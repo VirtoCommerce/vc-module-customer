@@ -8,10 +8,22 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
         public override void Up()
         {
             CreateTable(
-                "dbo.vc_Address",
+                "dbo.Member",
                 c => new
                     {
-                        AddressId = c.String(nullable: false, maxLength: 128),
+                        Id = c.String(nullable: false, maxLength: 128),
+                        CreatedDate = c.DateTime(nullable: false),
+                        ModifiedDate = c.DateTime(),
+                        CreatedBy = c.String(maxLength: 64),
+                        ModifiedBy = c.String(maxLength: 64),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.Address",
+                c => new
+                    {
+                        Id = c.String(nullable: false, maxLength: 128),
                         Name = c.String(nullable: false, maxLength: 128),
                         FirstName = c.String(maxLength: 128),
                         LastName = c.String(maxLength: 128),
@@ -31,60 +43,52 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
                         Email = c.String(maxLength: 256),
                         Organization = c.String(maxLength: 128),
                         MemberId = c.String(nullable: false, maxLength: 128),
+                        CreatedDate = c.DateTime(nullable: false),
+                        ModifiedDate = c.DateTime(),
+                        CreatedBy = c.String(maxLength: 64),
+                        ModifiedBy = c.String(maxLength: 64),
                         Discriminator = c.String(maxLength: 128),
                     })
-                .PrimaryKey(t => t.AddressId)
-                .ForeignKey("dbo.vc_Member", t => t.MemberId, cascadeDelete: true)
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Member", t => t.MemberId, cascadeDelete: true)
                 .Index(t => t.MemberId);
             
             CreateTable(
-                "dbo.vc_Member",
+                "dbo.Email",
                 c => new
                     {
-                        MemberId = c.String(nullable: false, maxLength: 128),
-                        CreatedDate = c.DateTime(nullable: false),
-                        CreatedBy = c.String(nullable: false, maxLength: 64),
-                        ModifiedDate = c.DateTime(),
-                        ModifiedBy = c.String(maxLength: 64),
-                    })
-                .PrimaryKey(t => t.MemberId);
-            
-            CreateTable(
-                "dbo.vc_Email",
-                c => new
-                    {
-                        EmailId = c.String(nullable: false, maxLength: 128),
+                        Id = c.String(nullable: false, maxLength: 128),
                         Address = c.String(),
                         IsValidated = c.Boolean(nullable: false),
                         Type = c.String(maxLength: 64),
                         MemberId = c.String(nullable: false, maxLength: 128),
                         Discriminator = c.String(maxLength: 128),
                     })
-                .PrimaryKey(t => t.EmailId)
-                .ForeignKey("dbo.vc_Member", t => t.MemberId, cascadeDelete: true)
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Member", t => t.MemberId, cascadeDelete: true)
                 .Index(t => t.MemberId);
             
             CreateTable(
-                "dbo.vc_MemberRelation",
+                "dbo.MemberRelation",
                 c => new
                     {
-                        MemberRelationId = c.String(nullable: false, maxLength: 128),
+                        Id = c.String(nullable: false, maxLength: 128),
                         AncestorSequence = c.Int(nullable: false),
                         AncestorId = c.String(nullable: false, maxLength: 128),
                         DescendantId = c.String(nullable: false, maxLength: 128),
                         Discriminator = c.String(maxLength: 128),
                     })
-                .PrimaryKey(t => t.MemberRelationId)
-                .ForeignKey("dbo.vc_Member", t => t.AncestorId, cascadeDelete: true)
-                .ForeignKey("dbo.vc_Member", t => t.DescendantId)
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Member", t => t.AncestorId, cascadeDelete: true)
+                .ForeignKey("dbo.Member", t => t.DescendantId)
                 .Index(t => t.AncestorId)
                 .Index(t => t.DescendantId);
             
             CreateTable(
-                "dbo.vc_Note",
+                "dbo.Note",
                 c => new
                     {
-                        NoteId = c.String(nullable: false, maxLength: 128),
+                        Id = c.String(nullable: false, maxLength: 128),
                         CreatedDate = c.DateTime(nullable: false),
                         CreatedBy = c.String(nullable: false, maxLength: 64),
                         ModifiedDate = c.DateTime(),
@@ -97,29 +101,29 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
                         MemberId = c.String(maxLength: 128),
                         Discriminator = c.String(maxLength: 128),
                     })
-                .PrimaryKey(t => t.NoteId)
-                .ForeignKey("dbo.vc_Member", t => t.MemberId)
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Member", t => t.MemberId)
                 .Index(t => t.MemberId);
             
             CreateTable(
-                "dbo.vc_Phone",
+                "dbo.Phone",
                 c => new
                     {
-                        PhoneId = c.String(nullable: false, maxLength: 128),
+                        Id = c.String(nullable: false, maxLength: 128),
                         Number = c.String(maxLength: 64),
                         Type = c.String(maxLength: 64),
                         MemberId = c.String(nullable: false, maxLength: 128),
                         Discriminator = c.String(maxLength: 128),
                     })
-                .PrimaryKey(t => t.PhoneId)
-                .ForeignKey("dbo.vc_Member", t => t.MemberId, cascadeDelete: true)
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Member", t => t.MemberId, cascadeDelete: true)
                 .Index(t => t.MemberId);
             
             CreateTable(
-                "dbo.vc_ContactPropertyValue",
+                "dbo.ContactPropertyValue",
                 c => new
                     {
-                        PropertyValueId = c.String(nullable: false, maxLength: 128),
+                        Id = c.String(nullable: false, maxLength: 128),
                         Name = c.String(maxLength: 128),
                         ValueType = c.Int(nullable: false),
                         ShortTextValue = c.String(maxLength: 512),
@@ -132,15 +136,15 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
                         ContactId = c.String(nullable: false, maxLength: 128),
                         Discriminator = c.String(maxLength: 128),
                     })
-                .PrimaryKey(t => t.PropertyValueId)
-                .ForeignKey("dbo.vc_Contact", t => t.ContactId)
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Contact", t => t.ContactId)
                 .Index(t => t.ContactId);
             
             CreateTable(
-                "dbo.vc_Contact",
+                "dbo.Contact",
                 c => new
                     {
-                        MemberId = c.String(nullable: false, maxLength: 128),
+                        Id = c.String(nullable: false, maxLength: 128),
                         FullName = c.String(nullable: false, maxLength: 128),
                         TimeZone = c.String(maxLength: 32),
                         DefaultLanguage = c.String(maxLength: 32),
@@ -151,15 +155,15 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
                         Photo = c.Binary(),
                         Salutation = c.String(maxLength: 256),
                     })
-                .PrimaryKey(t => t.MemberId)
-                .ForeignKey("dbo.vc_Member", t => t.MemberId)
-                .Index(t => t.MemberId);
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Member", t => t.Id)
+                .Index(t => t.Id);
             
             CreateTable(
-                "dbo.vc_Organization",
+                "dbo.Organization",
                 c => new
                     {
-                        MemberId = c.String(nullable: false, maxLength: 128),
+                        Id = c.String(nullable: false, maxLength: 128),
                         Name = c.String(nullable: false, maxLength: 128),
                         OrgType = c.Int(nullable: false),
                         Description = c.String(maxLength: 256),
@@ -167,41 +171,41 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
                         OwnerId = c.String(maxLength: 128),
                         Discriminator = c.String(maxLength: 128),
                     })
-                .PrimaryKey(t => t.MemberId)
-                .ForeignKey("dbo.vc_Member", t => t.MemberId)
-                .Index(t => t.MemberId);
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Member", t => t.Id)
+                .Index(t => t.Id);
             
         }
         
         public override void Down()
         {
-            DropForeignKey("dbo.vc_Organization", "MemberId", "dbo.vc_Member");
-            DropForeignKey("dbo.vc_Contact", "MemberId", "dbo.vc_Member");
-            DropForeignKey("dbo.vc_ContactPropertyValue", "ContactId", "dbo.vc_Contact");
-            DropForeignKey("dbo.vc_Phone", "MemberId", "dbo.vc_Member");
-            DropForeignKey("dbo.vc_Note", "MemberId", "dbo.vc_Member");
-            DropForeignKey("dbo.vc_MemberRelation", "DescendantId", "dbo.vc_Member");
-            DropForeignKey("dbo.vc_MemberRelation", "AncestorId", "dbo.vc_Member");
-            DropForeignKey("dbo.vc_Email", "MemberId", "dbo.vc_Member");
-            DropForeignKey("dbo.vc_Address", "MemberId", "dbo.vc_Member");
-            DropIndex("dbo.vc_Organization", new[] { "MemberId" });
-            DropIndex("dbo.vc_Contact", new[] { "MemberId" });
-            DropIndex("dbo.vc_ContactPropertyValue", new[] { "ContactId" });
-            DropIndex("dbo.vc_Phone", new[] { "MemberId" });
-            DropIndex("dbo.vc_Note", new[] { "MemberId" });
-            DropIndex("dbo.vc_MemberRelation", new[] { "DescendantId" });
-            DropIndex("dbo.vc_MemberRelation", new[] { "AncestorId" });
-            DropIndex("dbo.vc_Email", new[] { "MemberId" });
-            DropIndex("dbo.vc_Address", new[] { "MemberId" });
-            DropTable("dbo.vc_Organization");
-            DropTable("dbo.vc_Contact");
-            DropTable("dbo.vc_ContactPropertyValue");
-            DropTable("dbo.vc_Phone");
-            DropTable("dbo.vc_Note");
-            DropTable("dbo.vc_MemberRelation");
-            DropTable("dbo.vc_Email");
-            DropTable("dbo.vc_Member");
-            DropTable("dbo.vc_Address");
+            DropForeignKey("dbo.Organization", "Id", "dbo.Member");
+            DropForeignKey("dbo.Contact", "Id", "dbo.Member");
+            DropForeignKey("dbo.ContactPropertyValue", "ContactId", "dbo.Contact");
+            DropForeignKey("dbo.Phone", "MemberId", "dbo.Member");
+            DropForeignKey("dbo.Note", "MemberId", "dbo.Member");
+            DropForeignKey("dbo.MemberRelation", "DescendantId", "dbo.Member");
+            DropForeignKey("dbo.MemberRelation", "AncestorId", "dbo.Member");
+            DropForeignKey("dbo.Email", "MemberId", "dbo.Member");
+            DropForeignKey("dbo.Address", "MemberId", "dbo.Member");
+            DropIndex("dbo.Organization", new[] { "Id" });
+            DropIndex("dbo.Contact", new[] { "Id" });
+            DropIndex("dbo.ContactPropertyValue", new[] { "ContactId" });
+            DropIndex("dbo.Phone", new[] { "MemberId" });
+            DropIndex("dbo.Note", new[] { "MemberId" });
+            DropIndex("dbo.MemberRelation", new[] { "DescendantId" });
+            DropIndex("dbo.MemberRelation", new[] { "AncestorId" });
+            DropIndex("dbo.Email", new[] { "MemberId" });
+            DropIndex("dbo.Address", new[] { "MemberId" });
+            DropTable("dbo.Organization");
+            DropTable("dbo.Contact");
+            DropTable("dbo.ContactPropertyValue");
+            DropTable("dbo.Phone");
+            DropTable("dbo.Note");
+            DropTable("dbo.MemberRelation");
+            DropTable("dbo.Email");
+            DropTable("dbo.Address");
+            DropTable("dbo.Member");
         }
     }
 }
