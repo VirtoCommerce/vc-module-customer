@@ -68,6 +68,13 @@
           "name": "Store name"
         }
       },
+      "pick-store-list": {
+        "title": "New Account",
+        "subtitle": "Select a store for the new Account",
+        "labels": {
+          "name": "Store name"
+        }
+      },
       "organization-detail": {
         "subtitle": "Organization details",
         "labels": {
