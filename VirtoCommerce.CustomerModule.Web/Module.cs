@@ -56,21 +56,22 @@ namespace VirtoCommerce.CustomerModule.Web
         public override void PostInitialize()
         {
             var memberServiceDecorator = _container.Resolve<MemberServiceDecorator>();
-        
+
             Func<CustomerRepositoryImpl> customerRepositoryFactory = () => new CustomerRepositoryImpl(_connectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>());
             var commerceMembersService = new CommerceMembersServiceImpl(customerRepositoryFactory, _container.Resolve<IDynamicPropertyService>(), _container.Resolve<ISecurityService>(), memberServiceDecorator, _container.Resolve<IEventPublisher<MemberChangingEvent>>());
 
             memberServiceDecorator.RegisterMemberTypes(typeof(Organization), typeof(Contact), typeof(Vendor), typeof(Employee))
                                   .WithService(commerceMembersService)
-                                  .WithSearchService(commerceMembersService);          
+                                  .WithSearchService(commerceMembersService);
 
 
             //Next lines allow to use polymorph types in API controller methods
-            var formatters = GlobalConfiguration.Configuration.Formatters;
-            formatters.JsonFormatter.SerializerSettings.Converters.Add(new PolymorphicMemberJsonConverter(memberServiceDecorator));
+            var httpConfiguration = _container.Resolve<HttpConfiguration>();
+            httpConfiguration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new PolymorphicMemberJsonConverter(memberServiceDecorator));
 
             base.PostInitialize();
         }
+
         #endregion
 
         #region ISupportExportImportModule Members
@@ -97,5 +98,4 @@ namespace VirtoCommerce.CustomerModule.Web
         }
         #endregion
     }
-
 }

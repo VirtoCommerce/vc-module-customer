@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Formatting;
-using System.Text;
-using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
-using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CustomerModule.Web.JsonConverters
 {
@@ -20,13 +12,13 @@ namespace VirtoCommerce.CustomerModule.Web.JsonConverters
     public class PolymorphicMemberJsonConverter : JsonConverter
     {
         private readonly IMemberFactory _membersFactory;
+
         public PolymorphicMemberJsonConverter(IMemberFactory membersFactory)
         {
             _membersFactory = membersFactory;
         }
 
         public override bool CanWrite { get { return false; } }
-
         public override bool CanRead { get { return true; } }
 
         public override bool CanConvert(Type objectType)
@@ -46,7 +38,7 @@ namespace VirtoCommerce.CustomerModule.Web.JsonConverters
                     throw new ArgumentException("Missing memberType", "memberType");
                 }
 
-                string memberType = pt.Value<string>();
+                var memberType = pt.Value<string>();
                 retVal = _membersFactory.TryCreateMember(memberType);
                 if (retVal == null)
                 {
@@ -54,7 +46,7 @@ namespace VirtoCommerce.CustomerModule.Web.JsonConverters
                 }
 
             }
-            else if(objectType == typeof(MembersSearchCriteria))
+            else if (objectType == typeof(MembersSearchCriteria))
             {
                 retVal = _membersFactory.CreateMemberSearchCriteria();
             }

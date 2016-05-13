@@ -4,7 +4,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using VirtoCommerce.CustomerModule.Web.Security;
 using VirtoCommerce.Domain.Customer.Services;
-using VirtoCommerce.Platform.Core.Security;
+using VirtoCommerce.Platform.Core.Web.Security;
 using coreModel = VirtoCommerce.Domain.Customer.Model;
 
 namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
