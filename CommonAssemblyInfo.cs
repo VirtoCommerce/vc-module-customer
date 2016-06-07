@@ -12,7 +12,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyCompany("VirtoCommerce")]
-[assembly: AssemblyProduct("Virto Commerce Core Module")]
+[assembly: AssemblyProduct("Virto Commerce Customer Module")]
 [assembly: AssemblyCopyright("Copyright © VirtoCommerce 2011-2016")]
 
 [assembly: AssemblyFileVersion("2.11.0.0")]
