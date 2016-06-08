@@ -1,4 +1,17 @@
-set V=2.10.4
-nuget push VirtoCommerce.CustomerModule.Client.%V%.nupkg -Source nuget.org -ApiKey %1
-nuget push VirtoCommerce.CustomerModule.Data.%V%.nupkg -Source nuget.org -ApiKey %1
+@echo off
+setlocal enabledelayedexpansion
+
+if "%1" equ "" (
+    echo Pass NuGet API key as first parameter
+    pause
+    exit /b 1
+)
+
+for %%f in (*.nupkg) do (
+    set fileName=%%~nf
+    if "!fileName!" equ "!fileName:.symbols=!" (
+        nuget push %%f -Source nuget.org -ApiKey %1
+    )
+)
+
 pause
