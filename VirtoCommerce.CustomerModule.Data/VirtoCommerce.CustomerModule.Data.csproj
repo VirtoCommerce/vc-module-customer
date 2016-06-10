@@ -93,6 +93,10 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Migrations\201606101216148_AddIndexes.cs" />
+    <Compile Include="Migrations\201606101216148_AddIndexes.Designer.cs">
+      <DependentUpon>201606101216148_AddIndexes.cs</DependentUpon>
+    </Compile>
     <Compile Include="Model\AddressDataEntityComparer.cs" />
     <Compile Include="Migrations\201505050914307_Initial.cs" />
     <Compile Include="Migrations\201505050914307_Initial.Designer.cs">
@@ -177,6 +181,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603291317073_VendorAndEmployee.resx">
       <DependentUpon>201603291317073_VendorAndEmployee.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606101216148_AddIndexes.resx">
+      <DependentUpon>201606101216148_AddIndexes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

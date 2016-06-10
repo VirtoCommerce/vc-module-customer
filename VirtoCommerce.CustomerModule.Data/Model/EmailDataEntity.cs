@@ -16,6 +16,8 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 	public class EmailDataEntity : Entity
 	{
 		[CustomValidation(typeof(EmailDataEntity), "ValidateEmailContent", ErrorMessage = "Email has error")]
+        [StringLength(254)]
+        [Index(IsUnique = false)]
 		public string Address { get; set; }
 
 		public bool IsValidated { get; set; }
