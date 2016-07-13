@@ -97,6 +97,10 @@
     <Compile Include="Migrations\201606101216148_AddIndexes.Designer.cs">
       <DependentUpon>201606101216148_AddIndexes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201607131233142_IncreaseSizeAddressName.cs" />
+    <Compile Include="Migrations\201607131233142_IncreaseSizeAddressName.Designer.cs">
+      <DependentUpon>201607131233142_IncreaseSizeAddressName.cs</DependentUpon>
+    </Compile>
     <Compile Include="Model\AddressDataEntityComparer.cs" />
     <Compile Include="Migrations\201505050914307_Initial.cs" />
     <Compile Include="Migrations\201505050914307_Initial.Designer.cs">
@@ -184,6 +188,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201606101216148_AddIndexes.resx">
       <DependentUpon>201606101216148_AddIndexes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607131233142_IncreaseSizeAddressName.resx">
+      <DependentUpon>201607131233142_IncreaseSizeAddressName.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

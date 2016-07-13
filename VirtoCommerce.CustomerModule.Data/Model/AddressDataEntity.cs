@@ -17,7 +17,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 	public class AddressDataEntity : AuditableEntity
     {
 		[Required]
-		[StringLength(128)]
+		[StringLength(2048)]
 		public string Name { get; set; }
 			
 		[StringLength(128)]
