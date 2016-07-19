@@ -204,6 +204,27 @@ namespace VirtoCommerce.CustomerModule.Client.Api
         /// <returns>ApiResponse of Organization</returns>
         ApiResponse<Organization> CustomerModuleGetOrganizationByIdWithHttpInfo(string id);
         /// <summary>
+        /// Get vendor
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.CustomerModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="id">Vendor ID</param>
+        /// <returns>Vendor</returns>
+        Vendor CustomerModuleGetVendorById(string id);
+
+        /// <summary>
+        /// Get vendor
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.CustomerModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="id">Vendor ID</param>
+        /// <returns>ApiResponse of Vendor</returns>
+        ApiResponse<Vendor> CustomerModuleGetVendorByIdWithHttpInfo(string id);
+        /// <summary>
         /// Get organizations
         /// </summary>
         /// <remarks>
@@ -497,6 +518,27 @@ namespace VirtoCommerce.CustomerModule.Client.Api
         /// <param name="id">Organization id</param>
         /// <returns>Task of ApiResponse (Organization)</returns>
         System.Threading.Tasks.Task<ApiResponse<Organization>> CustomerModuleGetOrganizationByIdAsyncWithHttpInfo(string id);
+        /// <summary>
+        /// Get vendor
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.CustomerModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="id">Vendor ID</param>
+        /// <returns>Task of Vendor</returns>
+        System.Threading.Tasks.Task<Vendor> CustomerModuleGetVendorByIdAsync(string id);
+
+        /// <summary>
+        /// Get vendor
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.CustomerModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="id">Vendor ID</param>
+        /// <returns>Task of ApiResponse (Vendor)</returns>
+        System.Threading.Tasks.Task<ApiResponse<Vendor>> CustomerModuleGetVendorByIdAsyncWithHttpInfo(string id);
         /// <summary>
         /// Get organizations
         /// </summary>
@@ -1977,6 +2019,150 @@ namespace VirtoCommerce.CustomerModule.Client.Api
             return new ApiResponse<Organization>(localVarStatusCode,
                 localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
                 (Organization)ApiClient.Deserialize(localVarResponse, typeof(Organization)));
+            
+        }
+        /// <summary>
+        /// Get vendor 
+        /// </summary>
+        /// <exception cref="VirtoCommerce.CustomerModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="id">Vendor ID</param>
+        /// <returns>Vendor</returns>
+        public Vendor CustomerModuleGetVendorById(string id)
+        {
+             ApiResponse<Vendor> localVarResponse = CustomerModuleGetVendorByIdWithHttpInfo(id);
+             return localVarResponse.Data;
+        }
+
+        /// <summary>
+        /// Get vendor 
+        /// </summary>
+        /// <exception cref="VirtoCommerce.CustomerModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="id">Vendor ID</param>
+        /// <returns>ApiResponse of Vendor</returns>
+        public ApiResponse<Vendor> CustomerModuleGetVendorByIdWithHttpInfo(string id)
+        {
+            // verify the required parameter 'id' is set
+            if (id == null)
+                throw new ApiException(400, "Missing required parameter 'id' when calling VirtoCommerceCustomerApi->CustomerModuleGetVendorById");
+
+            var localVarPath = "/api/vendors/{id}";
+            var localVarPathParams = new Dictionary<string, string>();
+            var localVarQueryParams = new Dictionary<string, string>();
+            var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
+            var localVarFormParams = new Dictionary<string, string>();
+            var localVarFileParams = new Dictionary<string, FileParameter>();
+            object localVarPostBody = null;
+
+            // to determine the Content-Type header
+            string[] localVarHttpContentTypes = new string[] {
+            };
+            string localVarHttpContentType = ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+
+            // to determine the Accept header
+            string[] localVarHttpHeaderAccepts = new string[] {
+                "application/json", 
+                "text/json", 
+                "application/xml", 
+                "text/xml"
+            };
+            string localVarHttpHeaderAccept = ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            if (localVarHttpHeaderAccept != null)
+                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
+
+            // set "format" to json by default
+            // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
+            localVarPathParams.Add("format", "json");
+            if (id != null) localVarPathParams.Add("id", ApiClient.ParameterToString(id)); // path parameter
+
+
+            // make the HTTP request
+            IRestResponse localVarResponse = (IRestResponse)ApiClient.CallApi(localVarPath,
+                Method.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                localVarPathParams, localVarHttpContentType);
+
+            int localVarStatusCode = (int)localVarResponse.StatusCode;
+
+            if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
+                throw new ApiException(localVarStatusCode, "Error calling CustomerModuleGetVendorById: " + localVarResponse.Content, localVarResponse.Content);
+            else if (localVarStatusCode == 0)
+                throw new ApiException(localVarStatusCode, "Error calling CustomerModuleGetVendorById: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+
+            return new ApiResponse<Vendor>(localVarStatusCode,
+                localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
+                (Vendor)ApiClient.Deserialize(localVarResponse, typeof(Vendor)));
+            
+        }
+
+        /// <summary>
+        /// Get vendor 
+        /// </summary>
+        /// <exception cref="VirtoCommerce.CustomerModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="id">Vendor ID</param>
+        /// <returns>Task of Vendor</returns>
+        public async System.Threading.Tasks.Task<Vendor> CustomerModuleGetVendorByIdAsync(string id)
+        {
+             ApiResponse<Vendor> localVarResponse = await CustomerModuleGetVendorByIdAsyncWithHttpInfo(id);
+             return localVarResponse.Data;
+
+        }
+
+        /// <summary>
+        /// Get vendor 
+        /// </summary>
+        /// <exception cref="VirtoCommerce.CustomerModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="id">Vendor ID</param>
+        /// <returns>Task of ApiResponse (Vendor)</returns>
+        public async System.Threading.Tasks.Task<ApiResponse<Vendor>> CustomerModuleGetVendorByIdAsyncWithHttpInfo(string id)
+        {
+            // verify the required parameter 'id' is set
+            if (id == null)
+                throw new ApiException(400, "Missing required parameter 'id' when calling VirtoCommerceCustomerApi->CustomerModuleGetVendorById");
+
+            var localVarPath = "/api/vendors/{id}";
+            var localVarPathParams = new Dictionary<string, string>();
+            var localVarQueryParams = new Dictionary<string, string>();
+            var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
+            var localVarFormParams = new Dictionary<string, string>();
+            var localVarFileParams = new Dictionary<string, FileParameter>();
+            object localVarPostBody = null;
+
+            // to determine the Content-Type header
+            string[] localVarHttpContentTypes = new string[] {
+            };
+            string localVarHttpContentType = ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+
+            // to determine the Accept header
+            string[] localVarHttpHeaderAccepts = new string[] {
+                "application/json", 
+                "text/json", 
+                "application/xml", 
+                "text/xml"
+            };
+            string localVarHttpHeaderAccept = ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            if (localVarHttpHeaderAccept != null)
+                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
+
+            // set "format" to json by default
+            // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
+            localVarPathParams.Add("format", "json");
+            if (id != null) localVarPathParams.Add("id", ApiClient.ParameterToString(id)); // path parameter
+
+
+            // make the HTTP request
+            IRestResponse localVarResponse = (IRestResponse)await ApiClient.CallApiAsync(localVarPath,
+                Method.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                localVarPathParams, localVarHttpContentType);
+
+            int localVarStatusCode = (int)localVarResponse.StatusCode;
+
+            if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
+                throw new ApiException(localVarStatusCode, "Error calling CustomerModuleGetVendorById: " + localVarResponse.Content, localVarResponse.Content);
+            else if (localVarStatusCode == 0)
+                throw new ApiException(localVarStatusCode, "Error calling CustomerModuleGetVendorById: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+
+            return new ApiResponse<Vendor>(localVarStatusCode,
+                localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
+                (Vendor)ApiClient.Deserialize(localVarResponse, typeof(Vendor)));
             
         }
         /// <summary>

@@ -76,7 +76,9 @@
     <Compile Include="Model\Permission.cs" />
     <Compile Include="Model\PermissionScope.cs" />
     <Compile Include="Model\Role.cs" />
+    <Compile Include="Model\SeoInfo.cs" />
     <Compile Include="Model\SortInfo.cs" />
+    <Compile Include="Model\Vendor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
