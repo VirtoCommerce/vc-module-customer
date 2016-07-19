@@ -208,8 +208,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             return DeleteMembers(ids);
         }
 
-
-
         /// <summary>
         /// Get organization
         /// </summary>
@@ -232,6 +230,20 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [Route("contacts/{id}")]
         [ResponseType(typeof(coreModel.Contact))]
         public IHttpActionResult GetContactById(string id)
+        {
+            return GetMemberById(id);
+        }
+
+        /// <summary>
+        /// Get vendor
+        /// </summary>
+        /// <param name="id">Vendor ID</param>
+        /// <response code="200"></response>
+        /// <response code="404">Vendor not found.</response>
+        [HttpGet]
+        [Route("vendors/{id}")]
+        [ResponseType(typeof(coreModel.Vendor))]
+        public IHttpActionResult GetVendorById(string id)
         {
             return GetMemberById(id);
         }
