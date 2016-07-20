@@ -6,7 +6,7 @@ using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Customer.Model;
 using Xunit;
 
-namespace VirtoCommerce.CustomerModule.Tests
+namespace VirtoCommerce.CustomerModule.Test
 {
     public class ContactControllerTest
     {
