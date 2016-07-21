@@ -1,26 +1,24 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Http.Results;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using VirtoCommerce.CustomerModule.Web.Controllers.Api;
 using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Customer.Model;
-
+using Xunit;
 
 namespace VirtoCommerce.CustomerModule.Test
 {
-    [TestClass]
     public class ContactControllerTest
     {
-        [TestMethod]
+        [Fact]
         public void SearchContactsTest()
         {
             var controller = GetContactController();
             var result = controller.Search(new MembersSearchCriteria()) as OkNegotiatedContentResult<MembersSearchResult>;
-            Assert.IsNotNull(result.Content);
+            Assert.NotNull(result.Content);
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateNewOrganization()
         {
             var controller = GetContactController();
@@ -34,24 +32,24 @@ namespace VirtoCommerce.CustomerModule.Test
 
             };
             var result = controller.CreateMember(org) as OkNegotiatedContentResult<Organization>;
-            Assert.IsNotNull(result.Content);
+            Assert.NotNull(result.Content);
         }
 
-        [TestMethod]
+        [Fact]
         public void SearchTest()
         {
             var controller = GetContactController();
             var result = controller.Search(new MembersSearchCriteria { MemberId = "org1" }) as OkNegotiatedContentResult<MembersSearchResult>;
         }
 
-        [TestMethod]
+        [Fact]
         public void GetContact()
         {
             var controller = GetContactController();
             var result = controller.GetMemberById("testContact1") as OkNegotiatedContentResult<Contact>;
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateNewContact()
         {
             var controller = GetContactController();
@@ -85,10 +83,10 @@ namespace VirtoCommerce.CustomerModule.Test
                 DefaultLanguage = "ru"
             };
             var result = controller.CreateContact(contact) as OkNegotiatedContentResult<Contact>;
-            Assert.IsNotNull(result.Content);
+            Assert.NotNull(result.Content);
         }
 
-        [TestMethod]
+        [Fact]
         public void UpdateContact()
         {
             var controller = GetContactController();
@@ -106,7 +104,7 @@ namespace VirtoCommerce.CustomerModule.Test
             contact = result.Content;
         }
 
-        [TestMethod]
+        [Fact]
         public void PartialUpdateContact()
         {
             var controller = GetContactController();
@@ -123,14 +121,14 @@ namespace VirtoCommerce.CustomerModule.Test
             contact = result.Content;
         }
 
-        [TestMethod]
+        [Fact]
         public void DeleteContact()
         {
             var controller = GetContactController();
             controller.DeleteMembers(new[] { "testContact" });
             var result = controller.GetMemberById("testStore") as OkNegotiatedContentResult<Contact>;
 
-            Assert.IsNull(result);
+            Assert.Null(result);
         }
 
 

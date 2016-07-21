@@ -150,7 +150,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
                 if (!criteria.MemberTypes.IsNullOrEmpty())
                 {
-                    query = query.Where(x => criteria.MemberTypes.Contains(x.MemberType) || x.MemberType == null);
+                    query = query.Where(x => criteria.MemberTypes.Contains(x.MemberType));
                 }
 
                 if (criteria.MemberId != null)
