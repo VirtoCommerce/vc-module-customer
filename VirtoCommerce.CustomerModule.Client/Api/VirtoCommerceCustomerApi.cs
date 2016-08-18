@@ -265,6 +265,27 @@ namespace VirtoCommerce.CustomerModule.Client.Api
         /// <returns>ApiResponse of MembersSearchResult</returns>
         ApiResponse<MembersSearchResult> CustomerModuleSearchWithHttpInfo(MembersSearchCriteria criteria);
         /// <summary>
+        /// Search vendors
+        /// </summary>
+        /// <remarks>
+        /// Get array of vendors satisfied search criteria.
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.CustomerModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        /// <returns>VendorSearchResult</returns>
+        VendorSearchResult CustomerModuleSearchVendors(MembersSearchCriteria criteria);
+
+        /// <summary>
+        /// Search vendors
+        /// </summary>
+        /// <remarks>
+        /// Get array of vendors satisfied search criteria.
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.CustomerModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        /// <returns>ApiResponse of VendorSearchResult</returns>
+        ApiResponse<VendorSearchResult> CustomerModuleSearchVendorsWithHttpInfo(MembersSearchCriteria criteria);
+        /// <summary>
         /// Update contact
         /// </summary>
         /// <remarks>
@@ -579,6 +600,27 @@ namespace VirtoCommerce.CustomerModule.Client.Api
         /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
         /// <returns>Task of ApiResponse (MembersSearchResult)</returns>
         System.Threading.Tasks.Task<ApiResponse<MembersSearchResult>> CustomerModuleSearchAsyncWithHttpInfo(MembersSearchCriteria criteria);
+        /// <summary>
+        /// Search vendors
+        /// </summary>
+        /// <remarks>
+        /// Get array of vendors satisfied search criteria.
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.CustomerModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        /// <returns>Task of VendorSearchResult</returns>
+        System.Threading.Tasks.Task<VendorSearchResult> CustomerModuleSearchVendorsAsync(MembersSearchCriteria criteria);
+
+        /// <summary>
+        /// Search vendors
+        /// </summary>
+        /// <remarks>
+        /// Get array of vendors satisfied search criteria.
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.CustomerModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        /// <returns>Task of ApiResponse (VendorSearchResult)</returns>
+        System.Threading.Tasks.Task<ApiResponse<VendorSearchResult>> CustomerModuleSearchVendorsAsyncWithHttpInfo(MembersSearchCriteria criteria);
         /// <summary>
         /// Update contact
         /// </summary>
@@ -2463,6 +2505,174 @@ namespace VirtoCommerce.CustomerModule.Client.Api
             return new ApiResponse<MembersSearchResult>(localVarStatusCode,
                 localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
                 (MembersSearchResult)ApiClient.Deserialize(localVarResponse, typeof(MembersSearchResult)));
+            
+        }
+        /// <summary>
+        /// Search vendors Get array of vendors satisfied search criteria.
+        /// </summary>
+        /// <exception cref="VirtoCommerce.CustomerModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        /// <returns>VendorSearchResult</returns>
+        public VendorSearchResult CustomerModuleSearchVendors(MembersSearchCriteria criteria)
+        {
+             ApiResponse<VendorSearchResult> localVarResponse = CustomerModuleSearchVendorsWithHttpInfo(criteria);
+             return localVarResponse.Data;
+        }
+
+        /// <summary>
+        /// Search vendors Get array of vendors satisfied search criteria.
+        /// </summary>
+        /// <exception cref="VirtoCommerce.CustomerModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        /// <returns>ApiResponse of VendorSearchResult</returns>
+        public ApiResponse<VendorSearchResult> CustomerModuleSearchVendorsWithHttpInfo(MembersSearchCriteria criteria)
+        {
+            // verify the required parameter 'criteria' is set
+            if (criteria == null)
+                throw new ApiException(400, "Missing required parameter 'criteria' when calling VirtoCommerceCustomerApi->CustomerModuleSearchVendors");
+
+            var localVarPath = "/api/vendors/search";
+            var localVarPathParams = new Dictionary<string, string>();
+            var localVarQueryParams = new Dictionary<string, string>();
+            var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
+            var localVarFormParams = new Dictionary<string, string>();
+            var localVarFileParams = new Dictionary<string, FileParameter>();
+            object localVarPostBody = null;
+
+            // to determine the Content-Type header
+            string[] localVarHttpContentTypes = new string[] {
+                "application/json", 
+                "text/json", 
+                "application/xml", 
+                "text/xml", 
+                "application/x-www-form-urlencoded"
+            };
+            string localVarHttpContentType = ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+
+            // to determine the Accept header
+            string[] localVarHttpHeaderAccepts = new string[] {
+                "application/json", 
+                "text/json", 
+                "application/xml", 
+                "text/xml"
+            };
+            string localVarHttpHeaderAccept = ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            if (localVarHttpHeaderAccept != null)
+                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
+
+            // set "format" to json by default
+            // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
+            localVarPathParams.Add("format", "json");
+            if (criteria.GetType() != typeof(byte[]))
+            {
+                localVarPostBody = ApiClient.Serialize(criteria); // http body (model) parameter
+            }
+            else
+            {
+                localVarPostBody = criteria; // byte array
+            }
+
+
+            // make the HTTP request
+            IRestResponse localVarResponse = (IRestResponse)ApiClient.CallApi(localVarPath,
+                Method.POST, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                localVarPathParams, localVarHttpContentType);
+
+            int localVarStatusCode = (int)localVarResponse.StatusCode;
+
+            if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
+                throw new ApiException(localVarStatusCode, "Error calling CustomerModuleSearchVendors: " + localVarResponse.Content, localVarResponse.Content);
+            else if (localVarStatusCode == 0)
+                throw new ApiException(localVarStatusCode, "Error calling CustomerModuleSearchVendors: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+
+            return new ApiResponse<VendorSearchResult>(localVarStatusCode,
+                localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
+                (VendorSearchResult)ApiClient.Deserialize(localVarResponse, typeof(VendorSearchResult)));
+            
+        }
+
+        /// <summary>
+        /// Search vendors Get array of vendors satisfied search criteria.
+        /// </summary>
+        /// <exception cref="VirtoCommerce.CustomerModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        /// <returns>Task of VendorSearchResult</returns>
+        public async System.Threading.Tasks.Task<VendorSearchResult> CustomerModuleSearchVendorsAsync(MembersSearchCriteria criteria)
+        {
+             ApiResponse<VendorSearchResult> localVarResponse = await CustomerModuleSearchVendorsAsyncWithHttpInfo(criteria);
+             return localVarResponse.Data;
+
+        }
+
+        /// <summary>
+        /// Search vendors Get array of vendors satisfied search criteria.
+        /// </summary>
+        /// <exception cref="VirtoCommerce.CustomerModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        /// <returns>Task of ApiResponse (VendorSearchResult)</returns>
+        public async System.Threading.Tasks.Task<ApiResponse<VendorSearchResult>> CustomerModuleSearchVendorsAsyncWithHttpInfo(MembersSearchCriteria criteria)
+        {
+            // verify the required parameter 'criteria' is set
+            if (criteria == null)
+                throw new ApiException(400, "Missing required parameter 'criteria' when calling VirtoCommerceCustomerApi->CustomerModuleSearchVendors");
+
+            var localVarPath = "/api/vendors/search";
+            var localVarPathParams = new Dictionary<string, string>();
+            var localVarQueryParams = new Dictionary<string, string>();
+            var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
+            var localVarFormParams = new Dictionary<string, string>();
+            var localVarFileParams = new Dictionary<string, FileParameter>();
+            object localVarPostBody = null;
+
+            // to determine the Content-Type header
+            string[] localVarHttpContentTypes = new string[] {
+                "application/json", 
+                "text/json", 
+                "application/xml", 
+                "text/xml", 
+                "application/x-www-form-urlencoded"
+            };
+            string localVarHttpContentType = ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+
+            // to determine the Accept header
+            string[] localVarHttpHeaderAccepts = new string[] {
+                "application/json", 
+                "text/json", 
+                "application/xml", 
+                "text/xml"
+            };
+            string localVarHttpHeaderAccept = ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            if (localVarHttpHeaderAccept != null)
+                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
+
+            // set "format" to json by default
+            // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
+            localVarPathParams.Add("format", "json");
+            if (criteria.GetType() != typeof(byte[]))
+            {
+                localVarPostBody = ApiClient.Serialize(criteria); // http body (model) parameter
+            }
+            else
+            {
+                localVarPostBody = criteria; // byte array
+            }
+
+
+            // make the HTTP request
+            IRestResponse localVarResponse = (IRestResponse)await ApiClient.CallApiAsync(localVarPath,
+                Method.POST, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                localVarPathParams, localVarHttpContentType);
+
+            int localVarStatusCode = (int)localVarResponse.StatusCode;
+
+            if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
+                throw new ApiException(localVarStatusCode, "Error calling CustomerModuleSearchVendors: " + localVarResponse.Content, localVarResponse.Content);
+            else if (localVarStatusCode == 0)
+                throw new ApiException(localVarStatusCode, "Error calling CustomerModuleSearchVendors: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+
+            return new ApiResponse<VendorSearchResult>(localVarStatusCode,
+                localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
+                (VendorSearchResult)ApiClient.Deserialize(localVarResponse, typeof(VendorSearchResult)));
             
         }
         /// <summary>
