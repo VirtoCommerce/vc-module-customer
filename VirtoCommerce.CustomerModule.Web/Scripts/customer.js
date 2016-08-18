@@ -61,6 +61,14 @@ angular.module(moduleName, [])
           controller: 'platformWebApp.dynamicPropertyWidgetController',
           template: '$(Platform)/Scripts/app/dynamicProperties/widgets/dynamicPropertyWidget.tpl.html'
       }
+      var vendorSeoWidget = {
+      	controller: 'virtoCommerce.coreModule.seo.seoWidgetController',
+      	template: 'Modules/$(VirtoCommerce.Core)/Scripts/SEO/widgets/seoWidget.tpl.html',
+      	objectType: 'Vendor',
+      	getDefaultContainerId: function (blade) { return undefined; },
+      	getLanguages: function (blade) { return []; }
+      };
+     
       //Register widgets in customer details
       widgetService.registerWidget(accountsWidget, 'customerDetail1');
       widgetService.registerWidget(addressesWidget, 'customerDetail1');
@@ -86,6 +94,7 @@ angular.module(moduleName, [])
       widgetService.registerWidget(emailsWidget, 'vendorDetail1');
       widgetService.registerWidget(phonesWidget, 'vendorDetail1');
       widgetService.registerWidget(dynamicPropertyWidget, 'vendorDetail2');
+      widgetService.registerWidget(vendorSeoWidget, 'vendorDetail2');
 
       // register member types
       memberTypesResolverService.registerType({ memberType: 'Organization', fullTypeName: 'VirtoCommerce.Domain.Customer.Model.Organization', icon: 'fa-university', template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/organization-detail.tpl.html' });

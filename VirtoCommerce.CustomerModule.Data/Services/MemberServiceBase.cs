@@ -4,6 +4,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.Repositories;
+using VirtoCommerce.Domain.Commerce.Model;
+using VirtoCommerce.Domain.Commerce.Services;
 using VirtoCommerce.Domain.Customer.Events;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
@@ -19,14 +21,16 @@ namespace VirtoCommerce.CustomerModule.Data.Services
     /// </summary>
     public abstract class MemberServiceBase : ServiceBase, IMemberService, IMemberSearchService
     {
-        public MemberServiceBase(Func<IMemberRepository> repositoryFactory, IDynamicPropertyService dynamicPropertyService,
+        public MemberServiceBase(Func<IMemberRepository> repositoryFactory, IDynamicPropertyService dynamicPropertyService, ICommerceService commerceService,
                                  IMemberFactory memberFactory, IEventPublisher<MemberChangingEvent> eventPublisher)
         {
             RepositoryFactory = repositoryFactory;
             DynamicPropertyService = dynamicPropertyService;
             MemberFactory = memberFactory;
             MemberEventventPublisher = eventPublisher;
+            CommerceService = commerceService;
         }
+        protected ICommerceService CommerceService { get; set; }
         protected IEventPublisher<MemberChangingEvent> MemberEventventPublisher { get; private set; }
         protected IMemberFactory MemberFactory { get; private set; }
         protected Func<IMemberRepository> RepositoryFactory { get; private set; }
@@ -67,6 +71,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                 //Load dynamic properties for member
                 DynamicPropertyService.LoadDynamicPropertyValues(member);
             }
+            CommerceService.LoadSeoForObjects(retVal.OfType<ISeoSupport>().ToArray());
             return retVal.ToArray();
         }
 
@@ -110,6 +115,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             {
                 DynamicPropertyService.SaveDynamicPropertyValues(member);
             }
+            CommerceService.UpsertSeoForObjects(members.OfType<ISeoSupport>().ToArray());
         }
 
         public virtual void Delete(string[] ids, string[] memberTypes = null)
@@ -128,6 +134,11 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                     foreach (var member in members)
                     {
                         DynamicPropertyService.DeleteDynamicPropertyValues(member);
+                        var seoObject = member as ISeoSupport;
+                        if(seoObject != null)
+                        {
+                            CommerceService.DeleteSeoForObject(seoObject);
+                        }
                     }
                 }
             }
