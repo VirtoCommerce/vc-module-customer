@@ -28,7 +28,7 @@ angular.module(moduleName, [])
   }]
 )
 .run(
-  ['$rootScope', 'platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'virtoCommerce.customerModule.memberTypesResolverService', function ($rootScope, mainMenuService, widgetService, $state, memberTypesResolverService) {
+  ['$rootScope', 'platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', function ($rootScope, mainMenuService, widgetService, $state, memberTypesResolverService, settings) {
       //Register module in main menu
       var menuItem = {
           path: 'browse/member',
@@ -66,7 +66,9 @@ angular.module(moduleName, [])
       	template: 'Modules/$(VirtoCommerce.Core)/Scripts/SEO/widgets/seoWidget.tpl.html',
       	objectType: 'Vendor',
       	getDefaultContainerId: function (blade) { return undefined; },
-      	getLanguages: function (blade) { return []; }
+      	getLanguages: function (blade) {
+      		return settings.getValues({ id: 'VirtoCommerce.Core.General.Languages' });
+      	}
       };
      
       //Register widgets in customer details
