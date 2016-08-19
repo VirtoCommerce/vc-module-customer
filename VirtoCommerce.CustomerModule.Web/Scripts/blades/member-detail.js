@@ -10,7 +10,8 @@
                 dynamicProperties: [],
                 addresses: [],
                 phones: [],
-                emails: []
+                emails: [],
+				seoInfos: []
             }, blade.currentEntity);
 
             if (newEntity.memberType === 'Organization') {
@@ -51,6 +52,10 @@
     }
 
     function initializeBlade(data) {
+    	if (!data.seoInfos)
+    	{
+    		data.seoInfos = [];
+    	}
         blade.currentEntity = angular.copy(data);
         blade.origEntity = data;
         blade.isLoading = false;

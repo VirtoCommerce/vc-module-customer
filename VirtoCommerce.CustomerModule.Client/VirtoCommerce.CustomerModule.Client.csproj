@@ -79,6 +79,7 @@
     <Compile Include="Model\SeoInfo.cs" />
     <Compile Include="Model\SortInfo.cs" />
     <Compile Include="Model\Vendor.cs" />
+    <Compile Include="Model\VendorSearchResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

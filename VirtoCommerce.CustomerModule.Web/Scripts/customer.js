@@ -28,7 +28,7 @@ angular.module(moduleName, [])
   }]
 )
 .run(
-  ['$rootScope', 'platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'virtoCommerce.customerModule.memberTypesResolverService', function ($rootScope, mainMenuService, widgetService, $state, memberTypesResolverService) {
+  ['$rootScope', 'platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', function ($rootScope, mainMenuService, widgetService, $state, memberTypesResolverService, settings) {
       //Register module in main menu
       var menuItem = {
           path: 'browse/member',
@@ -61,6 +61,16 @@ angular.module(moduleName, [])
           controller: 'platformWebApp.dynamicPropertyWidgetController',
           template: '$(Platform)/Scripts/app/dynamicProperties/widgets/dynamicPropertyWidget.tpl.html'
       }
+      var vendorSeoWidget = {
+      	controller: 'virtoCommerce.coreModule.seo.seoWidgetController',
+      	template: 'Modules/$(VirtoCommerce.Core)/Scripts/SEO/widgets/seoWidget.tpl.html',
+      	objectType: 'Vendor',
+      	getDefaultContainerId: function (blade) { return undefined; },
+      	getLanguages: function (blade) {
+      		return settings.getValues({ id: 'VirtoCommerce.Core.General.Languages' });
+      	}
+      };
+     
       //Register widgets in customer details
       widgetService.registerWidget(accountsWidget, 'customerDetail1');
       widgetService.registerWidget(addressesWidget, 'customerDetail1');
@@ -86,6 +96,7 @@ angular.module(moduleName, [])
       widgetService.registerWidget(emailsWidget, 'vendorDetail1');
       widgetService.registerWidget(phonesWidget, 'vendorDetail1');
       widgetService.registerWidget(dynamicPropertyWidget, 'vendorDetail2');
+      widgetService.registerWidget(vendorSeoWidget, 'vendorDetail2');
 
       // register member types
       memberTypesResolverService.registerType({ memberType: 'Organization', fullTypeName: 'VirtoCommerce.Domain.Customer.Model.Organization', icon: 'fa-university', template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/organization-detail.tpl.html' });

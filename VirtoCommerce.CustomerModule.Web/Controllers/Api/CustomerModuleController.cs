@@ -2,6 +2,7 @@
 using System.Net;
 using System.Web.Http;
 using System.Web.Http.Description;
+using VirtoCommerce.CustomerModule.Web.Model;
 using VirtoCommerce.CustomerModule.Web.Security;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Platform.Core.Web.Security;
@@ -246,6 +247,30 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public IHttpActionResult GetVendorById(string id)
         {
             return GetMemberById(id);
+        }
+
+        /// <summary>
+        /// Search vendors
+        /// </summary>
+        /// <remarks>Get array of vendors satisfied search criteria.</remarks>
+        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        [HttpPost]
+        [Route("vendors/search")]
+        [ResponseType(typeof(VendorSearchResult))]
+        public IHttpActionResult SearchVendors(coreModel.MembersSearchCriteria criteria)
+        {
+            if(criteria == null)
+            {
+                criteria = new Domain.Customer.Model.MembersSearchCriteria();               
+            }
+            criteria.MemberType = typeof(coreModel.Vendor).Name;
+            var result = _memberSearchService.SearchMembers(criteria);
+            var retVal = new VendorSearchResult
+            {
+                TotalCount = result.TotalCount,
+                Vendors = result.Members.OfType<coreModel.Vendor>().ToList()
+            };
+            return Ok(result);
         }
 
         #endregion

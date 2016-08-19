@@ -5,6 +5,7 @@ using VirtoCommerce.CustomerModule.Data.Repositories;
 using VirtoCommerce.CustomerModule.Data.Services;
 using VirtoCommerce.CustomerModule.Web.ExportImport;
 using VirtoCommerce.CustomerModule.Web.JsonConverters;
+using VirtoCommerce.Domain.Commerce.Services;
 using VirtoCommerce.Domain.Customer.Events;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
@@ -58,7 +59,7 @@ namespace VirtoCommerce.CustomerModule.Web
             var memberServiceDecorator = _container.Resolve<MemberServiceDecorator>();
 
             Func<CustomerRepositoryImpl> customerRepositoryFactory = () => new CustomerRepositoryImpl(_connectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>());
-            var commerceMembersService = new CommerceMembersServiceImpl(customerRepositoryFactory, _container.Resolve<IDynamicPropertyService>(), _container.Resolve<ISecurityService>(), memberServiceDecorator, _container.Resolve<IEventPublisher<MemberChangingEvent>>());
+            var commerceMembersService = new CommerceMembersServiceImpl(customerRepositoryFactory, _container.Resolve<IDynamicPropertyService>(), _container.Resolve<ICommerceService>(), _container.Resolve<ISecurityService>(), memberServiceDecorator, _container.Resolve<IEventPublisher<MemberChangingEvent>>());
 
             memberServiceDecorator.RegisterMemberTypes(typeof(Organization), typeof(Contact), typeof(Vendor), typeof(Employee))
                                   .WithService(commerceMembersService)

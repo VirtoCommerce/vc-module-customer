@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.Repositories;
+using VirtoCommerce.Domain.Commerce.Services;
 using VirtoCommerce.Domain.Customer.Events;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
@@ -31,8 +32,8 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         };
 
         private readonly ISecurityService _securityService;
-        public CommerceMembersServiceImpl(Func<ICustomerRepository> repositoryFactory, IDynamicPropertyService dynamicPropertyService, ISecurityService securityService, IMemberFactory memberFactory, IEventPublisher<MemberChangingEvent> eventPublisher)
-            : base(repositoryFactory, dynamicPropertyService, memberFactory, eventPublisher)
+        public CommerceMembersServiceImpl(Func<ICustomerRepository> repositoryFactory, IDynamicPropertyService dynamicPropertyService, ICommerceService commerceService, ISecurityService securityService,  IMemberFactory memberFactory, IEventPublisher<MemberChangingEvent> eventPublisher)
+            : base(repositoryFactory, dynamicPropertyService, commerceService, memberFactory, eventPublisher)
         {
             _securityService = securityService;
         }
