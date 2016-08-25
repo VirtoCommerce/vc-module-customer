@@ -36,7 +36,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         #endregion
 
 
-        public virtual Note ToNote(Note note)
+        public virtual Note ToModel(Note note)
         {
             if (note == null)
                 throw new ArgumentNullException("note");
@@ -45,7 +45,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             return note;
         }
 
-        public virtual NoteDataEntity FromNote(Note note)
+        public virtual NoteDataEntity FromModel(Note note)
         {
             if (note == null)
                 throw new ArgumentNullException("note");
@@ -58,8 +58,8 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         public virtual void Patch(NoteDataEntity target)
         {
-            var patchInjectionPolicy = new PatchInjection<NoteDataEntity>(x => x.Body, x => x.Title);
-            target.InjectFrom(patchInjectionPolicy, this);
+            target.Body = this.Body;
+            target.Title = this.Title;
         }
 	}
 }

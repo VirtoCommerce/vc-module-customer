@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
+using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CustomerModule.Web.JsonConverters
 {
@@ -11,11 +12,9 @@ namespace VirtoCommerce.CustomerModule.Web.JsonConverters
     /// </summary>
     public class PolymorphicMemberJsonConverter : JsonConverter
     {
-        private readonly IMemberFactory _membersFactory;
 
-        public PolymorphicMemberJsonConverter(IMemberFactory membersFactory)
+        public PolymorphicMemberJsonConverter()
         {
-            _membersFactory = membersFactory;
         }
 
         public override bool CanWrite { get { return false; } }
@@ -23,14 +22,14 @@ namespace VirtoCommerce.CustomerModule.Web.JsonConverters
 
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(Member) || objectType == typeof(MembersSearchCriteria);
+            return typeof(Member).IsAssignableFrom(objectType) || objectType == typeof(MembersSearchCriteria);
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             object retVal = null;
             var obj = JObject.Load(reader);
-            if (objectType == typeof(Member))
+            if (typeof(Member).IsAssignableFrom(objectType))
             {
                 var pt = obj["memberType"];
                 if (pt == null)
@@ -39,7 +38,7 @@ namespace VirtoCommerce.CustomerModule.Web.JsonConverters
                 }
 
                 var memberType = pt.Value<string>();
-                retVal = _membersFactory.TryCreateMember(memberType);
+                retVal = AbstractTypeFactory<Member>.TryCreateInstance(memberType);
                 if (retVal == null)
                 {
                     throw new NotSupportedException("Unknown memberType: " + memberType);
@@ -48,7 +47,7 @@ namespace VirtoCommerce.CustomerModule.Web.JsonConverters
             }
             else if (objectType == typeof(MembersSearchCriteria))
             {
-                retVal = _membersFactory.CreateMemberSearchCriteria();
+                retVal = AbstractTypeFactory<MembersSearchCriteria>.TryCreateInstance();
             }
             serializer.Populate(obj.CreateReader(), retVal);
             return retVal;

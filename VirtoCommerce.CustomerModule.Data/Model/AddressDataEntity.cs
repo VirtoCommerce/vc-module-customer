@@ -99,20 +99,15 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         #endregion
 
 
-        public virtual Address ToAddress(Address address)
+        public virtual Address ToModel(Address address)
         {
-            if (address == null)
-                throw new ArgumentNullException("address");
-
-            var retVal = new Domain.Commerce.Model.Address();
-            retVal.InjectFrom(this);
-            retVal.Phone = this.DaytimePhoneNumber;
-            retVal.AddressType = EnumUtility.SafeParse(this.Type, AddressType.BillingAndShipping);
-
-            return retVal;
+            address.InjectFrom(this);
+            address.Phone = this.DaytimePhoneNumber;
+            address.AddressType = EnumUtility.SafeParse(this.Type, AddressType.BillingAndShipping);
+            return address;
         }
 
-        public virtual AddressDataEntity FromAddress(Address address)
+        public virtual AddressDataEntity FromModel(Address address)
         {
             if (address == null)
                 throw new ArgumentNullException("address");
@@ -125,13 +120,20 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         public virtual void Patch(AddressDataEntity target)
         {
-            var patchInjectionPolicy = new PatchInjection<AddressDataEntity>(x => x.City, x => x.CountryCode,
-                                                                                      x => x.CountryName, x => x.DaytimePhoneNumber,
-                                                                                      x => x.Email, x => x.EveningPhoneNumber, x => x.FaxNumber,
-                                                                                      x => x.FirstName, x => x.LastName, x => x.Line1,
-                                                                                      x => x.Line2, x => x.Name, x => x.Organization, x => x.PostalCode,
-                                                                                      x => x.RegionName, x => x.RegionId, x => x.StateProvince, x => x.Type);
-            target.InjectFrom(patchInjectionPolicy, this);
+            target.City = this.City;
+            target.CountryCode = this.CountryCode;
+            target.CountryName = this.CountryName;
+            target.DaytimePhoneNumber = this.DaytimePhoneNumber;
+            target.PostalCode = this.PostalCode;
+            target.RegionId = this.RegionId;
+            target.RegionName = this.RegionName;
+            target.Type = this.Type;
+            target.City = this.City;
+            target.Email = this.Email;
+            target.FirstName = this.FirstName;
+            target.LastName = this.LastName;
+            target.Line1 = this.Line1;
+            target.Line2 = this.Line2;
         }
     }
 }

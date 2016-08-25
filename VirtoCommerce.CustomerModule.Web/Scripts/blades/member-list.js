@@ -23,12 +23,12 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
                 $scope.pageSettings.totalItems = data.totalCount;
                 // precalculate icon
                 var memberTypeDefinition;
-                _.each(data.members, function (x) {
+                _.each(data.results, function (x) {
                     if (memberTypeDefinition = _.findWhere(memberTypesResolverService.objects, { memberType: x.memberType })) {
                         x._memberTypeIcon = memberTypeDefinition.icon;
                     }
                 });
-                $scope.listEntries = data.members;
+                $scope.listEntries = data.results;
 
                 //Set navigation breadcrumbs
                 setBreadcrumbs();

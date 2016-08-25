@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Web.Http;
 using Microsoft.Practices.Unity;
+using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.Repositories;
 using VirtoCommerce.CustomerModule.Data.Services;
 using VirtoCommerce.CustomerModule.Web.ExportImport;
@@ -9,6 +10,7 @@ using VirtoCommerce.Domain.Commerce.Services;
 using VirtoCommerce.Domain.Customer.Events;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Core.ExportImport;
@@ -50,25 +52,27 @@ namespace VirtoCommerce.CustomerModule.Web
             var memberServiceDecorator = new MemberServiceDecorator();
             _container.RegisterInstance(memberServiceDecorator);
             _container.RegisterInstance<IMemberService>(memberServiceDecorator);
-            _container.RegisterInstance<IMemberFactory>(memberServiceDecorator);
             _container.RegisterInstance<IMemberSearchService>(memberServiceDecorator);
         }
 
         public override void PostInitialize()
         {
-            var memberServiceDecorator = _container.Resolve<MemberServiceDecorator>();
-
             Func<CustomerRepositoryImpl> customerRepositoryFactory = () => new CustomerRepositoryImpl(_connectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>());
-            var commerceMembersService = new CommerceMembersServiceImpl(customerRepositoryFactory, _container.Resolve<IDynamicPropertyService>(), _container.Resolve<ICommerceService>(), _container.Resolve<ISecurityService>(), memberServiceDecorator, _container.Resolve<IEventPublisher<MemberChangingEvent>>());
+            var commerceMembersService = new CommerceMembersServiceImpl(customerRepositoryFactory, _container.Resolve<IDynamicPropertyService>(), _container.Resolve<ICommerceService>(), _container.Resolve<ISecurityService>(), _container.Resolve<IEventPublisher<MemberChangingEvent>>());
 
-            memberServiceDecorator.RegisterMemberTypes(typeof(Organization), typeof(Contact), typeof(Vendor), typeof(Employee))
-                                  .WithService(commerceMembersService)
-                                  .WithSearchService(commerceMembersService);
+            AbstractTypeFactory<Member>.RegisterType<Organization>().WithService(commerceMembersService).MapToType<OrganizationDataEntity>();
+            AbstractTypeFactory<Member>.RegisterType<Contact>().WithService(commerceMembersService).MapToType<ContactDataEntity>();
+            AbstractTypeFactory<Member>.RegisterType<Vendor>().WithService(commerceMembersService).MapToType<VendorDataEntity>();
+            AbstractTypeFactory<Member>.RegisterType<Employee>().WithService(commerceMembersService).MapToType<EmployeeDataEntity>();
 
+            AbstractTypeFactory<MemberDataEntity>.RegisterType<ContactDataEntity>();
+            AbstractTypeFactory<MemberDataEntity>.RegisterType<OrganizationDataEntity>();
+            AbstractTypeFactory<MemberDataEntity>.RegisterType<VendorDataEntity>();
+            AbstractTypeFactory<MemberDataEntity>.RegisterType<EmployeeDataEntity>();
 
             //Next lines allow to use polymorph types in API controller methods
             var httpConfiguration = _container.Resolve<HttpConfiguration>();
-            httpConfiguration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new PolymorphicMemberJsonConverter(memberServiceDecorator));
+            httpConfiguration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new PolymorphicMemberJsonConverter());
 
             base.PostInitialize();
         }

@@ -121,7 +121,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             get { return GetAsQueryable<MemberRelationDataEntity>(); }
         }
 
-        public virtual MemberDataEntity[] GetMembersByIds(string[] ids, string[] memberTypes = null)
+        public virtual MemberDataEntity[] GetMembersByIds(string[] ids,  string responseGroup = null, string[] memberTypes = null)
         {
             var query = Members.Include(x => x.MemberRelations.Select(y => y.Ancestor))
                                 .Where(x => ids.Contains(x.Id));
@@ -142,7 +142,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
         public virtual void RemoveMembersByIds(string[] ids, string[] memberTypes = null)
         {
-            var dbMembers = GetMembersByIds(ids, memberTypes);
+            var dbMembers = GetMembersByIds(ids, null, memberTypes);
             foreach (var dbMember in dbMembers)
             {
                 foreach (var relation in dbMember.MemberRelations.ToArray())

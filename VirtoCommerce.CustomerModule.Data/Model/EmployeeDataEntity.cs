@@ -40,23 +40,23 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         public DateTime? BirthDate { get; set; }
 
-        public override Member ToMember(Member member)
+        public override Member ToModel(Member member)
         {
             //Call base converter first
-            base.ToMember(member);
+            base.ToModel(member);
 
             var employee = member as Employee;
             employee.Organizations = this.MemberRelations.Select(x => x.Ancestor).OfType<OrganizationDataEntity>().Select(x => x.Id).ToList();
             return member;
         }
 
-        public override MemberDataEntity FromMember(Member member, PrimaryKeyResolvingMap pkMap)
+        public override MemberDataEntity FromModel(Member member, PrimaryKeyResolvingMap pkMap)
         {
             var employee = member as Employee;
             if (employee != null)
             {
                 member.Name = employee.FullName;
-                pkMap.AddPair(employee, this);
+              
                 if (employee.Organizations != null)
                 {
                     this.MemberRelations = new ObservableCollection<MemberRelationDataEntity>();
@@ -73,15 +73,23 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 }
             }
             //Call base converter
-            return base.FromMember(member, pkMap);
+            return base.FromModel(member, pkMap);
         }
 
-        public override void Patch(MemberDataEntity target)
+        public override void Patch(MemberDataEntity memberEntity)
         {
-            var patchInjection = new PatchInjection<EmployeeDataEntity>(x => x.FirstName, x => x.MiddleName, x => x.LastName, x => x.BirthDate, x => x.DefaultLanguage,
-                                                                   x => x.FullName, x => x.IsActive, x => x.Type, x => x.TimeZone);
-            target.InjectFrom(patchInjection, this);
+            var target = memberEntity as EmployeeDataEntity;
 
+            target.FirstName = this.FirstName;
+            target.MiddleName = this.MiddleName;
+            target.LastName = this.LastName;
+            target.BirthDate = this.BirthDate;
+            target.DefaultLanguage = this.DefaultLanguage;
+            target.FullName = this.FullName;
+            target.IsActive = this.IsActive;
+            target.Type = this.Type;
+            target.TimeZone = this.TimeZone;
+          
             base.Patch(target);
         }
     }

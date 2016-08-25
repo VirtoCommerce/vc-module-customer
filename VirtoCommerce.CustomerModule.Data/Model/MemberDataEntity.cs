@@ -47,7 +47,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         #endregion
 
-        public virtual Member ToMember(Member member)
+        public virtual Member ToModel(Member member)
         {
             if (member == null)
                 throw new ArgumentNullException("member");
@@ -57,43 +57,51 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             member.InjectFrom(this);
             member.MemberType = memberType;
 
-            member.Addresses = this.Addresses.OrderBy(x => x.Id).Select(x => x.ToAddress(new Address())).ToList();
+            member.Addresses = this.Addresses.OrderBy(x => x.Id).Select(x => x.ToModel(new Address())).ToList();
             member.Emails = this.Emails.OrderBy(x => x.Id).Select(x => x.Address).ToList();
-            member.Notes = this.Notes.OrderBy(x => x.Id).Select(x => x.ToNote(new Note())).ToList();
+            member.Notes = this.Notes.OrderBy(x => x.Id).Select(x => x.ToModel(new Note())).ToList();
             member.Phones = this.Phones.OrderBy(x => x.Id).Select(x => x.Number).ToList();
 
             return member;
         }
 
 
-        public virtual MemberDataEntity FromMember(Member member, PrimaryKeyResolvingMap pkMap)
+        public virtual MemberDataEntity FromModel(Member member, PrimaryKeyResolvingMap pkMap)
         {
             if (member == null)
                 throw new ArgumentNullException("member");
-          
+
+            pkMap.AddPair(member, this);
+
             this.InjectFrom(member);
 
             if (member.Phones != null)
             {
-                this.Phones = new ObservableCollection<PhoneDataEntity>(member.Phones.Select(x => new PhoneDataEntity
+                this.Phones = new ObservableCollection<PhoneDataEntity>();
+                foreach(var phone in member.Phones)
                 {
-                    Number = x,
-                    MemberId = member.Id
-                }));
+                    var phoneEntity = AbstractTypeFactory<PhoneDataEntity>.TryCreateInstance();
+                    phoneEntity.Number = phone;
+                    phoneEntity.MemberId = member.Id;
+                    this.Phones.Add(phoneEntity);
+                }              
             }
 
             if (member.Emails != null)
             {
-                this.Emails = new ObservableCollection<EmailDataEntity>(member.Emails.Select(x => new EmailDataEntity
+                this.Emails = new ObservableCollection<EmailDataEntity>();
+                foreach (var email in member.Emails)
                 {
-                    Address = x,
-                    MemberId = member.Id
-                }));
+                    var emailEntity = AbstractTypeFactory<EmailDataEntity>.TryCreateInstance();
+                    emailEntity.Address = email;
+                    emailEntity.MemberId = member.Id;
+                    this.Emails.Add(emailEntity);
+                }
             }
 
             if (member.Addresses != null)
             {
-                this.Addresses = new ObservableCollection<AddressDataEntity>(member.Addresses.Select(x => new AddressDataEntity().FromAddress(x)));
+                this.Addresses = new ObservableCollection<AddressDataEntity>(member.Addresses.Select(x => AbstractTypeFactory<AddressDataEntity>.TryCreateInstance().FromModel(x)));
                 foreach (var address in this.Addresses)
                 {
                     address.MemberId = member.Id;
@@ -102,7 +110,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
             if (member.Notes != null)
             {
-                this.Notes = new ObservableCollection<NoteDataEntity>(member.Notes.Select(x => new NoteDataEntity().FromNote(x)));
+                this.Notes = new ObservableCollection<NoteDataEntity>(member.Notes.Select(x => AbstractTypeFactory<NoteDataEntity>.TryCreateInstance().FromModel(x)));
                 foreach (var note in this.Notes)
                 {
                     note.MemberId = member.Id;
@@ -114,8 +122,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
       
         public virtual void Patch(MemberDataEntity target)
         {
-            var patchInjection = new PatchInjection<MemberDataEntity>(x => x.Name);
-            target.InjectFrom(patchInjection, this);
+            target.Name = this.Name;
 
             if (!this.Phones.IsNullCollection())
             {

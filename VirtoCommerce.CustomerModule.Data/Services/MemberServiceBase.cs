@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.Repositories;
 using VirtoCommerce.Domain.Commerce.Model;
+using VirtoCommerce.Domain.Commerce.Model.Search;
 using VirtoCommerce.Domain.Commerce.Services;
 using VirtoCommerce.Domain.Customer.Events;
 using VirtoCommerce.Domain.Customer.Model;
@@ -22,27 +23,19 @@ namespace VirtoCommerce.CustomerModule.Data.Services
     public abstract class MemberServiceBase : ServiceBase, IMemberService, IMemberSearchService
     {
         public MemberServiceBase(Func<IMemberRepository> repositoryFactory, IDynamicPropertyService dynamicPropertyService, ICommerceService commerceService,
-                                 IMemberFactory memberFactory, IEventPublisher<MemberChangingEvent> eventPublisher)
+                                  IEventPublisher<MemberChangingEvent> eventPublisher)
         {
             RepositoryFactory = repositoryFactory;
             DynamicPropertyService = dynamicPropertyService;
-            MemberFactory = memberFactory;
             MemberEventventPublisher = eventPublisher;
             CommerceService = commerceService;
         }
         protected ICommerceService CommerceService { get; set; }
         protected IEventPublisher<MemberChangingEvent> MemberEventventPublisher { get; private set; }
-        protected IMemberFactory MemberFactory { get; private set; }
         protected Func<IMemberRepository> RepositoryFactory { get; private set; }
         protected IDynamicPropertyService DynamicPropertyService { get; private set; }
 
-        /// <summary>
-        /// Create database persistent type DataMember instance for Member instance (domain -> data mapping)
-        /// </summary>
-        /// <param name="member"></param>
-        /// <returns></returns>
-        protected abstract MemberDataEntity TryCreateDataMember(Member member);
-
+    
         #region IMemberService Members
         /// <summary>
         /// Return members by requested ids can be override for load extra data for resulting members
@@ -50,18 +43,18 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         /// <param name="memberIds"></param>
         /// <param name="memberTypes"></param>
         /// <returns></returns>
-        public virtual Member[] GetByIds(string[] memberIds, string[] memberTypes = null)
+        public virtual Member[] GetByIds(string[] memberIds, string responseGroup = null, string[] memberTypes = null)
         {
             var retVal = new List<Member>();
             using (var repository = RepositoryFactory())
             {
-                var dataMembers = repository.GetMembersByIds(memberIds, memberTypes);
+                var dataMembers = repository.GetMembersByIds(memberIds, responseGroup, memberTypes);
                 foreach (var dataMember in dataMembers)
                 {
-                    var member = MemberFactory.TryCreateMember(dataMember.MemberType);
+                    var member = AbstractTypeFactory<Member>.TryCreateInstance(dataMember.MemberType);
                     if (member != null)
                     {
-                        dataMember.ToMember(member);
+                        dataMember.ToModel(member);
                         retVal.Add(member);
                     }
                 }
@@ -79,7 +72,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         /// Create or update members in database
         /// </summary>
         /// <param name="members"></param>
-        public virtual void CreateOrUpdate(Member[] members)
+        public virtual void SaveChanges(Member[] members)
         {
             var pkMap = new PrimaryKeyResolvingMap();
         
@@ -89,10 +82,11 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                 var dataExistMembers = repository.GetMembersByIds(members.Where(x => !x.IsTransient()).Select(x => x.Id).ToArray());
                 foreach (var member in members)
                 {
-                    var dataSourceMember = TryCreateDataMember(member);
-                     if (dataSourceMember != null)
+                    var memberEntityType = AbstractTypeFactory<Member>.AllTypeInfos.Where(x => x.MappedType != null && x.IsAssignableTo(member.MemberType)).Select(x => x.MappedType).FirstOrDefault();
+                    var dataSourceMember = AbstractTypeFactory<MemberDataEntity>.TryCreateInstance(memberEntityType.Name);
+                    if (dataSourceMember != null)
                     {
-                        dataSourceMember.FromMember(member, pkMap);
+                        dataSourceMember.FromModel(member, pkMap);
                         var dataTargetMember = dataExistMembers.FirstOrDefault(x => x.Id == member.Id);
                         if (dataTargetMember != null)
                         {
@@ -122,7 +116,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         {
             using (var repository = RepositoryFactory())
             {
-                var members = GetByIds(ids, memberTypes);
+                var members = GetByIds(ids, null, memberTypes);
                 if (!members.IsNullOrEmpty())
                 {
                     foreach (var member in members)
@@ -151,9 +145,9 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public virtual MembersSearchResult SearchMembers(MembersSearchCriteria criteria)
+        public virtual GenericSearchResult<Member> SearchMembers(MembersSearchCriteria criteria)
         {
-            var retVal = new MembersSearchResult();
+            var retVal = new GenericSearchResult<Member>();
 
             using (var repository = RepositoryFactory())
             {
@@ -190,8 +184,8 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
                 retVal.TotalCount = query.Count();
 
-                retVal.Members = query.Skip(criteria.Skip).Take(criteria.Take).ToArray()
-                                      .Select(x => x.ToMember(MemberFactory.TryCreateMember(x.MemberType))).ToList();
+                retVal.Results = query.Skip(criteria.Skip).Take(criteria.Take).ToArray()
+                                      .Select(x => x.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(x.MemberType))).ToList();
                 return retVal;
             }
         }

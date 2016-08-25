@@ -58,17 +58,17 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         #endregion
 
-        public override Member ToMember(Member member)
+        public override Member ToModel(Member member)
         {
             //Call base converter first
-            base.ToMember(member);
+            base.ToModel(member);
             var contact = member as Contact;
             contact.Organizations = this.MemberRelations.Select(x => x.Ancestor).OfType<OrganizationDataEntity>().Select(x => x.Id).ToList();
             member.Name = contact.FullName;
             return member;
         }
 
-        public override MemberDataEntity FromMember(Member member, PrimaryKeyResolvingMap pkMap)
+        public override MemberDataEntity FromModel(Member member, PrimaryKeyResolvingMap pkMap)
         {
             var contact = member as Contact;
             if (contact != null)
@@ -77,7 +77,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 {
                     this.Name = contact.FullName;
                 }
-                pkMap.AddPair(contact, this);
+
                 if (contact.Organizations != null)
                 {
                     this.MemberRelations = new ObservableCollection<MemberRelationDataEntity>();
@@ -94,17 +94,23 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 }
             }
             //Call base converter
-            return base.FromMember(member, pkMap);
+            return base.FromModel(member, pkMap);
         }
 
-        public override void Patch(MemberDataEntity target)
+        public override void Patch(MemberDataEntity memberDataEntity)
         {
-            var patchInjection = new PatchInjection<ContactDataEntity>(x => x.FirstName, x => x.MiddleName, x => x.LastName, x => x.BirthDate, x => x.DefaultLanguage,
-                                                                        x => x.FullName, x => x.Salutation,
-                                                                        x => x.TimeZone);
-            target.InjectFrom(patchInjection, this);
+            var target = memberDataEntity as ContactDataEntity;
 
+            target.FirstName = this.FirstName;
+            target.MiddleName = this.MiddleName;
+            target.LastName = this.LastName;
+            target.BirthDate = this.BirthDate;
+            target.DefaultLanguage = this.DefaultLanguage;
+            target.FullName = this.FullName;
+            target.Salutation = this.Salutation;
+            target.TimeZone = this.TimeZone;
             base.Patch(target);
+
         }
     }
 }

@@ -22,41 +22,20 @@ namespace VirtoCommerce.CustomerModule.Data.Services
     /// Members service support CRUD and search for Contact, Organization, Vendor and Employee member types
     /// </summary>
     public class CommerceMembersServiceImpl : MemberServiceBase
-    {
-        private Dictionary<Type, Type> _knownMemberTypesMap = new Dictionary<Type, Type>()
-         {
-            { typeof(Organization), typeof(OrganizationDataEntity) },
-            { typeof(Contact), typeof(ContactDataEntity) },
-            { typeof(Employee), typeof(EmployeeDataEntity) },
-            { typeof(Vendor), typeof(VendorDataEntity) }
-        };
-
+    {        
         private readonly ISecurityService _securityService;
-        public CommerceMembersServiceImpl(Func<ICustomerRepository> repositoryFactory, IDynamicPropertyService dynamicPropertyService, ICommerceService commerceService, ISecurityService securityService,  IMemberFactory memberFactory, IEventPublisher<MemberChangingEvent> eventPublisher)
-            : base(repositoryFactory, dynamicPropertyService, commerceService, memberFactory, eventPublisher)
+        public CommerceMembersServiceImpl(Func<ICustomerRepository> repositoryFactory, IDynamicPropertyService dynamicPropertyService, ICommerceService commerceService, ISecurityService securityService, IEventPublisher<MemberChangingEvent> eventPublisher)
+            : base(repositoryFactory, dynamicPropertyService, commerceService, eventPublisher)
         {
             _securityService = securityService;
         }
 
-        #region MemberServiceBase Overrides
-        protected override MemberDataEntity TryCreateDataMember(Member member)
-        {
-            MemberDataEntity retVal = null;
-            var memberDataEntityType = _knownMemberTypesMap.Where(x => x.Key == member.GetType()).Select(x => x.Value).FirstOrDefault();
-            if (memberDataEntityType != null)
-            {
-                retVal = Activator.CreateInstance(memberDataEntityType) as MemberDataEntity;
-            }
-            return retVal;
-        } 
-        #endregion
-       
 
         #region IMemberService Members
 
-        public override Member[] GetByIds(string[] memberIds, string[] memberTypes = null)
+        public override Member[] GetByIds(string[] memberIds, string responseGroup = null, string[] memberTypes = null)
         {
-            var retVal = base.GetByIds(memberIds, memberTypes);
+            var retVal = base.GetByIds(memberIds, responseGroup, memberTypes);
             Parallel.ForEach(retVal, new ParallelOptions { MaxDegreeOfParallelism = 10 }, (member) =>
             {
                 //Load security accounts for members which support them 

@@ -4,6 +4,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using VirtoCommerce.CustomerModule.Web.Model;
 using VirtoCommerce.CustomerModule.Web.Security;
+using VirtoCommerce.Domain.Commerce.Model.Search;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Platform.Core.Web.Security;
 using coreModel = VirtoCommerce.Domain.Customer.Model;
@@ -40,7 +41,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             };
             var result = _memberSearchService.SearchMembers(searchCriteria);
 
-            return Ok(result.Members.OfType<coreModel.Organization>());
+            return Ok(result.Results.OfType<coreModel.Organization>());
         }
 
         /// <summary>
@@ -50,7 +51,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
         [HttpPost]
         [Route("members/search")]
-        [ResponseType(typeof(coreModel.MembersSearchResult))]
+        [ResponseType(typeof(GenericSearchResult<coreModel.Member>))]
         public IHttpActionResult Search(coreModel.MembersSearchCriteria criteria)
         {
             var result = _memberSearchService.SearchMembers(criteria);
@@ -88,7 +89,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
         public IHttpActionResult CreateMember([FromBody]coreModel.Member member)
         {
-            _memberService.CreateOrUpdate(new[] { member });
+            _memberService.SaveChanges(new[] { member });
             var retVal = _memberService.GetByIds(new[] { member.Id }).FirstOrDefault();
 
             // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
@@ -106,7 +107,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
         public IHttpActionResult UpdateMember(coreModel.Member member)
         {
-            _memberService.CreateOrUpdate(new[] { member });
+            _memberService.SaveChanges(new[] { member });
             return StatusCode(HttpStatusCode.NoContent);
         }
 
@@ -268,7 +269,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             var retVal = new VendorSearchResult
             {
                 TotalCount = result.TotalCount,
-                Vendors = result.Members.OfType<coreModel.Vendor>().ToList()
+                Vendors = result.Results.OfType<coreModel.Vendor>().ToList()
             };
             return Ok(result);
         }

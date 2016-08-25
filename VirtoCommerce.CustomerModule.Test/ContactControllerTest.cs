@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web.Http.Results;
 using VirtoCommerce.CustomerModule.Web.Controllers.Api;
 using VirtoCommerce.Domain.Commerce.Model;
+using VirtoCommerce.Domain.Commerce.Model.Search;
 using VirtoCommerce.Domain.Customer.Model;
 using Xunit;
 
@@ -14,7 +15,7 @@ namespace VirtoCommerce.CustomerModule.Test
         public void SearchContactsTest()
         {
             var controller = GetContactController();
-            var result = controller.Search(new MembersSearchCriteria()) as OkNegotiatedContentResult<MembersSearchResult>;
+            var result = controller.Search(new MembersSearchCriteria()) as OkNegotiatedContentResult<GenericSearchResult<Member>>;
             Assert.NotNull(result.Content);
         }
 
@@ -39,7 +40,7 @@ namespace VirtoCommerce.CustomerModule.Test
         public void SearchTest()
         {
             var controller = GetContactController();
-            var result = controller.Search(new MembersSearchCriteria { MemberId = "org1" }) as OkNegotiatedContentResult<MembersSearchResult>;
+            var result = controller.Search(new MembersSearchCriteria { MemberId = "org1" }) as OkNegotiatedContentResult<GenericSearchResult<Member>>;
         }
 
         [Fact]
