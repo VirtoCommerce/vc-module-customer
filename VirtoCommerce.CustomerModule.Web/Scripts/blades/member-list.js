@@ -24,7 +24,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
                 // precalculate icon
                 var memberTypeDefinition;
                 _.each(data.results, function (x) {
-                    if (memberTypeDefinition = _.findWhere(memberTypesResolverService.objects, { memberType: x.memberType })) {
+                    if (memberTypeDefinition = memberTypesResolverService.resolve(x.memberType)) {
                         x._memberTypeIcon = memberTypeDefinition.icon;
                     }
                 });
@@ -62,12 +62,9 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
             name: name,
             blade: blade,
             navigate: function (breadcrumb) {
-                //bladeNavigationService.closeBlade(breadcrumb.blade,
-                //function () {
                 breadcrumb.blade.disableOpenAnimation = true;
                 bladeNavigationService.showBlade(breadcrumb.blade);
                 breadcrumb.blade.refresh();
-                //});
             }
         }
     }
@@ -98,26 +95,21 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
     //    return retVal;
     //}
 
-    blade.showDetailBlade = function (listItem, title) {
+    blade.showDetailBlade = function (listItem, isNew) {
         blade.setSelectedNode(listItem);
 
-        var memberTypeDefinition = _.findWhere(memberTypesResolverService.objects, { memberType: listItem.memberType });
-        if (memberTypeDefinition) {
-            var newBlade = {
-                id: "listMemberDetail",
-                currentEntity: listItem,
-                title: title,
-                memberTypeDefinition: memberTypeDefinition,
-                controller: memberTypeDefinition.controller,
-                template: memberTypeDefinition.template
-            };
+        var foundTemplate = memberTypesResolverService.resolve(listItem.memberType);
+        if (foundTemplate) {
+            var newBlade = angular.copy(foundTemplate.detailBlade);
+            newBlade.currentEntity = listItem;
+            newBlade.isNew = isNew;
             bladeNavigationService.showBlade(newBlade, blade);
         } else {
             dialogService.showNotificationDialog({
                 id: "error",
                 title: "customer.dialogs.unknown-member-type.title",
                 message: "customer.dialogs.unknown-member-type.message",
-                messageValues: { memberType: blade.currentEntity.memberType },
+                messageValues: { memberType: listItem.memberType },
             });
         }
     };
@@ -169,7 +161,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
             };
             bladeNavigationService.showBlade(newBlade, blade.parentBlade);
         } else {
-            blade.showDetailBlade(listItem, listItem.name);
+            blade.showDetailBlade(listItem);
         }
     };
 
@@ -188,6 +180,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
             executeMethod: function () {
                 var newBlade = {
                     id: 'listItemChild',
+                    currentEntity: blade.currentEntity,
                     title: 'customer.blades.member-add.title',
                     subtitle: 'customer.blades.member-add.subtitle',
                     controller: 'virtoCommerce.customerModule.memberAddController',
@@ -200,14 +193,14 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
             },
             permission: 'customer:create'
         },
-        {
-            name: "platform.commands.delete", icon: 'fa fa-trash-o',
-            executeMethod: function () { deleteList($scope.gridApi.selection.getSelectedRows()); },
-            canExecuteMethod: function () {
-                return $scope.gridApi && _.any($scope.gridApi.selection.getSelectedRows());
-            },
-            permission: 'customer:delete'
-        }
+{
+    name: "platform.commands.delete", icon: 'fa fa-trash-o',
+    executeMethod: function () { deleteList($scope.gridApi.selection.getSelectedRows()); },
+    canExecuteMethod: function () {
+        return $scope.gridApi && _.any($scope.gridApi.selection.getSelectedRows());
+    },
+    permission: 'customer:delete'
+}
     ];
 
 

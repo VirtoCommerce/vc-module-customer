@@ -49,8 +49,6 @@
         $scope.bladeClose();
     };
 
-    blade.headIcon = blade.parentBlade.headIcon;
-
     blade.toolbarCommands = [
         {
             name: "platform.commands.add", icon: 'fa fa-plus',

@@ -62,15 +62,15 @@ angular.module(moduleName, [])
           template: '$(Platform)/Scripts/app/dynamicProperties/widgets/dynamicPropertyWidget.tpl.html'
       }
       var vendorSeoWidget = {
-      	controller: 'virtoCommerce.coreModule.seo.seoWidgetController',
-      	template: 'Modules/$(VirtoCommerce.Core)/Scripts/SEO/widgets/seoWidget.tpl.html',
-      	objectType: 'Vendor',
-      	getDefaultContainerId: function (blade) { return undefined; },
-      	getLanguages: function (blade) {
-      		return settings.getValues({ id: 'VirtoCommerce.Core.General.Languages' });
-      	}
+          controller: 'virtoCommerce.coreModule.seo.seoWidgetController',
+          template: 'Modules/$(VirtoCommerce.Core)/Scripts/SEO/widgets/seoWidget.tpl.html',
+          objectType: 'Vendor',
+          getDefaultContainerId: function (blade) { return undefined; },
+          getLanguages: function (blade) {
+              return settings.getValues({ id: 'VirtoCommerce.Core.General.Languages' });
+          }
       };
-     
+
       //Register widgets in customer details
       widgetService.registerWidget(accountsWidget, 'customerDetail1');
       widgetService.registerWidget(addressesWidget, 'customerDetail1');
@@ -99,8 +99,71 @@ angular.module(moduleName, [])
       widgetService.registerWidget(vendorSeoWidget, 'vendorDetail2');
 
       // register member types
-      memberTypesResolverService.registerType({ memberType: 'Organization', fullTypeName: 'VirtoCommerce.Domain.Customer.Model.Organization', icon: 'fa-university', template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/organization-detail.tpl.html' });
-      memberTypesResolverService.registerType({ memberType: 'Employee', fullTypeName: 'VirtoCommerce.Domain.Customer.Model.Employee', icon: ' fa-user', template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/employee-detail.tpl.html' });
-      memberTypesResolverService.registerType({ memberType: 'Contact', fullTypeName: 'VirtoCommerce.Domain.Customer.Model.Contact', icon: 'fa-smile-o', template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/customer-detail.tpl.html' });
-      memberTypesResolverService.registerType({ memberType: 'Vendor', fullTypeName: 'VirtoCommerce.Domain.Customer.Model.Vendor', icon: 'fa-balance-scale', template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/vendor-detail.tpl.html', topLevelElementOnly: true });
+      memberTypesResolverService.registerType({
+          memberType: 'Organization',
+          description: 'customer.blades.member-add.organization.description',
+          fullTypeName: 'VirtoCommerce.Domain.Customer.Model.Organization',
+          icon: 'fa-university',
+          detailBlade: {
+              template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/organization-detail.tpl.html',
+              metaFields: [{
+                  name: 'businessCategory',
+                  title: "customer.blades.organization-detail.labels.business-category",
+                  valueType: "ShortText"
+              }]
+          },
+          knownChildrenTypes: ['Organization', 'Employee', 'Contact']
+      });
+      memberTypesResolverService.registerType({
+          memberType: 'Employee',
+          description: 'customer.blades.member-add.employee.description',
+          fullTypeName: 'VirtoCommerce.Domain.Customer.Model.Employee',
+          icon: ' fa-user',
+          detailBlade: {
+              template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/employee-detail.tpl.html',
+              metaFields: [{
+                  name: 'defaultLanguage',
+                  title: "customer.blades.employee-detail.labels.defaultLanguage",
+                  valueType: "ShortText"
+              },
+              {
+                  name: 'photoUrl',
+                  title: "customer.blades.employee-detail.labels.photo-url",
+                  valueType: "Url"
+              }]
+          }
+      });
+      memberTypesResolverService.registerType({
+          memberType: 'Contact',
+          description: 'customer.blades.member-add.contact.description',
+          fullTypeName: 'VirtoCommerce.Domain.Customer.Model.Contact',
+          icon: 'fa-smile-o',
+          detailBlade: {
+              template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/customer-detail.tpl.html',
+              metaFields: [{
+                  name: 'preferredCommunication',
+                  title: "customer.blades.contact-detail.labels.preferred-communication",
+                  valueType: "ShortText"
+              },
+              {
+                  name: 'preferredDelivery',
+                  title: "customer.blades.contact-detail.labels.preferred-delivery",
+                  valueType: "ShortText"
+              }]
+          }
+      });
+      memberTypesResolverService.registerType({
+          memberType: 'Vendor',
+          description: 'customer.blades.member-add.vendor.description',
+          fullTypeName: 'VirtoCommerce.Domain.Customer.Model.Vendor',
+          icon: 'fa-balance-scale',
+          detailBlade: {
+              template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/vendor-detail.tpl.html',
+              metaFields: [{
+                  name: 'description',
+                  title: "customer.blades.vendor-detail.labels.description",
+                  valueType: "LongText"
+              }]
+          }
+      });
   }]);

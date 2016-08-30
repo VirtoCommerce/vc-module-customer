@@ -155,9 +155,13 @@
   <ItemGroup>
     <Content Include="Scripts\blades\customer-accounts-list.js" />
     <Content Include="Scripts\blades\customer-accounts-list.tpl.html" />
+    <Content Include="Scripts\blades\vendor-detail.js" />
+    <Content Include="Scripts\blades\customer-detail.js" />
     <Content Include="Scripts\blades\employee-detail.tpl.html" />
     <Content Include="Scripts\blades\member-add.js" />
     <Content Include="Scripts\blades\member-add.tpl.html" />
+    <Content Include="Scripts\blades\employee-detail.js" />
+    <Content Include="Scripts\blades\organization-detail.js" />
     <Content Include="Scripts\blades\vendor-detail.tpl.html" />
     <Content Include="Scripts\blades\organization-detail.tpl.html" />
     <Content Include="Scripts\blades\member-list.js" />

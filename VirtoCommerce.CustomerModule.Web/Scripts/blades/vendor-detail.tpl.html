@@ -1,7 +1,7 @@
 ﻿<div class="blade-static __bottom" ng-include="'$(Platform)/Scripts/common/templates/create.tpl.html'" ng-if="blade.isNew"></div>
 <div class="blade-content">
     <div class="blade-inner">
-        <div class="inner-block clearfix">
+        <div class="inner-block clearfix" ng-controller="virtoCommerce.customerModule.vendorDetailController">
             <form class="form" name="detailForm">
                 <fieldset>
                     <div ng-init="setForm(detailForm)">
@@ -33,12 +33,8 @@
                             <input ng-model="blade.currentEntity.groupName" placeholder="{{'customer.blades.vendor-detail.placeholders.group-name' | translate}}" />
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">{{'customer.blades.vendor-detail.labels.description' | translate}}</label>
-                        <div class="form-input">
-                            <textarea class="form-control" ng-model="blade.currentEntity.description" placeholder="{{'customer.blades.vendor-detail.placeholders.name' | translate}}"></textarea>
-                        </div>
-                    </div>
+                    <va-metaform registered-inputs="blade.metaFields" blade="blade"></va-metaform>
+
                     <div class="form-group">
                         <va-widget-container group="vendorDetail2" data="blade.currentEntity" blade="blade" gridster-opts="{columns: 3}"></va-widget-container>
                     </div>

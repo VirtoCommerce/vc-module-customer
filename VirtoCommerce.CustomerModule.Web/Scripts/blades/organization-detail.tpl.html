@@ -1,7 +1,7 @@
 ﻿<div class="blade-static __bottom" ng-include="'$(Platform)/Scripts/common/templates/create.tpl.html'" ng-if="blade.isNew"></div>
 <div class="blade-content">
     <div class="blade-inner">
-        <div class="inner-block clearfix">
+        <div class="inner-block clearfix" ng-controller="virtoCommerce.customerModule.organizationDetailController">
             <form class="form" name="detailForm">
                 <fieldset>
                     <div ng-init="setForm(detailForm)">
@@ -15,12 +15,8 @@
                     </div>
                 </fieldset>
                 <fieldset>
-                    <div class="form-group">
-                        <label class="form-label">{{'customer.blades.organization-detail.labels.business-category' | translate}}</label>
-                        <div class="form-input">
-                            <input ng-model="blade.currentEntity.businessCategory" placeholder="{{'customer.blades.organization-detail.placeholders.business-category' | translate}}" />
-                        </div>
-                    </div>
+                    <va-metaform registered-inputs="blade.metaFields" blade="blade"></va-metaform>
+
                     <div class="form-group">
                         <label class="form-label">{{'customer.blades.organization-detail.labels.description' | translate}}</label>
                         <div class="form-input">

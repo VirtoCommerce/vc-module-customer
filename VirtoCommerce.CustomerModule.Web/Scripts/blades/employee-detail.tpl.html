@@ -1,7 +1,7 @@
 ﻿<div class="blade-static __bottom" ng-include="'$(Platform)/Scripts/common/templates/create.tpl.html'" ng-if="blade.isNew"></div>
 <div class="blade-content">
     <div class="blade-inner">
-        <div class="inner-block clearfix">
+        <div class="inner-block clearfix" ng-controller="virtoCommerce.customerModule.employeeDetailController">
             <form class="form" name="detailForm">
                 <fieldset>
                     <div ng-if="!blade.isNew">
@@ -66,7 +66,7 @@
                         <div class="form-group">
                             <label class="form-label">{{'customer.blades.employee-detail.labels.birthday' | translate}}</label>
                             <div class="form-input __calendar">
-                                <input type="text" class="form-control" ng-model="blade.currentEntity.birthDate" datepicker-popup="{{format}}" name="bd" is-open="datepickers.bd" max-date="today" datepicker-options="dateOptions" close-text="Close" placeholder="{{'customer.blades.employee-detail.placeholders.birthday' | translate}}" />
+                                <input type="text" class="form-control" ng-model="blade.currentEntity.birthDate" datepicker-popup name="bd" is-open="datepickers.bd" max-date="today" datepicker-options="dateOptions" close-text="Close" placeholder="{{'customer.blades.employee-detail.placeholders.birthday' | translate}}" />
                                 <button class="btn" type="button" ng-click="open($event,'bd')">
                                     <i class="btn-ico fa fa-calendar"></i>
                                 </button>
@@ -94,24 +94,8 @@
                         </ui-select>
                     </div>
                 </div>
-                <div class="columns clearfix">
-                    <div class="column">
-                        <div class="form-group">
-                            <label class="form-label">{{'customer.blades.employee-detail.labels.defaultLanguage' | translate}}</label>
-                            <div class="form-input">
-                                <input ng-model="blade.currentEntity.defaultLanguage" placeholder="{{'customer.blades.employee-detail.placeholders.defaultLanguage' | translate}}" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="column">
-                        <div class="form-group">
-                            <label class="form-label">{{'customer.blades.employee-detail.labels.photo-url' | translate }}</label>
-                            <div class="form-input">
-                                <input ng-model="blade.currentEntity.photoUrl" type="url" placeholder="{{ 'customer.blades.employee-detail.placeholders.photo-url' | translate }}">
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <va-metaform registered-inputs="blade.metaFields" blade="blade" column-count="2"></va-metaform>
+                
                 <div class="form-group">
                     <va-widget-container group="employeeDetail2" blade="blade" data="blade.currentEntity" gridster-opts="{columns: 3}"></va-widget-container>
                 </div>

@@ -1,38 +1,20 @@
 ﻿angular.module('virtoCommerce.customerModule')
-.controller('virtoCommerce.customerModule.memberDetailController', ['$scope', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.members', 'virtoCommerce.customerModule.organizations', 'platformWebApp.dynamicProperties.api', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.dialogService', 'virtoCommerce.coreModule.common.countries', function ($scope, bladeNavigationService, members, organizations, dynamicPropertiesApi, memberTypesResolverService, dialogService, countries) {
+.controller('virtoCommerce.customerModule.memberDetailController', ['$scope', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.members', 'platformWebApp.dynamicProperties.api', function ($scope, bladeNavigationService, members, dynamicPropertiesApi) {
     var blade = $scope.blade;
     blade.updatePermission = 'customer:update';
-    blade.isNew = !blade.currentEntity.id;
 
     blade.refresh = function (parentRefresh) {
         if (blade.isNew) {
-            var newEntity = angular.extend({
+            blade.currentEntity = angular.extend({
                 dynamicProperties: [],
                 addresses: [],
                 phones: [],
-                emails: [],
-				seoInfos: []
+                emails: []
             }, blade.currentEntity);
-
-            if (newEntity.memberType === 'Organization') {
-                newEntity.parentId = blade.parentBlade.currentEntity.id;
-            } else if (newEntity.memberType === 'Contact' || newEntity.memberType === 'Employee') {
-                newEntity.organizations = [];
-                if (blade.parentBlade.currentEntity.id) {
-                    newEntity.organizations.push(blade.parentBlade.currentEntity.id);
-                }
-
-                if (newEntity.memberType === 'Employee') {
-                    newEntity.isActive = true;
-                }
-            }
-
-            fillDynamicProperties(newEntity, blade.memberTypeDefinition.fullTypeName);
         } else {
             blade.isLoading = true;
 
-            members.get({ id: blade.currentEntity.id }, initializeBlade,
-                function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
+            members.get({ id: blade.currentEntity.id }, initializeBlade);
 
             if (parentRefresh) {
                 blade.parentBlade.refresh(true);
@@ -40,29 +22,25 @@
         }
     };
 
-    function fillDynamicProperties(newEntity, typeName) {
-        dynamicPropertiesApi.query({ id: typeName }, function (results) {
+    blade.fillDynamicProperties = function () {
+        dynamicPropertiesApi.query({ id: blade.memberTypeDefinition.fullTypeName }, function (results) {
             _.each(results, function (x) {
                 x.displayNames = undefined;
                 x.values = [];
             });
-            newEntity.dynamicProperties = results;
-            initializeBlade(newEntity);
-        }, function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
-    }
+            blade.currentEntity.dynamicProperties = results;
+            initializeBlade(blade.currentEntity);
+        });
+    };
 
     function initializeBlade(data) {
-    	if (!data.seoInfos)
-    	{
-    		data.seoInfos = [];
-    	}
         blade.currentEntity = angular.copy(data);
         blade.origEntity = data;
         blade.isLoading = false;
     }
 
     function isDirty() {
-        return !angular.equals(blade.currentEntity, blade.origEntity) && blade.hasUpdatePermission();
+        return !angular.equals(blade.currentEntity, blade.origEntity) && !blade.isNew && blade.hasUpdatePermission();
     }
 
     function canSave() {
@@ -78,12 +56,10 @@
                     blade.parentBlade.refresh(true);
                     blade.origEntity = blade.currentEntity;
                     $scope.bladeClose();
-                },
-                function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
+                });
         } else {
             members.update(blade.currentEntity,
-                function () { blade.refresh(true); },
-                function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
+                function () { blade.refresh(true); });
         }
     };
 
@@ -116,37 +92,7 @@
         ];
     }
 
-    // datepicker
-    $scope.datepickers = {
-        bd: false
-    }
-    $scope.today = new Date();
-
-    $scope.open = function ($event, which) {
-        $event.preventDefault();
-        $event.stopPropagation();
-
-        $scope.datepickers[which] = true;
-    };
-
-    $scope.dateOptions = {
-        'year-format': "'yyyy'",
-        'starting-day': 1
-    };
-
-    $scope.formats = ['shortDate', 'dd-MMMM-yyyy', 'yyyy/MM/dd'];
-    $scope.format = $scope.formats[0];
-
     blade.headIcon = blade.memberTypeDefinition.icon;
-    if (!blade.isNew) {
-        blade.subtitle = blade.memberTypeDefinition.subtitle;
-    }
-
-    // on load
-    if (blade.currentEntity.memberType === 'Contact' || blade.currentEntity.memberType === 'Employee') {
-        $scope.organizations = organizations.query();
-        $scope.timeZones = countries.getTimeZones();
-    }
 
     blade.refresh(false);
 }]);

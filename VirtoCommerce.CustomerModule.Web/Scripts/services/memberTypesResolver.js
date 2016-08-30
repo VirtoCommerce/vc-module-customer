@@ -3,25 +3,19 @@
     return {
         objects: [],
         registerType: function (memberTypeDefinition) {
-            var memberTypeName = memberTypeDefinition.memberType.toLowerCase();
+            memberTypeDefinition.detailBlade = angular.extend({
+                id: "memberDetail",
+                metaFields: [],
+                controller: 'virtoCommerce.customerModule.memberDetailController',
+                memberTypeDefinition: memberTypeDefinition
+            }, memberTypeDefinition.detailBlade);
 
-            if (_.isUndefined(memberTypeDefinition.titleAdd)) {
-                memberTypeDefinition.titleAdd = 'customer.blades.member-add.' + memberTypeName + '.title';
-            }
-            if (_.isUndefined(memberTypeDefinition.descriptionAdd)) {
-                memberTypeDefinition.descriptionAdd = 'customer.blades.member-add.' + memberTypeName + '.description';
-            }
-            if (_.isUndefined(memberTypeDefinition.newInstanceBladeTitle)) {
-                memberTypeDefinition.newInstanceBladeTitle = 'customer.blades.new-' + memberTypeName + '.title';
-            }
-            if (_.isUndefined(memberTypeDefinition.subtitle)) {
-                memberTypeDefinition.subtitle = 'customer.blades.' + memberTypeName + '-detail.subtitle';
-            }
-            if (!memberTypeDefinition.controller) {
-                memberTypeDefinition.controller = 'virtoCommerce.customerModule.memberDetailController';
-            }
+            memberTypeDefinition.knownChildrenTypes = memberTypeDefinition.knownChildrenTypes || [];
 
             this.objects.push(memberTypeDefinition);
+        },
+        resolve: function (type) {
+            return _.findWhere(this.objects, { memberType: type });
         }
     };
 });

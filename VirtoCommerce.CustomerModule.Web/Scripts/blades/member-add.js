@@ -4,14 +4,19 @@
 
     $scope.addMember = function (node) {
         $scope.bladeClose(function () {
-            blade.parentBlade.showDetailBlade({ memberType: node.memberType }, node.newInstanceBladeTitle);
+            blade.parentBlade.showDetailBlade({ memberType: node.memberType }, true);
         });
     };
+    
+    if (blade.currentEntity && blade.currentEntity.memberType) {
+        var parentType = memberTypesResolverService.resolve(blade.currentEntity.memberType);
+        $scope.availableTypes = _.map(parentType.knownChildrenTypes, function (type) {
+            return memberTypesResolverService.resolve(type);
+        }) ;
+    } else{
+        $scope.availableTypes =  memberTypesResolverService.objects;
+    }
+    
 
-    $scope.memberTypes = _.filter(memberTypesResolverService.objects, function (x) {
-        return !x.topLevelElementOnly || !blade.parentBlade.currentEntity.id;
-    });
-
-    blade.headIcon = blade.parentBlade.headIcon;
     blade.isLoading = false;
 }]);
