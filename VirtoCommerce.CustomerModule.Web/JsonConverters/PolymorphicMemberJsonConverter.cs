@@ -31,13 +31,12 @@ namespace VirtoCommerce.CustomerModule.Web.JsonConverters
             var obj = JObject.Load(reader);
             if (typeof(Member).IsAssignableFrom(objectType))
             {
+                var memberType = objectType.Name;
                 var pt = obj["memberType"];
-                if (pt == null)
+                if (pt != null)
                 {
-                    throw new ArgumentException("Missing memberType", "memberType");
+                    memberType = pt.Value<string>();
                 }
-
-                var memberType = pt.Value<string>();
                 retVal = AbstractTypeFactory<Member>.TryCreateInstance(memberType);
                 if (retVal == null)
                 {

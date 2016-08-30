@@ -74,7 +74,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                 // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
                 return Ok((dynamic)retVal);
             }
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok();
         }
 
 
@@ -100,7 +100,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// Update member
         /// </summary>
         /// <param name="member">concrete instance of abstract member type will be created by using PolymorphicMemberJsonConverter</param>
-        /// <response code="204">Operation completed.</response>
         [HttpPut]
         [Route("members")]
         [ResponseType(typeof(void))]
@@ -108,7 +107,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public IHttpActionResult UpdateMember(coreModel.Member member)
         {
             _memberService.SaveChanges(new[] { member });
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok();
         }
 
         /// <summary>
@@ -116,16 +115,14 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// </summary>
         /// <remarks>Delete members by given array of ids.</remarks>
         /// <param name="ids">An array of members ids</param>
-        /// <response code="204">Operation completed.</response>
         [HttpDelete]
         [Route("members")]
         [ResponseType(typeof(void))]
         [CheckPermission(Permission = CustomerPredefinedPermissions.Delete)]
-
         public IHttpActionResult DeleteMembers([FromUri] string[] ids)
         {
             _memberService.Delete(ids);
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok();
         }
 
         #region Special members for storefront C# API client  (because it not support polymorph types)
@@ -170,7 +167,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <summary>
         /// Update organization
         /// </summary>
-        /// <response code="204">Operation completed.</response>
         [HttpPut]
         [Route("organizations")]
         [ResponseType(typeof(void))]
@@ -185,7 +181,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// </summary>
         /// <remarks>Delete organizations by given array of ids.</remarks>
         /// <param name="ids">An array of organizations ids</param>
-        /// <response code="204">Operation completed.</response>
         [HttpDelete]
         [Route("organizations")]
         [ResponseType(typeof(void))]
@@ -200,7 +195,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// </summary>
         /// <remarks>Delete contacts by given array of ids.</remarks>
         /// <param name="ids">An array of contacts ids</param>
-        /// <response code="204">Operation completed.</response>
         [HttpDelete]
         [Route("contacts")]
         [ResponseType(typeof(void))]
@@ -214,8 +208,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// Get organization
         /// </summary>
         /// <param name="id">Organization id</param>
-        /// <response code="200"></response>
-        /// <response code="404">Organization not found.</response>
         [HttpGet]
         [Route("organizations/{id}")]
         [ResponseType(typeof(coreModel.Organization))]
@@ -240,8 +232,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// Get vendor
         /// </summary>
         /// <param name="id">Vendor ID</param>
-        /// <response code="200"></response>
-        /// <response code="404">Vendor not found.</response>
         [HttpGet]
         [Route("vendors/{id}")]
         [ResponseType(typeof(coreModel.Vendor))]
