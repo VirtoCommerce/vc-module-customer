@@ -31,7 +31,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             base.ToModel(member);
 
             var organization = member as Organization;
-            if (this.MemberRelations.Any())
+            if (organization != null && this.MemberRelations.Any())
             {
                 organization.ParentId = this.MemberRelations.FirstOrDefault().AncestorId;
             }
@@ -42,7 +42,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         {
             var organization = member as Organization;
          
-            if (organization.ParentId != null)
+            if (organization != null && organization.ParentId != null)
             {
                 this.MemberRelations = new ObservableCollection<MemberRelationDataEntity>();
                 var memberRelation = new MemberRelationDataEntity

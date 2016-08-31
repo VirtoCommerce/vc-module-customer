@@ -38,6 +38,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(32)]
         public string DefaultLanguage { get; set; }
 
+        [StringLength(2083)]
+        public string PhotoUrl { get; set; }
+
         public DateTime? BirthDate { get; set; }
 
         public override Member ToModel(Member member)
@@ -46,7 +49,10 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             base.ToModel(member);
 
             var employee = member as Employee;
-            employee.Organizations = this.MemberRelations.Select(x => x.Ancestor).OfType<OrganizationDataEntity>().Select(x => x.Id).ToList();
+            if (employee != null)
+            {
+                employee.Organizations = this.MemberRelations.Select(x => x.Ancestor).OfType<OrganizationDataEntity>().Select(x => x.Id).ToList();
+            }
             return member;
         }
 
@@ -89,7 +95,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             target.IsActive = this.IsActive;
             target.Type = this.Type;
             target.TimeZone = this.TimeZone;
-          
+            target.PhotoUrl = this.PhotoUrl;
             base.Patch(target);
         }
     }

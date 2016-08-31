@@ -63,8 +63,11 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             //Call base converter first
             base.ToModel(member);
             var contact = member as Contact;
-            contact.Organizations = this.MemberRelations.Select(x => x.Ancestor).OfType<OrganizationDataEntity>().Select(x => x.Id).ToList();
-            member.Name = contact.FullName;
+            if (contact != null)
+            {
+                contact.Organizations = this.MemberRelations.Select(x => x.Ancestor).OfType<OrganizationDataEntity>().Select(x => x.Id).ToList();
+                member.Name = contact.FullName;
+            }
             return member;
         }
 
@@ -109,6 +112,10 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             target.FullName = this.FullName;
             target.Salutation = this.Salutation;
             target.TimeZone = this.TimeZone;
+            target.TaxpayerId = this.TaxpayerId;
+            target.PreferredCommunication = this.PreferredCommunication;
+            target.PreferredDelivery = this.PreferredDelivery;
+
             base.Patch(target);
 
         }
