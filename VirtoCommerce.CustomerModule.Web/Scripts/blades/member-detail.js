@@ -36,8 +36,16 @@
     function initializeBlade(data) {
         blade.currentEntity = angular.copy(data);
         blade.origEntity = data;
+        blade.customInitialize();
         blade.isLoading = false;
     }
+
+    // base function to override as needed
+    blade.customInitialize = function () {
+        if (!blade.isNew) {
+            blade.title = blade.currentEntity.name;
+        }
+    };
 
     function isDirty() {
         return !angular.equals(blade.currentEntity, blade.origEntity) && !blade.isNew && blade.hasUpdatePermission();

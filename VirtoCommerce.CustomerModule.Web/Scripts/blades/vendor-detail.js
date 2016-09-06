@@ -10,7 +10,6 @@
 
         blade.fillDynamicProperties();
     } else {
-        blade.title = blade.currentEntity.name;
         blade.subtitle = 'customer.blades.vendor-detail.subtitle';
     }
 }]);

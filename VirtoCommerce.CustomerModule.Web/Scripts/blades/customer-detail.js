@@ -14,7 +14,6 @@
 
         blade.fillDynamicProperties();
     } else {
-        blade.title = blade.currentEntity.name;
         blade.subtitle = 'customer.blades.contact-detail.subtitle';
     }
 
