@@ -59,11 +59,10 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                     }
                 }
             }
-            foreach (var member in retVal)
-            {
-                //Load dynamic properties for member
-                DynamicPropertyService.LoadDynamicPropertyValues(member);
-            }
+
+            //Load dynamic properties for member
+            DynamicPropertyService.LoadDynamicPropertyValues(retVal.ToArray());
+
             CommerceService.LoadSeoForObjects(retVal.OfType<ISeoSupport>().ToArray());
             return retVal.ToArray();
         }
