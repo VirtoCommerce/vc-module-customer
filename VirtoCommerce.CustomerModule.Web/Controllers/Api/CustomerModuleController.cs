@@ -55,7 +55,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public IHttpActionResult Search(coreModel.MembersSearchCriteria criteria)
         {
             var result = _memberSearchService.SearchMembers(criteria);
-
             return Ok(result);
         }
 
@@ -74,7 +73,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                 // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
                 return Ok((dynamic)retVal);
             }
-            return Ok();
+            return NotFound();
         }
 
 
@@ -142,7 +141,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <summary>
         /// Update contact
         /// </summary>
-        /// <response code="204">Operation completed.</response>
         [HttpPut]
         [Route("contacts")]
         [ResponseType(typeof(void))]
@@ -250,7 +248,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ResponseType(typeof(VendorSearchResult))]
         public IHttpActionResult SearchVendors(coreModel.MembersSearchCriteria criteria)
         {
-            if(criteria == null)
+            if (criteria == null)
             {
                 criteria = new Domain.Customer.Model.MembersSearchCriteria();               
             }
