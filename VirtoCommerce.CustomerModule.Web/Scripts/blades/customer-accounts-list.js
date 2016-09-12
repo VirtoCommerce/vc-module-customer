@@ -1,6 +1,6 @@
 ﻿angular.module('virtoCommerce.customerModule')
-.controller('virtoCommerce.customerModule.customerAccountsListController', ['$scope', 'platformWebApp.dialogService', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeNavigationService', 'filterFilter',
-function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFilter) {
+.controller('virtoCommerce.customerModule.customerAccountsListController', ['$scope', 'platformWebApp.dialogService', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeNavigationService', 'filterFilter', 'platformWebApp.accounts',
+function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFilter, accounts) {
     $scope.uiGridConstants = uiGridHelper.uiGridConstants;
     var blade = $scope.blade;
 
@@ -47,6 +47,23 @@ function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFil
         bladeNavigationService.showBlade(newBlade, blade);
     }
 
+    $scope.deleteList = function (selection) {
+        var dialog = {
+            id: "confirmDeleteItem",
+            title: "platform.dialogs.account-delete.title",
+            message: "platform.dialogs.account-delete.message",
+            callback: function (remove) {
+                if (remove) {
+                    bladeNavigationService.closeChildrenBlades(blade, function () {
+                        var itemIds = _.pluck(selection, 'userName');
+                        accounts.remove({ names: itemIds }, blade.refresh);
+                    });
+                }
+            }
+        };
+        dialogService.showConfirmationDialog(dialog);
+    };
+
     blade.headIcon = 'fa-key';
 
     blade.toolbarCommands = [
@@ -67,15 +84,15 @@ function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFil
             },
             canExecuteMethod: function () { return true; },
             permission: 'platform:security:create'
+        },
+        {
+            name: "platform.commands.delete", icon: 'fa fa-trash-o',
+            executeMethod: function () { $scope.deleteList($scope.gridApi.selection.getSelectedRows()); },
+            canExecuteMethod: function () {
+                return $scope.gridApi && _.any($scope.gridApi.selection.getSelectedRows());
+            },
+            permission: 'platform:security:delete'
         }
-        //{
-        //    name: "platform.commands.delete", icon: 'fa fa-trash-o',
-        //    executeMethod: function () { deleteList($scope.gridApi.selection.getSelectedRows()); },
-        //    canExecuteMethod: function () {
-        //        return $scope.gridApi && _.any($scope.gridApi.selection.getSelectedRows());
-        //    },
-        //    permission: 'platform:security:delete'
-        //}
     ];
 
     // ui-grid
