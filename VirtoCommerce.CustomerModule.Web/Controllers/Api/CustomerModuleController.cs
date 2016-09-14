@@ -106,7 +106,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public IHttpActionResult UpdateMember(coreModel.Member member)
         {
             _memberService.SaveChanges(new[] { member });
-            return Ok();
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public IHttpActionResult DeleteMembers([FromUri] string[] ids)
         {
             _memberService.Delete(ids);
-            return Ok();
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         #region Special members for storefront C# API client  (because it not support polymorph types)
