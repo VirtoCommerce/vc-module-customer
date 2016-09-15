@@ -73,7 +73,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                 // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
                 return Ok((dynamic)retVal);
             }
-            return NotFound();
+            return Ok();
         }
 
 
