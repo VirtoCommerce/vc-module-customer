@@ -76,6 +76,19 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             return Ok();
         }
 
+        [HttpGet]
+        [Route("members")]
+        [ResponseType(typeof(coreModel.Member))]
+        public IHttpActionResult GetMembersByIds([FromUri] string[] ids)
+        {
+            var retVal = _memberService.GetByIds(ids);
+            if (retVal != null)
+            {
+                 // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
+                return Ok(retVal.Cast<dynamic>().ToArray());
+            }
+            return Ok();
+        }
 
         /// <summary>
         /// Create new member (can be any object inherited from Member type)
@@ -86,7 +99,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [Route("members")]
         [ResponseType(typeof(coreModel.Member))]
         [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
-        public IHttpActionResult CreateMember([FromBody]coreModel.Member member)
+        public IHttpActionResult CreateMember([FromBody] coreModel.Member member)
         {
             _memberService.SaveChanges(new[] { member });
             var retVal = _memberService.GetByIds(new[] { member.Id }).FirstOrDefault();
@@ -226,6 +239,19 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             return GetMemberById(id);
         }
 
+
+        /// <summary>
+        /// Bulk get contacts 
+        /// </summary>
+        /// <param name="ids">contact IDs</param>
+        [HttpGet]
+        [Route("contacts")]
+        [ResponseType(typeof(coreModel.Contact[]))]
+        public IHttpActionResult GetContactsByIds([FromUri]string[] ids)
+        {
+            return GetMembersByIds(ids);
+        }
+
         /// <summary>
         /// Get vendor
         /// </summary>
@@ -236,6 +262,18 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public IHttpActionResult GetVendorById(string id)
         {
             return GetMemberById(id);
+        }
+
+        /// <summary>
+        /// Bulk get vendors 
+        /// </summary>
+        /// <param name="ids">Vendors IDs</param>
+        [HttpGet]
+        [Route("vendors")]
+        [ResponseType(typeof(coreModel.Vendor[]))]
+        public IHttpActionResult GetVendorsByIds([FromUri]string[] ids)
+        {
+            return GetMembersByIds(ids);
         }
 
         /// <summary>
