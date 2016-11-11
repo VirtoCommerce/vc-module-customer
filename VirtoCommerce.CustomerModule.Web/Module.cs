@@ -50,8 +50,8 @@ namespace VirtoCommerce.CustomerModule.Web
             _container.RegisterType<IEventPublisher<MemberChangingEvent>, EventPublisher<MemberChangingEvent>>();
 
             Func<CustomerRepositoryImpl> customerRepositoryFactory = () => new CustomerRepositoryImpl(_connectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>());
-            _container.RegisterType<ICustomerRepository>(new InjectionFactory(c => customerRepositoryFactory));
-            _container.RegisterType<IMemberRepository>(new InjectionFactory(c => customerRepositoryFactory));
+            _container.RegisterInstance<Func<ICustomerRepository>>(customerRepositoryFactory);
+            _container.RegisterInstance<Func<IMemberRepository>>(customerRepositoryFactory);
 
             _container.RegisterType<IMemberService, CommerceMembersServiceImpl>();
             _container.RegisterType<IMemberSearchService, CommerceMembersServiceImpl>();
