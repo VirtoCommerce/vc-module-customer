@@ -49,21 +49,20 @@ namespace VirtoCommerce.CustomerModule.Web
             //Member changing event publisher.
             _container.RegisterType<IEventPublisher<MemberChangingEvent>, EventPublisher<MemberChangingEvent>>();
 
-            var memberServiceDecorator = new MemberServiceDecorator();
-            _container.RegisterInstance(memberServiceDecorator);
-            _container.RegisterInstance<IMemberService>(memberServiceDecorator);
-            _container.RegisterInstance<IMemberSearchService>(memberServiceDecorator);
+            Func<CustomerRepositoryImpl> customerRepositoryFactory = () => new CustomerRepositoryImpl(_connectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>());
+            _container.RegisterType<ICustomerRepository>(new InjectionFactory(c => customerRepositoryFactory));
+            _container.RegisterType<IMemberRepository>(new InjectionFactory(c => customerRepositoryFactory));
+
+            _container.RegisterType<IMemberService, CommerceMembersServiceImpl>();
+            _container.RegisterType<IMemberSearchService, CommerceMembersServiceImpl>();
         }
 
         public override void PostInitialize()
-        {
-            Func<CustomerRepositoryImpl> customerRepositoryFactory = () => new CustomerRepositoryImpl(_connectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>());
-            var commerceMembersService = new CommerceMembersServiceImpl(customerRepositoryFactory, _container.Resolve<IDynamicPropertyService>(), _container.Resolve<ICommerceService>(), _container.Resolve<ISecurityService>(), _container.Resolve<IEventPublisher<MemberChangingEvent>>());
-
-            AbstractTypeFactory<Member>.RegisterType<Organization>().WithService(commerceMembersService).MapToType<OrganizationDataEntity>();
-            AbstractTypeFactory<Member>.RegisterType<Contact>().WithService(commerceMembersService).MapToType<ContactDataEntity>();
-            AbstractTypeFactory<Member>.RegisterType<Vendor>().WithService(commerceMembersService).MapToType<VendorDataEntity>();
-            AbstractTypeFactory<Member>.RegisterType<Employee>().WithService(commerceMembersService).MapToType<EmployeeDataEntity>();
+        {          
+            AbstractTypeFactory<Member>.RegisterType<Organization>().MapToType<OrganizationDataEntity>();
+            AbstractTypeFactory<Member>.RegisterType<Contact>().MapToType<ContactDataEntity>();
+            AbstractTypeFactory<Member>.RegisterType<Vendor>().MapToType<VendorDataEntity>();
+            AbstractTypeFactory<Member>.RegisterType<Employee>().MapToType<EmployeeDataEntity>();
 
             AbstractTypeFactory<MemberDataEntity>.RegisterType<ContactDataEntity>();
             AbstractTypeFactory<MemberDataEntity>.RegisterType<OrganizationDataEntity>();
