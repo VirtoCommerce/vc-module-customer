@@ -8,9 +8,9 @@ Key features:
 
 
 # Documentation
-User guide: <a href="http://docs.virtocommerce.com/x/zgHr" target="_blank">Customer Service</a>
+User guide:
 
-Developer guide: <a href="http://docs.virtocommerce.com/x/FQAgAQ" target="_blank">Extending Members domain types</a>
+Developer guide: <a href="https://virtocommerce.com/docs/vc2devguide/extending-commerce/extending-members-domain-types" target="_blank">Extending Members domain types</a>
 
 # Installation
 Installing the module:
