@@ -23,6 +23,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 			MemberRelations = new NullCollection<MemberRelationDataEntity>();
 			Phones = new NullCollection<PhoneDataEntity>();
 			Emails = new NullCollection<EmailDataEntity>();
+            Groups = new NullCollection<MemberGroupDataEntity>();
         }
 
         [StringLength(64)]
@@ -45,6 +46,8 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
 		public ObservableCollection<EmailDataEntity> Emails { get; set; }
 
+        public ObservableCollection<MemberGroupDataEntity> Groups { get; set; }
+
         #endregion
 
         public virtual Member ToModel(Member member)
@@ -61,6 +64,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             member.Emails = this.Emails.OrderBy(x => x.Id).Select(x => x.Address).ToList();
             member.Notes = this.Notes.OrderBy(x => x.Id).Select(x => x.ToModel(new Note())).ToList();
             member.Phones = this.Phones.OrderBy(x => x.Id).Select(x => x.Number).ToList();
+            member.Groups = this.Groups.OrderBy(x => x.Id).Select(x => x.Group).ToList();
 
             return member;
         }
@@ -85,6 +89,18 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                     phoneEntity.MemberId = member.Id;
                     this.Phones.Add(phoneEntity);
                 }              
+            }
+
+            if (member.Groups != null)
+            {
+                this.Groups = new ObservableCollection<MemberGroupDataEntity>();
+                foreach (var group in member.Groups)
+                {
+                    var groupEntity = AbstractTypeFactory<MemberGroupDataEntity>.TryCreateInstance();
+                    groupEntity.Group = group;
+                    groupEntity.MemberId = member.Id;
+                    this.Groups.Add(groupEntity);
+                }
             }
 
             if (member.Emails != null)
@@ -134,6 +150,12 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             {
                 var addressComparer = AnonymousComparer.Create((EmailDataEntity x) => x.Address);
                 this.Emails.Patch(target.Emails, addressComparer, (sourceEmail, targetEmail) => targetEmail.Address = sourceEmail.Address);
+            }
+
+            if (!this.Groups.IsNullCollection())
+            {
+                var groupComparer = AnonymousComparer.Create((MemberGroupDataEntity x) => x.Group);
+                this.Groups.Patch(target.Groups, groupComparer, (sourceGroup, targetGroup) => targetGroup.Group = sourceGroup.Group);
             }
 
             if (!this.Addresses.IsNullCollection())

@@ -9,6 +9,7 @@
                     "first-name": "First name",
                     "middle-name": "Middle name",
                     "last-name": "Last name",
+                    "groups":  "User groups",
                     "full-name": "Full name",
                     "birthday": "Birthday",
                     "salutation": "Salutation",
@@ -20,6 +21,7 @@
                     "timezone": "Time zone"
                 },
                 "placeholders": {
+                    "groups": "Select user groups",
                     "first-name": "Enter value",
                     "middle-name": "Enter value",
                     "last-name": "Enter value",

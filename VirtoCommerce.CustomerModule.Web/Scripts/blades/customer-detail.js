@@ -1,5 +1,5 @@
 ﻿angular.module('virtoCommerce.customerModule')
-.controller('virtoCommerce.customerModule.customerDetailController', ['$scope', 'virtoCommerce.customerModule.organizations', 'virtoCommerce.coreModule.common.countries', function ($scope, organizations, countries) {
+.controller('virtoCommerce.customerModule.customerDetailController', ['$scope', 'virtoCommerce.customerModule.organizations', 'virtoCommerce.coreModule.common.countries', 'platformWebApp.settings', 'platformWebApp.bladeNavigationService', function ($scope, organizations, countries, settings, bladeNavigationService) {
     var blade = $scope.blade;
 
     if (blade.isNew) {
@@ -35,4 +35,19 @@
 
     $scope.organizations = organizations.query();
     $scope.timeZones = countries.getTimeZones();
+    $scope.groups = settings.getValues({ id: 'Customer.MemberGroups' });
+
+    $scope.openGroupsDictionarySettingManagement = function () {
+        var newBlade = {
+            id: 'settingDetailChild',
+            isApiSave: true,
+            currentEntityId: 'Customer.MemberGroups',
+            parentRefresh: function (data) { $scope.groups = data; },
+            controller: 'platformWebApp.settingDictionaryController',
+            template: '$(Platform)/Scripts/app/settings/blades/setting-dictionary.tpl.html'
+        };
+        bladeNavigationService.showBlade(newBlade, blade);
+    };
+
+
 }]);

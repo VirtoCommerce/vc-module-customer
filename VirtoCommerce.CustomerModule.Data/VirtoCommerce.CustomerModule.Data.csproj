@@ -76,8 +76,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="VirtoCommerce.Domain, Version=2.17.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Domain.2.17.0\lib\net451\VirtoCommerce.Domain.dll</HintPath>
+    <Reference Include="VirtoCommerce.Domain, Version=2.18.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtoCommerce.Domain.2.19.0-rc1\lib\net451\VirtoCommerce.Domain.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="VirtoCommerce.Platform.Core, Version=2.12.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -104,6 +104,10 @@
     <Compile Include="Migrations\201608310852086_EmployeePhotoUrl.cs" />
     <Compile Include="Migrations\201608310852086_EmployeePhotoUrl.Designer.cs">
       <DependentUpon>201608310852086_EmployeePhotoUrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611171903485_MemberGroups.cs" />
+    <Compile Include="Migrations\201611171903485_MemberGroups.Designer.cs">
+      <DependentUpon>201611171903485_MemberGroups.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\AddressDataEntityComparer.cs" />
     <Compile Include="Migrations\201505050914307_Initial.cs" />
@@ -144,6 +148,7 @@
     <Compile Include="Model\EmailDataEntity.cs" />
     <Compile Include="Model\EmployeeDataEntity.cs" />
     <Compile Include="Model\MemberDataEntity.cs" />
+    <Compile Include="Model\MemberGroupDataEntity.cs" />
     <Compile Include="Model\MemberRelationDataEntity.cs" />
     <Compile Include="Model\NoteDataEntity.cs" />
     <Compile Include="Model\OrganizationDataEntity.cs" />
@@ -199,6 +204,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201608310852086_EmployeePhotoUrl.resx">
       <DependentUpon>201608310852086_EmployeePhotoUrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611171903485_MemberGroups.resx">
+      <DependentUpon>201611171903485_MemberGroups.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

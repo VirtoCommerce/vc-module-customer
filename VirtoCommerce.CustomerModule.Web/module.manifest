@@ -38,6 +38,18 @@
                 <title>Export/Import description</title>
                 <description>Module description in platform export/import wizard</description>
             </setting>
+            <setting>
+                <name>Customer.MemberGroups</name>
+                <valueType>string</valueType>
+                <defaultValue>New</defaultValue>
+                <title>Member groups dictionary</title>
+                <description>All available members groups values</description>
+                <isArray>true</isArray>
+                <arrayValues>
+                    <value>VIP</value>
+                    <value>Wholesaler</value>
+                </arrayValues>
+            </setting>
         </group>
     </settings>
 

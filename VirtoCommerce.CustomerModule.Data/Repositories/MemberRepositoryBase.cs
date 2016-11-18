@@ -63,6 +63,16 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
                                           .WillCascadeOnDelete(true);
             #endregion
 
+            #region Group
+            modelBuilder.Entity<MemberGroupDataEntity>().HasKey(x => x.Id)
+                .Property(x => x.Id);
+            modelBuilder.Entity<MemberGroupDataEntity>().ToTable("MemberGroup");
+
+            modelBuilder.Entity<MemberGroupDataEntity>().HasRequired(m => m.Member)
+                                          .WithMany(m => m.Groups).HasForeignKey(m => m.MemberId)
+                                          .WillCascadeOnDelete(true);
+            #endregion
+
             #region Phone
             modelBuilder.Entity<PhoneDataEntity>().HasKey(x => x.Id)
                 .Property(x => x.Id);
@@ -98,6 +108,12 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
         public IQueryable<EmailDataEntity> Emails
         {
             get { return GetAsQueryable<EmailDataEntity>(); }
+        }
+
+
+        public IQueryable<MemberGroupDataEntity> Groups
+        {
+            get { return GetAsQueryable<MemberGroupDataEntity>(); }
         }
 
         public IQueryable<NoteDataEntity> Notes
@@ -136,6 +152,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             var emails = Emails.Where(x => ids.Contains(x.MemberId)).ToArray();
             var addresses = Addresses.Where(x => ids.Contains(x.MemberId)).ToArray();
             var phones = Phones.Where(x => ids.Contains(x.MemberId)).ToArray();
+            var groups = Groups.Where(x => ids.Contains(x.MemberId)).ToArray();
 
             return retVal;
         }

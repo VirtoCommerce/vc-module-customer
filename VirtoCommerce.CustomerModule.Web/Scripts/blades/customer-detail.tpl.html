@@ -15,35 +15,40 @@
                         </div>
                         <div class="column">
                             <div class="form-group">
-                                <label class="form-label">{{'customer.blades.contact-detail.labels.middle-name' | translate}}</label>
-                                <div class="form-input">
-                                    <input ng-model="blade.currentEntity.middleName" placeholder="{{'customer.blades.contact-detail.placeholders.middle-name' | translate}}" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="columns clearfix">
-                        <div class="column">
-                            <div class="form-group">
                                 <label class="form-label">{{'customer.blades.contact-detail.labels.last-name' | translate}}</label>
                                 <div class="form-input">
                                     <input ng-model="blade.currentEntity.lastName" required placeholder="{{'customer.blades.contact-detail.placeholders.last-name' | translate}}" />
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{{'customer.blades.contact-detail.labels.full-name' | translate}}</label>
+                        <div class="form-input">
+                            <input ng-model="blade.currentEntity.fullName" required placeholder="{{'customer.blades.contact-detail.placeholders.full-name' | translate}}" />
+                        </div>
+                    </div>
+                    <div class="columns clearfix">
                         <div class="column">
                             <div class="form-group">
-                                <label class="form-label">{{'customer.blades.contact-detail.labels.full-name' | translate}}</label>
-                                <div class="form-input">
-                                    <input ng-model="blade.currentEntity.fullName" required placeholder="{{'customer.blades.contact-detail.placeholders.full-name' | translate}}" />
+                                <label class="form-label">{{'customer.blades.contact-detail.labels.groups' | translate}}  <a href="" ng-click="openGroupsDictionarySettingManagement()" class="form-edit" va-permission="platform:setting:update"><i class="form-ico fa fa-pencil"></i></a></label>
+                                <div class="form-input" data-role="input-control">
+                                    <ui-select multiple ng-model="blade.currentEntity.groups">
+                                        <ui-select-match placeholder="{{'customer.blades.contact-detail.placeholders.groups' | translate}}">{{$item}}</ui-select-match>
+                                        <ui-select-choices repeat="x in groups | filter: $select.search">
+                                            <span ng-bind-html="x | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">{{'customer.blades.contact-detail.labels.salutation' | translate }}</label>
-                        <div class="form-input">
-                            <input ng-model="blade.currentEntity.salutation" placeholder="{{ 'customer.blades.contact-detail.placeholders.salutation' | translate }}">
+                        <div class="column">
+                            <div class="form-group">
+                                <label class="form-label">{{'customer.blades.contact-detail.labels.salutation' | translate }}</label>
+                                <div class="form-input">
+                                    <input ng-model="blade.currentEntity.salutation" placeholder="{{ 'customer.blades.contact-detail.placeholders.salutation' | translate }}">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group" ng-init="setForm(detailForm)">
@@ -97,8 +102,8 @@
                         </div>
                     </div>
                 </div>
-                <va-metaform registered-inputs="blade.metaFields" blade="blade" column-count="2"></va-metaform>
 
+                <va-metaform registered-inputs="blade.metaFields" blade="blade" column-count="2"></va-metaform>
                 <div class="form-group">
                     <va-widget-container group="customerDetail2" blade="blade" data="blade.currentEntity" gridster-opts="{columns: 3}"></va-widget-container>
                 </div>

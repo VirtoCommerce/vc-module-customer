@@ -157,6 +157,11 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                     query = query.Where(x => criteria.MemberTypes.Contains(x.MemberType));
                 }
 
+                if (!criteria.Groups.IsNullOrEmpty())
+                {
+                    query = query.Where(x=> x.Groups.Any(g => criteria.Groups.Contains(g.Group)));
+                }
+
                 if (criteria.MemberId != null)
                 {
                     //TODO: DeepSearch in specified member
