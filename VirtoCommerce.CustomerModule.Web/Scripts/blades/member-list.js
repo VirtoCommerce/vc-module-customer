@@ -165,7 +165,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
         }
     };
 
-    blade.headIcon = 'fa-user';
+    blade.headIcon = 'fa-user __customers';
 
     blade.toolbarCommands = [
         {
