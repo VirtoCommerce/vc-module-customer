@@ -22,7 +22,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
     /// </summary>
     public abstract class MemberServiceBase : ServiceBase, IMemberService, IMemberSearchService
     {
-        public MemberServiceBase(Func<IMemberRepository> repositoryFactory, IDynamicPropertyService dynamicPropertyService, ICommerceService commerceService,
+        protected MemberServiceBase(Func<IMemberRepository> repositoryFactory, IDynamicPropertyService dynamicPropertyService, ICommerceService commerceService,
                                   IEventPublisher<MemberChangingEvent> eventPublisher)
         {
             RepositoryFactory = repositoryFactory;
@@ -30,17 +30,19 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             MemberEventventPublisher = eventPublisher;
             CommerceService = commerceService;
         }
-        protected ICommerceService CommerceService { get; set; }
-        protected IEventPublisher<MemberChangingEvent> MemberEventventPublisher { get; private set; }
-        protected Func<IMemberRepository> RepositoryFactory { get; private set; }
-        protected IDynamicPropertyService DynamicPropertyService { get; private set; }
 
-    
+        protected Func<IMemberRepository> RepositoryFactory { get; }
+        protected IDynamicPropertyService DynamicPropertyService { get; }
+        protected IEventPublisher<MemberChangingEvent> MemberEventventPublisher { get; }
+        protected ICommerceService CommerceService { get; set; }
+
+
         #region IMemberService Members
         /// <summary>
         /// Return members by requested ids can be override for load extra data for resulting members
         /// </summary>
         /// <param name="memberIds"></param>
+        /// <param name="responseGroup"></param>
         /// <param name="memberTypes"></param>
         /// <returns></returns>
         public virtual Member[] GetByIds(string[] memberIds, string responseGroup = null, string[] memberTypes = null)
@@ -61,7 +63,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             }
 
             //Load dynamic properties for member
-            DynamicPropertyService.LoadDynamicPropertyValues(retVal.ToArray());
+            DynamicPropertyService.LoadDynamicPropertyValues(retVal.ToArray<IHasDynamicProperties>());
 
             CommerceService.LoadSeoForObjects(retVal.OfType<ISeoSupport>().ToArray());
             return retVal.ToArray();
@@ -74,40 +76,48 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         public virtual void SaveChanges(Member[] members)
         {
             var pkMap = new PrimaryKeyResolvingMap();
-        
+
             using (var repository = RepositoryFactory())
             using (var changeTracker = GetChangeTracker(repository))
             {
-                var dataExistMembers = repository.GetMembersByIds(members.Where(x => !x.IsTransient()).Select(x => x.Id).ToArray());
+                var existingMemberEntities = repository.GetMembersByIds(members.Where(m => !m.IsTransient()).Select(m => m.Id).ToArray());
+
                 foreach (var member in members)
                 {
-                    var memberEntityType = AbstractTypeFactory<Member>.AllTypeInfos.Where(x => x.MappedType != null && x.IsAssignableTo(member.MemberType)).Select(x => x.MappedType).FirstOrDefault();
-                    var dataSourceMember = AbstractTypeFactory<MemberDataEntity>.TryCreateInstance(memberEntityType.Name);
-                    if (dataSourceMember != null)
+                    var memberEntityType = AbstractTypeFactory<Member>.AllTypeInfos.Where(t => t.MappedType != null && t.IsAssignableTo(member.MemberType)).Select(t => t.MappedType).FirstOrDefault();
+                    if (memberEntityType != null)
                     {
-                        dataSourceMember.FromModel(member, pkMap);
-                        var dataTargetMember = dataExistMembers.FirstOrDefault(x => x.Id == member.Id);
-                        if (dataTargetMember != null)
+                        var dataSourceMember = AbstractTypeFactory<MemberDataEntity>.TryCreateInstance(memberEntityType.Name);
+                        if (dataSourceMember != null)
                         {
-                            changeTracker.Attach(dataTargetMember);
-                            dataSourceMember.Patch(dataTargetMember);
-                            MemberEventventPublisher.Publish(new MemberChangingEvent(EntryState.Modified, member));
+                            dataSourceMember.FromModel(member, pkMap);
+
+                            var dataTargetMember = existingMemberEntities.FirstOrDefault(m => m.Id == member.Id);
+                            if (dataTargetMember != null)
+                            {
+                                changeTracker.Attach(dataTargetMember);
+                                dataSourceMember.Patch(dataTargetMember);
+                                MemberEventventPublisher.Publish(new MemberChangingEvent(EntryState.Modified, member));
+                            }
+                            else
+                            {
+                                repository.Add(dataSourceMember);
+                                MemberEventventPublisher.Publish(new MemberChangingEvent(EntryState.Added, member));
+                            }
                         }
-                        else
-                        {
-                            repository.Add(dataSourceMember);
-                            MemberEventventPublisher.Publish(new MemberChangingEvent(EntryState.Added, member));
-                        }
-                    }                 
+                    }
                 }
+
                 CommitChanges(repository);
                 pkMap.ResolvePrimaryKeys();
             }
+
             //Save dynamic properties
             foreach (var member in members)
             {
                 DynamicPropertyService.SaveDynamicPropertyValues(member);
             }
+
             CommerceService.UpsertSeoForObjects(members.OfType<ISeoSupport>().ToArray());
         }
 
@@ -122,13 +132,13 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                     {
                         MemberEventventPublisher.Publish(new MemberChangingEvent(EntryState.Deleted, member));
                     }
-                    repository.RemoveMembersByIds(members.Select(x => x.Id).ToArray());
+                    repository.RemoveMembersByIds(members.Select(m => m.Id).ToArray());
                     CommitChanges(repository);
                     foreach (var member in members)
                     {
                         DynamicPropertyService.DeleteDynamicPropertyValues(member);
                         var seoObject = member as ISeoSupport;
-                        if(seoObject != null)
+                        if (seoObject != null)
                         {
                             CommerceService.DeleteSeoForObject(seoObject);
                         }
@@ -154,66 +164,64 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
                 if (!criteria.MemberTypes.IsNullOrEmpty())
                 {
-                    query = query.Where(x => criteria.MemberTypes.Contains(x.MemberType));
+                    query = query.Where(m => criteria.MemberTypes.Contains(m.MemberType));
                 }
 
                 if (!criteria.Groups.IsNullOrEmpty())
                 {
-                    query = query.Where(x=> x.Groups.Any(g => criteria.Groups.Contains(g.Group)));
+                    query = query.Where(m => m.Groups.Any(g => criteria.Groups.Contains(g.Group)));
                 }
 
                 if (criteria.MemberId != null)
                 {
                     //TODO: DeepSearch in specified member
-                    query = query.Where(x => x.MemberRelations.Any(y => y.AncestorId == criteria.MemberId));
+                    query = query.Where(m => m.MemberRelations.Any(r => r.AncestorId == criteria.MemberId));
                 }
                 else
                 {
                     if (!criteria.DeepSearch)
                     {
-                        query = query.Where(x => !x.MemberRelations.Any());
+                        query = query.Where(m => !m.MemberRelations.Any());
                     }
                 }
+
                 //Get extra predicates (where clause)
                 var predicate = GetQueryPredicate(criteria);
-
                 query = query.Where(LinqKit.Extensions.Expand(predicate));
 
                 var sortInfos = criteria.SortInfos;
                 if (sortInfos.IsNullOrEmpty())
                 {
-                    sortInfos = new[] { new SortInfo { SortColumn = ReflectionUtility.GetPropertyName<Member>(x => x.MemberType), SortDirection = SortDirection.Descending } };
+                    sortInfos = new[] { new SortInfo { SortColumn = ReflectionUtility.GetPropertyName<Member>(m => m.MemberType), SortDirection = SortDirection.Descending } };
                 }
+
                 query = query.OrderBySortInfos(sortInfos);
 
                 retVal.TotalCount = query.Count();
 
                 retVal.Results = query.Skip(criteria.Skip).Take(criteria.Take).ToArray()
-                                      .Select(x => x.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(x.MemberType))).ToList();
+                                      .Select(m => m.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(m.MemberType))).ToList();
                 return retVal;
             }
         }
         #endregion
 
-       /// <summary>
-       /// Used to define extra where clause for members search
-       /// </summary>
-       /// <param name="criteria"></param>
-       /// <returns></returns>
-        protected virtual  Expression<Func<MemberDataEntity, bool>> GetQueryPredicate(MembersSearchCriteria criteria)
+        /// <summary>
+        /// Used to define extra where clause for members search
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        protected virtual Expression<Func<MemberDataEntity, bool>> GetQueryPredicate(MembersSearchCriteria criteria)
         {
-            if (!String.IsNullOrEmpty(criteria.Keyword))
+            if (!string.IsNullOrEmpty(criteria.Keyword))
             {
                 var predicate = PredicateBuilder.False<MemberDataEntity>();
-                predicate = predicate.Or(x =>  x.Name.Contains(criteria.Keyword) || x.Emails.Any(y => y.Address.Contains(criteria.Keyword)));
+                predicate = predicate.Or(m => m.Name.Contains(criteria.Keyword) || m.Emails.Any(e => e.Address.Contains(criteria.Keyword)));
                 //Should use Expand() to all predicates to prevent EF error
                 //http://stackoverflow.com/questions/2947820/c-sharp-predicatebuilder-entities-the-parameter-f-was-not-bound-in-the-specif?rq=1
                 return LinqKit.Extensions.Expand(predicate);
-            }         
+            }
             return PredicateBuilder.True<MemberDataEntity>();
         }
-
-      
-
     }
 }
