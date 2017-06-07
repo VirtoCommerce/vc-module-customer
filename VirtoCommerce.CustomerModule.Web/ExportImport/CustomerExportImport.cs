@@ -36,7 +36,7 @@ namespace VirtoCommerce.CustomerModule.Web.ExportImport
                 progressInfo.Description = string.Format("Members exporting...");
                 progressCallback(progressInfo);
 
-                var memberCount = _memberSearchService.SearchMembers(new MembersSearchCriteria { Take = 0 }).TotalCount;
+                var memberCount = _memberSearchService.SearchMembers(new MembersSearchCriteria { Take = 0, DeepSearch = true }).TotalCount;
                 writer.WritePropertyName("MembersTotalCount");
                 writer.WriteValue(memberCount);
 
@@ -100,7 +100,7 @@ namespace VirtoCommerce.CustomerModule.Web.ExportImport
                                 {
                                     _memberService.SaveChanges(members.ToArray());
                                     members.Clear();
-                                    if (membersCount > 0)
+                                    if (membersTotalCount > 0)
                                     {
                                         progressInfo.Description = $"{ membersCount } of { membersTotalCount } members imported";
                                     }
