@@ -9,11 +9,6 @@ using VirtoCommerce.Platform.Core.ExportImport;
 
 namespace VirtoCommerce.CustomerModule.Web.ExportImport
 {
-    public sealed class BackupObject
-    {
-        public Member[] Members { get; set; }
-    }
-
     public sealed class CustomerExportImport
     {
         private readonly IMemberService _memberService;
