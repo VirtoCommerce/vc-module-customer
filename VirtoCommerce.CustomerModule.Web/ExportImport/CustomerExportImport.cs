@@ -1,65 +1,120 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Text;
+using Newtonsoft.Json;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
-using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
 
 namespace VirtoCommerce.CustomerModule.Web.ExportImport
 {
-    public sealed class BackupObject
-    {
-        public Member[] Members { get; set; }
-    }
-
     public sealed class CustomerExportImport
     {
         private readonly IMemberService _memberService;
         private readonly IMemberSearchService _memberSearchService;
+        private readonly JsonSerializer _serializer;
+        private const int _batchSize = 50;
 
         public CustomerExportImport(IMemberService memberService, IMemberSearchService memberSearchService)
         {
             _memberService = memberService;
             _memberSearchService = memberSearchService;
+            _serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.All };
         }
 
         public void DoExport(Stream backupStream, Action<ExportImportProgressInfo> progressCallback)
         {
-			var backupObject = GetBackupObject(progressCallback);
-            backupObject.SerializeJson(backupStream);
+            var progressInfo = new ExportImportProgressInfo { Description = "loading data..." };
+            progressCallback(progressInfo);
+
+            using (StreamWriter sw = new StreamWriter(backupStream, Encoding.UTF8))
+            using (JsonTextWriter writer = new JsonTextWriter(sw))
+            {
+                writer.WriteStartObject();
+
+                progressInfo.Description = string.Format("Members exporting...");
+                progressCallback(progressInfo);
+
+                var memberCount = _memberSearchService.SearchMembers(new MembersSearchCriteria { Take = 0 }).TotalCount;
+                writer.WritePropertyName("MembersTotalCount");
+                writer.WriteValue(memberCount);
+
+                writer.WritePropertyName("Members");
+                writer.WriteStartArray();
+                for (var i = 0; i < memberCount; i += _batchSize)
+                {
+                    var searchResponse = _memberSearchService.SearchMembers(new MembersSearchCriteria { Skip = i, Take = _batchSize, DeepSearch = true });
+                    foreach (var member in searchResponse.Results)
+                    {
+                        _serializer.Serialize(writer, member);
+                    }
+                    writer.Flush();
+                    progressInfo.Description = $"{ Math.Min(memberCount, i + _batchSize) } of { memberCount } members exported";
+                    progressCallback(progressInfo);
+                }
+                writer.WriteEndArray();
+
+                writer.WriteEndObject();
+                writer.Flush();
+            }
         }
 
         public void DoImport(Stream backupStream, Action<ExportImportProgressInfo> progressCallback)
         {
-            var backupObject = backupStream.DeserializeJson<BackupObject>();
-			var originalObject = GetBackupObject(progressCallback);
+            var progressInfo = new ExportImportProgressInfo();
+            var membersTotalCount = 0;
+            var serializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
 
-			var progressInfo = new ExportImportProgressInfo();
-			progressInfo.Description = String.Format("{0} members importing...", backupObject.Members.Count());
-            progressCallback(progressInfo);
-            _memberService.SaveChanges(backupObject.Members.OrderByDescending(x => x.MemberType).ToArray());
+            using (StreamReader streamReader = new StreamReader(backupStream))
+            using (JsonTextReader reader = new JsonTextReader(streamReader))
+            {
+                while (reader.Read())
+                {
+                    if (reader.TokenType == JsonToken.PropertyName)
+                    {
+                        if (reader.Value.ToString() == "MembersTotalCount")
+                        {
+                            membersTotalCount = reader.ReadAsInt32() ?? 0;
+                        }
+                        else if (reader.Value.ToString() == "Members")
+                        {
+                            reader.Read();
+                            if (reader.TokenType == JsonToken.StartArray)
+                            {
+                                reader.Read();
 
+                                var members = new List<Member>();
+                                var membersCount = 0;
+
+                                while (reader.TokenType != JsonToken.EndArray)
+                                {
+                                    var member = _serializer.Deserialize<Member>(reader);
+                                    members.Add(member);
+                                    membersCount++;
+
+                                    reader.Read();
+                                }
+
+                                if (membersCount % _batchSize == 0 || reader.TokenType == JsonToken.EndArray)
+                                {
+                                    _memberService.SaveChanges(members.ToArray());
+                                    members.Clear();
+                                    if (membersCount > 0)
+                                    {
+                                        progressInfo.Description = $"{ membersCount } of { membersTotalCount } members imported";
+                                    }
+                                    else
+                                    {
+                                        progressInfo.Description = $"{ membersCount } members imported";
+                                    }
+                                    progressCallback(progressInfo);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
-
-            #region BackupObject
-
-		public BackupObject GetBackupObject(Action<ExportImportProgressInfo> progressCallback)
-        {
-			var progressInfo = new ExportImportProgressInfo();
-			progressInfo.Description = "loading members...";
-			progressCallback(progressInfo);
-
-            var members = _memberSearchService.SearchMembers(new MembersSearchCriteria { DeepSearch = true, Take = int.MaxValue }).Results;
-
-            var result = new BackupObject();
-            result.Members = _memberService.GetByIds(members.Select(x => x.Id).ToArray()).OrderByDescending(x=> x.MemberType).ToArray();
-
-            return result;
-        }
-
-        #endregion
-
     }
 }
