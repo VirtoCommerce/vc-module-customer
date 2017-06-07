@@ -1,5 +1,5 @@
 ﻿angular.module('virtoCommerce.customerModule')
-.controller('virtoCommerce.customerModule.employeeDetailController', ['$scope', 'virtoCommerce.customerModule.organizations', 'virtoCommerce.coreModule.common.countries', function ($scope, organizations, countries) {
+.controller('virtoCommerce.customerModule.employeeDetailController', ['$scope', 'virtoCommerce.customerModule.organizations', 'platformWebApp.common.timeZones', function ($scope, organizations, timeZones) {
     var blade = $scope.blade;
 
     if (blade.isNew) {
@@ -29,11 +29,6 @@
         $scope.datepickers[which] = true;
     };
 
-    $scope.dateOptions = {
-        'year-format': "'yyyy'",
-        'starting-day': 1
-    };
-
     $scope.organizations = organizations.query();
-    $scope.timeZones = countries.getTimeZones();
+    $scope.timeZones = timeZones.query();
 }]);

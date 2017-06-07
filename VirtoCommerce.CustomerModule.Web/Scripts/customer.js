@@ -32,7 +32,7 @@ angular.module(moduleName, [])
       //Register module in main menu
       var menuItem = {
           path: 'browse/member',
-          icon: 'fa fa-user',
+          icon: 'fa fa-user __customers',
           title: 'customer.main-menu-title',
           priority: 180,
           action: function () { $state.go('workspace.customerModule'); },

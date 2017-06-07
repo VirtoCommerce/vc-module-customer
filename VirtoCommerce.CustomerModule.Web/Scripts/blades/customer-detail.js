@@ -1,5 +1,5 @@
 ﻿angular.module('virtoCommerce.customerModule')
-.controller('virtoCommerce.customerModule.customerDetailController', ['$scope', 'virtoCommerce.customerModule.organizations', 'virtoCommerce.coreModule.common.countries', 'platformWebApp.settings', 'platformWebApp.bladeNavigationService', function ($scope, organizations, countries, settings, bladeNavigationService) {
+.controller('virtoCommerce.customerModule.customerDetailController', ['$scope', 'virtoCommerce.customerModule.organizations', 'platformWebApp.common.timeZones', 'platformWebApp.settings', 'platformWebApp.bladeNavigationService', function ($scope, organizations, timeZones, settings, bladeNavigationService) {
     var blade = $scope.blade;
 
     if (blade.isNew) {
@@ -28,13 +28,8 @@
         $scope.datepickers[which] = true;
     };
 
-    $scope.dateOptions = {
-        'year-format': "'yyyy'",
-        'starting-day': 1
-    };
-
     $scope.organizations = organizations.query();
-    $scope.timeZones = countries.getTimeZones();
+    $scope.timeZones = timeZones.query();
     $scope.groups = settings.getValues({ id: 'Customer.MemberGroups' });
 
     $scope.openGroupsDictionarySettingManagement = function () {
