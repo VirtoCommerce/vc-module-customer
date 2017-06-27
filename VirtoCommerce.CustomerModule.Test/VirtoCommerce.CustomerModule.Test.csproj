@@ -6,8 +6,8 @@
     <ProjectGuid>{7BE9ACD8-B740-45A6-B6D5-9FE231E6F764}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>VirtoCommerce.CustomerModule.Tests</RootNamespace>
-    <AssemblyName>VirtoCommerce.CustomerModule.Tests</AssemblyName>
+    <RootNamespace>VirtoCommerce.CustomerModule.Test</RootNamespace>
+    <AssemblyName>VirtoCommerce.CustomerModule.Test</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
