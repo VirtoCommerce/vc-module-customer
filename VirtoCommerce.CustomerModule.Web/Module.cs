@@ -3,6 +3,7 @@ using System.Web.Http;
 using Microsoft.Practices.Unity;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.Repositories;
+using VirtoCommerce.CustomerModule.Data.Search;
 using VirtoCommerce.CustomerModule.Data.Search.Indexing;
 using VirtoCommerce.CustomerModule.Data.Services;
 using VirtoCommerce.CustomerModule.Web.ExportImport;
@@ -59,7 +60,11 @@ namespace VirtoCommerce.CustomerModule.Web
             _container.RegisterInstance<Func<IMemberRepository>>(customerRepositoryFactory);
 
             _container.RegisterType<IMemberService, CommerceMembersServiceImpl>();
-            _container.RegisterType<IMemberSearchService, CommerceMembersServiceImpl>();
+
+            // Indexed search
+            _container.RegisterType<ISearchRequestBuilder, MemberSearchRequestBuilder>(nameof(MemberSearchRequestBuilder));
+            _container.RegisterType<IMemberIndexedSearchService, MemberIndexedSearchService>();
+            _container.RegisterType<IMemberSearchService, MemberSearchServiceDecorator>();
         }
 
         public override void PostInitialize()

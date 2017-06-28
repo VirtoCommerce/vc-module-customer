@@ -9,6 +9,7 @@ using VirtoCommerce.Domain.Commerce.Model.Search;
 using VirtoCommerce.Domain.Commerce.Services;
 using VirtoCommerce.Domain.Customer.Events;
 using VirtoCommerce.Domain.Customer.Model;
+using VirtoCommerce.Domain.Customer.Model.Search;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
@@ -154,7 +155,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public virtual GenericSearchResult<Member> SearchMembers(MembersSearchCriteria criteria)
+        public virtual GenericSearchResult<Member> SearchMembers(MemberSearchCriteria criteria)
         {
             var retVal = new GenericSearchResult<Member>();
 
@@ -177,12 +178,9 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                     //TODO: DeepSearch in specified member
                     query = query.Where(m => m.MemberRelations.Any(r => r.AncestorId == criteria.MemberId));
                 }
-                else
+                else if (criteria.DeepSearch == false)
                 {
-                    if (!criteria.DeepSearch)
-                    {
-                        query = query.Where(m => !m.MemberRelations.Any());
-                    }
+                    query = query.Where(m => !m.MemberRelations.Any());
                 }
 
                 //Get extra predicates (where clause)
@@ -211,12 +209,12 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        protected virtual Expression<Func<MemberDataEntity, bool>> GetQueryPredicate(MembersSearchCriteria criteria)
+        protected virtual Expression<Func<MemberDataEntity, bool>> GetQueryPredicate(MemberSearchCriteria criteria)
         {
-            if (!string.IsNullOrEmpty(criteria.Keyword))
+            if (!string.IsNullOrEmpty(criteria.SearchPhrase))
             {
                 var predicate = PredicateBuilder.False<MemberDataEntity>();
-                predicate = predicate.Or(m => m.Name.Contains(criteria.Keyword) || m.Emails.Any(e => e.Address.Contains(criteria.Keyword)));
+                predicate = predicate.Or(m => m.Name.Contains(criteria.SearchPhrase) || m.Emails.Any(e => e.Address.Contains(criteria.SearchPhrase)));
                 //Should use Expand() to all predicates to prevent EF error
                 //http://stackoverflow.com/questions/2947820/c-sharp-predicatebuilder-entities-the-parameter-f-was-not-bound-in-the-specif?rq=1
                 return LinqKit.Extensions.Expand(predicate);

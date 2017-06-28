@@ -13,7 +13,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
             {
                 memberType: blade.memberType,
                 memberId: blade.currentEntity.id,
-                keyword: filter.keyword ? filter.keyword : undefined,
+                searchPhrase: filter.keyword ? filter.keyword : undefined,
                 sort: uiGridHelper.getSortExpression($scope),
                 skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
                 take: $scope.pageSettings.itemsPerPageCount

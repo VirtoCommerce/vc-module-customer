@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using VirtoCommerce.Domain.Customer.Model;
+using VirtoCommerce.Domain.Customer.Model.Search;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Platform.Core.ExportImport;
 
@@ -28,15 +29,15 @@ namespace VirtoCommerce.CustomerModule.Web.ExportImport
             var progressInfo = new ExportImportProgressInfo { Description = "loading data..." };
             progressCallback(progressInfo);
 
-            using (StreamWriter sw = new StreamWriter(backupStream, Encoding.UTF8))
-            using (JsonTextWriter writer = new JsonTextWriter(sw))
+            using (var sw = new StreamWriter(backupStream, Encoding.UTF8))
+            using (var writer = new JsonTextWriter(sw))
             {
                 writer.WriteStartObject();
 
-                progressInfo.Description = string.Format("Members exporting...");
+                progressInfo.Description = "Members exporting...";
                 progressCallback(progressInfo);
 
-                var memberCount = _memberSearchService.SearchMembers(new MembersSearchCriteria { Take = 0, DeepSearch = true }).TotalCount;
+                var memberCount = _memberSearchService.SearchMembers(new MemberSearchCriteria { Take = 0, DeepSearch = true }).TotalCount;
                 writer.WritePropertyName("MembersTotalCount");
                 writer.WriteValue(memberCount);
 
@@ -44,7 +45,7 @@ namespace VirtoCommerce.CustomerModule.Web.ExportImport
                 writer.WriteStartArray();
                 for (var i = 0; i < memberCount; i += _batchSize)
                 {
-                    var searchResponse = _memberSearchService.SearchMembers(new MembersSearchCriteria { Skip = i, Take = _batchSize, DeepSearch = true });
+                    var searchResponse = _memberSearchService.SearchMembers(new MemberSearchCriteria { Skip = i, Take = _batchSize, DeepSearch = true });
                     foreach (var member in searchResponse.Results)
                     {
                         _serializer.Serialize(writer, member);
@@ -64,10 +65,9 @@ namespace VirtoCommerce.CustomerModule.Web.ExportImport
         {
             var progressInfo = new ExportImportProgressInfo();
             var membersTotalCount = 0;
-            var serializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
 
-            using (StreamReader streamReader = new StreamReader(backupStream))
-            using (JsonTextReader reader = new JsonTextReader(streamReader))
+            using (var streamReader = new StreamReader(backupStream))
+            using (var reader = new JsonTextReader(streamReader))
             {
                 while (reader.Read())
                 {
@@ -100,6 +100,7 @@ namespace VirtoCommerce.CustomerModule.Web.ExportImport
                                 {
                                     _memberService.SaveChanges(members.ToArray());
                                     members.Clear();
+
                                     if (membersTotalCount > 0)
                                     {
                                         progressInfo.Description = $"{ membersCount } of { membersTotalCount } members imported";
@@ -108,6 +109,7 @@ namespace VirtoCommerce.CustomerModule.Web.ExportImport
                                     {
                                         progressInfo.Description = $"{ membersCount } members imported";
                                     }
+
                                     progressCallback(progressInfo);
                                 }
                             }

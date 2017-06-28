@@ -5,6 +5,7 @@ using System.Web.Http.Description;
 using VirtoCommerce.CustomerModule.Web.Model;
 using VirtoCommerce.CustomerModule.Web.Security;
 using VirtoCommerce.Domain.Commerce.Model.Search;
+using VirtoCommerce.Domain.Customer.Model.Search;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Platform.Core.Web.Security;
 using coreModel = VirtoCommerce.Domain.Customer.Model;
@@ -33,7 +34,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ResponseType(typeof(coreModel.Organization[]))]
         public IHttpActionResult ListOrganizations()
         {
-            var searchCriteria = new coreModel.MembersSearchCriteria
+            var searchCriteria = new MemberSearchCriteria
             {
                 MemberType = typeof(coreModel.Organization).Name,
                 DeepSearch = true,
@@ -52,7 +53,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpPost]
         [Route("members/search")]
         [ResponseType(typeof(GenericSearchResult<coreModel.Member>))]
-        public IHttpActionResult Search(coreModel.MembersSearchCriteria criteria)
+        public IHttpActionResult Search(MemberSearchCriteria criteria)
         {
             var result = _memberSearchService.SearchMembers(criteria);
             return Ok(result);
@@ -84,7 +85,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             var retVal = _memberService.GetByIds(ids);
             if (retVal != null)
             {
-                 // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
+                // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
                 return Ok(retVal.Cast<dynamic>().ToArray());
             }
             return Ok();
@@ -284,19 +285,22 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpPost]
         [Route("vendors/search")]
         [ResponseType(typeof(VendorSearchResult))]
-        public IHttpActionResult SearchVendors(coreModel.MembersSearchCriteria criteria)
+        public IHttpActionResult SearchVendors(MemberSearchCriteria criteria)
         {
             if (criteria == null)
             {
-                criteria = new Domain.Customer.Model.MembersSearchCriteria();               
+                criteria = new MemberSearchCriteria();
             }
+
             criteria.MemberType = typeof(coreModel.Vendor).Name;
-            var result = _memberSearchService.SearchMembers(criteria);
-            var retVal = new VendorSearchResult
+            var searchResult = _memberSearchService.SearchMembers(criteria);
+
+            var result = new VendorSearchResult
             {
-                TotalCount = result.TotalCount,
-                Vendors = result.Results.OfType<coreModel.Vendor>().ToList()
+                TotalCount = searchResult.TotalCount,
+                Vendors = searchResult.Results.OfType<coreModel.Vendor>().ToList()
             };
+
             return Ok(result);
         }
 

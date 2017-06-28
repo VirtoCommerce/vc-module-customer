@@ -81,29 +81,29 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
         protected virtual void IndexContact(IndexDocument document, Contact contact)
         {
             document.AddFilterableAndSearchableValue("Salutation", contact.Salutation);
-
             document.AddFilterableAndSearchableValue("FullName", contact.FullName);
             document.AddFilterableAndSearchableValue("FirstName", contact.FirstName);
             document.AddFilterableAndSearchableValue("MiddleName", contact.MiddleName);
             document.AddFilterableAndSearchableValue("LastName", contact.LastName);
             document.AddFilterableValue("BirthDate", contact.BirthDate);
-            document.AddFilterableValues("Organizations", contact.Organizations);
+            AddParentOrganizations(document, contact.Organizations);
 
-            document.AddFilterableValue("TaxpayerId", contact.TaxpayerId);
+            document.AddFilterableValue("TaxpayerId", contact.TaxPayerId);
             document.AddFilterableValue("PreferredDelivery", contact.PreferredDelivery);
             document.AddFilterableValue("PreferredCommunication", contact.PreferredCommunication);
         }
 
         protected virtual void IndexEmployee(IndexDocument document, Employee employee)
         {
+            document.AddFilterableAndSearchableValue("Salutation", employee.Salutation);
             document.AddFilterableAndSearchableValue("FullName", employee.FullName);
             document.AddFilterableAndSearchableValue("FirstName", employee.FirstName);
             document.AddFilterableAndSearchableValue("MiddleName", employee.MiddleName);
             document.AddFilterableAndSearchableValue("LastName", employee.LastName);
             document.AddFilterableValue("BirthDate", employee.BirthDate);
-            document.AddFilterableValues("Organizations", employee.Organizations);
+            AddParentOrganizations(document, employee.Organizations);
 
-            document.AddFilterableValue("EmployeeType", employee.Type);
+            document.AddFilterableValue("EmployeeType", employee.EmployeeType);
             document.AddFilterableValue("IsActive", employee.IsActive);
         }
 
@@ -112,13 +112,21 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             document.AddSearchableValue(organization.Description);
             document.AddFilterableValue("BusinessCategory", organization.BusinessCategory);
             document.AddFilterableValue("OwnerId", organization.OwnerId);
-            document.AddFilterableValue("ParentId", organization.ParentId);
+            AddParentOrganizations(document, new[] { organization.ParentId });
         }
 
         protected virtual void IndexVendor(IndexDocument document, Vendor vendor)
         {
             document.AddSearchableValue(vendor.Description);
             document.AddFilterableValue("GroupName", vendor.GroupName);
+        }
+
+        protected virtual void AddParentOrganizations(IndexDocument document, ICollection<string> values)
+        {
+            var nonEmptyValues = values?.Where(v => !string.IsNullOrEmpty(v)).ToArray();
+
+            document.AddFilterableValues("ParentOrganizations", nonEmptyValues);
+            document.AddFilterableValue("HasParentOrganizations", nonEmptyValues?.Any() ?? false);
         }
     }
 }
