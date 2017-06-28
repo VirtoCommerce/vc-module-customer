@@ -9,7 +9,7 @@
                     "first-name": "First name",
                     "middle-name": "Middle name",
                     "last-name": "Last name",
-                    "groups":  "User groups",
+                    "groups": "User groups",
                     "full-name": "Full name",
                     "birthday": "Birthday",
                     "salutation": "Salutation",
@@ -146,6 +146,12 @@
                 },
                 "placeholders": {
                     "phone": "Enter phone number"
+                }
+            },
+            "customer-accounts-list": {
+                "commands": {
+                    "link": "Link account",
+                    "unlink": "Unlink account"
                 }
             }
         },
