@@ -148,11 +148,15 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
             var retVal = query.ToArray();
 
-            var notes = Notes.Where(x => ids.Contains(x.MemberId)).ToArray();
-            var emails = Emails.Where(x => ids.Contains(x.MemberId)).ToArray();
-            var addresses = Addresses.Where(x => ids.Contains(x.MemberId)).ToArray();
-            var phones = Phones.Where(x => ids.Contains(x.MemberId)).ToArray();
-            var groups = Groups.Where(x => ids.Contains(x.MemberId)).ToArray();
+            ids = retVal.Select(x => x.Id).ToArray();
+            if (!ids.IsNullOrEmpty())
+            {
+                var notes = Notes.Where(x => ids.Contains(x.MemberId)).ToArray();
+                var emails = Emails.Where(x => ids.Contains(x.MemberId)).ToArray();
+                var addresses = Addresses.Where(x => ids.Contains(x.MemberId)).ToArray();
+                var phones = Phones.Where(x => ids.Contains(x.MemberId)).ToArray();
+                var groups = Groups.Where(x => ids.Contains(x.MemberId)).ToArray();
+            }
 
             return retVal;
         }
