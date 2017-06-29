@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using VirtoCommerce.Domain.Customer.Model;
-using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CustomerModule.Web.JsonConverters
@@ -12,13 +11,8 @@ namespace VirtoCommerce.CustomerModule.Web.JsonConverters
     /// </summary>
     public class PolymorphicMemberJsonConverter : JsonConverter
     {
-
-        public PolymorphicMemberJsonConverter()
-        {
-        }
-
-        public override bool CanWrite { get { return false; } }
-        public override bool CanRead { get { return true; } }
+        public override bool CanWrite => false;
+        public override bool CanRead => true;
 
         public override bool CanConvert(Type objectType)
         {

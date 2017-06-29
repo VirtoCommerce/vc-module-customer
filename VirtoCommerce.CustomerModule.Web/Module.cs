@@ -3,15 +3,16 @@ using System.Web.Http;
 using Microsoft.Practices.Unity;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.Repositories;
+using VirtoCommerce.CustomerModule.Data.Search;
+using VirtoCommerce.CustomerModule.Data.Search.Indexing;
 using VirtoCommerce.CustomerModule.Data.Services;
 using VirtoCommerce.CustomerModule.Web.ExportImport;
 using VirtoCommerce.CustomerModule.Web.JsonConverters;
-using VirtoCommerce.Domain.Commerce.Services;
 using VirtoCommerce.Domain.Customer.Events;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
+using VirtoCommerce.Domain.Search;
 using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.Modularity;
@@ -19,6 +20,7 @@ using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
+using VirtoCommerce.Platform.Data.Repositories;
 
 namespace VirtoCommerce.CustomerModule.Web
 {
@@ -46,19 +48,28 @@ namespace VirtoCommerce.CustomerModule.Web
 
         public override void Initialize()
         {
+            base.Initialize();
+
             //Member changing event publisher.
             _container.RegisterType<IEventPublisher<MemberChangingEvent>, EventPublisher<MemberChangingEvent>>();
 
-            Func<CustomerRepositoryImpl> customerRepositoryFactory = () => new CustomerRepositoryImpl(_connectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>());
+            Func<CustomerRepositoryImpl> customerRepositoryFactory = () => new CustomerRepositoryImpl(_connectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>(),
+                new ChangeLogInterceptor(_container.Resolve<Func<IPlatformRepository>>(), ChangeLogPolicy.Cumulative, new[] { nameof(MemberDataEntity) }, _container.Resolve<IUserNameResolver>()));
+
             _container.RegisterInstance<Func<ICustomerRepository>>(customerRepositoryFactory);
             _container.RegisterInstance<Func<IMemberRepository>>(customerRepositoryFactory);
 
             _container.RegisterType<IMemberService, CommerceMembersServiceImpl>();
-            _container.RegisterType<IMemberSearchService, CommerceMembersServiceImpl>();
+
+            // Indexed search
+            _container.RegisterType<ISearchRequestBuilder, MemberSearchRequestBuilder>(nameof(MemberSearchRequestBuilder));
+            _container.RegisterType<IMemberSearchService, MemberSearchServiceDecorator>();
         }
 
         public override void PostInitialize()
-        {          
+        {
+            base.PostInitialize();
+
             AbstractTypeFactory<Member>.RegisterType<Organization>().MapToType<OrganizationDataEntity>();
             AbstractTypeFactory<Member>.RegisterType<Contact>().MapToType<ContactDataEntity>();
             AbstractTypeFactory<Member>.RegisterType<Vendor>().MapToType<VendorDataEntity>();
@@ -73,7 +84,18 @@ namespace VirtoCommerce.CustomerModule.Web
             var httpConfiguration = _container.Resolve<HttpConfiguration>();
             httpConfiguration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new PolymorphicMemberJsonConverter());
 
-            base.PostInitialize();
+            // Indexing configuration
+            var memberIndexingConfiguration = new IndexDocumentConfiguration
+            {
+                DocumentType = KnownDocumentTypes.Member,
+                DocumentSource = new IndexDocumentSource
+                {
+                    ChangesProvider = _container.Resolve<MemberDocumentChangesProvider>(),
+                    DocumentBuilder = _container.Resolve<MemberDocumentBuilder>(),
+                },
+            };
+
+            _container.RegisterInstance(memberIndexingConfiguration.DocumentType, memberIndexingConfiguration);
         }
 
         #endregion
@@ -97,7 +119,7 @@ namespace VirtoCommerce.CustomerModule.Web
             get
             {
                 var settingManager = _container.Resolve<ISettingsManager>();
-                return settingManager.GetValue("Customer.ExportImport.Description", String.Empty);
+                return settingManager.GetValue("Customer.ExportImport.Description", string.Empty);
             }
         }
         #endregion

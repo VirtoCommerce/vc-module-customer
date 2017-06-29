@@ -16,7 +16,7 @@ namespace VirtoCommerce.CustomerModule.Test
         {
             var controller = GetContactController();
             var result = controller.Search(new MembersSearchCriteria()) as OkNegotiatedContentResult<GenericSearchResult<Member>>;
-            Assert.NotNull(result.Content);
+            Assert.NotNull(result?.Content);
         }
 
         [Fact]
@@ -33,7 +33,7 @@ namespace VirtoCommerce.CustomerModule.Test
 
             };
             var result = controller.CreateMember(org) as OkNegotiatedContentResult<Organization>;
-            Assert.NotNull(result.Content);
+            Assert.NotNull(result?.Content);
         }
 
         [Fact]
@@ -84,7 +84,7 @@ namespace VirtoCommerce.CustomerModule.Test
                 DefaultLanguage = "ru"
             };
             var result = controller.CreateContact(contact) as OkNegotiatedContentResult<Contact>;
-            Assert.NotNull(result.Content);
+            Assert.NotNull(result?.Content);
         }
 
         [Fact]
