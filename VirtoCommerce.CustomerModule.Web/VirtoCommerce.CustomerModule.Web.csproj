@@ -128,9 +128,10 @@
     <Content Include="module.manifest">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="packages.config">
+    <None Include="packages.config">
       <SubType>Designer</SubType>
-    </Content>
+    </None>
+    <None Include="module.ignore" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
