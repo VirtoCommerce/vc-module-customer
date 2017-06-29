@@ -63,7 +63,6 @@ namespace VirtoCommerce.CustomerModule.Web
 
             // Indexed search
             _container.RegisterType<ISearchRequestBuilder, MemberSearchRequestBuilder>(nameof(MemberSearchRequestBuilder));
-            _container.RegisterType<IMemberIndexedSearchService, MemberIndexedSearchService>();
             _container.RegisterType<IMemberSearchService, MemberSearchServiceDecorator>();
         }
 

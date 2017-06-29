@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using VirtoCommerce.CustomerModule.Data.Search;
 using VirtoCommerce.Domain.Commerce.Model.Search;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
@@ -8,9 +9,9 @@ namespace VirtoCommerce.CustomerModule.Data.Services
     public class MemberSearchServiceDecorator : IMemberSearchService
     {
         private readonly CommerceMembersServiceImpl _memberSearchService;
-        private readonly IMemberIndexedSearchService _memberIndexedSearchService;
+        private readonly MemberIndexedSearchService _memberIndexedSearchService;
 
-        public MemberSearchServiceDecorator(CommerceMembersServiceImpl memberSearchService, IMemberIndexedSearchService memberIndexedSearchService)
+        public MemberSearchServiceDecorator(CommerceMembersServiceImpl memberSearchService, MemberIndexedSearchService memberIndexedSearchService)
         {
             _memberSearchService = memberSearchService;
             _memberIndexedSearchService = memberIndexedSearchService;
