@@ -29,7 +29,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
                         x._memberTypeIcon = memberTypeDefinition.icon;
                     }
                 });
-                $scope.listEntries = data.results;
+                $scope.listEntries = data.results ? data.results : [];
 
                 //Set navigation breadcrumbs
                 setBreadcrumbs();
@@ -103,6 +103,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
         if (foundTemplate) {
             var newBlade = angular.copy(foundTemplate.detailBlade);
             newBlade.currentEntity = listItem;
+            newBlade.currentEntityId = listItem.id;
             newBlade.isNew = isNew;
             bladeNavigationService.showBlade(newBlade, blade);
         } else {
