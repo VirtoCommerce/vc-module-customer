@@ -4,7 +4,6 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using VirtoCommerce.Domain.Customer.Model;
-using VirtoCommerce.Domain.Customer.Model.Search;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Platform.Core.ExportImport;
 
@@ -37,7 +36,7 @@ namespace VirtoCommerce.CustomerModule.Web.ExportImport
                 progressInfo.Description = "Members exporting...";
                 progressCallback(progressInfo);
 
-                var memberCount = _memberSearchService.SearchMembers(new MemberSearchCriteria { Take = 0, DeepSearch = true }).TotalCount;
+                var memberCount = _memberSearchService.SearchMembers(new MembersSearchCriteria { Take = 0, DeepSearch = true }).TotalCount;
                 writer.WritePropertyName("MembersTotalCount");
                 writer.WriteValue(memberCount);
 
@@ -45,7 +44,7 @@ namespace VirtoCommerce.CustomerModule.Web.ExportImport
                 writer.WriteStartArray();
                 for (var i = 0; i < memberCount; i += _batchSize)
                 {
-                    var searchResponse = _memberSearchService.SearchMembers(new MemberSearchCriteria { Skip = i, Take = _batchSize, DeepSearch = true });
+                    var searchResponse = _memberSearchService.SearchMembers(new MembersSearchCriteria { Skip = i, Take = _batchSize, DeepSearch = true });
                     foreach (var member in searchResponse.Results)
                     {
                         _serializer.Serialize(writer, member);

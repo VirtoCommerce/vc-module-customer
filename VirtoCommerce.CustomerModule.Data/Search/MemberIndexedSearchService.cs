@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using VirtoCommerce.Domain.Customer.Model;
-using VirtoCommerce.Domain.Customer.Model.Search;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Domain.Search;
 
 namespace VirtoCommerce.CustomerModule.Data.Search
 {
-    public class MemberIndexedSearchService : IndexedSearchServiceBase<Member, MemberSearchCriteria>, IMemberIndexedSearchService
+    public class MemberIndexedSearchService : IndexedSearchServiceBase<Member, MembersSearchCriteria>, IMemberIndexedSearchService
     {
         private readonly IMemberService _memberService;
 
@@ -17,7 +16,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search
             _memberService = memberService;
         }
 
-        protected override IList<Member> GetItemsByIds(IList<string> itemIds, MemberSearchCriteria criteria)
+        protected override IList<Member> GetItemsByIds(IList<string> itemIds, MembersSearchCriteria criteria)
         {
             var result = _memberService.GetByIds(itemIds.ToArray(), criteria.ResponseGroup, criteria.MemberTypes);
             return result;

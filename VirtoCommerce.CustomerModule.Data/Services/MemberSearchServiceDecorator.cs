@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using VirtoCommerce.Domain.Commerce.Model.Search;
 using VirtoCommerce.Domain.Customer.Model;
-using VirtoCommerce.Domain.Customer.Model.Search;
 using VirtoCommerce.Domain.Customer.Services;
 
 namespace VirtoCommerce.CustomerModule.Data.Services
@@ -17,7 +16,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             _memberIndexedSearchService = memberIndexedSearchService;
         }
 
-        public GenericSearchResult<Member> SearchMembers(MemberSearchCriteria criteria)
+        public GenericSearchResult<Member> SearchMembers(MembersSearchCriteria criteria)
         {
             var result = !string.IsNullOrEmpty(criteria?.SearchPhrase)
                 ? SearchIndex(criteria)
@@ -27,12 +26,12 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         }
 
 
-        protected virtual GenericSearchResult<Member> SearchIndex(MemberSearchCriteria criteria)
+        protected virtual GenericSearchResult<Member> SearchIndex(MembersSearchCriteria criteria)
         {
             return Task.Run(() => SearchIndexAsync(criteria)).GetAwaiter().GetResult();
         }
 
-        protected virtual Task<GenericSearchResult<Member>> SearchIndexAsync(MemberSearchCriteria criteria)
+        protected virtual Task<GenericSearchResult<Member>> SearchIndexAsync(MembersSearchCriteria criteria)
         {
             return _memberIndexedSearchService.SearchAsync(criteria);
         }

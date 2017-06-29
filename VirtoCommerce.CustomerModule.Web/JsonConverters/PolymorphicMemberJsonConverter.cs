@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using VirtoCommerce.Domain.Customer.Model;
-using VirtoCommerce.Domain.Customer.Model.Search;
 using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CustomerModule.Web.JsonConverters
@@ -17,7 +16,7 @@ namespace VirtoCommerce.CustomerModule.Web.JsonConverters
 
         public override bool CanConvert(Type objectType)
         {
-            return typeof(Member).IsAssignableFrom(objectType) || objectType == typeof(MemberSearchCriteria);
+            return typeof(Member).IsAssignableFrom(objectType) || objectType == typeof(MembersSearchCriteria);
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -39,9 +38,9 @@ namespace VirtoCommerce.CustomerModule.Web.JsonConverters
                 }
 
             }
-            else if (objectType == typeof(MemberSearchCriteria))
+            else if (objectType == typeof(MembersSearchCriteria))
             {
-                retVal = AbstractTypeFactory<MemberSearchCriteria>.TryCreateInstance();
+                retVal = AbstractTypeFactory<MembersSearchCriteria>.TryCreateInstance();
             }
             serializer.Populate(obj.CreateReader(), retVal);
             return retVal;

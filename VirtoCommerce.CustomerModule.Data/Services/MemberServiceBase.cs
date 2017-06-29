@@ -9,7 +9,6 @@ using VirtoCommerce.Domain.Commerce.Model.Search;
 using VirtoCommerce.Domain.Commerce.Services;
 using VirtoCommerce.Domain.Customer.Events;
 using VirtoCommerce.Domain.Customer.Model;
-using VirtoCommerce.Domain.Customer.Model.Search;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
@@ -155,7 +154,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public virtual GenericSearchResult<Member> SearchMembers(MemberSearchCriteria criteria)
+        public virtual GenericSearchResult<Member> SearchMembers(MembersSearchCriteria criteria)
         {
             var retVal = new GenericSearchResult<Member>();
 
@@ -178,7 +177,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                     //TODO: DeepSearch in specified member
                     query = query.Where(m => m.MemberRelations.Any(r => r.AncestorId == criteria.MemberId));
                 }
-                else if (criteria.DeepSearch == false)
+                else if (!criteria.DeepSearch)
                 {
                     query = query.Where(m => !m.MemberRelations.Any());
                 }
@@ -209,7 +208,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        protected virtual Expression<Func<MemberDataEntity, bool>> GetQueryPredicate(MemberSearchCriteria criteria)
+        protected virtual Expression<Func<MemberDataEntity, bool>> GetQueryPredicate(MembersSearchCriteria criteria)
         {
             if (!string.IsNullOrEmpty(criteria.SearchPhrase))
             {

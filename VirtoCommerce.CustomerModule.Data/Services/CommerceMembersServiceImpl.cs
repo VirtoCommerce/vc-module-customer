@@ -6,7 +6,6 @@ using VirtoCommerce.CustomerModule.Data.Repositories;
 using VirtoCommerce.Domain.Commerce.Services;
 using VirtoCommerce.Domain.Customer.Events;
 using VirtoCommerce.Domain.Customer.Model;
-using VirtoCommerce.Domain.Customer.Model.Search;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Events;
@@ -47,7 +46,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         }
         #endregion
 
-        protected override Expression<Func<MemberDataEntity, bool>> GetQueryPredicate(MemberSearchCriteria criteria)
+        protected override Expression<Func<MemberDataEntity, bool>> GetQueryPredicate(MembersSearchCriteria criteria)
         {
             var retVal = base.GetQueryPredicate(criteria);
 

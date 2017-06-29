@@ -2,7 +2,7 @@
 using System.Linq;
 using VirtoCommerce.CustomerModule.Data.Search.Indexing;
 using VirtoCommerce.Domain.Commerce.Model.Search;
-using VirtoCommerce.Domain.Customer.Model.Search;
+using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Search;
 using VirtoCommerce.Platform.Core.Common;
 
@@ -23,7 +23,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search
         {
             SearchRequest request = null;
 
-            var categorySearchCriteria = criteria as MemberSearchCriteria;
+            var categorySearchCriteria = criteria as MembersSearchCriteria;
             if (categorySearchCriteria != null)
             {
                 // Getting filters modifies search phrase
@@ -44,7 +44,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search
         }
 
 
-        protected virtual IList<IFilter> GetFilters(MemberSearchCriteria criteria)
+        protected virtual IList<IFilter> GetFilters(MembersSearchCriteria criteria)
         {
             var result = new List<IFilter>();
 
@@ -75,7 +75,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search
                 result.Add(CreateTermFilter("ParentOrganizations", criteria.MemberId));
                 // TODO: criteria.DeepSearch requires something like outlines in the catalog module
             }
-            else if (criteria.DeepSearch == false)
+            else if (!criteria.DeepSearch)
             {
                 result.Add(CreateTermFilter("HasParentOrganizations", "false"));
             }
@@ -83,7 +83,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search
             return result;
         }
 
-        protected virtual IList<SortingField> GetSorting(MemberSearchCriteria criteria)
+        protected virtual IList<SortingField> GetSorting(MembersSearchCriteria criteria)
         {
             var result = new List<SortingField>();
 
