@@ -97,7 +97,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
         }
 
 
-        #region IFoundationCustomerRepository Members
+        #region IMemberRepository Members
 
 
         public IQueryable<AddressDataEntity> Addresses
@@ -139,18 +139,17 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
         public virtual MemberDataEntity[] GetMembersByIds(string[] ids,  string responseGroup = null, string[] memberTypes = null)
         {
-            var query = Members.Include(x => x.MemberRelations.Select(y => y.Ancestor))
-                                .Where(x => ids.Contains(x.Id));
+            var query = Members.Where(x => ids.Contains(x.Id));
+           
             if(!memberTypes.IsNullOrEmpty())
             {
                 query = query.Where(x => memberTypes.Contains(x.MemberType));
             }
-
             var retVal = query.ToArray();
-
             ids = retVal.Select(x => x.Id).ToArray();
             if (!ids.IsNullOrEmpty())
             {
+                var relations = MemberRelations.Include(x => x.Ancestor).Where(x => ids.Contains(x.DescendantId)).ToArray();
                 var notes = Notes.Where(x => ids.Contains(x.MemberId)).ToArray();
                 var emails = Emails.Where(x => ids.Contains(x.MemberId)).ToArray();
                 var addresses = Addresses.Where(x => ids.Contains(x.MemberId)).ToArray();

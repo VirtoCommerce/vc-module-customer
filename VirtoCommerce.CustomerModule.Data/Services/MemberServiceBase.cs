@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using VirtoCommerce.CustomerModule.Data.Extensions;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.Repositories;
 using VirtoCommerce.Domain.Commerce.Model;
@@ -50,6 +51,8 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             var retVal = new List<Member>();
             using (var repository = RepositoryFactory())
             {
+                repository.DisableChangesTracking();
+
                 var dataMembers = repository.GetMembersByIds(memberIds, responseGroup, memberTypes);
                 foreach (var dataMember in dataMembers)
                 {
@@ -160,6 +163,8 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
             using (var repository = RepositoryFactory())
             {
+                repository.DisableChangesTracking();
+
                 var query = LinqKit.Extensions.AsExpandable(repository.Members);
 
                 if (!criteria.MemberTypes.IsNullOrEmpty())

@@ -59,7 +59,8 @@ angular.module(moduleName, [])
       };
       var dynamicPropertyWidget = {
           controller: 'platformWebApp.dynamicPropertyWidgetController',
-          template: '$(Platform)/Scripts/app/dynamicProperties/widgets/dynamicPropertyWidget.tpl.html'
+          template: '$(Platform)/Scripts/app/dynamicProperties/widgets/dynamicPropertyWidget.tpl.html',
+          isVisible: function (blade) { return !blade.isNew; }
       }
       var vendorSeoWidget = {
           controller: 'virtoCommerce.coreModule.seo.seoWidgetController',
@@ -68,7 +69,8 @@ angular.module(moduleName, [])
           getDefaultContainerId: function (blade) { return undefined; },
           getLanguages: function (blade) {
               return settings.getValues({ id: 'VirtoCommerce.Core.General.Languages' });
-          }
+          },
+          isVisible: function (blade) { return !blade.isNew; }
       };
 
       // register WIDGETS
@@ -76,7 +78,8 @@ angular.module(moduleName, [])
           documentType: 'Member',
           controller: 'virtoCommerce.coreModule.searchIndex.indexWidgetController',
           // size: [3, 1],
-          template: 'Modules/$(VirtoCommerce.Core)/Scripts/SearchIndex/widgets/index-widget.tpl.html'
+          template: 'Modules/$(VirtoCommerce.Core)/Scripts/SearchIndex/widgets/index-widget.tpl.html',
+          isVisible: function (blade) { return !blade.isNew; }
       };
 
      
