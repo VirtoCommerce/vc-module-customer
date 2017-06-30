@@ -61,7 +61,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search
 
         protected virtual ICollection<Member> ConvertDocuments(IList<SearchDocument> documents, MembersSearchCriteria criteria)
         {
-            ICollection<Member> result = null;
+            var result = new List<Member>();
 
             if (documents?.Any() == true)
             {
@@ -70,10 +70,12 @@ namespace VirtoCommerce.CustomerModule.Data.Search
                 var itemsMap = items.ToDictionary(m => m.Id, m => m);
 
                 // Preserve documents order
-                result = documents
+                var members = documents
                     .Select(doc => itemsMap[doc.Id.ToString()])
                     //.Where(m => m != null)
                     .ToArray();
+
+                result.AddRange(members);
             }
 
             return result;
