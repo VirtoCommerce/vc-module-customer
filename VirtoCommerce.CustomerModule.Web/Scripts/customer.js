@@ -59,7 +59,8 @@ angular.module(moduleName, [])
       };
       var dynamicPropertyWidget = {
           controller: 'platformWebApp.dynamicPropertyWidgetController',
-          template: '$(Platform)/Scripts/app/dynamicProperties/widgets/dynamicPropertyWidget.tpl.html'
+          template: '$(Platform)/Scripts/app/dynamicProperties/widgets/dynamicPropertyWidget.tpl.html',
+          isVisible: function (blade) { return !blade.isNew; }
       }
       var vendorSeoWidget = {
           controller: 'virtoCommerce.coreModule.seo.seoWidgetController',
@@ -68,8 +69,20 @@ angular.module(moduleName, [])
           getDefaultContainerId: function (blade) { return undefined; },
           getLanguages: function (blade) {
               return settings.getValues({ id: 'VirtoCommerce.Core.General.Languages' });
-          }
+          },
+          isVisible: function (blade) { return !blade.isNew; }
       };
+
+      // register WIDGETS
+      var indexWidget = {
+          documentType: 'Member',
+          controller: 'virtoCommerce.coreModule.searchIndex.indexWidgetController',
+          // size: [3, 1],
+          template: 'Modules/$(VirtoCommerce.Core)/Scripts/SearchIndex/widgets/index-widget.tpl.html',
+          isVisible: function (blade) { return !blade.isNew; }
+      };
+
+     
 
       //Register widgets in customer details
       widgetService.registerWidget(accountsWidget, 'customerDetail1');
@@ -77,12 +90,14 @@ angular.module(moduleName, [])
       widgetService.registerWidget(emailsWidget, 'customerDetail1');
       widgetService.registerWidget(phonesWidget, 'customerDetail2');
       widgetService.registerWidget(dynamicPropertyWidget, 'customerDetail2');
+      widgetService.registerWidget(indexWidget, 'customerDetail2');
 
       //Register widgets in organization details
       widgetService.registerWidget(addressesWidget, 'organizationDetail1');
       widgetService.registerWidget(emailsWidget, 'organizationDetail1');
       widgetService.registerWidget(phonesWidget, 'organizationDetail1');
       widgetService.registerWidget(dynamicPropertyWidget, 'organizationDetail2');
+      widgetService.registerWidget(indexWidget, 'organizationDetail2');
 
       //Register widgets in employee details
       widgetService.registerWidget(accountsWidget, 'employeeDetail1');
@@ -90,6 +105,7 @@ angular.module(moduleName, [])
       widgetService.registerWidget(emailsWidget, 'employeeDetail1');
       widgetService.registerWidget(phonesWidget, 'employeeDetail2');
       widgetService.registerWidget(dynamicPropertyWidget, 'employeeDetail2');
+      widgetService.registerWidget(indexWidget, 'employeeDetail2');
 
       //Register widgets in vendor details
       widgetService.registerWidget(addressesWidget, 'vendorDetail1');
@@ -97,6 +113,7 @@ angular.module(moduleName, [])
       widgetService.registerWidget(phonesWidget, 'vendorDetail1');
       widgetService.registerWidget(dynamicPropertyWidget, 'vendorDetail2');
       widgetService.registerWidget(vendorSeoWidget, 'vendorDetail2');
+      widgetService.registerWidget(indexWidget, 'vendorDetail2');
 
       // register member types
       memberTypesResolverService.registerType({

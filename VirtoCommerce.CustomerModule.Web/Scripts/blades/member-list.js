@@ -13,7 +13,8 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
             {
                 memberType: blade.memberType,
                 memberId: blade.currentEntity.id,
-                keyword: filter.keyword ? filter.keyword : undefined,
+                searchPhrase: filter.keyword ? filter.keyword : undefined,
+                deepSearch: filter.keyword ? true : false,
                 sort: uiGridHelper.getSortExpression($scope),
                 skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
                 take: $scope.pageSettings.itemsPerPageCount
@@ -28,7 +29,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
                         x._memberTypeIcon = memberTypeDefinition.icon;
                     }
                 });
-                $scope.listEntries = data.results;
+                $scope.listEntries = data.results ? data.results : [];
 
                 //Set navigation breadcrumbs
                 setBreadcrumbs();
@@ -102,6 +103,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
         if (foundTemplate) {
             var newBlade = angular.copy(foundTemplate.detailBlade);
             newBlade.currentEntity = listItem;
+            newBlade.currentEntityId = listItem.id;
             newBlade.isNew = isNew;
             bladeNavigationService.showBlade(newBlade, blade);
         } else {

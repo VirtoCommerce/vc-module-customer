@@ -5,9 +5,9 @@ using System.Web.Http.Description;
 using VirtoCommerce.CustomerModule.Web.Model;
 using VirtoCommerce.CustomerModule.Web.Security;
 using VirtoCommerce.Domain.Commerce.Model.Search;
+using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Platform.Core.Web.Security;
-using coreModel = VirtoCommerce.Domain.Customer.Model;
 
 namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
 {
@@ -30,18 +30,18 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <remarks>Get array of all organizations.</remarks>
         [HttpGet]
         [Route("members/organizations")]
-        [ResponseType(typeof(coreModel.Organization[]))]
+        [ResponseType(typeof(Organization[]))]
         public IHttpActionResult ListOrganizations()
         {
-            var searchCriteria = new coreModel.MembersSearchCriteria
+            var searchCriteria = new MembersSearchCriteria
             {
-                MemberType = typeof(coreModel.Organization).Name,
+                MemberType = typeof(Organization).Name,
                 DeepSearch = true,
                 Take = int.MaxValue
             };
             var result = _memberSearchService.SearchMembers(searchCriteria);
 
-            return Ok(result.Results.OfType<coreModel.Organization>());
+            return Ok(result.Results.OfType<Organization>());
         }
 
         /// <summary>
@@ -51,8 +51,8 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
         [HttpPost]
         [Route("members/search")]
-        [ResponseType(typeof(GenericSearchResult<coreModel.Member>))]
-        public IHttpActionResult Search(coreModel.MembersSearchCriteria criteria)
+        [ResponseType(typeof(GenericSearchResult<Member>))]
+        public IHttpActionResult Search(MembersSearchCriteria criteria)
         {
             var result = _memberSearchService.SearchMembers(criteria);
             return Ok(result);
@@ -64,7 +64,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="id">member id</param>
         [HttpGet]
         [Route("members/{id}")]
-        [ResponseType(typeof(coreModel.Member))]
+        [ResponseType(typeof(Member))]
         public IHttpActionResult GetMemberById(string id)
         {
             var retVal = _memberService.GetByIds(new[] { id }).FirstOrDefault();
@@ -78,13 +78,13 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
 
         [HttpGet]
         [Route("members")]
-        [ResponseType(typeof(coreModel.Member))]
+        [ResponseType(typeof(Member))]
         public IHttpActionResult GetMembersByIds([FromUri] string[] ids)
         {
             var retVal = _memberService.GetByIds(ids);
             if (retVal != null)
             {
-                 // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
+                // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
                 return Ok(retVal.Cast<dynamic>().ToArray());
             }
             return Ok();
@@ -97,9 +97,9 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <returns></returns>
         [HttpPost]
         [Route("members")]
-        [ResponseType(typeof(coreModel.Member))]
+        [ResponseType(typeof(Member))]
         [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
-        public IHttpActionResult CreateMember([FromBody] coreModel.Member member)
+        public IHttpActionResult CreateMember([FromBody] Member member)
         {
             _memberService.SaveChanges(new[] { member });
             var retVal = _memberService.GetByIds(new[] { member.Id }).FirstOrDefault();
@@ -116,7 +116,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [Route("members")]
         [ResponseType(typeof(void))]
         [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
-        public IHttpActionResult UpdateMember(coreModel.Member member)
+        public IHttpActionResult UpdateMember(Member member)
         {
             _memberService.SaveChanges(new[] { member });
             return StatusCode(HttpStatusCode.NoContent);
@@ -144,9 +144,9 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// </summary>
         [HttpPost]
         [Route("contacts")]
-        [ResponseType(typeof(coreModel.Contact))]
+        [ResponseType(typeof(Contact))]
         [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
-        public IHttpActionResult CreateContact(coreModel.Contact contact)
+        public IHttpActionResult CreateContact(Contact contact)
         {
             return CreateMember(contact);
         }
@@ -158,7 +158,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [Route("contacts")]
         [ResponseType(typeof(void))]
         [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
-        public IHttpActionResult UpdateContact(coreModel.Contact contact)
+        public IHttpActionResult UpdateContact(Contact contact)
         {
             return UpdateMember(contact);
         }
@@ -168,9 +168,9 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// </summary>
         [HttpPost]
         [Route("organizations")]
-        [ResponseType(typeof(coreModel.Organization))]
+        [ResponseType(typeof(Organization))]
         [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
-        public IHttpActionResult CreateOrganization(coreModel.Organization organization)
+        public IHttpActionResult CreateOrganization(Organization organization)
         {
             return CreateMember(organization);
         }
@@ -182,7 +182,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [Route("organizations")]
         [ResponseType(typeof(void))]
         [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
-        public IHttpActionResult UpdateOrganization(coreModel.Organization organization)
+        public IHttpActionResult UpdateOrganization(Organization organization)
         {
             return UpdateMember(organization);
         }
@@ -221,7 +221,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="id">Organization id</param>
         [HttpGet]
         [Route("organizations/{id}")]
-        [ResponseType(typeof(coreModel.Organization))]
+        [ResponseType(typeof(Organization))]
         public IHttpActionResult GetOrganizationById(string id)
         {
             return GetMemberById(id);
@@ -233,7 +233,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="id">Contact ID</param>
         [HttpGet]
         [Route("contacts/{id}")]
-        [ResponseType(typeof(coreModel.Contact))]
+        [ResponseType(typeof(Contact))]
         public IHttpActionResult GetContactById(string id)
         {
             return GetMemberById(id);
@@ -246,7 +246,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="ids">contact IDs</param>
         [HttpGet]
         [Route("contacts")]
-        [ResponseType(typeof(coreModel.Contact[]))]
+        [ResponseType(typeof(Contact[]))]
         public IHttpActionResult GetContactsByIds([FromUri]string[] ids)
         {
             return GetMembersByIds(ids);
@@ -258,7 +258,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="id">Vendor ID</param>
         [HttpGet]
         [Route("vendors/{id}")]
-        [ResponseType(typeof(coreModel.Vendor))]
+        [ResponseType(typeof(Vendor))]
         public IHttpActionResult GetVendorById(string id)
         {
             return GetMemberById(id);
@@ -270,7 +270,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="ids">Vendors IDs</param>
         [HttpGet]
         [Route("vendors")]
-        [ResponseType(typeof(coreModel.Vendor[]))]
+        [ResponseType(typeof(Vendor[]))]
         public IHttpActionResult GetVendorsByIds([FromUri]string[] ids)
         {
             return GetMembersByIds(ids);
@@ -284,19 +284,22 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpPost]
         [Route("vendors/search")]
         [ResponseType(typeof(VendorSearchResult))]
-        public IHttpActionResult SearchVendors(coreModel.MembersSearchCriteria criteria)
+        public IHttpActionResult SearchVendors(MembersSearchCriteria criteria)
         {
             if (criteria == null)
             {
-                criteria = new Domain.Customer.Model.MembersSearchCriteria();               
+                criteria = new MembersSearchCriteria();
             }
-            criteria.MemberType = typeof(coreModel.Vendor).Name;
-            var result = _memberSearchService.SearchMembers(criteria);
-            var retVal = new VendorSearchResult
+
+            criteria.MemberType = typeof(Vendor).Name;
+            var searchResult = _memberSearchService.SearchMembers(criteria);
+
+            var result = new VendorSearchResult
             {
-                TotalCount = result.TotalCount,
-                Vendors = result.Results.OfType<coreModel.Vendor>().ToList()
+                TotalCount = searchResult.TotalCount,
+                Vendors = searchResult.Results.OfType<Vendor>().ToList()
             };
+
             return Ok(result);
         }
 
