@@ -11,6 +11,7 @@
     <description>Managing customers contacts and organizations</description>
     <authors>
         <author>Virto Commerce</author>
+        <author>Artem Dudarev</author>
         <author>Egidijus Mažeika</author>
     </authors>
     <owners>
@@ -19,7 +20,7 @@
     <projectUrl>https://virtocommerce.com/apps/extensions/virto-customer-module</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/VirtoCommerce/vc-module-customer/master/VirtoCommerce.CustomerModule.Web/Content/logo.png</iconUrl>
     <releaseNotes>First version.</releaseNotes>
-    <copyright>Copyright © 2011-2016 Virto Commerce. All rights reserved</copyright>
+    <copyright>Copyright © 2011-2017 Virto Commerce. All rights reserved</copyright>
     <tags>customer</tags>
 
     <assemblyFile>VirtoCommerce.CustomerModule.Web.dll</assemblyFile>
