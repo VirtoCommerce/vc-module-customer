@@ -17,7 +17,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             _memberIndexedSearchService = memberIndexedSearchService;
         }
 
-        public GenericSearchResult<Member> SearchMembers(MembersSearchCriteria criteria)
+        public virtual GenericSearchResult<Member> SearchMembers(MembersSearchCriteria criteria)
         {
             var result = !string.IsNullOrEmpty(criteria?.SearchPhrase)
                 ? SearchIndex(criteria)

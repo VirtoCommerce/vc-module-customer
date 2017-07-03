@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Domain.Search;
@@ -16,7 +17,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             _memberService = memberService;
         }
 
-        public Task<IList<IndexDocument>> GetDocumentsAsync(IList<string> documentIds)
+        public virtual Task<IList<IndexDocument>> GetDocumentsAsync(IList<string> documentIds)
         {
             var members = GetMembers(documentIds);
 
@@ -43,14 +44,20 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             document.AddFilterableValue("CreatedDate", member.CreatedDate);
             document.AddFilterableValue("ModifiedDate", member.ModifiedDate ?? member.CreatedDate);
 
-            if (member.Addresses != null)
+            if (member.Addresses?.Any() == true)
             {
-                // TODO: Index addresses
+                foreach (var address in member.Addresses)
+                {
+                    IndexAddress(document, address);
+                }
             }
 
-            if (member.Notes != null)
+            if (member.Notes?.Any() == true)
             {
-                // TODO: Index notes
+                foreach (var note in member.Notes)
+                {
+                    IndexNote(document, note);
+                }
             }
 
             var contact = member as Contact;
@@ -76,6 +83,33 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             }
 
             return document;
+        }
+
+        protected virtual void IndexAddress(IndexDocument document, Address address)
+        {
+            document.AddSearchableValue(address.AddressType.ToString());
+            document.AddSearchableValue(address.Name);
+            document.AddSearchableValue(address.Organization);
+            document.AddSearchableValue(address.CountryCode);
+            document.AddSearchableValue(address.CountryName);
+            document.AddSearchableValue(address.City);
+            document.AddSearchableValue(address.PostalCode);
+            document.AddSearchableValue(address.Zip);
+            document.AddSearchableValue(address.Line1);
+            document.AddSearchableValue(address.Line2);
+            document.AddSearchableValue(address.RegionId);
+            document.AddSearchableValue(address.RegionName);
+            document.AddSearchableValue(address.FirstName);
+            document.AddSearchableValue(address.MiddleName);
+            document.AddSearchableValue(address.LastName);
+            document.AddSearchableValue(address.Phone);
+            document.AddSearchableValue(address.Email);
+        }
+
+        protected virtual void IndexNote(IndexDocument document, Note note)
+        {
+            document.AddSearchableValue(note.Title);
+            document.AddSearchableValue(note.Body);
         }
 
         protected virtual void IndexContact(IndexDocument document, Contact contact)
