@@ -62,12 +62,15 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// Get member
         /// </summary>
         /// <param name="id">member id</param>
+        /// <param name="responseGroup">response group</param>
+        /// <param name="memberType">member type</param>
         [HttpGet]
         [Route("members/{id}")]
         [ResponseType(typeof(Member))]
-        public IHttpActionResult GetMemberById(string id)
+        public IHttpActionResult GetMemberById(string id, string responseGroup = null, string memberType = null)
         {
-            var retVal = _memberService.GetByIds(new[] { id }).FirstOrDefault();
+            //pass member type name for better perfomance
+            var retVal = _memberService.GetByIds(new[] { id }, responseGroup, memberType != null ? new[] { memberType } : null).FirstOrDefault();
             if (retVal != null)
             {
                 // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
@@ -79,9 +82,10 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpGet]
         [Route("members")]
         [ResponseType(typeof(Member))]
-        public IHttpActionResult GetMembersByIds([FromUri] string[] ids)
+        public IHttpActionResult GetMembersByIds([FromUri] string[] ids, string responseGroup = null, string[] memberTypes = null)
         {
-            var retVal = _memberService.GetByIds(ids);
+            //pass member types name for better perfomance
+            var retVal = _memberService.GetByIds(ids, responseGroup, memberTypes != null ? memberTypes : null);
             if (retVal != null)
             {
                 // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
@@ -102,7 +106,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public IHttpActionResult CreateMember([FromBody] Member member)
         {
             _memberService.SaveChanges(new[] { member });
-            var retVal = _memberService.GetByIds(new[] { member.Id }).FirstOrDefault();
+            var retVal = _memberService.GetByIds(new[] { member.Id }, null, new[] { member.MemberType }).FirstOrDefault();
 
             // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
             return Ok((dynamic)retVal);
@@ -224,7 +228,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ResponseType(typeof(Organization))]
         public IHttpActionResult GetOrganizationById(string id)
         {
-            return GetMemberById(id);
+            return GetMemberById(id, null, typeof(Organization).Name);
         }
 
         /// <summary>
@@ -236,7 +240,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ResponseType(typeof(Contact))]
         public IHttpActionResult GetContactById(string id)
         {
-            return GetMemberById(id);
+            return GetMemberById(id, null, typeof(Contact).Name);
         }
 
 
@@ -248,8 +252,8 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [Route("contacts")]
         [ResponseType(typeof(Contact[]))]
         public IHttpActionResult GetContactsByIds([FromUri]string[] ids)
-        {
-            return GetMembersByIds(ids);
+        {          
+            return GetMembersByIds(ids, null, new[] { typeof(Contact).Name });
         }
 
         /// <summary>
@@ -261,7 +265,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ResponseType(typeof(Vendor))]
         public IHttpActionResult GetVendorById(string id)
         {
-            return GetMemberById(id);
+            return GetMemberById(id, null, typeof(Vendor).Name);
         }
 
         /// <summary>
@@ -273,7 +277,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ResponseType(typeof(Vendor[]))]
         public IHttpActionResult GetVendorsByIds([FromUri]string[] ids)
         {
-            return GetMembersByIds(ids);
+            return GetMembersByIds(ids, null, new[] { typeof(Vendor).Name });
         }
 
         /// <summary>

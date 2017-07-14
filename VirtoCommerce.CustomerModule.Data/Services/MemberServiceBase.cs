@@ -52,6 +52,14 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             using (var repository = RepositoryFactory())
             {
                 repository.DisableChangesTracking();
+                //There is loading for all coresponding members conseptual model entities types
+                //query performance when TPT inheritance used it is too slow, for improve performance we are passing concrete member types in to the repository
+                var memberTypeInfos = AbstractTypeFactory<Member>.AllTypeInfos.Where(t => t.MappedType != null);                                                                  
+                if (memberTypes != null)
+                {
+                    memberTypeInfos = memberTypeInfos.Where(x => memberTypes.Any(mt => x.IsAssignableTo(mt)));
+                }
+                memberTypes = memberTypeInfos.Select(t => t.MappedType.AssemblyQualifiedName).Distinct().ToArray();
 
                 var dataMembers = repository.GetMembersByIds(memberIds, responseGroup, memberTypes);
                 foreach (var dataMember in dataMembers)
@@ -82,7 +90,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
             using (var repository = RepositoryFactory())
             using (var changeTracker = GetChangeTracker(repository))
-            {
+            {           
                 var existingMemberEntities = repository.GetMembersByIds(members.Where(m => !m.IsTransient()).Select(m => m.Id).ToArray());
 
                 foreach (var member in members)
