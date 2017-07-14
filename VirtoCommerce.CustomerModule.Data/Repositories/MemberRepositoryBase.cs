@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using VirtoCommerce.CustomerModule.Data.Model;
@@ -13,6 +14,12 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 {
     public abstract class MemberRepositoryBase : EFRepositoryBase, IMemberRepository
     {
+        private static MethodInfo _genericGetMembersMethodInfo;
+        static MemberRepositoryBase()
+        {
+            _genericGetMembersMethodInfo = typeof(MemberRepositoryBase).GetMethod("InnerGetMembersByIds");
+        }
+
         public MemberRepositoryBase()
         {
         }
@@ -138,26 +145,34 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
         }
 
         public virtual MemberDataEntity[] GetMembersByIds(string[] ids,  string responseGroup = null, string[] memberTypes = null)
-        {
-            var query = Members.Where(x => ids.Contains(x.Id));
-           
-            if(!memberTypes.IsNullOrEmpty())
+        {         
+            if(ids.IsNullOrEmpty())
             {
-                query = query.Where(x => memberTypes.Contains(x.MemberType));
-            }
-            var retVal = query.ToArray();
-            ids = retVal.Select(x => x.Id).ToArray();
-            if (!ids.IsNullOrEmpty())
-            {
-                var relations = MemberRelations.Include(x => x.Ancestor).Where(x => ids.Contains(x.DescendantId)).ToArray();
-                var notes = Notes.Where(x => ids.Contains(x.MemberId)).ToArray();
-                var emails = Emails.Where(x => ids.Contains(x.MemberId)).ToArray();
-                var addresses = Addresses.Where(x => ids.Contains(x.MemberId)).ToArray();
-                var phones = Phones.Where(x => ids.Contains(x.MemberId)).ToArray();
-                var groups = Groups.Where(x => ids.Contains(x.MemberId)).ToArray();
+                return new MemberDataEntity[] { };
             }
 
-            return retVal;
+            var result = new List<MemberDataEntity>();         
+            if (!memberTypes.IsNullOrEmpty())
+            {
+                foreach (var memberType in memberTypes)
+                {
+                    //Use special dynamically constructed inner generic method for each passed member type 
+                    //for better query performance
+                    var gm = _genericGetMembersMethodInfo.MakeGenericMethod(Type.GetType(memberType));
+                    var members = gm.Invoke(this, new object[] { ids, responseGroup }) as MemberDataEntity[];
+                    result.AddRange(members);
+                    //Stop process other types
+                    if (result.Count() == ids.Count())
+                    {
+                        break;
+                    }
+                }
+            }         
+            else
+            {
+                result.AddRange(InnerGetMembersByIds<MemberDataEntity>(ids, responseGroup));
+            }
+            return result.ToArray();
         }
 
         public virtual void RemoveMembersByIds(string[] ids, string[] memberTypes = null)
@@ -173,5 +188,31 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             }
         }
         #endregion
+
+        public T[] InnerGetMembersByIds<T>(string[] ids, string responseGroup = null) where T: MemberDataEntity
+        {
+            //Use OfType() clause very much accelerates the query performance when used TPT inheritance
+            var query = Members.OfType<T>().Where(x => ids.Contains(x.Id));
+           
+            var retVal = query.ToArray();
+            ids = retVal.Select(x => x.Id).ToArray();
+            if (!ids.IsNullOrEmpty())
+            {
+                var relations = MemberRelations.Where(x => ids.Contains(x.DescendantId)).ToArray();
+                var ancestorIds = relations.Select(x => x.AncestorId).ToArray();
+                if (!ancestorIds.IsNullOrEmpty())
+                {
+                    var ancestors = Members.Where(x => ancestorIds.Contains(x.Id)).ToArray();
+                }
+                var notes = Notes.Where(x => ids.Contains(x.MemberId)).ToArray();
+                var emails = Emails.Where(x => ids.Contains(x.MemberId)).ToArray();
+                var addresses = Addresses.Where(x => ids.Contains(x.MemberId)).ToArray();
+                var phones = Phones.Where(x => ids.Contains(x.MemberId)).ToArray();
+                var groups = Groups.Where(x => ids.Contains(x.MemberId)).ToArray();
+            }
+
+            return retVal;
+        }
+
     }
 }
