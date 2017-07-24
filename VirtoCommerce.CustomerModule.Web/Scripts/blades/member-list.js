@@ -149,7 +149,8 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
     $scope.selectNode = function (listItem) {
         blade.setSelectedNode(listItem);
 
-        if (listItem.memberType === 'Organization') {
+        var foundTemplate = memberTypesResolverService.resolve(listItem.memberType);
+        if (foundTemplate && foundTemplate.knownChildrenTypes && foundTemplate.knownChildrenTypes.length) {
             var newBlade = {
                 id: blade.id,
                 breadcrumbs: blade.breadcrumbs,
