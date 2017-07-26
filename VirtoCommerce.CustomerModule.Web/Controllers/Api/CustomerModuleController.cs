@@ -1,9 +1,11 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Web.Http;
 using System.Web.Http.Description;
 using VirtoCommerce.CustomerModule.Web.Model;
 using VirtoCommerce.CustomerModule.Web.Security;
+using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Commerce.Model.Search;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
@@ -305,6 +307,21 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             };
 
             return Ok(result);
+        }
+
+        [HttpPut]
+        [Route("addresses")]
+        [ResponseType(typeof(void))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
+        public IHttpActionResult UpdateAddesses(string memberId, [FromBody] IEnumerable<Address> addresses)
+        {
+            var member = _memberService.GetByIds(new[] { memberId }).FirstOrDefault();
+            if (member != null)
+            {
+                member.Addresses = addresses.ToList();
+                _memberService.SaveChanges(new[] { member });
+            }
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         #endregion
