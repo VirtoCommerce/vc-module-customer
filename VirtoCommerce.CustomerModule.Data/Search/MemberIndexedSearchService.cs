@@ -71,8 +71,8 @@ namespace VirtoCommerce.CustomerModule.Data.Search
 
                 // Preserve documents order
                 var members = documents
-                    .Select(doc => itemsMap[doc.Id.ToString()])
-                    //.Where(m => m != null)
+                    .Select(doc => itemsMap.ContainsKey(doc.Id) ? itemsMap[doc.Id] : null)
+                    .Where(m => m != null)
                     .ToArray();
 
                 result.AddRange(members);
