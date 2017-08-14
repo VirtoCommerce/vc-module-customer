@@ -60,7 +60,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             member.InjectFrom(this);
             member.MemberType = memberType;
 
-            member.Addresses = this.Addresses.OrderBy(x => x.Id).Select(x => x.ToModel(new Address())).ToList();
+            member.Addresses = this.Addresses.OrderBy(x => x.Id).Select(x => x.ToModel(AbstractTypeFactory<Address>.TryCreateInstance())).ToList();
             member.Emails = this.Emails.OrderBy(x => x.Id).Select(x => x.Address).ToList();
             member.Notes = this.Notes.OrderBy(x => x.Id).Select(x => x.ToModel(new Note())).ToList();
             member.Phones = this.Phones.OrderBy(x => x.Id).Select(x => x.Number).ToList();
@@ -160,7 +160,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
             if (!this.Addresses.IsNullCollection())
             {
-                this.Addresses.Patch(target.Addresses, new AddressDataEntityComparer(), (sourceAddress, targetAddress) => sourceAddress.Patch(targetAddress));
+                this.Addresses.Patch(target.Addresses, AbstractTypeFactory<AddressDataEntityComparer>.TryCreateInstance(), (sourceAddress, targetAddress) => sourceAddress.Patch(targetAddress));
             }
 
             if (!this.Notes.IsNullCollection())

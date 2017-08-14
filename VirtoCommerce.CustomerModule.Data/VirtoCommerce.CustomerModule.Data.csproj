@@ -100,7 +100,6 @@
     <Compile Include="Migrations\201611171903485_MemberGroups.Designer.cs">
       <DependentUpon>201611171903485_MemberGroups.cs</DependentUpon>
     </Compile>
-    <Compile Include="Model\AddressDataEntityComparer.cs" />
     <Compile Include="Migrations\201505050914307_Initial.cs" />
     <Compile Include="Migrations\201505050914307_Initial.Designer.cs">
       <DependentUpon>201505050914307_Initial.cs</DependentUpon>
@@ -135,6 +134,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\AddressDataEntity.cs" />
+    <Compile Include="Model\AddressDataEntityComparer.cs" />
     <Compile Include="Model\ContactDataEntity.cs" />
     <Compile Include="Model\EmailDataEntity.cs" />
     <Compile Include="Model\EmployeeDataEntity.cs" />

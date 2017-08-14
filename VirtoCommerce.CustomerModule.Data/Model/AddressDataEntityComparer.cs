@@ -11,12 +11,12 @@ namespace VirtoCommerce.CustomerModule.Data.Model
     {
         #region IEqualityComparer<Discount> Members
 
-        public bool Equals(AddressDataEntity x, AddressDataEntity y)
+        public virtual bool Equals(AddressDataEntity x, AddressDataEntity y)
         {
             return GetHashCode(x) == GetHashCode(y);
         }
 
-        public int GetHashCode(AddressDataEntity obj)
+        public virtual int GetHashCode(AddressDataEntity obj)
         {
             var result = String.Join(":", obj.Organization, obj.City, obj.CountryCode, obj.CountryName, obj.FaxNumber, obj.Name, obj.RegionName,
                                           obj.RegionId, obj.StateProvince, obj.Email, obj.FirstName, obj.LastName, obj.Line1, obj.Line2,
