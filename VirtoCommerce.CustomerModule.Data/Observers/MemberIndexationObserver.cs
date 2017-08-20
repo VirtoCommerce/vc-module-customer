@@ -40,7 +40,6 @@ namespace VirtoCommerce.CustomerModule.Data.Observers
         {
             if (changeEvent.ChangeState == EntryState.Added && changeEvent.Member.Id != null)
             {
-                var test = _indexingManager.GetIndexStateAsync(KnownDocumentTypes.Member);
                 IndexingOptions indexingOptions = new IndexingOptions {
                     DocumentType = KnownDocumentTypes.Member,
                     DeleteExistingIndex = false,
