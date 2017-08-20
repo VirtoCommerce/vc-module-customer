@@ -21,6 +21,7 @@ using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
 using VirtoCommerce.Platform.Data.Repositories;
+using VirtoCommerce.CustomerModule.Data.Observers;
 
 namespace VirtoCommerce.CustomerModule.Web
 {
@@ -64,6 +65,9 @@ namespace VirtoCommerce.CustomerModule.Web
             // Indexed search
             _container.RegisterType<ISearchRequestBuilder, MemberSearchRequestBuilder>(nameof(MemberSearchRequestBuilder));
             _container.RegisterType<IMemberSearchService, MemberSearchServiceDecorator>();
+
+            //Create member observer. Index member
+            _container.RegisterType<IObserver<MemberChangingEvent>, MemberIndexationObserver>("MemberIndexationObserver");
         }
 
         public override void PostInitialize()
