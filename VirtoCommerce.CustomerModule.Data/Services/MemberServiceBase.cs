@@ -90,7 +90,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
             using (var repository = RepositoryFactory())
             using (var changeTracker = GetChangeTracker(repository))
-            {           
+            {
                 var existingMemberEntities = repository.GetMembersByIds(members.Where(m => !m.IsTransient()).Select(m => m.Id).ToArray());
 
                 foreach (var member in members)
@@ -120,7 +120,23 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                 }
 
                 CommitChanges(repository);
+
+                //for indexing new records we evaluate if this is a new record added through UI.
+                //if that's the case we will only have one record sent in this method and it's ID will be null.
+                bool isNewMember = false;
+                if (members.Count() == 1 && members.First().Id == null)
+                {
+                    isNewMember = true;
+                }
+
                 pkMap.ResolvePrimaryKeys();
+
+                //Now that the ID of the new record is resolved we publish the event for getting the new record indexed by MemberIndexationObserver.
+                if (isNewMember)
+                {
+                    MemberEventventPublisher.Publish(new MemberChangingEvent(EntryState.Added, members.First()));
+                }
+
             }
 
             //Save dynamic properties
