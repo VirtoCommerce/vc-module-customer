@@ -14,7 +14,7 @@
 <div class="blade-content __medium-wide">
     <div class="blade-inner">
         <div class="inner-block">
-            <div class="table-wrapper" ng-init="setGridOptions({
+            <div class="table-wrapper" ng-init="setGridOptions('memberlist-grid', {
                     useExternalSorting: true,
                     data: 'listEntries',
                     rowTemplate: 'member-list.row.html',
@@ -22,8 +22,8 @@
                     columnDefs: [
                                 { name: 'actions', displayName: '', enableColumnResizing: false, enableSorting: false, width: 30, cellTemplate: 'list-actions.cell.html', pinnedLeft:true },
                                 {
-                                    name: 'memberType', displayName: 'customer.blades.member-list.labels.type', headerTooltip: 'Type of contact',
-                                    enableColumnResizing: false, width: 60, cellTemplate: 'member-list-icon.cell.html', sort: { direction: uiGridConstants.DESC }
+                                  name: 'memberType', displayName: 'customer.blades.member-list.labels.type', headerTooltip: 'Type of contact',
+                                  enableColumnResizing: false, width: 60, cellTemplate: 'member-list-icon.cell.html', sort: { direction: uiGridConstants.DESC }
                                 },
                                 { name: 'name', displayName: 'customer.blades.member-list.labels.name', sort: { direction: uiGridConstants.ASC } }
                         ]})">

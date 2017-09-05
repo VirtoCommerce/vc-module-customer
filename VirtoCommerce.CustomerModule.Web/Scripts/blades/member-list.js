@@ -1,6 +1,6 @@
 ﻿angular.module('virtoCommerce.customerModule')
-.controller('virtoCommerce.customerModule.memberListController', ['$scope', 'virtoCommerce.customerModule.members', 'platformWebApp.dialogService', 'platformWebApp.bladeUtils', 'platformWebApp.uiGridHelper', 'virtoCommerce.customerModule.memberTypesResolverService',
-function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesResolverService) {
+.controller('virtoCommerce.customerModule.memberListController', ['$scope', 'virtoCommerce.customerModule.members', 'platformWebApp.dialogService', 'platformWebApp.bladeUtils', 'platformWebApp.uiGridHelper', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.ui-grid.extension',
+function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesResolverService, gridOptionExtension) {
     $scope.uiGridConstants = uiGridHelper.uiGridConstants;
 
     var blade = $scope.blade;
@@ -222,10 +222,15 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
     };
 
     // ui-grid
-    $scope.setGridOptions = function (gridOptions) {
-        uiGridHelper.initialize($scope, gridOptions, function (gridApi) {
-            uiGridHelper.bindRefreshOnSortChanged($scope);
-        });
+    $scope.setGridOptions = function (gridId, gridOptions) {
+        $scope.gridOptions = gridOptions;
+        gridOptionExtension.tryExtendGridOptions(gridId, gridOptions);
+
+        gridOptions.onRegisterApi = function (gridApi) {
+            gridApi.core.on.sortChanged($scope, function () {
+                if (!blade.isLoading) blade.refresh();
+            });
+        };
 
         bladeUtils.initializePagination($scope);
     };
