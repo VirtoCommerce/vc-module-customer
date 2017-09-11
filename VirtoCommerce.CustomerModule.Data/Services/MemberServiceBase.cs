@@ -54,7 +54,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                 repository.DisableChangesTracking();
                 //There is loading for all coresponding members conseptual model entities types
                 //query performance when TPT inheritance used it is too slow, for improve performance we are passing concrete member types in to the repository
-                var memberTypeInfos = AbstractTypeFactory<Member>.AllTypeInfos.Where(t => t.MappedType != null);                                                                  
+                var memberTypeInfos = AbstractTypeFactory<Member>.AllTypeInfos.Where(t => t.MappedType != null);
                 if (memberTypes != null)
                 {
                     memberTypeInfos = memberTypeInfos.Where(x => memberTypes.Any(mt => x.IsAssignableTo(mt)));
@@ -90,7 +90,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
             using (var repository = RepositoryFactory())
             using (var changeTracker = GetChangeTracker(repository))
-            {           
+            {
                 var existingMemberEntities = repository.GetMembersByIds(members.Where(m => !m.IsTransient()).Select(m => m.Id).ToArray());
 
                 foreach (var member in members)
@@ -167,8 +167,6 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         /// <returns></returns>
         public virtual GenericSearchResult<Member> SearchMembers(MembersSearchCriteria criteria)
         {
-            var retVal = new GenericSearchResult<Member>();
-
             using (var repository = RepositoryFactory())
             {
                 repository.DisableChangesTracking();
@@ -202,16 +200,26 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                 var sortInfos = criteria.SortInfos;
                 if (sortInfos.IsNullOrEmpty())
                 {
-                    sortInfos = new[] { new SortInfo { SortColumn = ReflectionUtility.GetPropertyName<Member>(m => m.MemberType), SortDirection = SortDirection.Descending } };
+                    sortInfos = new[] {
+                        new SortInfo { SortColumn = ReflectionUtility.GetPropertyName<Member>(m => m.MemberType), SortDirection = SortDirection.Descending },
+                        new SortInfo { SortColumn = ReflectionUtility.GetPropertyName<Member>(m => m.Name), SortDirection = SortDirection.Ascending },
+                    };
                 }
 
                 query = query.OrderBySortInfos(sortInfos);
 
-                retVal.TotalCount = query.Count();
+                var totalCount = query.Count();
+                var memberIds = query.Select(m => m.Id).Skip(criteria.Skip).Take(criteria.Take).ToList();
 
-                retVal.Results = query.Skip(criteria.Skip).Take(criteria.Take).ToArray()
-                                      .Select(m => m.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(m.MemberType))).ToList();
-                return retVal;
+                var result = new GenericSearchResult<Member>
+                {
+                    TotalCount = totalCount,
+                    Results = GetByIds(memberIds.ToArray(), criteria.ResponseGroup, criteria.MemberTypes)
+                        .OrderBy(m => memberIds.IndexOf(m.Id))
+                        .ToList(),
+                };
+
+                return result;
             }
         }
         #endregion
