@@ -8,7 +8,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
     public class EmailDataEntity : Entity
     {
-        [CustomValidation(typeof(EmailDataEntity), "ValidateEmailContent", ErrorMessage = "Email has error")]
+        [EmailAddress]
         [StringLength(254)]
         [Index(IsUnique = false)]
         public string Address { get; set; }
@@ -25,29 +25,6 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         public virtual MemberDataEntity Member { get; set; }
 
-
-        #endregion
-
-        #region Validation
-
-        public static ValidationResult ValidateEmailContent(string value, ValidationContext context)
-        {
-            if (value == null || string.IsNullOrEmpty(value))
-            {
-                return new ValidationResult("Email can't be empty");
-            }
-
-            Regex regex = new Regex(@"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$");
-            if (!regex.IsMatch(value))
-            {
-                return new ValidationResult((@"Email must be ""email@server.[domain 2].domain"));
-            }
-            else
-            {
-                return ValidationResult.Success;
-            }
-
-        }
 
         #endregion
 
