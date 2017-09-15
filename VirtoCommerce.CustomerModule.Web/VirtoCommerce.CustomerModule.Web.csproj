@@ -188,6 +188,7 @@
     <Compile Include="ExportImport\CustomerExportImport.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\OnlyContactsSecurityScope.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

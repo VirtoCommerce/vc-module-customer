@@ -136,7 +136,7 @@ namespace VirtoCommerce.CustomerModule.Test
         private static CustomerModuleController GetContactController()
         {
 
-            return new CustomerModuleController(null, null);
+            return new CustomerModuleController(null, null, null, null);
         }
     }
 }

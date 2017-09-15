@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
 using System.Web.Http.Description;
+using VirtoCommerce.CustomerModule.Data.Extensions;
 using VirtoCommerce.CustomerModule.Web.Model;
 using VirtoCommerce.CustomerModule.Web.Security;
 using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Commerce.Model.Search;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
+using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Web.Security;
 
 namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
@@ -17,11 +20,15 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
     [CheckPermission(Permission = CustomerPredefinedPermissions.Read)]
     public class CustomerModuleController : ApiController
     {
+        private readonly ISecurityService _securityService;
+        private readonly IPermissionScopeService _permissionScopeService;
         private readonly IMemberService _memberService;
         private readonly IMemberSearchService _memberSearchService;
 
-        public CustomerModuleController(IMemberService memberService, IMemberSearchService memberSearchService)
+        public CustomerModuleController(IMemberService memberService, IMemberSearchService memberSearchService, ISecurityService securityService, IPermissionScopeService permissionScopeService)
         {
+            _securityService = securityService;
+            _permissionScopeService = permissionScopeService;
             _memberService = memberService;
             _memberSearchService = memberSearchService;
         }
@@ -56,7 +63,17 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ResponseType(typeof(GenericSearchResult<Member>))]
         public IHttpActionResult Search(MembersSearchCriteria criteria)
         {
-            var result = _memberSearchService.SearchMembers(criteria);
+            var searchResult = _memberSearchService.SearchMembers(criteria);
+
+            var result = new GenericSearchResult<dynamic>();
+            result.TotalCount = searchResult.TotalCount;
+            foreach(var member in searchResult.Results)
+            {
+                // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
+                dynamic dynamicresult = member.ToDynamic();
+                dynamicresult.SecurityScopes = GetObjectPermissionScopeStrings(member);
+                result.Results.Add(dynamicresult);
+            }
             return Ok(result);
         }
 
@@ -76,7 +93,9 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             if (retVal != null)
             {
                 // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
-                return Ok((dynamic)retVal);
+                dynamic dynamicresult = retVal.ToDynamic();
+                dynamicresult.SecurityScopes = GetObjectPermissionScopeStrings(retVal);
+                return Ok(dynamicresult);
             }
             return Ok();
         }
@@ -325,5 +344,21 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         #endregion
+
+        protected string[] GetObjectPermissionScopeStrings(object obj)
+        {
+            return _permissionScopeService.GetObjectPermissionScopeStrings(obj).ToArray();
+        }
+
+        protected void CheckCurrentUserHasPermissionForObjects(string permission, params object[] objects)
+        {
+            //Scope bound security check
+            var scopes = objects.SelectMany(x => _permissionScopeService.GetObjectPermissionScopeStrings(x)).Distinct().ToArray();
+            if (!_securityService.UserHasAnyPermission(User.Identity.Name, scopes, permission))
+            {
+                throw new HttpResponseException(HttpStatusCode.Unauthorized);
+            }
+        }
+     
     }
 }

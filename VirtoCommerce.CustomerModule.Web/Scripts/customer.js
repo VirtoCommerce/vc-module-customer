@@ -1,7 +1,7 @@
 ﻿//Call this to register our module to main application
 var moduleName = "virtoCommerce.customerModule";
 
-if (AppDependencies != undefined) {
+if (AppDependencies !== undefined) {
     AppDependencies.push(moduleName);
 }
 
@@ -28,7 +28,7 @@ angular.module(moduleName, [])
   }]
 )
 .run(
-  ['$rootScope', 'platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', function ($rootScope, mainMenuService, widgetService, $state, memberTypesResolverService, settings) {
+    ['$rootScope', 'platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', 'platformWebApp.permissionScopeResolver', function ($rootScope, mainMenuService, widgetService, $state, memberTypesResolverService, settings, scopeResolver) {
       //Register module in main menu
       var menuItem = {
           path: 'browse/member',
@@ -61,7 +61,7 @@ angular.module(moduleName, [])
           controller: 'platformWebApp.dynamicPropertyWidgetController',
           template: '$(Platform)/Scripts/app/dynamicProperties/widgets/dynamicPropertyWidget.tpl.html',
           isVisible: function (blade) { return !blade.isNew; }
-      }
+      };
       var vendorSeoWidget = {
           controller: 'virtoCommerce.coreModule.seo.seoWidgetController',
           template: 'Modules/$(VirtoCommerce.Core)/Scripts/SEO/widgets/seoWidget.tpl.html',
@@ -183,4 +183,13 @@ angular.module(moduleName, [])
               }]
           }
       });
+
+      //Security scopes
+      //Register permission scopes templates used for scope bounded definition in role management ui
+      var onlyContactScope = {
+          type: 'OnlyContactsSecurityScope',
+          title: 'Only for contact'
+      };
+      scopeResolver.register(onlyContactScope);
+
   }]);

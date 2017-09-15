@@ -2,6 +2,7 @@
 .controller('virtoCommerce.customerModule.memberDetailController', ['$scope', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.members', 'platformWebApp.dynamicProperties.api', function ($scope, bladeNavigationService, members, dynamicPropertiesApi) {
     var blade = $scope.blade;
     blade.updatePermission = 'customer:update';
+    blade.securityScopes = blade.currentEntity.securityScopes;
 
     blade.refresh = function (parentRefresh) {
         if (blade.isNew) {
@@ -73,7 +74,7 @@
 
     $scope.setForm = function (form) {
         $scope.formScope = form;
-    }
+    };
 
     blade.onClose = function (closeCallback) {
         bladeNavigationService.showConfirmationIfNeeded(isDirty(), canSave(), blade, $scope.saveChanges, closeCallback, "customer.dialogs.member-save.title", "customer.dialogs.member-save.message");

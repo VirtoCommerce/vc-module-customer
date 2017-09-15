@@ -21,6 +21,7 @@ using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
 using VirtoCommerce.Platform.Data.Repositories;
+using VirtoCommerce.CustomerModule.Web.Security;
 
 namespace VirtoCommerce.CustomerModule.Web
 {
@@ -69,6 +70,10 @@ namespace VirtoCommerce.CustomerModule.Web
         public override void PostInitialize()
         {
             base.PostInitialize();
+
+            var securityScopeService = _container.Resolve<IPermissionScopeService>();
+            securityScopeService.RegisterSope(() => new OnlyContactsSecurityScope());
+            
 
             AbstractTypeFactory<Member>.RegisterType<Organization>().MapToType<OrganizationDataEntity>();
             AbstractTypeFactory<Member>.RegisterType<Contact>().MapToType<ContactDataEntity>();
