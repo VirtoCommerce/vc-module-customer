@@ -132,8 +132,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
 
                         if (_.any(memberIds)) {
                             members.remove({ ids: memberIds },
-                            function () { blade.refresh(true); },
-                            function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
+                            function () { blade.refresh(true); });
                         }
                     });
                 }
