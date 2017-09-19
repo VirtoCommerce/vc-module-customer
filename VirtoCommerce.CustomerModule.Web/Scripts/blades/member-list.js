@@ -38,7 +38,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
         if (parentRefresh && blade.parentRefresh) {
             blade.parentRefresh();
         }
-    }
+    };
 
     //Breadcrumbs
     function setBreadcrumbs() {
@@ -67,7 +67,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
                 bladeNavigationService.showBlade(breadcrumb.blade);
                 breadcrumb.blade.refresh();
             }
-        }
+        };
     }
 
     //$scope.getMainAddress = function (data) {
@@ -132,12 +132,12 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
 
                         if (_.any(memberIds)) {
                             members.remove({ ids: memberIds },
-                            function () { blade.refresh(true); });
+                                function () { blade.refresh(true); });
                         }
                     });
                 }
             }
-        }
+        };
         dialogService.showConfirmationDialog(dialog);
     }
 
