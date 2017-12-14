@@ -234,6 +234,18 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
+        /// Get plenty organizations 
+        /// </summary>
+        /// <param name="ids">Organization ids</param>
+        [HttpGet]
+        [Route("organizations")]
+        [ResponseType(typeof(Organization))]
+        public IHttpActionResult GetOrganizationsByIds([FromUri]string[] ids)
+        {
+            return GetMembersByIds(ids, null, new[] { typeof(Organization).Name });
+        }
+
+        /// <summary>
         /// Get contact
         /// </summary>
         /// <param name="id">Contact ID</param>
@@ -247,7 +259,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
 
 
         /// <summary>
-        /// Bulk get contacts 
+        /// Get plenty contacts 
         /// </summary>
         /// <param name="ids">contact IDs</param>
         [HttpGet]
@@ -271,7 +283,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
-        /// Bulk get vendors 
+        /// Get plenty vendors 
         /// </summary>
         /// <param name="ids">Vendors IDs</param>
         [HttpGet]
@@ -324,6 +336,54 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        /// <summary>
+        /// Create employee
+        /// </summary>
+        [HttpPost]
+        [Route("employees")]
+        [ResponseType(typeof(Employee))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
+        public IHttpActionResult CreateEmployee(Employee employee)
+        {
+            return CreateMember(employee);
+        }
+
+        /// <summary>
+        /// Get plenty employees 
+        /// </summary>
+        /// <param name="ids">contact IDs</param>
+        [HttpGet]
+        [Route("employees")]
+        [ResponseType(typeof(Employee[]))]
+        public IHttpActionResult GetEmployeesByIds([FromUri]string[] ids)
+        {
+            return GetMembersByIds(ids, null, new[] { typeof(Employee).Name });
+        }
+
+        /// <summary>
+        /// Get all member organizations
+        /// </summary>
+        /// <param name="id">member Id</param>
+        [HttpGet]
+        [Route("members/{id}/organizations")]
+        [ResponseType(typeof(Organization[]))]
+        public IHttpActionResult GetMemberOrganizations([FromUri] string id)
+        {
+            var member = _memberService.GetByIds(new[] { id  }, null, new[] { typeof(Employee).Name, typeof(Contact).Name }).FirstOrDefault();
+            var organizationsIds = new List<string>();
+            if (member != null)
+            {
+                if(member is Contact contact)
+                {
+                    organizationsIds = contact.Organizations?.ToList();
+                }
+                else if (member is Employee employee)
+                {
+                    organizationsIds = employee.Organizations?.ToList();
+                }
+            }
+            return GetOrganizationsByIds(organizationsIds.ToArray());
+        }
         #endregion
     }
 }
