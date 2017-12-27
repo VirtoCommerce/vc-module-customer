@@ -130,7 +130,19 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
                     bladeNavigationService.closeChildrenBlades(blade, function () {
                         var memberIds = _.pluck(selection, 'id');
 
-                        if (_.any(memberIds)) {
+                        if (($scope.gridApi != undefined) && $scope.gridApi.selection.getSelectAllState()) {
+                            members.bulkdelete({
+                                    searchPhrase: filter.keyword ? filter.keyword : undefined,
+                                    deepSearch: filter.keyword ? true : false,
+                                    take: $scope.pageSettings.itemsPerPageCount
+                                },
+                                function () {
+                                    $scope.gridApi.selection.clearSelectedRows();
+                                    blade.refresh(true);
+                                }
+                            );
+                        }
+                        else if (_.any(memberIds)) {
                             members.remove({ ids: memberIds },
                                 function () { blade.refresh(true); });
                         }
@@ -226,6 +238,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
         gridOptionExtension.tryExtendGridOptions(gridId, gridOptions);
 
         gridOptions.onRegisterApi = function (gridApi) {
+            $scope.gridApi = gridApi;
             gridApi.core.on.sortChanged($scope, function () {
                 if (!blade.isLoading) blade.refresh();
             });
