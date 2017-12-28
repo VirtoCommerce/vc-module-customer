@@ -6,19 +6,21 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
     var blade = $scope.blade;
     blade.title = 'customer.blades.member-list.title';
     var bladeNavigationService = bladeUtils.bladeNavigationService;
+    var searchParams;
 
     blade.refresh = function (parentRefresh) {
         blade.isLoading = true;
+        searchParams = {
+            memberType: blade.memberType,
+            memberId: blade.currentEntity.id,
+            searchPhrase: filter.keyword ? filter.keyword : undefined,
+            deepSearch: filter.keyword ? true : false,
+            sort: uiGridHelper.getSortExpression($scope),
+            skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
+            take: $scope.pageSettings.itemsPerPageCount
+        };
         members.search(
-            {
-                memberType: blade.memberType,
-                memberId: blade.currentEntity.id,
-                searchPhrase: filter.keyword ? filter.keyword : undefined,
-                deepSearch: filter.keyword ? true : false,
-                sort: uiGridHelper.getSortExpression($scope),
-                skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
-                take: $scope.pageSettings.itemsPerPageCount
-            },
+            searchParams ,
             function (data) {
                 blade.isLoading = false;
                 $scope.pageSettings.totalItems = data.totalCount;
@@ -131,12 +133,11 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
                         var memberIds = _.pluck(selection, 'id');
 
                         if (($scope.gridApi != undefined) && $scope.gridApi.selection.getSelectAllState()) {
-                            members.bulkdelete({
+                            members.delete({
                                     searchPhrase: filter.keyword ? filter.keyword : undefined,
-                                    deepSearch: filter.keyword ? true : false,
+                                    skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
                                     take: $scope.pageSettings.itemsPerPageCount
-                                },
-                                function () {
+                                }, function () {
                                     $scope.gridApi.selection.clearSelectedRows();
                                     blade.refresh(true);
                                 }

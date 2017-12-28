@@ -3,7 +3,7 @@
     return $resource('api/members/:id', {}, {
         search: { method: 'POST', url: 'api/members/search' },
         update: { method: 'PUT' },
-        bulkdelete: { method: 'POST', url: 'api/members/bulk-delete'}
+        delete: { method: 'POST', url: 'api/members/delete'}
     });
 }])
 .factory('virtoCommerce.customerModule.organizations', ['$resource', function ($resource) {

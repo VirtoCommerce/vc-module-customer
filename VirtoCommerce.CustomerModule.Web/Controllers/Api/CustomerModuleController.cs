@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Microsoft.Practices.ObjectBuilder2;
 using VirtoCommerce.CustomerModule.Web.Model;
 using VirtoCommerce.CustomerModule.Web.Security;
 using VirtoCommerce.Domain.Commerce.Model;
@@ -145,23 +146,35 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
-        /// Delete planty members
+        /// Bulk delete members
         /// </summary>
         /// <remarks>Bulk delete members by search criteria of members.</remarks>
         /// <param name="criteria">concrete instance of SearchCriteria type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
         [HttpPost]
-        [Route("members/bulk-delete")]
+        [Route("members/delete")]
         [ResponseType(typeof(void))]
         [CheckPermission(Permission = CustomerPredefinedPermissions.Delete)]
         public IHttpActionResult BulkDeleteMembersBySearchCriteria(MembersSearchCriteria criteria)
         {
-            GenericSearchResult<Member> searchResult;
+            bool hasSearchCriteriaMembers;
+            List<string> listIds = new List<string>();
             do
             {
-                searchResult = _memberSearchService.SearchMembers(criteria);
-                _memberService.Delete(searchResult.Results.Select(mem => mem.Id).ToArray());
+                var searchResult = _memberSearchService.SearchMembers(criteria);
+                hasSearchCriteriaMembers = searchResult.Results.Any();
+                if (hasSearchCriteriaMembers)
+                {
+                    searchResult.Results.ForEach(res => listIds.Add(res.Id));
+                    criteria.Skip += criteria.Take;
+                }
             }
-            while (searchResult.Results.Any());
+            while (hasSearchCriteriaMembers);
+
+            listIds.ProcessWithPaging(criteria.Take, (ids, currentItem, totalCount) =>
+            {
+                _memberService.Delete(ids.ToArray());
+            });
+            
 
             return StatusCode(HttpStatusCode.NoContent);
         }
