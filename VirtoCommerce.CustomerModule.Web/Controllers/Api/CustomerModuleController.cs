@@ -147,23 +147,22 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <summary>
         /// Delete planty members
         /// </summary>
-        /// <remarks>Delete planty members by search criteria of members.</remarks>
-        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        /// <remarks>Bulk delete members by search criteria of members.</remarks>
+        /// <param name="criteria">concrete instance of SearchCriteria type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
         [HttpPost]
         [Route("members/bulk-delete")]
         [ResponseType(typeof(void))]
         [CheckPermission(Permission = CustomerPredefinedPermissions.Delete)]
         public IHttpActionResult BulkDeleteMembersBySearchCriteria(MembersSearchCriteria criteria)
         {
-            int currentTake = criteria.Take;
-            criteria.Take = int.MaxValue;
-            var result = _memberSearchService.SearchMembers(criteria);
-            result.Results.ProcessWithPaging(currentTake, (currentMembers, currentCount, TotalCount) =>
+            GenericSearchResult<Member> searchResult;
+            do
             {
-                _memberService.Delete(currentMembers.Select(mem => mem.Id).ToArray());
-            });
-                
-            
+                searchResult = _memberSearchService.SearchMembers(criteria);
+                _memberService.Delete(searchResult.Results.Select(mem => mem.Id).ToArray());
+            }
+            while (searchResult.Results.Any());
+
             return StatusCode(HttpStatusCode.NoContent);
         }
 
