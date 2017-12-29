@@ -157,7 +157,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public IHttpActionResult BulkDeleteMembersBySearchCriteria(MembersSearchCriteria criteria)
         {
             bool hasSearchCriteriaMembers;
-            List<string> listIds = new List<string>();
+            var listIds = new List<string>();
             do
             {
                 var searchResult = _memberSearchService.SearchMembers(criteria);
