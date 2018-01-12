@@ -2,6 +2,7 @@
 .controller('virtoCommerce.customerModule.memberDetailController', ['$scope', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.members', 'platformWebApp.dynamicProperties.api', function ($scope, bladeNavigationService, members, dynamicPropertiesApi) {
     var blade = $scope.blade;
     blade.updatePermission = 'customer:update';
+    blade.currentEntityId = blade.currentEntity.id;
 
     blade.refresh = function (parentRefresh) {
         if (blade.isNew) {

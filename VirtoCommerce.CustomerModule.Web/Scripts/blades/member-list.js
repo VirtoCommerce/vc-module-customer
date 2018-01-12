@@ -9,16 +9,8 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
 
     blade.refresh = function (parentRefresh) {
         blade.isLoading = true;
-        members.search(
-            {
-                memberType: blade.memberType,
-                memberId: blade.currentEntity.id,
-                searchPhrase: filter.keyword ? filter.keyword : undefined,
-                deepSearch: filter.keyword ? true : false,
-                sort: uiGridHelper.getSortExpression($scope),
-                skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
-                take: $scope.pageSettings.itemsPerPageCount
-            },
+        var searchCriteria = getSearchCriteria();
+        members.search(searchCriteria,
             function (data) {
                 blade.isLoading = false;
                 $scope.pageSettings.totalItems = data.totalCount;
@@ -130,7 +122,15 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
                     bladeNavigationService.closeChildrenBlades(blade, function () {
                         var memberIds = _.pluck(selection, 'id');
 
-                        if (_.any(memberIds)) {
+                        if (($scope.gridApi != undefined) && $scope.gridApi.selection.getSelectAllState()) {
+                            var searchCriteria = getSearchCriteria();
+                            members.delete(searchCriteria, function () {
+                                    $scope.gridApi.selection.clearSelectedRows();
+                                    blade.refresh(true);
+                                }
+                            );
+                        }
+                        else if (_.any(memberIds)) {
                             members.remove({ ids: memberIds },
                                 function () { blade.refresh(true); });
                         }
@@ -226,6 +226,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
         gridOptionExtension.tryExtendGridOptions(gridId, gridOptions);
 
         gridOptions.onRegisterApi = function (gridApi) {
+            $scope.gridApi = gridApi;
             gridApi.core.on.sortChanged($scope, function () {
                 if (!blade.isLoading) blade.refresh();
             });
@@ -233,6 +234,19 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
 
         bladeUtils.initializePagination($scope);
     };
+
+    function getSearchCriteria() {
+        var searchCriteria = {
+            memberType: blade.memberType,
+            memberId: blade.currentEntity.id,
+            searchPhrase: filter.keyword ? filter.keyword : undefined,
+            deepSearch: filter.keyword ? true : false,
+            sort: uiGridHelper.getSortExpression($scope),
+            skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
+            take: $scope.pageSettings.itemsPerPageCount
+        };
+        return searchCriteria;
+    }
 
 
     //No need to call this because page 'pageSettings.currentPage' is watched!!! It would trigger subsequent duplicated req...
