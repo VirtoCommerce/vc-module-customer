@@ -1,5 +1,5 @@
 ﻿angular.module('virtoCommerce.customerModule')
-.controller('virtoCommerce.customerModule.employeeDetailController', ['$scope', 'virtoCommerce.customerModule.organizations', 'platformWebApp.common.timeZones', function ($scope, organizations, timeZones) {
+.controller('virtoCommerce.customerModule.employeeDetailController', ['$scope', 'virtoCommerce.customerModule.members', 'platformWebApp.common.timeZones', function ($scope, members, timeZones) {
     var blade = $scope.blade;
 
     if (blade.isNew) {
@@ -29,6 +29,41 @@
         $scope.datepickers[which] = true;
     };
 
-    $scope.organizations = organizations.query();
+
+    $scope.pageSize = 50;
+    $scope.organizations = [];
+
+    $scope.fetch = function ($select, $event) {
+        if (!$event) {
+            // This is a first call or a call from a filter
+            $select.page = 0;
+        } else {
+            // This is a call from "Load more..." button
+            $event.stopPropagation();
+            $event.preventDefault();
+            $select.page++;
+        }
+
+        members.search(
+            {
+                memberType: 'Organization',
+                SearchPhrase: $select.search,
+                deepSearch: true,
+                take: $scope.pageSize,
+                skip: $select.page * $scope.pageSize
+            },
+            function (data) {
+                if (data.results.length < $scope.pageSize)
+                    $select.loaded = true;
+                else
+                    $select.loaded = false;
+
+                if ($event)
+                    $scope.organizations = $scope.organizations.concat(data.results);
+                else
+                    $scope.organizations = data.results;
+            });
+    }
+
     $scope.timeZones = timeZones.query();
 }]);
