@@ -18,7 +18,7 @@
     }
 
     // datepicker
-    $scope.datepickers = {}
+    $scope.datepickers = {};
     $scope.today = new Date();
 
     $scope.open = function ($event, which) {
@@ -51,17 +51,14 @@
                 skip: $select.page * $scope.pageSize
             },
             function (data) {
-                if (data.results.length < $scope.pageSize)
-                    $select.loaded = true;
-                else 
-                    $select.loaded = false;
+                $select.loaded = data.results.length < $scope.pageSize;
 
                 if ($event)
                     $scope.organizations = $scope.organizations.concat(data.results);
-                else 
+                else
                     $scope.organizations = data.results;
             });
-    }
+    };
 
     $scope.timeZones = timeZones.query();
     $scope.groups = settings.getValues({ id: 'Customer.MemberGroups' });
