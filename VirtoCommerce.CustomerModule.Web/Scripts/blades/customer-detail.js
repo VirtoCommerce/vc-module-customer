@@ -1,5 +1,5 @@
 ﻿angular.module('virtoCommerce.customerModule')
-.controller('virtoCommerce.customerModule.customerDetailController', ['$scope', 'virtoCommerce.customerModule.organizations', 'platformWebApp.common.timeZones', 'platformWebApp.settings', 'platformWebApp.bladeNavigationService', function ($scope, organizations, timeZones, settings, bladeNavigationService) {
+.controller('virtoCommerce.customerModule.customerDetailController', ['$scope', 'virtoCommerce.customerModule.members', 'platformWebApp.common.timeZones', 'platformWebApp.settings', 'platformWebApp.bladeNavigationService', function ($scope, members, timeZones, settings, bladeNavigationService) {
     var blade = $scope.blade;
 
     if (blade.isNew) {
@@ -18,7 +18,7 @@
     }
 
     // datepicker
-    $scope.datepickers = {}
+    $scope.datepickers = {};
     $scope.today = new Date();
 
     $scope.open = function ($event, which) {
@@ -28,7 +28,38 @@
         $scope.datepickers[which] = true;
     };
 
-    $scope.organizations = organizations.query();
+    $scope.pageSize = 50;
+    $scope.organizations = [];
+
+    $scope.fetch = function ($select, $event) {
+        if (!$event) {
+            // it's first call or the call from filter 
+            $select.page = 0;
+        } else {
+            // This is a call from "Load more..." button
+            $event.stopPropagation();
+            $event.preventDefault();
+            $select.page++;
+        }
+
+        members.search(
+            {
+                memberType: 'Organization',
+                SearchPhrase: $select.search,
+                deepSearch: true,
+                take: $scope.pageSize,
+                skip: $select.page * $scope.pageSize
+            },
+            function (data) {
+                $select.loaded = data.results.length < $scope.pageSize;
+
+                if ($event)
+                    $scope.organizations = $scope.organizations.concat(data.results);
+                else
+                    $scope.organizations = data.results;
+            });
+    };
+
     $scope.timeZones = timeZones.query();
     $scope.groups = settings.getValues({ id: 'Customer.MemberGroups' });
 
