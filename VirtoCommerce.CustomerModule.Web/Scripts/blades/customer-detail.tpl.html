@@ -62,9 +62,7 @@
                         <ui-select-choices refresh="fetch($select)" repeat="x.id as x in organizations | filter: {}">
                                 <span ng-bind-html="x.name | highlight: $select.search"></span>
                                 <div ng-if="$index == $select.items.length-1 && !$select.loaded">
-                                    <button
-                                            class="btn btn-xs btn-success"
-                                            style="width: 100%; margin-top: 5px;"
+                                    <button class="btn loadmore-btn"
                                             ng-click="fetch($select, $event);"
                                             ng-disabled="loading">
                                         Load more...
