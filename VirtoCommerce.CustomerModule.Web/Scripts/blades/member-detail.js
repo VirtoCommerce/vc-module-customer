@@ -103,5 +103,28 @@
 
     blade.headIcon = blade.memberTypeDefinition.icon;
 
+    $scope.pageSize = 50;
+
+    $scope.fetchOrganizations = function ($select) {
+        $select.page = 0;
+        $scope.organizations = [];
+        $scope.fetchNextOrganizations($select);
+    }
+
+    $scope.fetchNextOrganizations = function ($select) {
+        members.search(
+            {
+                memberType: 'Organization',
+                SearchPhrase: $select.search,
+                deepSearch: true,
+                take: $scope.pageSize,
+                skip: $select.page * $scope.pageSize
+            },
+            function (data) {
+                $scope.organizations = $scope.organizations.concat(data.results);
+                $select.page++;
+            });
+    };
+
     blade.refresh(false);
 }]);
