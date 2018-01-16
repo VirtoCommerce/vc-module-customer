@@ -184,6 +184,8 @@ angular.module(moduleName, [])
           }
       });
 
+      // pageSize amount must be enough to show scroll bar in dropdown list container.
+      // If scroll list doesn't appear auto loading won't be work.
       $rootScope.pageSize = 50;
 
       $rootScope.fetchOrganizations = function ($select) {
