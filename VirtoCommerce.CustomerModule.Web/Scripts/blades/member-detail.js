@@ -103,6 +103,8 @@
 
     blade.headIcon = blade.memberTypeDefinition.icon;
 
+    // pageSize amount must be enough to show scrollbar in dropdown list container.
+    // If scrollbar doesn't appear auto loading won't work.
     $scope.pageSize = 50;
 
     $scope.fetchOrganizations = function ($select) {

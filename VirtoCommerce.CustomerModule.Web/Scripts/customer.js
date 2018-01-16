@@ -183,29 +183,4 @@ angular.module(moduleName, [])
               }]
           }
       });
-
-      // pageSize amount must be enough to show scroll bar in dropdown list container.
-      // If scroll list doesn't appear auto loading won't be work.
-      $rootScope.pageSize = 50;
-
-      $rootScope.fetchOrganizations = function ($select) {
-        $select.page = 0;
-        $rootScope.organizations = [];
-        $rootScope.fetchNextOrganizations($select);
-      }
-
-      $rootScope.fetchNextOrganizations = function ($select) {
-        members.search(
-            {
-                memberType: 'Organization',
-                SearchPhrase: $select.search,
-                deepSearch: true,
-                take: $rootScope.pageSize,
-                skip: $select.page * $rootScope.pageSize
-            },
-            function (data) {
-                $rootScope.organizations = $rootScope.organizations.concat(data.results);
-                $select.page++;
-        });
-      };
   }]);
