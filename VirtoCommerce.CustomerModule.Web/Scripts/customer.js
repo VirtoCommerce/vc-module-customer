@@ -5,7 +5,7 @@ if (AppDependencies != undefined) {
     AppDependencies.push(moduleName);
 }
 
-angular.module(moduleName, ['angular-scroll-complete'])
+angular.module(moduleName, [])
 .config(
   ['$stateProvider', function ($stateProvider) {
       $stateProvider
