@@ -28,7 +28,7 @@ angular.module(moduleName, [])
   }]
 )
 .run(
-  ['$rootScope', 'platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', function ($rootScope, mainMenuService, widgetService, $state, memberTypesResolverService, settings) {
+    ['$rootScope', 'platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', 'virtoCommerce.customerModule.members', function ($rootScope, mainMenuService, widgetService, $state, memberTypesResolverService, settings, members) {
       //Register module in main menu
       var menuItem = {
           path: 'browse/member',
@@ -183,4 +183,27 @@ angular.module(moduleName, [])
               }]
           }
       });
+
+      $rootScope.pageSize = 50;
+
+      $rootScope.fetchOrganizations = function ($select) {
+        $select.page = 0;
+        $rootScope.organizations = [];
+        $rootScope.fetchNextOrganizations($select);
+      }
+
+      $rootScope.fetchNextOrganizations = function ($select) {
+        members.search(
+            {
+                memberType: 'Organization',
+                SearchPhrase: $select.search,
+                deepSearch: true,
+                take: $rootScope.pageSize,
+                skip: $select.page * $rootScope.pageSize
+            },
+            function (data) {
+                $rootScope.organizations = $rootScope.organizations.concat(data.results);
+                $select.page++;
+        });
+      };
   }]);

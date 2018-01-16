@@ -35,7 +35,7 @@
                                 <div class="form-input" data-role="input-control">
                                     <ui-select multiple ng-model="blade.currentEntity.groups">
                                         <ui-select-match placeholder="{{'customer.blades.contact-detail.placeholders.groups' | translate}}">{{$item}}</ui-select-match>
-                                        <ui-select-choices repeat="x in groups | filter: $select.search">
+                                        <ui-select-choices repeat="x in groups | filter: $select.search" >
                                             <span ng-bind-html="x | highlight: $select.search"></span>
                                         </ui-select-choices>
                                     </ui-select>
@@ -59,7 +59,7 @@
                     <label class="form-label">{{'customer.blades.contact-detail.labels.organizations' | translate}}</label>
                     <ui-select multiple ng-model="blade.currentEntity.organizations">
                         <ui-select-match placeholder="{{'customer.blades.contact-detail.placeholders.organizations' | translate}}">{{$item.name}}</ui-select-match>
-                        <ui-select-choices repeat="x.id as x in organizations | filter: {name: $select.search}">
+                        <ui-select-choices repeat="x.id as x in organizations" refresh="fetchOrganizations($select)" when-scrolled="fetchNextOrganizations($select)">
                             <span ng-bind-html="x.name | highlight: $select.search"></span>
                         </ui-select-choices>
                     </ui-select>

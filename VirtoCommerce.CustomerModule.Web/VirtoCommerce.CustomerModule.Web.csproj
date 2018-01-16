@@ -189,7 +189,9 @@
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Content\css\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.CustomerModule.Data\VirtoCommerce.CustomerModule.Data.csproj">
       <Project>{1e7cb134-7d2c-45ff-8eb7-3c6d474d9536}</Project>

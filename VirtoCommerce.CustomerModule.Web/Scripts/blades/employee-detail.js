@@ -1,5 +1,5 @@
 ﻿angular.module('virtoCommerce.customerModule')
-.controller('virtoCommerce.customerModule.employeeDetailController', ['$scope', 'virtoCommerce.customerModule.organizations', 'platformWebApp.common.timeZones', function ($scope, organizations, timeZones) {
+.controller('virtoCommerce.customerModule.employeeDetailController', ['$scope', 'virtoCommerce.customerModule.members', 'platformWebApp.common.timeZones', function ($scope, members, timeZones) {
     var blade = $scope.blade;
 
     if (blade.isNew) {
@@ -19,7 +19,7 @@
     }
 
     // datepicker
-    $scope.datepickers = {}
+    $scope.datepickers = {};
     $scope.today = new Date();
 
     $scope.open = function ($event, which) {
@@ -29,6 +29,5 @@
         $scope.datepickers[which] = true;
     };
 
-    $scope.organizations = organizations.query();
     $scope.timeZones = timeZones.query();
 }]);
