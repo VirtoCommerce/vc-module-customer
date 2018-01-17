@@ -54,7 +54,7 @@ namespace VirtoCommerce.CustomerModule.Web
             _container.RegisterType<IEventPublisher<MemberChangingEvent>, EventPublisher<MemberChangingEvent>>();
 
             Func<CustomerRepositoryImpl> customerRepositoryFactory = () => new CustomerRepositoryImpl(_connectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>(),
-                new ChangeLogInterceptor(_container.Resolve<Func<IPlatformRepository>>(), ChangeLogPolicy.Cumulative, new[] { nameof(MemberDataEntity) }, _container.Resolve<IUserNameResolver>()));
+                new ChangeLogInterceptor(_container.Resolve<Func<IPlatformRepository>>(), ChangeLogPolicy.Cumulative, new[] { nameof(MemberDataEntity) }));
 
             _container.RegisterInstance<Func<ICustomerRepository>>(customerRepositoryFactory);
             _container.RegisterInstance<Func<IMemberRepository>>(customerRepositoryFactory);
