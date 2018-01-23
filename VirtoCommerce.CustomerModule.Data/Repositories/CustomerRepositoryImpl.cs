@@ -1,8 +1,8 @@
-﻿using System;
+﻿using System.Data.Common;
 using System.Data.Entity;
 using System.Linq;
 using VirtoCommerce.CustomerModule.Data.Model;
-using VirtoCommerce.Platform.Data.Infrastructure;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
 
 namespace VirtoCommerce.CustomerModule.Data.Repositories
@@ -18,6 +18,11 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
         {
             //Configuration.AutoDetectChangesEnabled = true;
             Configuration.ProxyCreationEnabled = false;
+        }
+
+        public CustomerRepositoryImpl(DbConnection existingConnection, IUnitOfWork unitOfWork = null,
+            IInterceptor[] interceptors = null) : base(existingConnection, unitOfWork, interceptors)
+        {
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
