@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Data.Infrastructure;
@@ -29,6 +28,11 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
         {
             //Configuration.AutoDetectChangesEnabled = true;
             Configuration.ProxyCreationEnabled = false;
+        }
+
+        protected MemberRepositoryBase(DbConnection existingConnection, IUnitOfWork unitOfWork = null,
+            IInterceptor[] interceptors = null) : base(existingConnection, unitOfWork, interceptors)
+        { 
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
