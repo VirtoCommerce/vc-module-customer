@@ -26,7 +26,7 @@ namespace VirtoCommerce.CustomerModule.Web
 {
     public class Module : ModuleBase, ISupportExportImportModule
     {
-        private readonly string _connectionStringName = ConfigurationHelper.GetConnectionStringValue("VirtoCommerce.Customer") ?? ConfigurationHelper.GetConnectionStringValue("VirtoCommerce");
+        private readonly string _connectionString = ConfigurationHelper.GetConnectionStringValue("VirtoCommerce.Customer") ?? ConfigurationHelper.GetConnectionStringValue("VirtoCommerce");
         private readonly IUnityContainer _container; 
 
         public Module(IUnityContainer container)
@@ -38,7 +38,7 @@ namespace VirtoCommerce.CustomerModule.Web
 
         public override void SetupDatabase()
         {
-            using (var db = new CustomerRepositoryImpl(_connectionStringName, _container.Resolve<AuditableInterceptor>()))
+            using (var db = new CustomerRepositoryImpl(_connectionString, _container.Resolve<AuditableInterceptor>()))
             {
                 var initializer = new SetupDatabaseInitializer<CustomerRepositoryImpl, Data.Migrations.Configuration>();
                 initializer.InitializeDatabase(db);
@@ -53,7 +53,7 @@ namespace VirtoCommerce.CustomerModule.Web
             //Member changing event publisher.
             _container.RegisterType<IEventPublisher<MemberChangingEvent>, EventPublisher<MemberChangingEvent>>();
 
-            Func<CustomerRepositoryImpl> customerRepositoryFactory = () => new CustomerRepositoryImpl(_connectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>(),
+            Func<CustomerRepositoryImpl> customerRepositoryFactory = () => new CustomerRepositoryImpl(_connectionString, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>(),
                 new ChangeLogInterceptor(_container.Resolve<Func<IPlatformRepository>>(), ChangeLogPolicy.Cumulative, new[] { nameof(MemberDataEntity) }));
 
             _container.RegisterInstance<Func<ICustomerRepository>>(customerRepositoryFactory);
