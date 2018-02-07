@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
+using VirtoCommerce.CustomerModule.Data.Common;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Platform.Core.ExportImport;
@@ -85,7 +87,7 @@ namespace VirtoCommerce.CustomerModule.Web.ExportImport
 
                                 var members = new List<Member>();
                                 var membersCount = 0;
-
+                                //TODO: implement to iterative import without whole members loading
                                 while (reader.TokenType != JsonToken.EndArray)
                                 {
                                     var member = _serializer.Deserialize<Member>(reader);
@@ -94,21 +96,24 @@ namespace VirtoCommerce.CustomerModule.Web.ExportImport
 
                                     reader.Read();
                                 }
-
-                                if (membersCount % _batchSize == 0 || reader.TokenType == JsonToken.EndArray)
+                                //Need to import by topological sort order, because Organizations have a graph structure and here references integrity must be preserved 
+                                var organizations = members.OfType<Organization>();
+                                var nodes = new HashSet<string>(organizations.Select(x => x.Id));
+                                var edges = new HashSet<Tuple<string, string>>(organizations.Where(x => !string.IsNullOrEmpty(x.ParentId)).Select(x => new Tuple<string, string>(x.Id, x.ParentId)));
+                                var orgsTopologicalSortedList = TopologicalSort.Sort(nodes, edges);
+                                members = members.OrderByDescending(x => orgsTopologicalSortedList.IndexOf(x.Id)).ToList();
+                                for (int i = 0; i < membersCount; i += _batchSize)
                                 {
-                                    _memberService.SaveChanges(members.ToArray());
-                                    members.Clear();
+                                    _memberService.SaveChanges(members.Skip(i).Take(_batchSize).ToArray());
 
                                     if (membersTotalCount > 0)
                                     {
-                                        progressInfo.Description = $"{ membersCount } of { membersTotalCount } members imported";
+                                        progressInfo.Description = $"{ i } of { membersTotalCount } members imported";
                                     }
                                     else
                                     {
-                                        progressInfo.Description = $"{ membersCount } members imported";
+                                        progressInfo.Description = $"{ i } members imported";
                                     }
-
                                     progressCallback(progressInfo);
                                 }
                             }

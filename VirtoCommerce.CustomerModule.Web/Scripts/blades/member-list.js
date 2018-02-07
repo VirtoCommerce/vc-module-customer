@@ -120,6 +120,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
             callback: function (remove) {
                 if (remove) {
                     bladeNavigationService.closeChildrenBlades(blade, function () {
+                        blade.isLoading = true;
                         var memberIds = _.pluck(selection, 'id');
 
                         if (($scope.gridApi != undefined) && $scope.gridApi.selection.getSelectAllState()) {
