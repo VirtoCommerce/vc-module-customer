@@ -145,6 +145,7 @@
     <Compile Include="Model\OrganizationDataEntity.cs" />
     <Compile Include="Model\PhoneDataEntity.cs" />
     <Compile Include="Model\VendorDataEntity.cs" />
+    <Compile Include="Observers\MemberIndexationObserver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\CustomerRepositoryImpl.cs" />
     <Compile Include="Repositories\ICustomerRepository.cs" />
