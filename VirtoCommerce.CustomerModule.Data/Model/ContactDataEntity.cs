@@ -51,7 +51,8 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(64)]
         public string PreferredCommunication { get; set; }
 
-        public byte[] Photo { get; set; }
+        [StringLength(2083)]
+        public string PhotoUrl { get; set; }
 
         [StringLength(256)]
         public string Salutation { get; set; }
@@ -115,7 +116,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             target.TaxpayerId = this.TaxpayerId;
             target.PreferredCommunication = this.PreferredCommunication;
             target.PreferredDelivery = this.PreferredDelivery;
-            target.Photo = this.Photo;
+            target.PhotoUrl = this.PhotoUrl;
 
             base.Patch(target);
         }
