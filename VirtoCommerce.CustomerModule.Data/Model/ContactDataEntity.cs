@@ -115,9 +115,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             target.TaxpayerId = this.TaxpayerId;
             target.PreferredCommunication = this.PreferredCommunication;
             target.PreferredDelivery = this.PreferredDelivery;
+            target.Photo = this.Photo;
 
             base.Patch(target);
-
         }
     }
 }
