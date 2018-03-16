@@ -131,6 +131,10 @@
     <Compile Include="Migrations\201603291317073_VendorAndEmployee.Designer.cs">
       <DependentUpon>201603291317073_VendorAndEmployee.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803010948526_ChangeTypePhotoForContact.cs" />
+    <Compile Include="Migrations\201803010948526_ChangeTypePhotoForContact.Designer.cs">
+      <DependentUpon>201803010948526_ChangeTypePhotoForContact.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\AddressDataEntity.cs" />
     <Compile Include="Model\AddressDataEntityComparer.cs" />
@@ -205,6 +209,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201611171903485_MemberGroups.resx">
       <DependentUpon>201611171903485_MemberGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803010948526_ChangeTypePhotoForContact.resx">
+      <DependentUpon>201803010948526_ChangeTypePhotoForContact.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
