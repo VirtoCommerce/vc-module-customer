@@ -52,6 +52,7 @@ namespace VirtoCommerce.CustomerModule.Web
 
             //Member changing event publisher.
             _container.RegisterType<IEventPublisher<MemberChangingEvent>, EventPublisher<MemberChangingEvent>>();
+            _container.RegisterType<IEventPublisher<MemberChangedEvent>, EventPublisher<MemberChangedEvent>>();
 
             Func<CustomerRepositoryImpl> customerRepositoryFactory = () => new CustomerRepositoryImpl(_connectionString, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>(),
                 new ChangeLogInterceptor(_container.Resolve<Func<IPlatformRepository>>(), ChangeLogPolicy.Cumulative, new[] { nameof(MemberDataEntity) }));
