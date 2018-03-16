@@ -19,8 +19,8 @@ namespace VirtoCommerce.CustomerModule.Data.Services
     public class CommerceMembersServiceImpl : MemberServiceBase
     {
         private readonly ISecurityService _securityService;
-        public CommerceMembersServiceImpl(Func<ICustomerRepository> repositoryFactory, IDynamicPropertyService dynamicPropertyService, ICommerceService commerceService, ISecurityService securityService, IEventPublisher<MemberChangingEvent> eventPublisher)
-            : base(repositoryFactory, dynamicPropertyService, commerceService, eventPublisher)
+        public CommerceMembersServiceImpl(Func<ICustomerRepository> repositoryFactory, IDynamicPropertyService dynamicPropertyService, ICommerceService commerceService, ISecurityService securityService, IEventPublisher<MemberChangingEvent> memberChangingEventPublisher, IEventPublisher<MemberChangedEvent> memberChangedEventPublisher)
+            : base(repositoryFactory, dynamicPropertyService, commerceService, memberChangingEventPublisher, memberChangedEventPublisher)
         {
             _securityService = securityService;
         }

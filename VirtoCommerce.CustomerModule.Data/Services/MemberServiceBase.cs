@@ -23,17 +23,19 @@ namespace VirtoCommerce.CustomerModule.Data.Services
     public abstract class MemberServiceBase : ServiceBase, IMemberService, IMemberSearchService
     {
         protected MemberServiceBase(Func<IMemberRepository> repositoryFactory, IDynamicPropertyService dynamicPropertyService, ICommerceService commerceService,
-                                  IEventPublisher<MemberChangingEvent> eventPublisher)
+                                  IEventPublisher<MemberChangingEvent> memberChangingEventPublisher, IEventPublisher<MemberChangedEvent> memberChangedEventPublisher)
         {
             RepositoryFactory = repositoryFactory;
             DynamicPropertyService = dynamicPropertyService;
-            MemberEventventPublisher = eventPublisher;
+            MemberChangingEventPublisher = memberChangingEventPublisher;
+            MemberChangedEventPublisher = memberChangedEventPublisher;
             CommerceService = commerceService;
         }
 
         protected Func<IMemberRepository> RepositoryFactory { get; }
         protected IDynamicPropertyService DynamicPropertyService { get; }
-        protected IEventPublisher<MemberChangingEvent> MemberEventventPublisher { get; }
+        protected IEventPublisher<MemberChangingEvent> MemberChangingEventPublisher { get; }
+        protected IEventPublisher<MemberChangedEvent> MemberChangedEventPublisher { get; }
         protected ICommerceService CommerceService { get; set; }
 
 
@@ -86,6 +88,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         public virtual void SaveChanges(Member[] members)
         {
             var pkMap = new PrimaryKeyResolvingMap();
+            var changedEvents = new List<MemberChangedEvent>();
 
             using (var repository = RepositoryFactory())
             using (var changeTracker = GetChangeTracker(repository))
@@ -107,12 +110,14 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                             {
                                 changeTracker.Attach(dataTargetMember);
                                 dataSourceMember.Patch(dataTargetMember);
-                                MemberEventventPublisher.Publish(new MemberChangingEvent(EntryState.Modified, member));
+                                MemberChangingEventPublisher.Publish(new MemberChangingEvent(EntryState.Modified, member));
+                                changedEvents.Add(new MemberChangedEvent(EntryState.Modified, member));
                             }
                             else
                             {
                                 repository.Add(dataSourceMember);
-                                MemberEventventPublisher.Publish(new MemberChangingEvent(EntryState.Added, member));
+                                MemberChangingEventPublisher.Publish(new MemberChangingEvent(EntryState.Added, member));
+                                changedEvents.Add(new MemberChangedEvent(EntryState.Added, member));
                             }
                         }
                     }
@@ -129,6 +134,11 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             }
 
             CommerceService.UpsertSeoForObjects(members.OfType<ISeoSupport>().ToArray());
+
+            foreach (var changedEvent in changedEvents)
+            {
+                MemberChangedEventPublisher.Publish(changedEvent);
+            }
         }
 
         public virtual void Delete(string[] ids, string[] memberTypes = null)
@@ -140,7 +150,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                 {
                     foreach (var member in members)
                     {
-                        MemberEventventPublisher.Publish(new MemberChangingEvent(EntryState.Deleted, member));
+                        MemberChangingEventPublisher.Publish(new MemberChangingEvent(EntryState.Deleted, member));
                     }
                     repository.RemoveMembersByIds(members.Select(m => m.Id).ToArray());
                     CommitChanges(repository);
@@ -152,6 +162,10 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                         {
                             CommerceService.DeleteSeoForObject(seoObject);
                         }
+                    }
+                    foreach (var member in members)
+                    {
+                        MemberChangedEventPublisher.Publish(new MemberChangedEvent(EntryState.Deleted, member));
                     }
                 }
             }
