@@ -23,19 +23,21 @@ namespace VirtoCommerce.CustomerModule.Data.Services
     public abstract class MemberServiceBase : ServiceBase, IMemberService, IMemberSearchService
     {
         protected MemberServiceBase(Func<IMemberRepository> repositoryFactory, IDynamicPropertyService dynamicPropertyService, ICommerceService commerceService,
-                                  IEventPublisher<MemberChangingEvent> memberChangingEventPublisher, IEventPublisher<MemberChangedEvent> memberChangedEventPublisher)
+                                  Func<IEventPublisher<MemberChangingEvent>> memberChangingEventPublisherFunc, Func<IEventPublisher<MemberChangedEvent>> memberChangedEventPublisherFunc)
         {
             RepositoryFactory = repositoryFactory;
             DynamicPropertyService = dynamicPropertyService;
-            MemberChangingEventPublisher = memberChangingEventPublisher;
-            MemberChangedEventPublisher = memberChangedEventPublisher;
+            MemberChangingEventPublisherFunc = memberChangingEventPublisherFunc;
+            MemberChangedEventPublisherFunc = memberChangedEventPublisherFunc;
             CommerceService = commerceService;
         }
 
         protected Func<IMemberRepository> RepositoryFactory { get; }
         protected IDynamicPropertyService DynamicPropertyService { get; }
-        protected IEventPublisher<MemberChangingEvent> MemberChangingEventPublisher { get; }
-        protected IEventPublisher<MemberChangedEvent> MemberChangedEventPublisher { get; }
+        protected Func<IEventPublisher<MemberChangingEvent>> MemberChangingEventPublisherFunc { get; }
+        protected IEventPublisher<MemberChangingEvent> MemberChangingEventPublisher => MemberChangingEventPublisherFunc();
+        protected Func<IEventPublisher<MemberChangedEvent>> MemberChangedEventPublisherFunc { get; }
+        protected IEventPublisher<MemberChangedEvent> MemberChangedEventPublisher => MemberChangedEventPublisherFunc();
         protected ICommerceService CommerceService { get; set; }
 
 
