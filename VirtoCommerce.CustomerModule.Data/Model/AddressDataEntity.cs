@@ -102,6 +102,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         public virtual Address ToModel(Address address)
         {
             address.InjectFrom(this);
+            address.Key = Id;
             address.Phone = this.DaytimePhoneNumber;
             address.AddressType = EnumUtility.SafeParse(this.Type, AddressType.BillingAndShipping);
             return address;
