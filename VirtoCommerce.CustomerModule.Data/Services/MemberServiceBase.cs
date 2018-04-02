@@ -7,6 +7,7 @@ using VirtoCommerce.CustomerModule.Data.Repositories;
 using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Commerce.Model.Search;
 using VirtoCommerce.Domain.Commerce.Services;
+using VirtoCommerce.Domain.Common.Events;
 using VirtoCommerce.Domain.Customer.Events;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
@@ -23,19 +24,17 @@ namespace VirtoCommerce.CustomerModule.Data.Services
     public abstract class MemberServiceBase : ServiceBase, IMemberService, IMemberSearchService
     {
         protected MemberServiceBase(Func<IMemberRepository> repositoryFactory, IDynamicPropertyService dynamicPropertyService, ICommerceService commerceService,
-                                  IEventPublisher<MemberChangingEvent> memberChangingEventPublisher, IEventPublisher<MemberChangedEvent> memberChangedEventPublisher)
+                                    IEventPublisher eventPublisher)
         {
             RepositoryFactory = repositoryFactory;
             DynamicPropertyService = dynamicPropertyService;
-            MemberChangingEventPublisher = memberChangingEventPublisher;
-            MemberChangedEventPublisher = memberChangedEventPublisher;
+            EventPublisher = eventPublisher;
             CommerceService = commerceService;
         }
 
         protected Func<IMemberRepository> RepositoryFactory { get; }
         protected IDynamicPropertyService DynamicPropertyService { get; }
-        protected IEventPublisher<MemberChangingEvent> MemberChangingEventPublisher { get; }
-        protected IEventPublisher<MemberChangedEvent> MemberChangedEventPublisher { get; }
+        protected IEventPublisher EventPublisher { get; }
         protected ICommerceService CommerceService { get; set; }
 
 
@@ -88,7 +87,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         public virtual void SaveChanges(Member[] members)
         {
             var pkMap = new PrimaryKeyResolvingMap();
-            var changedEvents = new List<MemberChangedEvent>();
+            var changedEntries = new List<GenericChangedEntry<Member>>();
 
             using (var repository = RepositoryFactory())
             using (var changeTracker = GetChangeTracker(repository))
@@ -110,21 +109,21 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                             {
                                 changeTracker.Attach(dataTargetMember);
                                 dataSourceMember.Patch(dataTargetMember);
-                                MemberChangingEventPublisher.Publish(new MemberChangingEvent(EntryState.Modified, member));
-                                changedEvents.Add(new MemberChangedEvent(EntryState.Modified, member));
+                                changedEntries.Add(new GenericChangedEntry<Member>(dataTargetMember.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(member.MemberType)), member, EntryState.Modified));
                             }
                             else
                             {
                                 repository.Add(dataSourceMember);
-                                MemberChangingEventPublisher.Publish(new MemberChangingEvent(EntryState.Added, member));
-                                changedEvents.Add(new MemberChangedEvent(EntryState.Added, member));
+                                changedEntries.Add(new GenericChangedEntry<Member>(member, EntryState.Added));
                             }
                         }
                     }
                 }
-
+                //Raise domain events
+                EventPublisher.Publish(new MemberChangingEvent(changedEntries));
                 CommitChanges(repository);
                 pkMap.ResolvePrimaryKeys();
+                EventPublisher.Publish(new MemberChangedEvent(changedEntries));
             }
 
             //Save dynamic properties
@@ -134,24 +133,18 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             }
 
             CommerceService.UpsertSeoForObjects(members.OfType<ISeoSupport>().ToArray());
-
-            foreach (var changedEvent in changedEvents)
-            {
-                MemberChangedEventPublisher.Publish(changedEvent);
-            }
         }
 
         public virtual void Delete(string[] ids, string[] memberTypes = null)
-        {
+        { 
             using (var repository = RepositoryFactory())
             {
                 var members = GetByIds(ids, null, memberTypes);
                 if (!members.IsNullOrEmpty())
                 {
-                    foreach (var member in members)
-                    {
-                        MemberChangingEventPublisher.Publish(new MemberChangingEvent(EntryState.Deleted, member));
-                    }
+                    var changedEntries = members.Select(x => new GenericChangedEntry<Member>(x, EntryState.Deleted));
+                    EventPublisher.Publish(new MemberChangingEvent(changedEntries));
+
                     repository.RemoveMembersByIds(members.Select(m => m.Id).ToArray());
                     CommitChanges(repository);
                     foreach (var member in members)
@@ -163,10 +156,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                             CommerceService.DeleteSeoForObject(seoObject);
                         }
                     }
-                    foreach (var member in members)
-                    {
-                        MemberChangedEventPublisher.Publish(new MemberChangedEvent(EntryState.Deleted, member));
-                    }
+                    EventPublisher.Publish(new MemberChangedEvent(changedEntries));
                 }
             }
         }
