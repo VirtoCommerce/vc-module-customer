@@ -130,12 +130,12 @@
     };
 
     function loadCustomerOrganizations() {
-        organizationsResource.getByIds(
-            { 'ids[]': blade.currentEntity.organizations },
-            function (data) {
-                joinOrganizations(data);
-            }
-        );
+        if (blade.currentEntity.organizations && blade.currentEntity.organizations.length > 0) {
+            organizationsResource.getByIds({ ids: blade.currentEntity.organizations }, function (data) {
+                    joinOrganizations(data);
+                }
+            );
+        };
     };
 
     function joinOrganizations(organizations) {
