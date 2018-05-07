@@ -1,5 +1,5 @@
 ﻿angular.module('virtoCommerce.customerModule')
-.controller('virtoCommerce.customerModule.memberDetailController', ['$scope', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.members', 'platformWebApp.dynamicProperties.api', function ($scope, bladeNavigationService, members, dynamicPropertiesApi) {
+.controller('virtoCommerce.customerModule.memberDetailController', ['$scope', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.members', 'platformWebApp.dynamicProperties.api', 'virtoCommerce.customerModule.organizations', function ($scope, bladeNavigationService, members, dynamicPropertiesApi, organizationsResource) {
     var blade = $scope.blade;
     blade.updatePermission = 'customer:update';
     blade.currentEntityId = blade.currentEntity.id;
@@ -110,6 +110,7 @@
     $scope.fetchOrganizations = function ($select) {
         $select.page = 0;
         $scope.organizations = [];
+        getCustomerOrganizartions();
         $scope.fetchNextOrganizations($select);
     }
 
@@ -123,9 +124,23 @@
                 skip: $select.page * $scope.pageSize
             },
             function (data) {
-                $scope.organizations = $scope.organizations.concat(data.results);
+                joinOrganizations(data.results);
                 $select.page++;
             });
+    };
+
+    function getCustomerOrganizartions() {
+        organizationsResource.getByIds(
+            { 'ids[]': blade.currentEntity.organizations },
+            function (data) {
+                joinOrganizations(data);
+            }
+        );
+    };
+
+    function joinOrganizations(organizations) {
+        $scope.organizations = $scope.organizations.concat(organizations);
+
     };
 
     blade.refresh(false);
