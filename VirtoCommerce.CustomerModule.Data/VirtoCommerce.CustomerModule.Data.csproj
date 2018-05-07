@@ -139,6 +139,10 @@
     <Compile Include="Migrations\201803010948526_ChangeTypePhotoForContact.Designer.cs">
       <DependentUpon>201803010948526_ChangeTypePhotoForContact.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201805071501368_RemoveAddressNameRequired.cs" />
+    <Compile Include="Migrations\201805071501368_RemoveAddressNameRequired.Designer.cs">
+      <DependentUpon>201805071501368_RemoveAddressNameRequired.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\AddressDataEntity.cs" />
     <Compile Include="Model\AddressDataEntityComparer.cs" />
@@ -216,6 +220,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803010948526_ChangeTypePhotoForContact.resx">
       <DependentUpon>201803010948526_ChangeTypePhotoForContact.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805071501368_RemoveAddressNameRequired.resx">
+      <DependentUpon>201805071501368_RemoveAddressNameRequired.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
