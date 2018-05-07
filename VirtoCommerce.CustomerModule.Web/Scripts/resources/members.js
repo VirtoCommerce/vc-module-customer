@@ -7,5 +7,12 @@
     });
 }])
 .factory('virtoCommerce.customerModule.organizations', ['$resource', function ($resource) {
-    return $resource('api/members/organizations');
+    return $resource('api/members/organizations', {},
+        {
+            getByIds: {
+                method: 'GET',
+                url: 'api/organizations',
+                isArray: true
+            }
+        });
 }]);
