@@ -110,7 +110,7 @@
     $scope.fetchOrganizations = function ($select) {
         $select.page = 0;
         $scope.organizations = [];
-        getCustomerOrganizartions();
+        loadCustomerOrganizations();
         $scope.fetchNextOrganizations($select);
     }
 
@@ -129,7 +129,7 @@
             });
     };
 
-    function getCustomerOrganizartions() {
+    function loadCustomerOrganizations() {
         organizationsResource.getByIds(
             { 'ids[]': blade.currentEntity.organizations },
             function (data) {
