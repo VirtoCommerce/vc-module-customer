@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,18 +13,13 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         public virtual bool Equals(AddressDataEntity x, AddressDataEntity y)
         {
-            return GetHashCode(x) == GetHashCode(y);
+            return x.Id == y.Id;
         }
 
         public virtual int GetHashCode(AddressDataEntity obj)
         {
-            var result = String.Join(":", obj.Organization, obj.City, obj.CountryCode, obj.CountryName, obj.FaxNumber, obj.Name, obj.RegionName,
-                                          obj.RegionId, obj.StateProvince, obj.Email, obj.FirstName, obj.LastName, obj.Line1, obj.Line2,
-                                          obj.DaytimePhoneNumber, obj.PostalCode, obj.DaytimePhoneNumber, obj.EveningPhoneNumber,
-                                          obj.Type);
-            return result.GetHashCode();
+            return obj.Id != null ? obj.Id.GetHashCode() : obj.GetHashCode();
         }
-
 
         #endregion
     }

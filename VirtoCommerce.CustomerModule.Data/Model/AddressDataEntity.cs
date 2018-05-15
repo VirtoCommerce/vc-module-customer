@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -113,6 +113,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 throw new ArgumentNullException("address");
          
             this.InjectFrom(address);
+            this.Id = address.Key;
             this.DaytimePhoneNumber = address.Phone;
             this.Type = address.AddressType.ToString();
             return this;
