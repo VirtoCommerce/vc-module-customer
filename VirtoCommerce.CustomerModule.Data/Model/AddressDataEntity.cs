@@ -126,31 +126,6 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             target.LastName = LastName;
             target.Line1 = Line1;
             target.Line2 = Line2;
-        }
-
-        public override bool Equals(object obj)
-        {
-            var result = base.Equals(obj);
-            //For transient addresses need to compare two objects as value object (by content)
-            if (!result && IsTransient() && obj is AddressDataEntity otherAddressEntity)
-            {
-                var domainAddress = ToModel(AbstractTypeFactory<Address>.TryCreateInstance());
-                var otherAddress = otherAddressEntity.ToModel(AbstractTypeFactory<Address>.TryCreateInstance());
-                result = domainAddress.Equals(otherAddress);
-            }
-            return result;
-        }
-
-        public override int GetHashCode()
-        {
-            if (IsTransient())
-            {
-                //need to convert to domain address model to allow use ValueObject.GetHashCode
-                var domainAddress = ToModel(AbstractTypeFactory<Address>.TryCreateInstance());
-                return domainAddress.GetHashCode();
-            }
-            return base.GetHashCode();
-        }
-     
+        }    
     }
 }
