@@ -132,6 +132,7 @@
     <Content Include="module.manifest">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Localizations\ru.VirtoCommerce.Customer.json" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
