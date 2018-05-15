@@ -1,22 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.Serialization;
+using System;
 using System.ComponentModel.DataAnnotations;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations.Schema;
-using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Platform.Data.Infrastructure;
-using VirtoCommerce.Platform.Data.Common.ConventionInjections;
 using Omu.ValueInjecter;
 using VirtoCommerce.Domain.Commerce.Model;
+using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CustomerModule.Data.Model
 {
-	public class AddressDataEntity : AuditableEntity
+    public class AddressDataEntity : AuditableEntity
     {
-		[StringLength(2048)]
+        [StringLength(2048)]
 		public string Name { get; set; }
 			
 		[StringLength(128)]
@@ -84,7 +76,6 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
 		public virtual MemberDataEntity Member { get; set; }
 
-
 		#endregion
 
         #region Overrides
@@ -102,8 +93,8 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         {
             address.InjectFrom(this);
             address.Key = Id;
-            address.Phone = this.DaytimePhoneNumber;
-            address.AddressType = EnumUtility.SafeParse(this.Type, AddressType.BillingAndShipping);
+            address.Phone = DaytimePhoneNumber;
+            address.AddressType = EnumUtility.SafeParse(Type, AddressType.BillingAndShipping);
             return address;
         }
 
@@ -113,27 +104,53 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 throw new ArgumentNullException("address");
          
             this.InjectFrom(address);
-            this.DaytimePhoneNumber = address.Phone;
-            this.Type = address.AddressType.ToString();
+            Id = address.Key;
+            DaytimePhoneNumber = address.Phone;
+            Type = address.AddressType.ToString();
             return this;
         }
 
         public virtual void Patch(AddressDataEntity target)
         {
-            target.City = this.City;
-            target.CountryCode = this.CountryCode;
-            target.CountryName = this.CountryName;
-            target.DaytimePhoneNumber = this.DaytimePhoneNumber;
-            target.PostalCode = this.PostalCode;
-            target.RegionId = this.RegionId;
-            target.RegionName = this.RegionName;
-            target.Type = this.Type;
-            target.City = this.City;
-            target.Email = this.Email;
-            target.FirstName = this.FirstName;
-            target.LastName = this.LastName;
-            target.Line1 = this.Line1;
-            target.Line2 = this.Line2;
+            target.City = City;
+            target.CountryCode = CountryCode;
+            target.CountryName = CountryName;
+            target.DaytimePhoneNumber = DaytimePhoneNumber;
+            target.PostalCode = PostalCode;
+            target.RegionId = RegionId;
+            target.RegionName = RegionName;
+            target.Type = Type;
+            target.City = City;
+            target.Email = Email;
+            target.FirstName = FirstName;
+            target.LastName = LastName;
+            target.Line1 = Line1;
+            target.Line2 = Line2;
         }
+
+        public override bool Equals(object obj)
+        {
+            var result = base.Equals(obj);
+            //For transient addresses need to compare two objects as value object (by content)
+            if (!result && IsTransient() && obj is AddressDataEntity otherAddressEntity)
+            {
+                var domainAddress = ToModel(AbstractTypeFactory<Address>.TryCreateInstance());
+                var otherAddress = otherAddressEntity.ToModel(AbstractTypeFactory<Address>.TryCreateInstance());
+                result = domainAddress.Equals(otherAddress);
+            }
+            return result;
+        }
+
+        public override int GetHashCode()
+        {
+            if (IsTransient())
+            {
+                //need to convert to domain address model to allow use ValueObject.GetHashCode
+                var domainAddress = ToModel(AbstractTypeFactory<Address>.TryCreateInstance());
+                return domainAddress.GetHashCode();
+            }
+            return base.GetHashCode();
+        }
+     
     }
 }

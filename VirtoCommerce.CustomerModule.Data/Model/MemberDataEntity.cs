@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -160,7 +160,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
             if (!this.Addresses.IsNullCollection())
             {
-                this.Addresses.Patch(target.Addresses, AbstractTypeFactory<AddressDataEntityComparer>.TryCreateInstance(), (sourceAddress, targetAddress) => sourceAddress.Patch(targetAddress));
+                this.Addresses.Patch(target.Addresses, (sourceAddress, targetAddress) => sourceAddress.Patch(targetAddress));
             }
 
             if (!this.Notes.IsNullCollection())

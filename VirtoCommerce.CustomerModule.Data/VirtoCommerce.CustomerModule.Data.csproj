@@ -145,7 +145,6 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\AddressDataEntity.cs" />
-    <Compile Include="Model\AddressDataEntityComparer.cs" />
     <Compile Include="Model\ContactDataEntity.cs" />
     <Compile Include="Model\EmailDataEntity.cs" />
     <Compile Include="Model\EmployeeDataEntity.cs" />
