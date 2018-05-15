@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // <copyright file="GlobalAssemblyInfo.cs" company="VirtoCommerce">
 //   Copyright © VirtoCommerce. All rights reserved.
 // </copyright>
@@ -15,8 +15,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct("Virto Commerce Customer Module")]
 [assembly: AssemblyCopyright("Copyright © VirtoCommerce 2011-2017")]
 
-[assembly: AssemblyFileVersion("2.14.15.0")]
-[assembly: AssemblyVersion("2.14.15.0")]
+[assembly: AssemblyFileVersion("2.14.16.0")]
+[assembly: AssemblyVersion("2.14.16.0")]
 
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]
