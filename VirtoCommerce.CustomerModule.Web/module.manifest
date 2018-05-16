@@ -51,6 +51,13 @@
                     <value>Wholesaler</value>
                 </arrayValues>
             </setting>
+            <setting>
+              <name>Customer.ExportImport.PageSize</name>
+              <valueType>integer</valueType>
+              <defaultValue>50</defaultValue>
+              <title>The page size being used for Export / Import</title>
+              <description>High value may will cause slow performance</description>
+            </setting>
         </group>
     </settings>
 

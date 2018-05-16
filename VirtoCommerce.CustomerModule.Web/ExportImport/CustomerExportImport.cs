@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +8,7 @@ using VirtoCommerce.CustomerModule.Data.Common;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Platform.Core.ExportImport;
+using VirtoCommerce.Platform.Core.Settings;
 
 namespace VirtoCommerce.CustomerModule.Web.ExportImport
 {
@@ -15,14 +16,33 @@ namespace VirtoCommerce.CustomerModule.Web.ExportImport
     {
         private readonly IMemberService _memberService;
         private readonly IMemberSearchService _memberSearchService;
+        private readonly ISettingsManager _settingsManager;
         private readonly JsonSerializer _serializer;
-        private const int _batchSize = 50;
 
-        public CustomerExportImport(IMemberService memberService, IMemberSearchService memberSearchService)
+        private int? _batchSize;
+
+        public CustomerExportImport(
+            IMemberService memberService,
+            IMemberSearchService memberSearchService,
+            ISettingsManager settingsManager
+            )
         {
             _memberService = memberService;
             _memberSearchService = memberSearchService;
+            _settingsManager = settingsManager;
             _serializer = new JsonSerializer { TypeNameHandling = TypeNameHandling.All };
+        }
+
+        private int BatchSize
+        {
+            get
+            {
+                if (_batchSize == null)
+                {
+                    _batchSize = _settingsManager.GetValue("Customer.ExportImport.PageSize", 50);
+                }
+                return (int)_batchSize;
+            }
         }
 
         public void DoExport(Stream backupStream, Action<ExportImportProgressInfo> progressCallback)
@@ -44,15 +64,16 @@ namespace VirtoCommerce.CustomerModule.Web.ExportImport
 
                 writer.WritePropertyName("Members");
                 writer.WriteStartArray();
-                for (var i = 0; i < memberCount; i += _batchSize)
+
+                for (var i = 0; i < memberCount; i += BatchSize)
                 {
-                    var searchResponse = _memberSearchService.SearchMembers(new MembersSearchCriteria { Skip = i, Take = _batchSize, DeepSearch = true });
+                    var searchResponse = _memberSearchService.SearchMembers(new MembersSearchCriteria { Skip = i, Take = BatchSize, DeepSearch = true });
                     foreach (var member in searchResponse.Results)
                     {
                         _serializer.Serialize(writer, member);
                     }
                     writer.Flush();
-                    progressInfo.Description = $"{ Math.Min(memberCount, i + _batchSize) } of { memberCount } members exported";
+                    progressInfo.Description = $"{ Math.Min(memberCount, i + BatchSize) } of { memberCount } members exported";
                     progressCallback(progressInfo);
                 }
                 writer.WriteEndArray();
@@ -102,9 +123,10 @@ namespace VirtoCommerce.CustomerModule.Web.ExportImport
                                 var edges = new HashSet<Tuple<string, string>>(organizations.Where(x => !string.IsNullOrEmpty(x.ParentId)).Select(x => new Tuple<string, string>(x.Id, x.ParentId)));
                                 var orgsTopologicalSortedList = TopologicalSort.Sort(nodes, edges);
                                 members = members.OrderByDescending(x => orgsTopologicalSortedList.IndexOf(x.Id)).ToList();
-                                for (int i = 0; i < membersCount; i += _batchSize)
+
+                                for (int i = 0; i < membersCount; i += BatchSize)
                                 {
-                                    _memberService.SaveChanges(members.Skip(i).Take(_batchSize).ToArray());
+                                    _memberService.SaveChanges(members.Skip(i).Take(BatchSize).ToArray());
 
                                     if (membersTotalCount > 0)
                                     {
