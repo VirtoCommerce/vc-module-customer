@@ -121,6 +121,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             target.RegionName = RegionName;
             target.Type = Type;
             target.City = City;
+            target.Name = Name;
             target.Email = Email;
             target.FirstName = FirstName;
             target.LastName = LastName;
