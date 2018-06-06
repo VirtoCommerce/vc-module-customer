@@ -120,7 +120,7 @@ namespace VirtoCommerce.CustomerModule.Web.ExportImport
                                 //Need to import by topological sort order, because Organizations have a graph structure and here references integrity must be preserved 
                                 var organizations = members.OfType<Organization>();
                                 var nodes = new HashSet<string>(organizations.Select(x => x.Id));
-                                var edges = new HashSet<Tuple<string, string>>(organizations.Where(x => !string.IsNullOrEmpty(x.ParentId)).Select(x => new Tuple<string, string>(x.Id, x.ParentId)));
+                                var edges = new HashSet<Tuple<string, string>>(organizations.Where(x => !string.IsNullOrEmpty(x.ParentId) && x.Id != x.ParentId).Select(x => new Tuple<string, string>(x.Id, x.ParentId)));
                                 var orgsTopologicalSortedList = TopologicalSort.Sort(nodes, edges);
                                 members = members.OrderByDescending(x => orgsTopologicalSortedList.IndexOf(x.Id)).ToList();
 
