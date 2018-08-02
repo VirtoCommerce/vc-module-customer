@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
@@ -28,38 +29,42 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             _memberSearchService = memberSearchService;
         }
 
-        /// <summary>
-        /// Get organizations
-        /// </summary>
-        /// <remarks>Get array of all organizations.</remarks>
-        [HttpGet]
-        [Route("members/organizations")]
-        [ResponseType(typeof(Organization[]))]
-        public IHttpActionResult ListOrganizations()
-        {
-            var searchCriteria = new MembersSearchCriteria
-            {
-                MemberType = typeof(Organization).Name,
-                DeepSearch = true,
-                Take = int.MaxValue
-            };
-            var result = _memberSearchService.SearchMembers(searchCriteria);
+        #region Polymorphic
 
-            return Ok(result.Results.OfType<Organization>());
+        /// <summary>
+        /// Create new member (can be any object inherited from Member type)
+        /// </summary>
+        /// <param name="member">concrete instance of abstract member type will be created by using PolymorphicMemberJsonConverter</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("members")]
+        [ResponseType(typeof(Member))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
+        public IHttpActionResult CreateMember([FromBody] Member member)
+        {
+            _memberService.SaveChanges(new[] { member });
+            var retVal = _memberService.GetByIds(new[] { member.Id }, null, new[] { member.MemberType }).FirstOrDefault();
+
+            // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
+            return Ok((dynamic)retVal);
         }
 
         /// <summary>
-        /// Get members
+        /// Bulk create new members (can be any objects inherited from Member type)
         /// </summary>
-        /// <remarks>Get array of members satisfied search criteria.</remarks>
-        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        /// <param name="members">Array of concrete instances of abstract member type will be created by using PolymorphicMemberJsonConverter</param>
+        /// <returns></returns>
         [HttpPost]
-        [Route("members/search")]
-        [ResponseType(typeof(GenericSearchResult<Member>))]
-        public IHttpActionResult Search(MembersSearchCriteria criteria)
+        [Route("members/bulk")]
+        [ResponseType(typeof(Member[]))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
+        public IHttpActionResult BulkCreateMembers([FromBody] Member[] members)
         {
-            var result = _memberSearchService.SearchMembers(criteria);
-            return Ok(result);
+            _memberService.SaveChanges(members);
+            var retVal = _memberService.GetByIds(members.Select(m => m.Id).ToArray(), null, members.Select(m => m.MemberType).ToArray()).ToArray();
+
+            // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
+            return Ok((dynamic)retVal);
         }
 
         /// <summary>
@@ -99,21 +104,42 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
-        /// Create new member (can be any object inherited from Member type)
+        /// Get all member organizations
         /// </summary>
-        /// <param name="member">concrete instance of abstract member type will be created by using PolymorphicMemberJsonConverter</param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("members")]
-        [ResponseType(typeof(Member))]
-        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
-        public IHttpActionResult CreateMember([FromBody] Member member)
+        /// <param name="id">member Id</param>
+        [HttpGet]
+        [Route("members/{id}/organizations")]
+        [ResponseType(typeof(Organization[]))]
+        public IHttpActionResult GetMemberOrganizations([FromUri] string id)
         {
-            _memberService.SaveChanges(new[] { member });
-            var retVal = _memberService.GetByIds(new[] { member.Id }, null, new[] { member.MemberType }).FirstOrDefault();
+            var member = _memberService.GetByIds(new[] { id  }, null, new[] { typeof(Employee).Name, typeof(Contact).Name }).FirstOrDefault();
+            var organizationsIds = new List<string>();
+            if (member != null)
+            {
+                if(member is Contact contact)
+                {
+                    organizationsIds = contact.Organizations?.ToList();
+                }
+                else if (member is Employee employee)
+                {
+                    organizationsIds = employee.Organizations?.ToList();
+                }
+            }
+            return GetOrganizationsByIds(organizationsIds.ToArray());
+        }
 
-            // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
-            return Ok((dynamic)retVal);
+        /// <summary>
+        /// Get members
+        /// </summary>
+        /// <remarks>Get array of members satisfied search criteria.</remarks>
+        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        [HttpPost]
+        [Route("members/search")]
+        [ResponseType(typeof(GenericSearchResult<Member>))]
+        public IHttpActionResult Search(MembersSearchCriteria criteria)
+        {
+            var result = _memberSearchService.SearchMembers(criteria);
+            return Ok(result);
         }
 
         /// <summary>
@@ -127,6 +153,20 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public IHttpActionResult UpdateMember(Member member)
         {
             _memberService.SaveChanges(new[] { member });
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        /// <summary>
+        /// Bulk update members
+        /// </summary>
+        /// <param name="members">Array of concrete instances of abstract member type will be created by using PolymorphicMemberJsonConverter</param>
+        [HttpPut]
+        [Route("members/bulk")]
+        [ResponseType(typeof(void))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
+        public IHttpActionResult BulkUpdateMembers(Member[] members)
+        {
+            _memberService.SaveChanges(members);
             return StatusCode(HttpStatusCode.NoContent);
         }
 
@@ -179,31 +219,9 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        #region Special members for storefront C# API client  (because it not support polymorph types)
+        #endregion
 
-        /// <summary>
-        /// Create contact
-        /// </summary>
-        [HttpPost]
-        [Route("contacts")]
-        [ResponseType(typeof(Contact))]
-        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
-        public IHttpActionResult CreateContact(Contact contact)
-        {
-            return CreateMember(contact);
-        }
-
-        /// <summary>
-        /// Update contact
-        /// </summary>
-        [HttpPut]
-        [Route("contacts")]
-        [ResponseType(typeof(void))]
-        [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
-        public IHttpActionResult UpdateContact(Contact contact)
-        {
-            return UpdateMember(contact);
-        }
+        #region Organization
 
         /// <summary>
         /// Create organization
@@ -218,43 +236,35 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
-        /// Update organization
+        /// Bulk create organizations
         /// </summary>
-        [HttpPut]
-        [Route("organizations")]
-        [ResponseType(typeof(void))]
-        [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
-        public IHttpActionResult UpdateOrganization(Organization organization)
+        [HttpPost]
+        [Route("organizations/bulk")]
+        [ResponseType(typeof(Organization[]))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
+        public IHttpActionResult BulkCreateOrganizations(Organization[] organizations)
         {
-            return UpdateMember(organization);
+            return BulkCreateMembers(organizations.Cast<Member>().ToArray());
         }
 
         /// <summary>
-        /// Delete organizations
+        /// Get organizations
         /// </summary>
-        /// <remarks>Delete organizations by given array of ids.</remarks>
-        /// <param name="ids">An array of organizations ids</param>
-        [HttpDelete]
-        [Route("organizations")]
-        [ResponseType(typeof(void))]
-        [CheckPermission(Permission = CustomerPredefinedPermissions.Delete)]
-        public IHttpActionResult DeleteOrganizations([FromUri] string[] ids)
+        /// <remarks>Get array of all organizations.</remarks>
+        [HttpGet]
+        [Route("members/organizations")]
+        [ResponseType(typeof(Organization[]))]
+        public IHttpActionResult ListOrganizations()
         {
-            return DeleteMembers(ids);
-        }
+            var searchCriteria = new MembersSearchCriteria
+            {
+                MemberType = typeof(Organization).Name,
+                DeepSearch = true,
+                Take = int.MaxValue
+            };
+            var result = _memberSearchService.SearchMembers(searchCriteria);
 
-        /// <summary>
-        /// Delete contacts
-        /// </summary>
-        /// <remarks>Delete contacts by given array of ids.</remarks>
-        /// <param name="ids">An array of contacts ids</param>
-        [HttpDelete]
-        [Route("contacts")]
-        [ResponseType(typeof(void))]
-        [CheckPermission(Permission = CustomerPredefinedPermissions.Delete)]
-        public IHttpActionResult DeleteContacts([FromUri] string[] ids)
-        {
-            return DeleteMembers(ids);
+            return Ok(result.Results.OfType<Organization>());
         }
 
         /// <summary>
@@ -282,6 +292,100 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
+        /// Search organizations
+        /// </summary>
+        /// <remarks>Get array of organizations satisfied search criteria.</remarks>
+        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        [HttpPost]
+        [Route("organizations/search")]
+        [ResponseType(typeof(GenericSearchResult<Organization>))]
+        public IHttpActionResult SearchOrganizations(MembersSearchCriteria criteria)
+        {
+            if (criteria == null)
+            {
+                criteria = new MembersSearchCriteria();
+            }
+
+            criteria.MemberType = typeof(Organization).Name;
+            criteria.MemberTypes = new[] { criteria.MemberType };
+            var searchResult = _memberSearchService.SearchMembers(criteria);
+
+            var result = new GenericSearchResult<Organization>
+            {
+                TotalCount = searchResult.TotalCount,
+                Results = searchResult.Results.OfType<Organization>().ToList()
+            };
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Update organization
+        /// </summary>
+        [HttpPut]
+        [Route("organizations")]
+        [ResponseType(typeof(void))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
+        public IHttpActionResult UpdateOrganization(Organization organization)
+        {
+            return UpdateMember(organization);
+        }
+
+        /// <summary>
+        /// Bulk update organization
+        /// </summary>
+        [HttpPut]
+        [Route("organizations/bulk")]
+        [ResponseType(typeof(void))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
+        public IHttpActionResult BulkUpdateOrganizations(Organization[] organizations)
+        {
+            return BulkUpdateMembers(organizations.Cast<Member>().ToArray());
+        }
+
+        /// <summary>
+        /// Delete organizations
+        /// </summary>
+        /// <remarks>Delete organizations by given array of ids.</remarks>
+        /// <param name="ids">An array of organizations ids</param>
+        [HttpDelete]
+        [Route("organizations")]
+        [ResponseType(typeof(void))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Delete)]
+        public IHttpActionResult DeleteOrganizations([FromUri] string[] ids)
+        {
+            return DeleteMembers(ids);
+        }
+
+        #endregion
+
+        #region Contact
+
+        /// <summary>
+        /// Create contact
+        /// </summary>
+        [HttpPost]
+        [Route("contacts")]
+        [ResponseType(typeof(Contact))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
+        public IHttpActionResult CreateContact(Contact contact)
+        {
+            return CreateMember(contact);
+        }
+
+        /// <summary>
+        /// Bulk create contacts
+        /// </summary>
+        [HttpPost]
+        [Route("contacts/bulk")]
+        [ResponseType(typeof(Contact[]))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
+        public IHttpActionResult BulkCreateContacts(Contact[] contacts)
+        {
+            return BulkCreateMembers(contacts.Cast<Member>().ToArray());
+        }
+
+        /// <summary>
         /// Get contact
         /// </summary>
         /// <param name="id">Contact ID</param>
@@ -292,8 +396,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         {
             return GetMemberById(id, null, typeof(Contact).Name);
         }
-
-
+        
         /// <summary>
         /// Get plenty contacts 
         /// </summary>
@@ -305,6 +408,76 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         {          
             return GetMembersByIds(ids, null, new[] { typeof(Contact).Name });
         }
+
+        /// <summary>
+        /// Search contacts
+        /// </summary>
+        /// <remarks>Get array of contacts satisfied search criteria.</remarks>
+        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        [HttpPost]
+        [Route("contacts/search")]
+        [ResponseType(typeof(GenericSearchResult<Contact>))]
+        public IHttpActionResult SearchContacts(MembersSearchCriteria criteria)
+        {
+            if (criteria == null)
+            {
+                criteria = new MembersSearchCriteria();
+            }
+
+            criteria.MemberType = typeof(Contact).Name;
+            criteria.MemberTypes = new[] { criteria.MemberType };
+            var searchResult = _memberSearchService.SearchMembers(criteria);
+
+            var result = new GenericSearchResult<Contact>
+            {
+                TotalCount = searchResult.TotalCount,
+                Results = searchResult.Results.OfType<Contact>().ToList()
+            };
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Update contact
+        /// </summary>
+        [HttpPut]
+        [Route("contacts")]
+        [ResponseType(typeof(void))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
+        public IHttpActionResult UpdateContact(Contact contact)
+        {
+            return UpdateMember(contact);
+        }
+
+        /// <summary>
+        /// Bulk update contact
+        /// </summary>
+        [HttpPut]
+        [Route("contacts/bulk")]
+        [ResponseType(typeof(void))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
+        public IHttpActionResult BulkUpdateContacts(Contact[] contacts)
+        {
+            return BulkUpdateMembers(contacts.Cast<Member>().ToArray());
+        }
+
+        /// <summary>
+        /// Delete contacts
+        /// </summary>
+        /// <remarks>Delete contacts by given array of ids.</remarks>
+        /// <param name="ids">An array of contacts ids</param>
+        [HttpDelete]
+        [Route("contacts")]
+        [ResponseType(typeof(void))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Delete)]
+        public IHttpActionResult DeleteContacts([FromUri] string[] ids)
+        {
+            return DeleteMembers(ids);
+        }
+
+        #endregion
+
+        #region Vendors
 
         /// <summary>
         /// Get vendor
@@ -346,6 +519,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             }
 
             criteria.MemberType = typeof(Vendor).Name;
+            criteria.MemberTypes = new[] { criteria.MemberType };
             var searchResult = _memberSearchService.SearchMembers(criteria);
 
             var result = new VendorSearchResult
@@ -356,6 +530,50 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
 
             return Ok(result);
         }
+
+        #endregion
+
+        #region Employee
+
+        /// <summary>
+        /// Create employee
+        /// </summary>
+        [HttpPost]
+        [Route("employees")]
+        [ResponseType(typeof(Employee))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
+        public IHttpActionResult CreateEmployee(Employee employee)
+        {
+            return CreateMember(employee);
+        }
+
+        /// <summary>
+        /// Create employee
+        /// </summary>
+        [HttpPost]
+        [Route("employees/bulk")]
+        [ResponseType(typeof(Employee[]))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
+        public IHttpActionResult BulkCreateEmployees(Employee[] employees)
+        {
+            return BulkCreateMembers(employees.Cast<Member>().ToArray());
+        }
+
+        /// <summary>
+        /// Get plenty employees 
+        /// </summary>
+        /// <param name="ids">contact IDs</param>
+        [HttpGet]
+        [Route("employees")]
+        [ResponseType(typeof(Employee[]))]
+        public IHttpActionResult GetEmployeesByIds([FromUri]string[] ids)
+        {
+            return GetMembersByIds(ids, null, new[] { typeof(Employee).Name });
+        }
+
+        #endregion
+
+        #region Special members
 
         [HttpPut]
         [Route("addresses")]
@@ -372,54 +590,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        /// <summary>
-        /// Create employee
-        /// </summary>
-        [HttpPost]
-        [Route("employees")]
-        [ResponseType(typeof(Employee))]
-        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
-        public IHttpActionResult CreateEmployee(Employee employee)
-        {
-            return CreateMember(employee);
-        }
-
-        /// <summary>
-        /// Get plenty employees 
-        /// </summary>
-        /// <param name="ids">contact IDs</param>
-        [HttpGet]
-        [Route("employees")]
-        [ResponseType(typeof(Employee[]))]
-        public IHttpActionResult GetEmployeesByIds([FromUri]string[] ids)
-        {
-            return GetMembersByIds(ids, null, new[] { typeof(Employee).Name });
-        }
-
-        /// <summary>
-        /// Get all member organizations
-        /// </summary>
-        /// <param name="id">member Id</param>
-        [HttpGet]
-        [Route("members/{id}/organizations")]
-        [ResponseType(typeof(Organization[]))]
-        public IHttpActionResult GetMemberOrganizations([FromUri] string id)
-        {
-            var member = _memberService.GetByIds(new[] { id  }, null, new[] { typeof(Employee).Name, typeof(Contact).Name }).FirstOrDefault();
-            var organizationsIds = new List<string>();
-            if (member != null)
-            {
-                if(member is Contact contact)
-                {
-                    organizationsIds = contact.Organizations?.ToList();
-                }
-                else if (member is Employee employee)
-                {
-                    organizationsIds = employee.Organizations?.ToList();
-                }
-            }
-            return GetOrganizationsByIds(organizationsIds.ToArray());
-        }
         #endregion
     }
 }
