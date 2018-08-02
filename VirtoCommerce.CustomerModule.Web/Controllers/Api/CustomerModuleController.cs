@@ -48,7 +48,25 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
             return Ok((dynamic)retVal);
         }
-        
+
+        /// <summary>
+        /// Bulk create new members (can be any objects inherited from Member type)
+        /// </summary>
+        /// <param name="members">Array of concrete instances of abstract member type will be created by using PolymorphicMemberJsonConverter</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("members/bulk")]
+        [ResponseType(typeof(Member[]))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
+        public IHttpActionResult BulkCreateMembers([FromBody] Member[] members)
+        {
+            _memberService.SaveChanges(members);
+            var retVal = _memberService.GetByIds(members.Select(m => m.Id).ToArray(), null, members.Select(m => m.MemberType).ToArray()).ToArray();
+
+            // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
+            return Ok((dynamic)retVal);
+        }
+
         /// <summary>
         /// Get member
         /// </summary>
@@ -139,6 +157,20 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
+        /// Bulk update members
+        /// </summary>
+        /// <param name="members">Array of concrete instances of abstract member type will be created by using PolymorphicMemberJsonConverter</param>
+        [HttpPut]
+        [Route("members/bulk")]
+        [ResponseType(typeof(void))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
+        public IHttpActionResult BulkUpdateMembers(Member[] members)
+        {
+            _memberService.SaveChanges(members);
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        /// <summary>
         /// Delete members
         /// </summary>
         /// <remarks>Delete members by given array of ids.</remarks>
@@ -201,6 +233,18 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public IHttpActionResult CreateOrganization(Organization organization)
         {
             return CreateMember(organization);
+        }
+
+        /// <summary>
+        /// Bulk create organizations
+        /// </summary>
+        [HttpPost]
+        [Route("organizations/bulk")]
+        [ResponseType(typeof(Organization[]))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
+        public IHttpActionResult BulkCreateOrganizations(Organization[] organizations)
+        {
+            return BulkCreateMembers(organizations.Cast<Member>().ToArray());
         }
 
         /// <summary>
@@ -288,6 +332,18 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
+        /// Bulk update organization
+        /// </summary>
+        [HttpPut]
+        [Route("organizations/bulk")]
+        [ResponseType(typeof(void))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
+        public IHttpActionResult BulkUpdateOrganizations(Organization[] organizations)
+        {
+            return BulkUpdateMembers(organizations.Cast<Member>().ToArray());
+        }
+
+        /// <summary>
         /// Delete organizations
         /// </summary>
         /// <remarks>Delete organizations by given array of ids.</remarks>
@@ -315,6 +371,18 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public IHttpActionResult CreateContact(Contact contact)
         {
             return CreateMember(contact);
+        }
+
+        /// <summary>
+        /// Bulk create contacts
+        /// </summary>
+        [HttpPost]
+        [Route("contacts/bulk")]
+        [ResponseType(typeof(Contact[]))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
+        public IHttpActionResult BulkCreateContacts(Contact[] contacts)
+        {
+            return BulkCreateMembers(contacts.Cast<Member>().ToArray());
         }
 
         /// <summary>
@@ -379,6 +447,18 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public IHttpActionResult UpdateContact(Contact contact)
         {
             return UpdateMember(contact);
+        }
+
+        /// <summary>
+        /// Bulk update contact
+        /// </summary>
+        [HttpPut]
+        [Route("contacts/bulk")]
+        [ResponseType(typeof(void))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
+        public IHttpActionResult BulkUpdateContacts(Contact[] contacts)
+        {
+            return BulkUpdateMembers(contacts.Cast<Member>().ToArray());
         }
 
         /// <summary>
@@ -465,6 +545,18 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public IHttpActionResult CreateEmployee(Employee employee)
         {
             return CreateMember(employee);
+        }
+
+        /// <summary>
+        /// Create employee
+        /// </summary>
+        [HttpPost]
+        [Route("employees/bulk")]
+        [ResponseType(typeof(Employee[]))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
+        public IHttpActionResult BulkCreateEmployees(Employee[] employees)
+        {
+            return BulkCreateMembers(employees.Cast<Member>().ToArray());
         }
 
         /// <summary>
