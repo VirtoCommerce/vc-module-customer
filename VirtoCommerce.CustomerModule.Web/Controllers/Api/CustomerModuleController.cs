@@ -248,6 +248,34 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
+        /// Search organizations
+        /// </summary>
+        /// <remarks>Get array of organizations satisfied search criteria.</remarks>
+        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        [HttpPost]
+        [Route("organizations/search")]
+        [ResponseType(typeof(GenericSearchResult<Organization>))]
+        public IHttpActionResult SearchOrganizations(MembersSearchCriteria criteria)
+        {
+            if (criteria == null)
+            {
+                criteria = new MembersSearchCriteria();
+            }
+
+            criteria.MemberType = typeof(Organization).Name;
+            criteria.MemberTypes = new[] { criteria.MemberType };
+            var searchResult = _memberSearchService.SearchMembers(criteria);
+
+            var result = new GenericSearchResult<Organization>
+            {
+                TotalCount = searchResult.TotalCount,
+                Results = searchResult.Results.OfType<Organization>().ToList()
+            };
+
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Update organization
         /// </summary>
         [HttpPut]
@@ -311,6 +339,34 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public IHttpActionResult GetContactsByIds([FromUri]string[] ids)
         {          
             return GetMembersByIds(ids, null, new[] { typeof(Contact).Name });
+        }
+
+        /// <summary>
+        /// Search contacts
+        /// </summary>
+        /// <remarks>Get array of contacts satisfied search criteria.</remarks>
+        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        [HttpPost]
+        [Route("contacts/search")]
+        [ResponseType(typeof(GenericSearchResult<Contact>))]
+        public IHttpActionResult SearchContacts(MembersSearchCriteria criteria)
+        {
+            if (criteria == null)
+            {
+                criteria = new MembersSearchCriteria();
+            }
+
+            criteria.MemberType = typeof(Contact).Name;
+            criteria.MemberTypes = new[] { criteria.MemberType };
+            var searchResult = _memberSearchService.SearchMembers(criteria);
+
+            var result = new GenericSearchResult<Contact>
+            {
+                TotalCount = searchResult.TotalCount,
+                Results = searchResult.Results.OfType<Contact>().ToList()
+            };
+
+            return Ok(result);
         }
 
         /// <summary>
@@ -383,6 +439,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             }
 
             criteria.MemberType = typeof(Vendor).Name;
+            criteria.MemberTypes = new[] { criteria.MemberType };
             var searchResult = _memberSearchService.SearchMembers(criteria);
 
             var result = new VendorSearchResult
