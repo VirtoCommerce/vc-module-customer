@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
@@ -28,40 +29,26 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             _memberSearchService = memberSearchService;
         }
 
-        /// <summary>
-        /// Get organizations
-        /// </summary>
-        /// <remarks>Get array of all organizations.</remarks>
-        [HttpGet]
-        [Route("members/organizations")]
-        [ResponseType(typeof(Organization[]))]
-        public IHttpActionResult ListOrganizations()
-        {
-            var searchCriteria = new MembersSearchCriteria
-            {
-                MemberType = typeof(Organization).Name,
-                DeepSearch = true,
-                Take = int.MaxValue
-            };
-            var result = _memberSearchService.SearchMembers(searchCriteria);
-
-            return Ok(result.Results.OfType<Organization>());
-        }
+        #region Polymorphic
 
         /// <summary>
-        /// Get members
+        /// Create new member (can be any object inherited from Member type)
         /// </summary>
-        /// <remarks>Get array of members satisfied search criteria.</remarks>
-        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        /// <param name="member">concrete instance of abstract member type will be created by using PolymorphicMemberJsonConverter</param>
+        /// <returns></returns>
         [HttpPost]
-        [Route("members/search")]
-        [ResponseType(typeof(GenericSearchResult<Member>))]
-        public IHttpActionResult Search(MembersSearchCriteria criteria)
+        [Route("members")]
+        [ResponseType(typeof(Member))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
+        public IHttpActionResult CreateMember([FromBody] Member member)
         {
-            var result = _memberSearchService.SearchMembers(criteria);
-            return Ok(result);
-        }
+            _memberService.SaveChanges(new[] { member });
+            var retVal = _memberService.GetByIds(new[] { member.Id }, null, new[] { member.MemberType }).FirstOrDefault();
 
+            // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
+            return Ok((dynamic)retVal);
+        }
+        
         /// <summary>
         /// Get member
         /// </summary>
@@ -99,21 +86,42 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
-        /// Create new member (can be any object inherited from Member type)
+        /// Get all member organizations
         /// </summary>
-        /// <param name="member">concrete instance of abstract member type will be created by using PolymorphicMemberJsonConverter</param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("members")]
-        [ResponseType(typeof(Member))]
-        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
-        public IHttpActionResult CreateMember([FromBody] Member member)
+        /// <param name="id">member Id</param>
+        [HttpGet]
+        [Route("members/{id}/organizations")]
+        [ResponseType(typeof(Organization[]))]
+        public IHttpActionResult GetMemberOrganizations([FromUri] string id)
         {
-            _memberService.SaveChanges(new[] { member });
-            var retVal = _memberService.GetByIds(new[] { member.Id }, null, new[] { member.MemberType }).FirstOrDefault();
+            var member = _memberService.GetByIds(new[] { id  }, null, new[] { typeof(Employee).Name, typeof(Contact).Name }).FirstOrDefault();
+            var organizationsIds = new List<string>();
+            if (member != null)
+            {
+                if(member is Contact contact)
+                {
+                    organizationsIds = contact.Organizations?.ToList();
+                }
+                else if (member is Employee employee)
+                {
+                    organizationsIds = employee.Organizations?.ToList();
+                }
+            }
+            return GetOrganizationsByIds(organizationsIds.ToArray());
+        }
 
-            // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
-            return Ok((dynamic)retVal);
+        /// <summary>
+        /// Get members
+        /// </summary>
+        /// <remarks>Get array of members satisfied search criteria.</remarks>
+        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        [HttpPost]
+        [Route("members/search")]
+        [ResponseType(typeof(GenericSearchResult<Member>))]
+        public IHttpActionResult Search(MembersSearchCriteria criteria)
+        {
+            var result = _memberSearchService.SearchMembers(criteria);
+            return Ok(result);
         }
 
         /// <summary>
@@ -179,31 +187,9 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        #region Special members for storefront C# API client  (because it not support polymorph types)
+        #endregion
 
-        /// <summary>
-        /// Create contact
-        /// </summary>
-        [HttpPost]
-        [Route("contacts")]
-        [ResponseType(typeof(Contact))]
-        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
-        public IHttpActionResult CreateContact(Contact contact)
-        {
-            return CreateMember(contact);
-        }
-
-        /// <summary>
-        /// Update contact
-        /// </summary>
-        [HttpPut]
-        [Route("contacts")]
-        [ResponseType(typeof(void))]
-        [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
-        public IHttpActionResult UpdateContact(Contact contact)
-        {
-            return UpdateMember(contact);
-        }
+        #region Organization
 
         /// <summary>
         /// Create organization
@@ -215,6 +201,50 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public IHttpActionResult CreateOrganization(Organization organization)
         {
             return CreateMember(organization);
+        }
+
+        /// <summary>
+        /// Get organizations
+        /// </summary>
+        /// <remarks>Get array of all organizations.</remarks>
+        [HttpGet]
+        [Route("members/organizations")]
+        [ResponseType(typeof(Organization[]))]
+        public IHttpActionResult ListOrganizations()
+        {
+            var searchCriteria = new MembersSearchCriteria
+            {
+                MemberType = typeof(Organization).Name,
+                DeepSearch = true,
+                Take = int.MaxValue
+            };
+            var result = _memberSearchService.SearchMembers(searchCriteria);
+
+            return Ok(result.Results.OfType<Organization>());
+        }
+
+        /// <summary>
+        /// Get organization
+        /// </summary>
+        /// <param name="id">Organization id</param>
+        [HttpGet]
+        [Route("organizations/{id}")]
+        [ResponseType(typeof(Organization))]
+        public IHttpActionResult GetOrganizationById(string id)
+        {
+            return GetMemberById(id, null, typeof(Organization).Name);
+        }
+
+        /// <summary>
+        /// Get plenty organizations 
+        /// </summary>
+        /// <param name="ids">Organization ids</param>
+        [HttpGet]
+        [Route("organizations")]
+        [ResponseType(typeof(Organization))]
+        public IHttpActionResult GetOrganizationsByIds([FromUri]string[] ids)
+        {
+            return GetMembersByIds(ids, null, new[] { typeof(Organization).Name });
         }
 
         /// <summary>
@@ -243,6 +273,58 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             return DeleteMembers(ids);
         }
 
+        #endregion
+
+        #region Contact
+
+        /// <summary>
+        /// Create contact
+        /// </summary>
+        [HttpPost]
+        [Route("contacts")]
+        [ResponseType(typeof(Contact))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Create)]
+        public IHttpActionResult CreateContact(Contact contact)
+        {
+            return CreateMember(contact);
+        }
+
+        /// <summary>
+        /// Get contact
+        /// </summary>
+        /// <param name="id">Contact ID</param>
+        [HttpGet]
+        [Route("contacts/{id}")]
+        [ResponseType(typeof(Contact))]
+        public IHttpActionResult GetContactById(string id)
+        {
+            return GetMemberById(id, null, typeof(Contact).Name);
+        }
+        
+        /// <summary>
+        /// Get plenty contacts 
+        /// </summary>
+        /// <param name="ids">contact IDs</param>
+        [HttpGet]
+        [Route("contacts")]
+        [ResponseType(typeof(Contact[]))]
+        public IHttpActionResult GetContactsByIds([FromUri]string[] ids)
+        {          
+            return GetMembersByIds(ids, null, new[] { typeof(Contact).Name });
+        }
+
+        /// <summary>
+        /// Update contact
+        /// </summary>
+        [HttpPut]
+        [Route("contacts")]
+        [ResponseType(typeof(void))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
+        public IHttpActionResult UpdateContact(Contact contact)
+        {
+            return UpdateMember(contact);
+        }
+
         /// <summary>
         /// Delete contacts
         /// </summary>
@@ -257,54 +339,9 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             return DeleteMembers(ids);
         }
 
-        /// <summary>
-        /// Get organization
-        /// </summary>
-        /// <param name="id">Organization id</param>
-        [HttpGet]
-        [Route("organizations/{id}")]
-        [ResponseType(typeof(Organization))]
-        public IHttpActionResult GetOrganizationById(string id)
-        {
-            return GetMemberById(id, null, typeof(Organization).Name);
-        }
+        #endregion
 
-        /// <summary>
-        /// Get plenty organizations 
-        /// </summary>
-        /// <param name="ids">Organization ids</param>
-        [HttpGet]
-        [Route("organizations")]
-        [ResponseType(typeof(Organization))]
-        public IHttpActionResult GetOrganizationsByIds([FromUri]string[] ids)
-        {
-            return GetMembersByIds(ids, null, new[] { typeof(Organization).Name });
-        }
-
-        /// <summary>
-        /// Get contact
-        /// </summary>
-        /// <param name="id">Contact ID</param>
-        [HttpGet]
-        [Route("contacts/{id}")]
-        [ResponseType(typeof(Contact))]
-        public IHttpActionResult GetContactById(string id)
-        {
-            return GetMemberById(id, null, typeof(Contact).Name);
-        }
-
-
-        /// <summary>
-        /// Get plenty contacts 
-        /// </summary>
-        /// <param name="ids">contact IDs</param>
-        [HttpGet]
-        [Route("contacts")]
-        [ResponseType(typeof(Contact[]))]
-        public IHttpActionResult GetContactsByIds([FromUri]string[] ids)
-        {          
-            return GetMembersByIds(ids, null, new[] { typeof(Contact).Name });
-        }
+        #region Vendors
 
         /// <summary>
         /// Get vendor
@@ -357,20 +394,9 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             return Ok(result);
         }
 
-        [HttpPut]
-        [Route("addresses")]
-        [ResponseType(typeof(void))]
-        [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
-        public IHttpActionResult UpdateAddesses(string memberId, [FromBody] IEnumerable<Address> addresses)
-        {
-            var member = _memberService.GetByIds(new[] { memberId }).FirstOrDefault();
-            if (member != null)
-            {
-                member.Addresses = addresses.ToList();
-                _memberService.SaveChanges(new[] { member });
-            }
-            return StatusCode(HttpStatusCode.NoContent);
-        }
+        #endregion
+
+        #region Employee
 
         /// <summary>
         /// Create employee
@@ -396,30 +422,25 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             return GetMembersByIds(ids, null, new[] { typeof(Employee).Name });
         }
 
-        /// <summary>
-        /// Get all member organizations
-        /// </summary>
-        /// <param name="id">member Id</param>
-        [HttpGet]
-        [Route("members/{id}/organizations")]
-        [ResponseType(typeof(Organization[]))]
-        public IHttpActionResult GetMemberOrganizations([FromUri] string id)
+        #endregion
+
+        #region Special members
+
+        [HttpPut]
+        [Route("addresses")]
+        [ResponseType(typeof(void))]
+        [CheckPermission(Permission = CustomerPredefinedPermissions.Update)]
+        public IHttpActionResult UpdateAddesses(string memberId, [FromBody] IEnumerable<Address> addresses)
         {
-            var member = _memberService.GetByIds(new[] { id  }, null, new[] { typeof(Employee).Name, typeof(Contact).Name }).FirstOrDefault();
-            var organizationsIds = new List<string>();
+            var member = _memberService.GetByIds(new[] { memberId }).FirstOrDefault();
             if (member != null)
             {
-                if(member is Contact contact)
-                {
-                    organizationsIds = contact.Organizations?.ToList();
-                }
-                else if (member is Employee employee)
-                {
-                    organizationsIds = employee.Organizations?.ToList();
-                }
+                member.Addresses = addresses.ToList();
+                _memberService.SaveChanges(new[] { member });
             }
-            return GetOrganizationsByIds(organizationsIds.ToArray());
+            return StatusCode(HttpStatusCode.NoContent);
         }
+
         #endregion
     }
 }
