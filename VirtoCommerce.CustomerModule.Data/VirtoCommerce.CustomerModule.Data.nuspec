@@ -2,7 +2,7 @@
 <package>
     <metadata>
         <id>$id$</id>
-        <version>2.14.18</version>
+        <version>$version$</version>
         <title>$title$</title>
         <authors>VirtoCommerce</authors>
         <owners>VirtoCommerce</owners>
