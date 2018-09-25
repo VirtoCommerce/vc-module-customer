@@ -127,6 +127,10 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             target.LastName = LastName;
             target.Line1 = Line1;
             target.Line2 = Line2;
+            target.EveningPhoneNumber = EveningPhoneNumber;
+            target.FaxNumber = FaxNumber;
+            target.Organization = Organization;
+            target.StateProvince = StateProvince;
         }    
     }
 }
