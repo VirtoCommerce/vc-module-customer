@@ -82,7 +82,10 @@ angular.module(moduleName, [])
           isVisible: function (blade) { return !blade.isNew; }
       };
 
-     
+      var changesLogWidget = {
+        controller: 'platformWebApp.changeLog.operationsWidgetController',
+        template: '$(Platform)/Scripts/app/changeLog/widgets/operations-widget.tpl.html'
+      };
 
       //Register widgets in customer details
       widgetService.registerWidget(accountsWidget, 'customerDetail1');
@@ -91,6 +94,7 @@ angular.module(moduleName, [])
       widgetService.registerWidget(phonesWidget, 'customerDetail2');
       widgetService.registerWidget(dynamicPropertyWidget, 'customerDetail2');
       widgetService.registerWidget(indexWidget, 'customerDetail2');
+      widgetService.registerWidget(changesLogWidget, 'customerDetail2');
 
       //Register widgets in organization details
       widgetService.registerWidget(addressesWidget, 'organizationDetail1');
