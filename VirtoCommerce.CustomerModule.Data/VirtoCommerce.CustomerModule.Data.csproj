@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -35,6 +35,10 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoCompare, Version=0.3.0.53, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\AutoCompare.0.3.0.53\lib\net452\AutoCompare.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="CacheManager.Core, Version=0.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CacheManager.Core.0.8.0\lib\net45\CacheManager.Core.dll</HintPath>
     </Reference>
@@ -87,6 +91,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Common\TopologicalSort.cs" />
+    <Compile Include="Handlers\LogChangesMemberChangedEventHandler.cs" />
     <Compile Include="Migrations\201606101216148_AddIndexes.cs" />
     <Compile Include="Migrations\201606101216148_AddIndexes.Designer.cs">
       <DependentUpon>201606101216148_AddIndexes.cs</DependentUpon>
@@ -160,6 +165,7 @@
     <Compile Include="Repositories\ICustomerRepository.cs" />
     <Compile Include="Repositories\IMemberRepository.cs" />
     <Compile Include="Repositories\MemberRepositoryBase.cs" />
+    <Compile Include="Resources\MemberResources.Designer.cs" />
     <Compile Include="Search\Indexing\IndexDocumentExtensions.cs" />
     <Compile Include="Search\Indexing\MemberDocumentBuilder.cs" />
     <Compile Include="Search\Indexing\MemberDocumentChangesProvider.cs" />
@@ -223,6 +229,7 @@
     <EmbeddedResource Include="Migrations\201805071501368_RemoveAddressNameRequired.resx">
       <DependentUpon>201805071501368_RemoveAddressNameRequired.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\MemberResources.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
