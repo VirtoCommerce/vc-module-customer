@@ -8,8 +8,6 @@ using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Common.Events;
 using VirtoCommerce.Domain.Customer.Events;
 using VirtoCommerce.Domain.Customer.Model;
-using VirtoCommerce.Domain.Customer.Services;
-using VirtoCommerce.Domain.Order.Model;
 using VirtoCommerce.Platform.Core.ChangeLog;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
@@ -92,16 +90,9 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                 modifiedPhones,
                 result =>
                     (state, source, target) =>
-                    {
-                        if (state == EntryState.Added)
-                        {
-                            result.Add(string.Format(MemberResources.PhoneAdded, member.MemberType, member.Name, target));
-                        }
-                        else if (state == EntryState.Deleted)
-                        {
-                            result.Add(string.Format(MemberResources.PhoneRemoved, member.MemberType, member.Name, target));
-                        }
-                    });
+                        result.Add(string.Format(
+                            MemberResources.ResourceManager.GetString($"Phone{state}") ?? string.Empty,
+                                member.MemberType, member.Name, target)));
         }
 
         protected virtual IEnumerable<string> GetEmailChanges(
@@ -112,16 +103,9 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                 modifiedEmails,
                 result =>
                     (state, source, target) =>
-                    {
-                        if (state == EntryState.Added)
-                        {
-                            result.Add(string.Format(MemberResources.EmailAdded, member.MemberType, member.Name, target));
-                        }
-                        else if (state == EntryState.Deleted)
-                        {
-                            result.Add(string.Format(MemberResources.EmailRemoved, member.MemberType, member.Name, target));
-                        }
-                    });
+                        result.Add(string.Format(
+                            MemberResources.ResourceManager.GetString($"Email{state}") ?? string.Empty,
+                                member.MemberType, member.Name, target)));
         }
 
         protected virtual IEnumerable<string> GetAddressChanges(
@@ -132,18 +116,9 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                 modifiedAddress,
                 result =>
                     (state, source, target) =>
-                    {
-                        if (state == EntryState.Added)
-                        {
-                            result.Add(
-                                string.Format(MemberResources.AddressAdded, member.MemberType, member.Name, StringifyAddress(target)));
-                        }
-                        else if (state == EntryState.Deleted)
-                        {
-                            result.Add(
-                                string.Format(MemberResources.AddressRemoved, member.MemberType, member.Name, StringifyAddress(target)));
-                        }
-                    });
+                        result.Add(string.Format(
+                            MemberResources.ResourceManager.GetString($"Address{state}") ?? string.Empty,
+                            member.MemberType, member.Name, StringifyAddress(target), StringifyAddress(source))));
         }
 
         protected virtual IEnumerable<string> GetListChanges<T>(
@@ -218,6 +193,10 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
         public override int GetHashCode(Difference obj)
         {
+            if (obj == null)
+            {
+                return 0;
+            }
             var result = String.Join(":", obj.Name, obj.NewValue, obj.OldValue);
             return result.GetHashCode();
         }

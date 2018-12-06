@@ -72,9 +72,9 @@ namespace VirtoCommerce.CustomerModule.Data {
         /// <summary>
         ///   Looks up a localized string similar to The address &apos;{2}&apos; for {0} {1} deleted.
         /// </summary>
-        public static string AddressRemoved {
+        public static string AddressDeleted {
             get {
-                return ResourceManager.GetString("AddressRemoved", resourceCulture);
+                return ResourceManager.GetString("AddressDeleted", resourceCulture);
             }
         }
         
@@ -90,9 +90,9 @@ namespace VirtoCommerce.CustomerModule.Data {
         /// <summary>
         ///   Looks up a localized string similar to The email &apos;{2}&apos; for {0} {1} deleted.
         /// </summary>
-        public static string EmailRemoved {
+        public static string EmailDeleted {
             get {
-                return ResourceManager.GetString("EmailRemoved", resourceCulture);
+                return ResourceManager.GetString("EmailDeleted", resourceCulture);
             }
         }
         
@@ -135,9 +135,9 @@ namespace VirtoCommerce.CustomerModule.Data {
         /// <summary>
         ///   Looks up a localized string similar to The phone &apos;{2}&apos; for {0} {1} deleted.
         /// </summary>
-        public static string PhoneRemoved {
+        public static string PhoneDeleted {
             get {
-                return ResourceManager.GetString("PhoneRemoved", resourceCulture);
+                return ResourceManager.GetString("PhoneDeleted", resourceCulture);
             }
         }
     }

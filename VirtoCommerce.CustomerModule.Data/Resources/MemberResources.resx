@@ -27,19 +27,19 @@
   <data name="AddressAdded" xml:space="preserve">
     <value>The address '{2}' for {0} {1} added</value>
   </data>
-  <data name="AddressRemoved" xml:space="preserve">
+  <data name="AddressDeleted" xml:space="preserve">
     <value>The address '{2}' for {0} {1} deleted</value>
   </data>
   <data name="EmailAdded" xml:space="preserve">
     <value>The email '{2}' for {0} {1} added</value>
   </data>
-  <data name="EmailRemoved" xml:space="preserve">
+  <data name="EmailDeleted" xml:space="preserve">
     <value>The email '{2}' for {0} {1} deleted</value>
   </data>
   <data name="PhoneAdded" xml:space="preserve">
     <value>The phone '{2}' for {0} {1} added</value>
   </data>
-  <data name="PhoneRemoved" xml:space="preserve">
+  <data name="PhoneDeleted" xml:space="preserve">
     <value>The phone '{2}' for {0} {1} deleted</value>
   </data>
 </root>
