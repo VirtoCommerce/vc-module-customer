@@ -95,11 +95,11 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                     {
                         if (state == EntryState.Added)
                         {
-                            AddPhoneAddedOperation(result, member, target);
+                            result.Add(string.Format(MemberResources.PhoneAdded, member.MemberType, member.Name, target));
                         }
                         else if (state == EntryState.Deleted)
                         {
-                            AddPhoneRemovedOperation(result, member, target);
+                            result.Add(string.Format(MemberResources.PhoneRemoved, member.MemberType, member.Name, target));
                         }
                     });
         }
@@ -115,11 +115,11 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                     {
                         if (state == EntryState.Added)
                         {
-                            AddEmailAddedOperation(result, member, target);
+                            result.Add(string.Format(MemberResources.EmailAdded, member.MemberType, member.Name, target));
                         }
                         else if (state == EntryState.Deleted)
                         {
-                            AddEmailRemovedOperation(result, member, target);
+                            result.Add(string.Format(MemberResources.EmailRemoved, member.MemberType, member.Name, target));
                         }
                     });
         }
@@ -135,11 +135,13 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                     {
                         if (state == EntryState.Added)
                         {
-                            AddAddressAddedOperation(result, member, target);
+                            result.Add(
+                                string.Format(MemberResources.AddressAdded, member.MemberType, member.Name, StringifyAddress(target)));
                         }
                         else if (state == EntryState.Deleted)
                         {
-                            AddAddressRemovedOperation(result, member, target);
+                            result.Add(
+                                string.Format(MemberResources.AddressRemoved, member.MemberType, member.Name, StringifyAddress(target)));
                         }
                     });
         }
@@ -175,38 +177,6 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                     difference.Name,
                     difference.OldValue,
                     difference.NewValue));
-        }
-
-        private void AddPhoneRemovedOperation(List<string> result, Member member, string phone)
-        {
-            result.Add(string.Format(MemberResources.PhoneRemoved, member.MemberType, member.Name, phone));
-        }
-
-        private void AddPhoneAddedOperation(List<string> result, Member member, string phone)
-        {
-            result.Add(string.Format(MemberResources.PhoneAdded, member.MemberType, member.Name, phone));
-        }
-
-        private void AddEmailRemovedOperation(List<string> result, Member member, string email)
-        {
-            result.Add(string.Format(MemberResources.EmailRemoved, member.MemberType, member.Name, email));
-        }
-
-        private void AddEmailAddedOperation(List<string> result, Member member, string email)
-        {
-            result.Add(string.Format(MemberResources.EmailAdded, member.MemberType, member.Name, email));
-        }
-
-        private void AddAddressRemovedOperation(List<string> result, Member member, Address address)
-        {
-            result.Add(
-                string.Format(MemberResources.AddressRemoved, member.MemberType, member.Name, StringifyAddress(address)));
-        }
-
-        private void AddAddressAddedOperation(List<string> result, Member member, Address address)
-        {
-            result.Add(
-                string.Format(MemberResources.AddressAdded, member.MemberType, member.Name, StringifyAddress(address)));
         }
 
         private static string StringifyAddress(Address address)
