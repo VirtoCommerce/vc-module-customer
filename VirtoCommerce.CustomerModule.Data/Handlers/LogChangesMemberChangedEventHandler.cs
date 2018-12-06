@@ -19,26 +19,32 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
     public class LogChangesMemberChangedEventHandler : IEventHandler<MemberChangedEvent>
     {
         private readonly IChangeLogService _changeLogService;
-        private static readonly string[] ObservedProperties;
+        private readonly string[] _observedProperties;
 
-        static LogChangesMemberChangedEventHandler()
+        public static string[] ObservedProperties()
         {
             var memberPropsNames = ReflectionUtility.GetPropertyNames<Contact>(
                 x => x.Name, x => x.FirstName, x => x.LastName, x => x.MiddleName,
                 x => x.Salutation, x => x.FullName, x => x.BirthDate);
-            ObservedProperties = memberPropsNames.ToArray();
+            return memberPropsNames.ToArray();
         }
 
         public LogChangesMemberChangedEventHandler(IChangeLogService changeLogService)
+            : this(changeLogService, ObservedProperties())
+        {
+        }
+
+        protected LogChangesMemberChangedEventHandler(IChangeLogService changeLogService, string[] observedProperties)
         {
             _changeLogService = changeLogService;
+            _observedProperties = observedProperties;
         }
 
         public virtual Task Handle(MemberChangedEvent message)
         {
             var operationLogs =
                 message.ChangedEntries
-                    .Where(x => x.EntryState == EntryState.Modified)
+                    .Where(x => x.EntryState == EntryState.Modified && x.OldEntry is Contact)
                     .SelectMany(GetChangedEntryOperationLogs)
                     .ToArray();
             _changeLogService.SaveChanges(operationLogs);
@@ -59,7 +65,7 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
             }
 
             var observedDifferences =
-                diff.Join(ObservedProperties, x => x.Name.ToLowerInvariant(), x => x.ToLowerInvariant(), (x, y) => x)
+                diff.Join(_observedProperties, x => x.Name.ToLowerInvariant(), x => x.ToLowerInvariant(), (x, y) => x)
                     .ToArray();
             foreach (var difference in observedDifferences.Distinct(new DifferenceComparer()))
             {
