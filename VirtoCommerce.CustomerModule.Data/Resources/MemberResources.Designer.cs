@@ -115,7 +115,7 @@ namespace VirtoCommerce.CustomerModule.Data {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The {0} {1} property &apos;{2}&apos; changed from &apos;{3}&apos; to  &apos;{4}&apos;.
+        ///   Looks up a localized string similar to The {0} {1} property &apos;{2}&apos; changed from &apos;{3}&apos; to &apos;{4}&apos;.
         /// </summary>
         public static string MemberPropertyChanged {
             get {

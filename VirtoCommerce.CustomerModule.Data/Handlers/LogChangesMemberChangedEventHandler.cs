@@ -39,8 +39,9 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
             var operationLogs =
                 message.ChangedEntries
                     .Where(x => x.EntryState == EntryState.Modified)
-                    .SelectMany(GetChangedEntryOperationLogs);
-            _changeLogService.SaveChanges(operationLogs.ToArray());
+                    .SelectMany(GetChangedEntryOperationLogs)
+                    .ToArray();
+            _changeLogService.SaveChanges(operationLogs);
             return Task.CompletedTask;
         }
 
@@ -202,20 +203,20 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                 string.Format(MemberResources.AddressAdded, member.MemberType, member.Name, StringifyAddress(address)));
         }
 
-        private string StringifyAddress(Address address)
+        private static string StringifyAddress(Address address)
         {
-            var result = "";
-            if (address != null)
+            if (address == null)
             {
-                return string.Join(
-                    ", ",
-                    typeof(Address)
-                        .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                        .OrderBy(p => p.Name)
-                        .Select(p => p.GetValue(address))
-                        .Where(x => x != null));
+                return "";
             }
-            return result;
+
+            return string.Join(
+                ", ",
+                typeof(Address)
+                    .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                    .OrderBy(p => p.Name)
+                    .Select(p => p.GetValue(address))
+                    .Where(x => x != null));
         }
 
         protected virtual OperationLog GetLogRecord(Member member, string template)
