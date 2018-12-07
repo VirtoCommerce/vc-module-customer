@@ -79,55 +79,16 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
         protected virtual IEnumerable<string> GetContactChanges(Contact originalContact, Contact modifiedContact)
         {
             return
-                GetAddressChanges(
-                    originalContact, originalContact.Addresses, modifiedContact.Addresses)
-                    .Union(GetEmailChanges(originalContact, originalContact.Emails, modifiedContact.Emails))
-                    .Union(GetPhoneChanges(originalContact, originalContact.Phones, modifiedContact.Phones));
-        }
-
-        protected virtual IEnumerable<string> GetPhoneChanges(
-            Member member, IEnumerable<string> originalPhones, IEnumerable<string> modifiedPhones)
-        {
-            return GetListChanges(
-                originalPhones,
-                modifiedPhones,
-                result =>
-                    (state, source, target) =>
-                        result.Add(string.Format(
-                            MemberResources.ResourceManager.GetString($"Phone{state}") ?? string.Empty,
-                                member.MemberType, member.Name, target)));
-        }
-
-        protected virtual IEnumerable<string> GetEmailChanges(
-            Member member, IEnumerable<string> originalEmails, IEnumerable<string> modifiedEmails)
-        {
-            return GetListChanges(
-                originalEmails,
-                modifiedEmails,
-                result =>
-                    (state, source, target) =>
-                        result.Add(string.Format(
-                            MemberResources.ResourceManager.GetString($"Email{state}") ?? string.Empty,
-                                member.MemberType, member.Name, target)));
-        }
-
-        protected virtual IEnumerable<string> GetAddressChanges(
-            Member member, IEnumerable<Address> originalAddress, IEnumerable<Address> modifiedAddress)
-        {
-            return GetListChanges(
-                originalAddress,
-                modifiedAddress,
-                result =>
-                    (state, source, target) =>
-                        result.Add(string.Format(
-                            MemberResources.ResourceManager.GetString($"Address{state}") ?? string.Empty,
-                            member.MemberType, member.Name, StringifyAddress(target), StringifyAddress(source))));
+                GetListChanges(originalContact, originalContact.Addresses, modifiedContact.Addresses, "Address")
+                    .Union(GetListChanges(originalContact, originalContact.Emails, modifiedContact.Emails, "Email"))
+                    .Union(GetListChanges(originalContact, originalContact.Phones, modifiedContact.Phones, "Phone"));
         }
 
         protected virtual IEnumerable<string> GetListChanges<T>(
+            Member member,
             IEnumerable<T> originalCollection,
             IEnumerable<T> modifiedCollection,
-            Func<List<string>, Action<EntryState, T, T>> compareAction)
+            string resourceKeyPrefix)
         {
             if (originalCollection == null || modifiedCollection == null)
             {
@@ -135,12 +96,15 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
             }
 
             var result = new List<string>();
+
+            void CompareAction(EntryState state, T source, T target) =>
+                result.Add(string.Format(
+                    MemberResources.ResourceManager.GetString($"{resourceKeyPrefix}{state}") ?? string.Empty,
+                    member.MemberType, member.Name, target, source));
+
             modifiedCollection
                 .Where(x => x != null).ToList()
-                .CompareTo(
-                    originalCollection.Where(x => x != null).ToList(),
-                    EqualityComparer<T>.Default,
-                    compareAction(result));
+                .CompareTo(originalCollection.Where(x => x != null).ToList(), EqualityComparer<T>.Default, CompareAction);
             return result;
         }
 
@@ -155,22 +119,6 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                     difference.Name,
                     difference.OldValue,
                     difference.NewValue));
-        }
-
-        private static string StringifyAddress(Address address)
-        {
-            if (address == null)
-            {
-                return "";
-            }
-
-            return string.Join(
-                ", ",
-                typeof(Address)
-                    .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                    .OrderBy(p => p.Name)
-                    .Select(p => p.GetValue(address))
-                    .Where(x => x != null));
         }
 
         protected virtual OperationLog GetLogRecord(Member member, string template)

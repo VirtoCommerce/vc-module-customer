@@ -57,11 +57,6 @@ namespace VirtoCommerce.CustomerModule.Test
 
         public static TheoryData<Contact, Contact, IReadOnlyCollection<string>> LogsData()
         {
-            var newAddressString =
-                "0, City_NEW, Country Code_NEW, Country_NEW, Email_NEW, FirstName_NEW_address, LastName_NEW_address, AddressLine_NEW, MiddleName_NEW_address, Address_Name_NEW, Zip_NEW";
-            var oldAddressString =
-                "0, City1, Country Code1, Country1, Email1, FirstName1_address, LastName1_address, AddressLine1, MiddleName1_address, Address1Name, Zip1";
-
             var data = new TheoryData<Contact, Contact, IReadOnlyCollection<string>>
             {
                 // Modified Name
@@ -149,7 +144,7 @@ namespace VirtoCommerce.CustomerModule.Test
                             Zip = "Zip_NEW"
                         }
                     }},
-                    new[] {$"The address '{newAddressString}' for Contact Name added"}
+                    new[] {"The address 'FirstName_NEW_address, LastName_NEW_address, AddressLine_NEW, City_NEW, Zip_NEW, Country_NEW' for Contact Name added"}
                 },
                 // Deleted address
                 {
@@ -170,7 +165,7 @@ namespace VirtoCommerce.CustomerModule.Test
                         }
                     } },
                     new Contact { Id = "id", Name = "Name", Addresses = new List<Address>() },
-                    new[] {$"The address '{oldAddressString}' for Contact Name deleted"}
+                    new[] {"The address 'FirstName1_address, LastName1_address, AddressLine1, City1, Zip1, Country1' for Contact Name deleted"}
                 },
                 // Address changed
                 {
@@ -178,8 +173,8 @@ namespace VirtoCommerce.CustomerModule.Test
                     new Contact { Id = "id", Name = "Name", Addresses = new List<Address> { new Address { City = "City_NEW" } } },
                     new []
                     {
-                        "The address '0, City1' for Contact Name deleted",
-                        "The address '0, City_NEW' for Contact Name added"
+                        "The address 'City1' for Contact Name deleted",
+                        "The address 'City_NEW' for Contact Name added"
                     }
                 },
                 // No changes
