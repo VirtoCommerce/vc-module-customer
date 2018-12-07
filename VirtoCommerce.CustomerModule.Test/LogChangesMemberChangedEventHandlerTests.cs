@@ -13,6 +13,7 @@ using Xunit;
 
 namespace VirtoCommerce.CustomerModule.Test
 {
+    [Trait("Category", "CI")]
     public class LogChangesMemberChangedEventHandlerTests
     {
         [Theory]
