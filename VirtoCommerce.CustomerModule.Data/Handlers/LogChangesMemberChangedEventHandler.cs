@@ -19,16 +19,19 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
         private readonly IChangeLogService _changeLogService;
         private readonly string[] _observedProperties;
 
-        public static string[] ObservedProperties()
+        public static string[] DefaultObservedProperties
         {
-            var memberPropsNames = ReflectionUtility.GetPropertyNames<Contact>(
-                x => x.Name, x => x.FirstName, x => x.LastName, x => x.MiddleName,
-                x => x.Salutation, x => x.FullName, x => x.BirthDate);
-            return memberPropsNames.ToArray();
+            get
+            {
+                var memberPropsNames = ReflectionUtility.GetPropertyNames<Contact>(
+                    x => x.Name, x => x.FirstName, x => x.LastName, x => x.MiddleName,
+                    x => x.Salutation, x => x.FullName, x => x.BirthDate);
+                return memberPropsNames.ToArray();
+            }
         }
 
         public LogChangesMemberChangedEventHandler(IChangeLogService changeLogService)
-            : this(changeLogService, ObservedProperties())
+            : this(changeLogService, DefaultObservedProperties)
         {
         }
 
