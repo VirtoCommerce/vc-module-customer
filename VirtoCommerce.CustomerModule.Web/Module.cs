@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Web.Http;
 using Microsoft.Practices.Unity;
+using VirtoCommerce.CustomerModule.Data.Handlers;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.Repositories;
 using VirtoCommerce.CustomerModule.Data.Search;
@@ -11,7 +12,9 @@ using VirtoCommerce.CustomerModule.Web.JsonConverters;
 using VirtoCommerce.Domain.Customer.Events;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
+using VirtoCommerce.Domain.Order.Events;
 using VirtoCommerce.Domain.Search;
+using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Core.ExportImport;
@@ -27,7 +30,7 @@ namespace VirtoCommerce.CustomerModule.Web
     public class Module : ModuleBase, ISupportExportImportModule
     {
         private readonly string _connectionString = ConfigurationHelper.GetConnectionStringValue("VirtoCommerce.Customer") ?? ConfigurationHelper.GetConnectionStringValue("VirtoCommerce");
-        private readonly IUnityContainer _container; 
+        private readonly IUnityContainer _container;
 
         public Module(IUnityContainer container)
         {
@@ -49,6 +52,13 @@ namespace VirtoCommerce.CustomerModule.Web
         public override void Initialize()
         {
             base.Initialize();
+
+            var eventHandlerRegistrar = _container.Resolve<IHandlerRegistrar>();
+
+            eventHandlerRegistrar.RegisterHandler<MemberChangedEvent>(
+                async (message, token) =>
+                    await _container.Resolve<LogChangesMemberChangedEventHandler>().Handle(message));
+
 
             Func<CustomerRepositoryImpl> customerRepositoryFactory = () => new CustomerRepositoryImpl(_connectionString, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>(),
                 new ChangeLogInterceptor(_container.Resolve<Func<IPlatformRepository>>(), ChangeLogPolicy.Cumulative, new[] { nameof(MemberDataEntity) }));
