@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using AutoCompare;
-using VirtoCommerce.Domain.Commerce.Model;
+using VirtoCommerce.CustomerModule.Data.Resources;
 using VirtoCommerce.Domain.Common.Events;
 using VirtoCommerce.Domain.Customer.Events;
 using VirtoCommerce.Domain.Customer.Model;
@@ -14,6 +12,9 @@ using VirtoCommerce.Platform.Core.Events;
 
 namespace VirtoCommerce.CustomerModule.Data.Handlers
 {
+    /// <summary>
+    /// Represents logic for audit logging for contact changes.
+    /// </summary>
     public class LogChangesMemberChangedEventHandler : IEventHandler<MemberChangedEvent>
     {
         private readonly IChangeLogService _changeLogService;
@@ -43,82 +44,64 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
         public virtual Task Handle(MemberChangedEvent message)
         {
-            var operationLogs =
-                message.ChangedEntries
-                    .Where(x => x.EntryState == EntryState.Modified && x.OldEntry is Contact)
-                    .SelectMany(GetChangedEntryOperationLogs)
-                    .ToArray();
-            _changeLogService.SaveChanges(operationLogs);
+            //Log audit records only for contacts members
+            var operationLogs = message.ChangedEntries.Where(x => x.EntryState == EntryState.Modified && x.OldEntry is Contact)
+                                        .SelectMany(GetChangedEntryOperationLogs)
+                                        .ToArray();
+            if (operationLogs.Any())
+            {
+                _changeLogService.SaveChanges(operationLogs);
+            }
             return Task.CompletedTask;
         }
 
-        protected virtual IEnumerable<OperationLog> GetChangedEntryOperationLogs(
-            GenericChangedEntry<Member> changedEntry)
+        protected virtual IEnumerable<OperationLog> GetChangedEntryOperationLogs(GenericChangedEntry<Member> changedEntry)
         {
             var result = new List<string>();
 
-            var diff = Comparer.Compare(changedEntry.OldEntry, changedEntry.NewEntry);
+            var oldContact = changedEntry.OldEntry as Contact;
+            var changedContact = changedEntry.NewEntry as Contact;
 
-            if (changedEntry.OldEntry is Contact contact)
+            var diff = Comparer.Compare(oldContact, changedContact);
+            //First, we detect changes with simple properties of the contact object.
+            var observedDifferences = diff.Join(_observedProperties, x => x.Name.ToLowerInvariant(), x => x.ToLowerInvariant(), (x, y) => x).ToArray();
+            var anonymousDiffComparer = AnonymousComparer.Create((Difference x) => string.Join(":", x.Name, x.NewValue, x.OldValue));
+            foreach (var difference in observedDifferences.Distinct(anonymousDiffComparer))
             {
-                result.AddRange(GetContactChanges(contact, changedEntry.NewEntry as Contact));
-                diff.AddRange(Comparer.Compare(contact, changedEntry.NewEntry as Contact));
+                result.Add(string.Format(MemberResources.MemberPropertyChanged, difference.Name, difference.OldValue, difference.NewValue));
             }
+            //Second, detect changes for contact dependencies
+            result.AddRange(GetContactDependenciesChanges(oldContact, changedContact));
 
-            var observedDifferences =
-                diff.Join(_observedProperties, x => x.Name.ToLowerInvariant(), x => x.ToLowerInvariant(), (x, y) => x)
-                    .ToArray();
-            foreach (var difference in observedDifferences.Distinct(new DifferenceComparer()))
-            {
-                AddMemberPropertyChangedOperation(result, changedEntry, difference);
-            }
-
-            return result.Select(x => GetLogRecord(changedEntry.NewEntry, x));
+            return result.Select(x => GetLogRecord(changedContact, x));
         }
 
-        protected virtual IEnumerable<string> GetContactChanges(Contact originalContact, Contact modifiedContact)
+        protected virtual IEnumerable<string> GetContactDependenciesChanges(Contact originalContact, Contact modifiedContact)
         {
-            return
-                GetListChanges(originalContact, originalContact.Addresses, modifiedContact.Addresses, "Address")
-                    .Union(GetListChanges(originalContact, originalContact.Emails, modifiedContact.Emails, "Email"))
-                    .Union(GetListChanges(originalContact, originalContact.Phones, modifiedContact.Phones, "Phone"));
+            return DetectCollectionsChanges(originalContact.Addresses, modifiedContact.Addresses, "Address")
+                    .Union(DetectCollectionsChanges(originalContact.Emails, modifiedContact.Emails, "Email"))
+                    .Union(DetectCollectionsChanges(originalContact.Phones, modifiedContact.Phones, "Phone"));
         }
 
-        protected virtual IEnumerable<string> GetListChanges<T>(
-            Member member,
-            IEnumerable<T> originalCollection,
-            IEnumerable<T> modifiedCollection,
-            string resourceKeyPrefix)
+        protected static IEnumerable<string> DetectCollectionsChanges<T>(IEnumerable<T> originalCollection, IEnumerable<T> modifiedCollection, string resourceKeyPrefix)
         {
-            if (originalCollection == null || modifiedCollection == null)
-            {
-                return Enumerable.Empty<string>();
-            }
-
             var result = new List<string>();
-
-            void CompareAction(EntryState state, T source, T target) =>
-                result.Add(string.Format(
-                    MemberResources.ResourceManager.GetString($"{resourceKeyPrefix}{state}") ?? string.Empty,
-                    member.MemberType, member.Name, target, source));
-
-            modifiedCollection
-                .Where(x => x != null).ToList()
-                .CompareTo(originalCollection.Where(x => x != null).ToList(), EqualityComparer<T>.Default, CompareAction);
-            return result;
-        }
-
-        private static void AddMemberPropertyChangedOperation(
-            List<string> result, GenericChangedEntry<Member> changedEntry, Difference difference)
-        {
-            result.Add(
-                string.Format(
-                    MemberResources.MemberPropertyChanged,
-                    changedEntry.OldEntry.MemberType,
-                    changedEntry.NewEntry.Name,
-                    difference.Name,
-                    difference.OldValue,
-                    difference.NewValue));
+            if (originalCollection != null && modifiedCollection != null)
+            {
+                void CompareAction(EntryState state, T source, T target)
+                {
+                    //Do not log unchanged values.
+                    if (state != EntryState.Modified || source?.ToString() != target?.ToString())
+                    {
+                        result.Add(string.Format(
+                            MemberResources.ResourceManager.GetString($"{resourceKeyPrefix}{state}") ?? string.Empty, target, source));
+                    }
+                }
+                modifiedCollection
+                    .Where(x => x != null).ToList()
+                    .CompareTo(originalCollection.Where(x => x != null).ToList(), EqualityComparer<T>.Default, CompareAction);
+            }
+            return result.Where(x => !string.IsNullOrEmpty(x));
         }
 
         protected virtual OperationLog GetLogRecord(Member member, string template)
@@ -131,25 +114,7 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                 Detail = template
             };
             return result;
-
         }
     }
 
-    internal class DifferenceComparer : EqualityComparer<Difference>
-    {
-        public override bool Equals(Difference x, Difference y)
-        {
-            return GetHashCode(x) == GetHashCode(y);
-        }
-
-        public override int GetHashCode(Difference obj)
-        {
-            if (obj == null)
-            {
-                return 0;
-            }
-            var result = String.Join(":", obj.Name, obj.NewValue, obj.OldValue);
-            return result.GetHashCode();
-        }
-    }
 }

@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Moq;
+using VirtoCommerce.CustomerModule.Data;
 using VirtoCommerce.CustomerModule.Data.Handlers;
+using VirtoCommerce.CustomerModule.Data.Resources;
 using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Common.Events;
 using VirtoCommerce.Domain.Customer.Events;
@@ -22,6 +24,7 @@ namespace VirtoCommerce.CustomerModule.Test
         public async Task LogChangesMemberChangedEventHandler_SavesChanges(
             Contact oldMember, Contact newMember, IReadOnlyCollection<string> expectedLogs)
         {
+
             var changesLogService = new Mock<IChangeLogService>();
             changesLogService
                 .Setup(x => x.SaveChanges(It.IsAny<OperationLog[]>()))
@@ -50,7 +53,7 @@ namespace VirtoCommerce.CustomerModule.Test
             var handler = new LogChangesMemberChangedEventHandler(changesLogService.Object);
 
             var message = new MemberChangedEvent(
-                new[] {new GenericChangedEntry<Member>(newMember, oldMember, EntryState.Modified)});
+                new[] { new GenericChangedEntry<Member>(newMember, oldMember, EntryState.Modified) });
 
             await handler.Handle(message);
         }
@@ -61,129 +64,63 @@ namespace VirtoCommerce.CustomerModule.Test
             {
                 // Modified Name
                 {
-                    new Contact { Id = "id", Name = "Name1" },
-                    new Contact { Id = "id", Name = "Name_NEW" },
-                    new[] {"The Contact Name_NEW property 'Name' changed from 'Name1' to 'Name_NEW'"}
-                },
-                // Modified FirstName
-                {
-                    new Contact { Id = "id", Name = "Name", FirstName = "FirstName1" },
-                    new Contact { Id = "id", Name = "Name", FirstName = "FirstName_NEW" },
-                    new[] {"The Contact Name property 'FirstName' changed from 'FirstName1' to 'FirstName_NEW'"}
-                },
-                // Modified MiddleName
-                {
-                    new Contact { Id = "id", Name = "Name", MiddleName = "MiddleName1" },
-                    new Contact { Id = "id", Name = "Name", MiddleName = "MiddleName_NEW" },
-                    new[] {"The Contact Name property 'MiddleName' changed from 'MiddleName1' to 'MiddleName_NEW'"}
-                },
-                // Modified LastName
-                {
-                    new Contact { Id = "id", Name = "Name", LastName = "LastName1" },
-                    new Contact { Id = "id", Name = "Name", LastName = "LastName_NEW" },
-                    new[] {"The Contact Name property 'LastName' changed from 'LastName1' to 'LastName_NEW'"}
-                },
-                // Modified Salutation
-                {
-                    new Contact { Id = "id", Name = "Name", Salutation = "Salutation1" },
-                    new Contact { Id = "id", Name = "Name", Salutation = "Salutation_NEW" },
-                    new[] {"The Contact Name property 'Salutation' changed from 'Salutation1' to 'Salutation_NEW'"}
-                },
-                // Modified FullName
-                {
-                    new Contact { Id = "id", Name = "Name", FullName = "FullName1" },
-                    new Contact { Id = "id", Name = "Name", FullName = "FullName_NEW" },
-                    new[] {"The Contact Name property 'FullName' changed from 'FullName1' to 'FullName_NEW'"}
-                },
-                // Modified Birthday
-                {
-                    new Contact { Id = "id", Name = "Name", BirthDate = new DateTime(2000, 1, 1) },
-                    new Contact { Id = "id", Name = "Name", BirthDate = new DateTime(2001, 3, 10) },
-                    new[] {$"The Contact Name property 'BirthDate' changed from '{new DateTime(2000, 1, 1):G}' to '{new DateTime(2001, 3, 10):G}'"}
-                },
-                // Added email
-                {
-                    new Contact { Id = "id", Name = "Name", Emails = new List<string>() },
-                    new Contact { Id = "id", Name = "Name", Emails = new List<string> {"email_NEW"} },
-                    new[] {"The email 'email_NEW' for Contact Name added"}
-                },
-                // Deleted email
-                {
-                    new Contact { Id = "id", Name = "Name", Emails = new List<string> {"email1"} },
-                    new Contact { Id = "id", Name = "Name", Emails = new List<string>() },
-                    new[] {"The email 'email1' for Contact Name deleted"}
-                },
-                // Added phone
-                {
-                    new Contact { Id = "id", Name = "Name", Phones = new List<string>() },
-                    new Contact { Id = "id", Name = "Name", Phones = new List<string>{"phone_NEW"} },
-                    new[] {"The phone 'phone_NEW' for Contact Name added"}
-                },
-                // Deleted phone
-                {
-                    new Contact { Id = "id", Name = "Name", Phones = new List<string> { "phone1"} },
-                    new Contact { Id = "id", Name = "Name", Phones = new List<string>() },
-                    new[] {"The phone 'phone1' for Contact Name deleted"}
-                },
-                // Added address
-                {
-                    new Contact { Id = "id", Name = "Name", Addresses = new List<Address>() },
-                    new Contact { Id = "id", Name = "Name", Addresses = new List<Address>
+                    new Contact { Id = "id", Name = "Name1", FirstName = "FirstName1", MiddleName = "MiddleName1", LastName = "LastName1", Salutation = "Salutation1", FullName = "FullName1",  BirthDate = new DateTime(2001, 1, 10)  },
+                    new Contact { Id = "id", Name = "Name_New", FirstName = "FirstName_NEW", MiddleName = "MiddleName_NEW", LastName = "LastName_NEW", Salutation = "Salutation_NEW", FullName = "FullName_NEW",  BirthDate = new DateTime(2001, 3, 10) },
+                    new[]
                     {
-                        new Address
-                        {
-                            City = "City_NEW",
-                            CountryCode = "Country Code_NEW",
-                            CountryName = "Country_NEW",
-                            Email = "Email_NEW",
-                            FirstName = "FirstName_NEW_address",
-                            LastName = "LastName_NEW_address",
-                            Line1 = "AddressLine_NEW",
-                            MiddleName = "MiddleName_NEW_address",
-                            Name = "Address_Name_NEW",
-                            Zip = "Zip_NEW"
-                        }
-                    }},
-                    new[] {"The address 'FirstName_NEW_address, LastName_NEW_address, AddressLine_NEW, City_NEW, Zip_NEW, Country_NEW' for Contact Name added"}
-                },
-                // Deleted address
-                {
-                    new Contact { Id = "id", Name = "Name", Addresses = new List<Address>
-                    {
-                        new Address
-                        {
-                            City = "City1",
-                            CountryCode = "Country Code1",
-                            CountryName = "Country1",
-                            Email = "Email1",
-                            FirstName = "FirstName1_address",
-                            LastName = "LastName1_address",
-                            Line1 = "AddressLine1",
-                            MiddleName = "MiddleName1_address",
-                            Name = "Address1Name",
-                            Zip = "Zip1"
-                        }
-                    } },
-                    new Contact { Id = "id", Name = "Name", Addresses = new List<Address>() },
-                    new[] {"The address 'FirstName1_address, LastName1_address, AddressLine1, City1, Zip1, Country1' for Contact Name deleted"}
-                },
-                // Address changed
-                {
-                    new Contact { Id = "id", Name = "Name", Addresses = new List<Address> { new Address { City = "City1" } } },
-                    new Contact { Id = "id", Name = "Name", Addresses = new List<Address> { new Address { City = "City_NEW" } } },
-                    new []
-                    {
-                        "The address 'City1' for Contact Name deleted",
-                        "The address 'City_NEW' for Contact Name added"
+                      string.Format(MemberResources.MemberPropertyChanged, "Name", "Name1", "Name_New"),
+                      string.Format(MemberResources.MemberPropertyChanged, "FirstName", "FirstName1", "FirstName_NEW"),
+                      string.Format(MemberResources.MemberPropertyChanged, "MiddleName", "MiddleName1", "MiddleName_NEW"),
+                      string.Format(MemberResources.MemberPropertyChanged, "LastName", "LastName1", "LastName_NEW"),
+                      string.Format(MemberResources.MemberPropertyChanged, "Salutation", "Salutation1", "Salutation_NEW"),
+                      string.Format(MemberResources.MemberPropertyChanged, "FullName", "FullName1", "FullName_NEW"),
+                      string.Format(MemberResources.MemberPropertyChanged, "BirthDate", new DateTime(2001, 1, 10), new DateTime(2001, 3, 10)),
                     }
+                },             
+                // Emails
+                {
+                    new Contact { Id = "id", Emails = new List<string>() { "unchanged@mail.com", "deleted@mail.com" } },
+                    new Contact { Id = "id", Emails = new List<string> { "unchanged@mail.com", "added@mail.com" } },
+                    new[]
+                    {
+                        string.Format(MemberResources.EmailAdded, "added@mail.com"),
+                        string.Format(MemberResources.EmailDeleted, "deleted@mail.com")
+                    }
+                },           
+                // Phones
+                {
+                    new Contact { Id = "id", Phones = new List<string>(){ "unchanged phone", "deleted phone" } },
+                    new Contact { Id = "id", Phones = new List<string> { "unchanged phone", "added phone" } },
+                    new[]
+                    {
+                       string.Format(MemberResources.PhoneAdded, "added phone"),
+                       string.Format(MemberResources.PhoneDeleted, "deleted phone")
+                    }
+                },             
+                // Addresses
+                {
+                   new Contact { Id = "id", Addresses = new List<Address>() { new Address { Key = "1", City = "modified address" }, new Address { Key = "2", City = "deleted address" } } },
+                   new Contact { Id = "id", Addresses = new List<Address> {  new Address { City = "added address" }, new Address { Key = "1", City = "modified address2" } } },
+                   new[]
+                   {
+                       string.Format(MemberResources.AddressAdded, "added address"),
+                       string.Format(MemberResources.AddressDeleted, "deleted address"),
+                       string.Format(MemberResources.AddressModified, "modified address", "modified address2")
+                   }
+                },
+                // Partial update (when null was passed for dependencies collections
+                {
+                new Contact { Id = "id", Phones = new List<string>(){ "phone" }, Emails = new List<string>() { "email" }, Addresses = new List<Address>() { new Address { Name = "address" } }  },
+                    new Contact { Id = "id" },
+                   Array.Empty<string>()
                 },
                 // No changes
                 {
-                    new Contact{ Id = "id", Name = "Name" },
-                    new Contact{ Id = "id", Name = "Name" },
-                    new string[0]
+                new Contact { Id = "id", Name = "Name" },
+                    new Contact { Id = "id", Name = "Name" },
+                     Array.Empty<string>()
                 }
-            };
+        };
 
             return data;
         }
