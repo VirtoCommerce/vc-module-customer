@@ -131,15 +131,6 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             document.AddFilterableValue("TaxpayerId", contact.TaxPayerId);
             document.AddFilterableValue("PreferredDelivery", contact.PreferredDelivery);
             document.AddFilterableValue("PreferredCommunication", contact.PreferredCommunication);
-
-            //Add emails from contact
-            if (contact.Emails?.Any() == true)
-            { 
-                foreach (string email in contact.Emails)
-                { 
-                    document.AddSearchableValue(email);
-                }
-            }
         }
 
         protected virtual void IndexEmployee(IndexDocument document, Employee employee)
