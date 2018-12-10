@@ -1,13 +1,17 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using VirtoCommerce.Domain.Catalog.Model;
 using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Domain.Search;
+using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.DynamicProperties;
+using model = VirtoCommerce.Domain.Catalog.Model;
 
 namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
-{
+{    
     public class MemberDocumentBuilder : IIndexDocumentBuilder
     {
         private readonly IMemberService _memberService;
@@ -68,6 +72,8 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             if (contact != null)
             {
                 IndexContact(document, contact);
+
+                IndexCustomProperties(document, contact.DynamicProperties, contact.DynamicProperties.Select(x => x.ValueType).ToList());
             }
             else if (employee != null)
             {
@@ -161,6 +167,57 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 
             document.AddFilterableValues("ParentOrganizations", nonEmptyValues);
             document.AddFilterableValue("HasParentOrganizations", nonEmptyValues?.Any() ?? false);
+        }
+
+        protected virtual void IndexCustomProperties(IndexDocument document, ICollection<DynamicObjectProperty> properties, ICollection<DynamicPropertyValueType> contentPropertyTypes)
+        {
+            foreach (var property in properties)
+            {
+                var propertyName = property.Name?.ToLowerInvariant();
+                if (!string.IsNullOrEmpty(propertyName))
+                {
+                    var isCollection = property?.IsDictionary == true || property?.IsArray == true;
+                    IList<object> values = new List<object>();
+
+                    switch (property.ValueType)
+                    {
+                        case DynamicPropertyValueType.Boolean:
+                        case DynamicPropertyValueType.DateTime:
+                        case DynamicPropertyValueType.Integer:
+                        case DynamicPropertyValueType.Decimal:
+                            if (property?.IsArray == true)
+                            {
+                                values.AddRange((property.Values as IEnumerable<DynamicPropertyObjectValue>).Select(x => x.Value));
+                                document.Add(new IndexDocumentField(propertyName, values) { IsRetrievable = true, IsFilterable = true, IsCollection = isCollection });
+                            }
+                            else
+                            {
+                                document.Add(new IndexDocumentField(propertyName, property.Values.FirstOrDefault()?.Value) { IsRetrievable = true, IsFilterable = true, IsCollection = isCollection });
+                            }
+
+                            break;
+                        case DynamicPropertyValueType.LongText:
+                            document.Add(new IndexDocumentField(propertyName, property.Values.FirstOrDefault().Value.ToString().ToLowerInvariant()) { IsRetrievable = true, IsSearchable = true, IsCollection = isCollection });
+                            break;
+                        case DynamicPropertyValueType.ShortText:
+                            if (property?.IsDictionary == true)
+                            {
+                                //add all locales in dictionary to searchIndex
+                                values.AddRange((property.Values as IEnumerable<DynamicPropertyObjectValue>).Select(x => x.Value)
+                                                                        .Cast<DynamicPropertyDictionaryItem>()
+                                                                        .Select(x => x.Name));
+                            }
+
+                            else if (property?.IsArray == true)
+                            {
+                                values.AddRange((property.Values as IEnumerable<DynamicPropertyObjectValue>).Select(x => x.Value));
+                            }
+
+                            document.Add(new IndexDocumentField(propertyName, values) { IsRetrievable = true, IsFilterable = true, IsCollection = isCollection });
+                            break;
+                    }
+                }
+            }
         }
     }
 }
