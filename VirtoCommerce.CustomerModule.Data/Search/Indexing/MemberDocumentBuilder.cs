@@ -185,7 +185,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                         case DynamicPropertyValueType.Decimal:
                             if (property.IsArray)
                             {
-                                values.AddRange((property.Values as IEnumerable<DynamicPropertyObjectValue>).Select(x => x.Value));
+                                values.AddRange(property.Values.Select(x => x.Value));
                                 document.Add(new IndexDocumentField(propertyName, values) { IsRetrievable = true, IsFilterable = true, IsCollection = isCollection });
                             }
                             else
@@ -198,14 +198,13 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                             if (property.IsDictionary)
                             {
                                 //add all locales in dictionary to searchIndex
-                                values.AddRange((property.Values as IEnumerable<DynamicPropertyObjectValue>).Select(x => x.Value)
-                                                                        .Cast<DynamicPropertyDictionaryItem>()
-                                                                        .Select(x => x.Name));
+                                values.AddRange(property.Values.Select(x => x.Value)
+                                                               .Cast<DynamicPropertyDictionaryItem>()
+                                                               .Select(x => x.Name));
                             }
-
                             else if (property.IsArray)
                             {
-                                values.AddRange((property.Values as IEnumerable<DynamicPropertyObjectValue>).Select(x => x.Value));
+                                values.AddRange(property.Values.Select(x => x.Value));
                             }
 
                             document.Add(new IndexDocumentField(propertyName, values) { IsRetrievable = true, IsFilterable = true, IsCollection = isCollection });
