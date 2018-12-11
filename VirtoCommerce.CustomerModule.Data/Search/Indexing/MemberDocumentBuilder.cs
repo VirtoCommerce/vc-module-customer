@@ -11,7 +11,7 @@ using VirtoCommerce.Platform.Core.DynamicProperties;
 using model = VirtoCommerce.Domain.Catalog.Model;
 
 namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
-{    
+{
     public class MemberDocumentBuilder : IIndexDocumentBuilder
     {
         private readonly IMemberService _memberService;
