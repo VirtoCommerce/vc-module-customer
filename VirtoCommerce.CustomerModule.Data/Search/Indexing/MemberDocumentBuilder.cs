@@ -72,20 +72,22 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             if (contact != null)
             {
                 IndexContact(document, contact);
-
-                IndexCustomProperties(document, contact.DynamicProperties, contact.DynamicProperties.Select(x => x.ValueType).ToList());
+                IndexDynamicProperties(document, contact.DynamicProperties);
             }
             else if (employee != null)
             {
                 IndexEmployee(document, employee);
+                IndexDynamicProperties(document, employee.DynamicProperties);
             }
             else if (organization != null)
             {
                 IndexOrganization(document, organization);
+                IndexDynamicProperties(document, organization.DynamicProperties);
             }
             else if (vendor != null)
             {
                 IndexVendor(document, vendor);
+                IndexDynamicProperties(document, vendor.DynamicProperties);
             }
 
             return document;
@@ -169,7 +171,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             document.AddFilterableValue("HasParentOrganizations", nonEmptyValues?.Any() ?? false);
         }
 
-        protected virtual void IndexCustomProperties(IndexDocument document, ICollection<DynamicObjectProperty> properties, ICollection<DynamicPropertyValueType> contentPropertyTypes)
+        protected virtual void IndexDynamicProperties(IndexDocument document, ICollection<DynamicObjectProperty> properties)
         {
             foreach (var property in properties)
             {
@@ -195,9 +197,6 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                                 document.Add(new IndexDocumentField(propertyName, property.Values.FirstOrDefault()?.Value) { IsRetrievable = true, IsFilterable = true, IsCollection = isCollection });
                             }
 
-                            break;
-                        case DynamicPropertyValueType.LongText:
-                            document.Add(new IndexDocumentField(propertyName, property.Values.FirstOrDefault().Value.ToString().ToLowerInvariant()) { IsRetrievable = true, IsSearchable = true, IsCollection = isCollection });
                             break;
                         case DynamicPropertyValueType.ShortText:
                             if (property?.IsDictionary == true)
