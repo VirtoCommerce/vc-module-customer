@@ -1,14 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using VirtoCommerce.Domain.Catalog.Model;
 using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Domain.Search;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
-using model = VirtoCommerce.Domain.Catalog.Model;
 
 namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 {
@@ -72,23 +70,21 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             if (contact != null)
             {
                 IndexContact(document, contact);
-                IndexDynamicProperties(document, contact.DynamicProperties);
             }
             else if (employee != null)
             {
                 IndexEmployee(document, employee);
-                IndexDynamicProperties(document, employee.DynamicProperties);
             }
             else if (organization != null)
             {
                 IndexOrganization(document, organization);
-                IndexDynamicProperties(document, organization.DynamicProperties);
             }
             else if (vendor != null)
             {
                 IndexVendor(document, vendor);
-                IndexDynamicProperties(document, vendor.DynamicProperties);
             }
+
+            IndexDynamicProperties(document, member.DynamicProperties);
 
             return document;
         }
@@ -178,7 +174,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                 var propertyName = property.Name?.ToLowerInvariant();
                 if (!string.IsNullOrEmpty(propertyName))
                 {
-                    var isCollection = property?.IsDictionary == true || property?.IsArray == true;
+                    var isCollection = property.IsDictionary || property.IsArray;
                     IList<object> values = new List<object>();
 
                     switch (property.ValueType)
@@ -187,7 +183,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                         case DynamicPropertyValueType.DateTime:
                         case DynamicPropertyValueType.Integer:
                         case DynamicPropertyValueType.Decimal:
-                            if (property?.IsArray == true)
+                            if (property.IsArray)
                             {
                                 values.AddRange((property.Values as IEnumerable<DynamicPropertyObjectValue>).Select(x => x.Value));
                                 document.Add(new IndexDocumentField(propertyName, values) { IsRetrievable = true, IsFilterable = true, IsCollection = isCollection });
@@ -199,7 +195,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 
                             break;
                         case DynamicPropertyValueType.ShortText:
-                            if (property?.IsDictionary == true)
+                            if (property.IsDictionary)
                             {
                                 //add all locales in dictionary to searchIndex
                                 values.AddRange((property.Values as IEnumerable<DynamicPropertyObjectValue>).Select(x => x.Value)
@@ -207,7 +203,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                                                                         .Select(x => x.Name));
                             }
 
-                            else if (property?.IsArray == true)
+                            else if (property.IsArray)
                             {
                                 values.AddRange((property.Values as IEnumerable<DynamicPropertyObjectValue>).Select(x => x.Value));
                             }
