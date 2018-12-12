@@ -1,4 +1,4 @@
-﻿angular.module('virtoCommerce.customerModule')
+angular.module('virtoCommerce.customerModule')
 .controller('virtoCommerce.customerModule.memberListController', ['$scope', 'virtoCommerce.customerModule.members', 'platformWebApp.dialogService', 'platformWebApp.bladeUtils', 'platformWebApp.uiGridHelper', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.ui-grid.extension',
 function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesResolverService, gridOptionExtension) {
     $scope.uiGridConstants = uiGridHelper.uiGridConstants;
@@ -238,6 +238,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
 
     function getSearchCriteria() {
         var searchCriteria = {
+            responseGroup: 'Default',
             memberType: blade.memberType,
             memberId: blade.currentEntity.id,
             searchPhrase: filter.keyword ? filter.keyword : undefined,

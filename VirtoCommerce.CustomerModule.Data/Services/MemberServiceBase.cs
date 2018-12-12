@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -49,6 +49,8 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         public virtual Member[] GetByIds(string[] memberIds, string responseGroup = null, string[] memberTypes = null)
         {
             var retVal = new List<Member>();
+            var memberRespGroup = EnumUtility.SafeParse(responseGroup, MemberResponseGroup.Full);
+
             using (var repository = RepositoryFactory())
             {
                 repository.DisableChangesTracking();
@@ -73,10 +75,15 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                 }
             }
 
-            //Load dynamic properties for member
-            DynamicPropertyService.LoadDynamicPropertyValues(retVal.ToArray<IHasDynamicProperties>());
-
-            CommerceService.LoadSeoForObjects(retVal.OfType<ISeoSupport>().ToArray());
+            if (memberRespGroup.HasFlag(MemberResponseGroup.WithDynamicProperties))
+            {
+                //Load dynamic properties for member
+                DynamicPropertyService.LoadDynamicPropertyValues(retVal.ToArray<IHasDynamicProperties>());
+            }
+            if (memberRespGroup.HasFlag(MemberResponseGroup.WithSeo))
+            {
+                CommerceService.LoadSeoForObjects(retVal.OfType<ISeoSupport>().ToArray());
+            }
             return retVal.ToArray();
         }
 
@@ -109,7 +116,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                             {
                                 changeTracker.Attach(dataTargetMember);
                                 changedEntries.Add(new GenericChangedEntry<Member>(member, dataTargetMember.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(member.MemberType)), EntryState.Modified));
-                                dataSourceMember.Patch(dataTargetMember);                               
+                                dataSourceMember.Patch(dataTargetMember);
                             }
                             else
                             {
@@ -136,7 +143,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         }
 
         public virtual void Delete(string[] ids, string[] memberTypes = null)
-        { 
+        {
             using (var repository = RepositoryFactory())
             {
                 var members = GetByIds(ids, null, memberTypes);

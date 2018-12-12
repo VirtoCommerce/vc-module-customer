@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using VirtoCommerce.CustomerModule.Data.Model;
@@ -30,19 +31,23 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
         public override Member[] GetByIds(string[] memberIds, string responseGroup = null, string[] memberTypes = null)
         {
-            var retVal = base.GetByIds(memberIds, responseGroup, memberTypes);
-            Parallel.ForEach(retVal, new ParallelOptions { MaxDegreeOfParallelism = 10 }, member =>
+            var result = base.GetByIds(memberIds, responseGroup, memberTypes);
+            var memberRespGroup = EnumUtility.SafeParse(responseGroup, MemberResponseGroup.Full);
+            //Load member security accounts by separate request
+            if (memberRespGroup.HasFlag(MemberResponseGroup.WithSecurityAccounts))
             {
-                //Load security accounts for members which support them 
-                var hasSecurityAccounts = member as IHasSecurityAccounts;
-                if (hasSecurityAccounts != null)
+                var hasSecurityAccountMembers = result.OfType<IHasSecurityAccounts>();
+                if (hasSecurityAccountMembers.Any())
                 {
-                    //Load all security accounts associated with this contact
-                    var result = Task.Run(() => _securityService.SearchUsersAsync(new UserSearchRequest { MemberId = member.Id, TakeCount = int.MaxValue })).Result;
-                    hasSecurityAccounts.SecurityAccounts.AddRange(result.Users);
+                    var usersSearchResult = Task.Factory.StartNew(() => _securityService.SearchUsersAsync(new UserSearchRequest { MemberIds = hasSecurityAccountMembers.Select(x => ((Member)x).Id).ToArray(), TakeCount = int.MaxValue }), System.Threading.CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default).Unwrap().GetAwaiter().GetResult();
+
+                    foreach (var hasAccountMember in hasSecurityAccountMembers)
+                    {
+                        hasAccountMember.SecurityAccounts.AddRange(usersSearchResult.Users.Where(x => x.MemberId.EqualsInvariant(((Member)hasAccountMember).Id)));
+                    }
                 }
-            });
-            return retVal;
+            }
+            return result;
         }
         #endregion
 

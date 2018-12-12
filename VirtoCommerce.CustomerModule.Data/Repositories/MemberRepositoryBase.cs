@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.Entity;
@@ -32,7 +32,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
         protected MemberRepositoryBase(DbConnection existingConnection, IUnitOfWork unitOfWork = null,
             IInterceptor[] interceptors = null) : base(existingConnection, unitOfWork, interceptors)
-        { 
+        {
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -136,7 +136,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
         {
             get { return GetAsQueryable<PhoneDataEntity>(); }
         }
- 
+
 
         public IQueryable<MemberDataEntity> Members
         {
@@ -148,14 +148,14 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             get { return GetAsQueryable<MemberRelationDataEntity>(); }
         }
 
-        public virtual MemberDataEntity[] GetMembersByIds(string[] ids,  string responseGroup = null, string[] memberTypes = null)
-        {         
-            if(ids.IsNullOrEmpty())
+        public virtual MemberDataEntity[] GetMembersByIds(string[] ids, string responseGroup = null, string[] memberTypes = null)
+        {
+            if (ids.IsNullOrEmpty())
             {
                 return new MemberDataEntity[] { };
             }
 
-            var result = new List<MemberDataEntity>();         
+            var result = new List<MemberDataEntity>();
             if (!memberTypes.IsNullOrEmpty())
             {
                 foreach (var memberType in memberTypes)
@@ -171,7 +171,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
                         break;
                     }
                 }
-            }         
+            }
             else
             {
                 result.AddRange(InnerGetMembersByIds<MemberDataEntity>(ids, responseGroup));
@@ -193,11 +193,11 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
         }
         #endregion
 
-        public T[] InnerGetMembersByIds<T>(string[] ids, string responseGroup = null) where T: MemberDataEntity
+        public T[] InnerGetMembersByIds<T>(string[] ids, string responseGroup = null) where T : MemberDataEntity
         {
             //Use OfType() clause very much accelerates the query performance when used TPT inheritance
             var query = Members.OfType<T>().Where(x => ids.Contains(x.Id));
-           
+
             var retVal = query.ToArray();
             ids = retVal.Select(x => x.Id).ToArray();
             if (!ids.IsNullOrEmpty())
@@ -206,13 +206,31 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
                 var ancestorIds = relations.Select(x => x.AncestorId).ToArray();
                 if (!ancestorIds.IsNullOrEmpty())
                 {
-                    var ancestors = Members.Where(x => ancestorIds.Contains(x.Id)).ToArray();
+                    var ancestors = Members.OfType<T>().Where(x => ancestorIds.Contains(x.Id)).ToArray();
                 }
-                var notes = Notes.Where(x => ids.Contains(x.MemberId)).ToArray();
-                var emails = Emails.Where(x => ids.Contains(x.MemberId)).ToArray();
-                var addresses = Addresses.Where(x => ids.Contains(x.MemberId)).ToArray();
-                var phones = Phones.Where(x => ids.Contains(x.MemberId)).ToArray();
-                var groups = Groups.Where(x => ids.Contains(x.MemberId)).ToArray();
+
+                var memberResponseGroup = EnumUtility.SafeParse(responseGroup, MemberResponseGroup.Full);
+
+                if (memberResponseGroup.HasFlag(MemberResponseGroup.WithNotes))
+                {
+                    var notes = Notes.Where(x => ids.Contains(x.MemberId)).ToArray();
+                }
+                if (memberResponseGroup.HasFlag(MemberResponseGroup.WithEmails))
+                {
+                    var emails = Emails.Where(x => ids.Contains(x.MemberId)).ToArray();
+                }
+                if (memberResponseGroup.HasFlag(MemberResponseGroup.WithAddresses))
+                {
+                    var addresses = Addresses.Where(x => ids.Contains(x.MemberId)).ToArray();
+                }
+                if (memberResponseGroup.HasFlag(MemberResponseGroup.WithPhones))
+                {
+                    var phones = Phones.Where(x => ids.Contains(x.MemberId)).ToArray();
+                }
+                if (memberResponseGroup.HasFlag(MemberResponseGroup.WithGroups))
+                {
+                    var groups = Groups.Where(x => ids.Contains(x.MemberId)).ToArray();
+                }
             }
 
             return retVal;

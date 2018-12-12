@@ -156,6 +156,7 @@
     <Compile Include="Model\MemberDataEntity.cs" />
     <Compile Include="Model\MemberGroupDataEntity.cs" />
     <Compile Include="Model\MemberRelationDataEntity.cs" />
+    <Compile Include="Model\MemberResponseGroup.cs" />
     <Compile Include="Model\NoteDataEntity.cs" />
     <Compile Include="Model\OrganizationDataEntity.cs" />
     <Compile Include="Model\PhoneDataEntity.cs" />
