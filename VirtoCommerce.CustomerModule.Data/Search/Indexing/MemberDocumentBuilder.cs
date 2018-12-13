@@ -178,43 +178,21 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                 var isCollection = property.IsDictionary || property.IsArray;
                 IList<object> values = new List<object>();
 
-                switch (property.ValueType)
+                if (property.IsDictionary)
                 {
-                    case DynamicPropertyValueType.Boolean:
-                    case DynamicPropertyValueType.DateTime:
-                    case DynamicPropertyValueType.Integer:
-                    case DynamicPropertyValueType.Decimal:
-                        if (property.IsArray)
-                        {
-                            values.AddRange(property.Values.Select(x => x.Value));
-                        }
-                        else
-                        {
-                            values.Add(property.Values.FirstOrDefault()?.Value);
-                        }
-
-                        break;
-                    case DynamicPropertyValueType.ShortText:
-                        if (property.IsDictionary)
-                        {
-                            //add all locales in dictionary to searchIndex
-                            values.AddRange(property.Values.Select(x => x.Value)
-                                                           .Cast<DynamicPropertyDictionaryItem>()
-                                                           .Where(x => !string.IsNullOrEmpty(x.Name))
-                                                           .Select(x => x.Name));
-                        }
-                        else
-                        {
-                            values.AddRange(property.Values.Where(x => x.Value != null)
-                                                           .Select(x => x.Value));
-                        }
-
-                        break;
+                    //add all locales in dictionary to searchIndex
+                    values.AddRange(property.Values.Select(x => x.Value)
+                                                    .Cast<DynamicPropertyDictionaryItem>()
+                                                    .Where(x => !string.IsNullOrEmpty(x.Name))
+                                                    .Select(x => x.Name));
                 }
-
+                else
+                {
+                    values.AddRange(property.Values.Where(x => x.Value != null)
+                                                    .Select(x => x.Value));
+                }
                 document.Add(new IndexDocumentField(propertyName, values) { IsRetrievable = true, IsFilterable = true, IsCollection = isCollection });
             }
-
         }
     }
 }
