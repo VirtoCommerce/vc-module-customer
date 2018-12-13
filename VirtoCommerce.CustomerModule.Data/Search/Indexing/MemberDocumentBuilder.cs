@@ -172,24 +172,28 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
         protected virtual void IndexDynamicProperty(IndexDocument document, DynamicObjectProperty property)
         {
             var propertyName = property.Name?.ToLowerInvariant();
+
             if (!string.IsNullOrEmpty(propertyName))
             {
                 var isCollection = property.IsDictionary || property.IsArray;
-                var values = new List<object>();
+                IList<object> values = new List<object>();
 
                 if (property.IsDictionary)
                 {
                     //add all locales in dictionary to searchIndex
-                    values.AddRange(property.Values.Select(x => x.Value)
-                                                    .Cast<DynamicPropertyDictionaryItem>()
-                                                    .Where(x => !string.IsNullOrEmpty(x.Name))
-                                                    .Select(x => x.Name));
+                    values = property.Values.Select(x => x.Value)
+                                            .Cast<DynamicPropertyDictionaryItem>()
+                                            .Where(x => !string.IsNullOrEmpty(x.Name))
+                                            .Select(x => x.Name)
+                                            .ToList<object>();
                 }
                 else
                 {
-                    values.AddRange(property.Values.Where(x => x.Value != null)
-                                                    .Select(x => x.Value));
+                    values = property.Values.Where(x => x.Value != null)
+                                            .Select(x => x.Value)
+                                            .ToList();
                 }
+
                 document.Add(new IndexDocumentField(propertyName, values) { IsRetrievable = true, IsFilterable = true, IsCollection = isCollection });
             }
         }
