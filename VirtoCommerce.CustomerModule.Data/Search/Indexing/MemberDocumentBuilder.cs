@@ -176,7 +176,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             if (!string.IsNullOrEmpty(propertyName))
             {
                 var isCollection = property.IsDictionary || property.IsArray;
-                IList<object> values = new List<object>();
+                IList<object> values;
 
                 if (property.IsDictionary)
                 {
