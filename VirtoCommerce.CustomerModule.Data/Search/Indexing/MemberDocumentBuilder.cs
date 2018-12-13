@@ -5,7 +5,6 @@ using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Domain.Search;
-using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 
 namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
@@ -176,7 +175,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             if (!string.IsNullOrEmpty(propertyName))
             {
                 var isCollection = property.IsDictionary || property.IsArray;
-                IList<object> values = new List<object>();
+                var values = new List<object>();
 
                 if (property.IsDictionary)
                 {
