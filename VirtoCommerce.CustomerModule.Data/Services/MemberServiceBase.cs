@@ -49,19 +49,10 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         public virtual Member[] GetByIds(string[] memberIds, string responseGroup = null, string[] memberTypes = null)
         {
             var retVal = new List<Member>();
-            var memberRespGroup = EnumUtility.SafeParse(responseGroup, MemberResponseGroup.Full);
 
             using (var repository = RepositoryFactory())
             {
                 repository.DisableChangesTracking();
-                //There is loading for all corresponding members conceptual model entities types
-                //query performance when TPT inheritance used it is too slow, for improve performance we are passing concrete member types in to the repository
-                var memberTypeInfos = AbstractTypeFactory<Member>.AllTypeInfos.Where(t => t.MappedType != null);
-                if (memberTypes != null)
-                {
-                    memberTypeInfos = memberTypeInfos.Where(x => memberTypes.Any(mt => x.IsAssignableTo(mt)));
-                }
-                memberTypes = memberTypeInfos.Select(t => t.MappedType.AssemblyQualifiedName).Distinct().ToArray();
 
                 var dataMembers = repository.GetMembersByIds(memberIds, responseGroup, memberTypes);
                 foreach (var dataMember in dataMembers)
@@ -74,7 +65,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                     }
                 }
             }
-
+            var memberRespGroup = EnumUtility.SafeParse(responseGroup, MemberResponseGroup.Full);
             if (memberRespGroup.HasFlag(MemberResponseGroup.WithDynamicProperties))
             {
                 //Load dynamic properties for member

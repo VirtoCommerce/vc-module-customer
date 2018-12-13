@@ -238,7 +238,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
 
     function getSearchCriteria() {
         var searchCriteria = {
-            responseGroup: 'Default',
+            responseGroup: 'Info',
             memberType: blade.memberType,
             memberId: blade.currentEntity.id,
             searchPhrase: filter.keyword ? filter.keyword : undefined,

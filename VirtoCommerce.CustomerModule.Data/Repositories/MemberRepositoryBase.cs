@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
 using VirtoCommerce.CustomerModule.Data.Model;
+using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
@@ -148,25 +149,44 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             get { return GetAsQueryable<MemberRelationDataEntity>(); }
         }
 
-        public virtual MemberDataEntity[] GetMembersByIds(string[] ids, string responseGroup = null, string[] memberTypes = null)
+        public virtual MemberDataEntity[] GetMembersByIds(string[] ids, string responseGroup = null, string[] memberTypeNames = null)
         {
             if (ids.IsNullOrEmpty())
             {
                 return new MemberDataEntity[] { };
             }
 
-            var result = new List<MemberDataEntity>();
-            if (!memberTypes.IsNullOrEmpty())
+            var memberResponseGroup = EnumUtility.SafeParse(responseGroup, MemberResponseGroup.Full);
+
+            MemberDataEntity[] GetMembersViaGenericReflectionCall(string[] memberIds, MemberResponseGroup memberRespGroup, Type memberType)
             {
-                foreach (var memberType in memberTypes)
+                //Use special dynamically constructed inner generic method for each passed member type 
+                //for better query performance
+                var gm = _genericGetMembersMethodInfo.MakeGenericMethod(memberType);
+                return gm.Invoke(this, new object[] { memberIds, memberRespGroup }) as MemberDataEntity[];
+            };
+
+            //There is loading for all corresponding members conceptual model entities types
+            //query performance when TPT inheritance used it is too slow, for improve performance we are passing concrete member types in to the repository
+            var allKnownMemberMappedTypeInfos = AbstractTypeFactory<Member>.AllTypeInfos.Where(t => t.MappedType != null).ToArray();
+            var memberMappedTypes = allKnownMemberMappedTypeInfos.Where(x => memberTypeNames == null || memberTypeNames.Any(mt => x.IsAssignableTo(mt)))
+                                                     .Select(x => x.MappedType.AssemblyQualifiedName)
+                                                     .Distinct()
+                                                     .Select(x => Type.GetType(x))
+                                                     .ToArray();
+
+
+            var result = new List<MemberDataEntity>();
+            if (!memberMappedTypes.IsNullOrEmpty())
+            {
+                foreach (var memberType in memberMappedTypes)
                 {
                     //Use special dynamically constructed inner generic method for each passed member type 
                     //for better query performance
-                    var gm = _genericGetMembersMethodInfo.MakeGenericMethod(Type.GetType(memberType));
-                    var members = gm.Invoke(this, new object[] { ids, responseGroup }) as MemberDataEntity[];
-                    result.AddRange(members);
+
+                    result.AddRange(GetMembersViaGenericReflectionCall(ids, memberResponseGroup, memberType));
                     //Stop process other types
-                    if (result.Count() == ids.Count())
+                    if (result.Count() >= ids.Count())
                     {
                         break;
                     }
@@ -174,7 +194,32 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             }
             else
             {
-                result.AddRange(InnerGetMembersByIds<MemberDataEntity>(ids, responseGroup));
+                result.AddRange(InnerGetMembersByIds<MemberDataEntity>(ids, memberResponseGroup));
+            }
+
+            if (memberResponseGroup.HasFlag(MemberResponseGroup.WithAncestors))
+            {
+                var ancestors = new List<MemberDataEntity>();
+                var relations = MemberRelations.Where(x => ids.Contains(x.DescendantId)).ToArray();
+                var ancestorIds = relations.Select(x => x.AncestorId).ToArray();
+                if (!ancestorIds.IsNullOrEmpty())
+                {
+                    //TODO: Need to load  ancestor (member) type from MemberRelations table to avoid  this iteration  on all known member types in the future.
+                    var allKnownAncestorTypes = allKnownMemberMappedTypeInfos.Select(x => x.MappedType.AssemblyQualifiedName)
+                                                     .Distinct()
+                                                     .Select(x => Type.GetType(x))
+                                                     .ToArray();
+                    //Iterate all known member types  and try to load ancestors for each of them 
+                    foreach (var knownAncestorType in allKnownAncestorTypes)
+                    {
+                        ancestors.AddRange(GetMembersViaGenericReflectionCall(ancestorIds, MemberResponseGroup.Info, knownAncestorType).ToArray());
+                        //Stop process other types if already loaded all ancestors
+                        if (ancestors.Count() >= ancestorIds.Count())
+                        {
+                            break;
+                        }
+                    }
+                }
             }
             return result.ToArray();
         }
@@ -193,7 +238,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
         }
         #endregion
 
-        public T[] InnerGetMembersByIds<T>(string[] ids, string responseGroup = null) where T : MemberDataEntity
+        public T[] InnerGetMembersByIds<T>(string[] ids, MemberResponseGroup responseGroup = MemberResponseGroup.Full) where T : MemberDataEntity
         {
             //Use OfType() clause very much accelerates the query performance when used TPT inheritance
             var query = Members.OfType<T>().Where(x => ids.Contains(x.Id));
@@ -202,37 +247,27 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             ids = retVal.Select(x => x.Id).ToArray();
             if (!ids.IsNullOrEmpty())
             {
-                var relations = MemberRelations.Where(x => ids.Contains(x.DescendantId)).ToArray();
-                var ancestorIds = relations.Select(x => x.AncestorId).ToArray();
-                if (!ancestorIds.IsNullOrEmpty())
-                {
-                    var ancestors = Members.OfType<T>().Where(x => ancestorIds.Contains(x.Id)).ToArray();
-                }
-
-                var memberResponseGroup = EnumUtility.SafeParse(responseGroup, MemberResponseGroup.Full);
-
-                if (memberResponseGroup.HasFlag(MemberResponseGroup.WithNotes))
+                if (responseGroup.HasFlag(MemberResponseGroup.WithNotes))
                 {
                     var notes = Notes.Where(x => ids.Contains(x.MemberId)).ToArray();
                 }
-                if (memberResponseGroup.HasFlag(MemberResponseGroup.WithEmails))
+                if (responseGroup.HasFlag(MemberResponseGroup.WithEmails))
                 {
                     var emails = Emails.Where(x => ids.Contains(x.MemberId)).ToArray();
                 }
-                if (memberResponseGroup.HasFlag(MemberResponseGroup.WithAddresses))
+                if (responseGroup.HasFlag(MemberResponseGroup.WithAddresses))
                 {
                     var addresses = Addresses.Where(x => ids.Contains(x.MemberId)).ToArray();
                 }
-                if (memberResponseGroup.HasFlag(MemberResponseGroup.WithPhones))
+                if (responseGroup.HasFlag(MemberResponseGroup.WithPhones))
                 {
                     var phones = Phones.Where(x => ids.Contains(x.MemberId)).ToArray();
                 }
-                if (memberResponseGroup.HasFlag(MemberResponseGroup.WithGroups))
+                if (responseGroup.HasFlag(MemberResponseGroup.WithGroups))
                 {
                     var groups = Groups.Where(x => ids.Contains(x.MemberId)).ToArray();
                 }
             }
-
             return retVal;
         }
 

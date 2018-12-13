@@ -66,12 +66,12 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// Get member
         /// </summary>
         /// <param name="id">member id</param>
-        /// <param name="responseGroup">response group</param>
+        /// <param name="responseGroup">Response group flags controls fullness of resulting object graph</param>
         /// <param name="memberType">member type</param>
         [HttpGet]
         [Route("members/{id}")]
         [ResponseType(typeof(Member))]
-        public IHttpActionResult GetMemberById(string id, string responseGroup = null, string memberType = null)
+        public IHttpActionResult GetMemberById(string id, [FromUri]string responseGroup = null, string memberType = null)
         {
             //pass member type name for better perfomance
             var retVal = _memberService.GetByIds(new[] { id }, responseGroup, memberType != null ? new[] { memberType } : null).FirstOrDefault();
@@ -86,7 +86,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpGet]
         [Route("members")]
         [ResponseType(typeof(Member))]
-        public IHttpActionResult GetMembersByIds([FromUri] string[] ids, string responseGroup = null, string[] memberTypes = null)
+        public IHttpActionResult GetMembersByIds([FromUri] string[] ids, [FromUri]string responseGroup = null, string[] memberTypes = null)
         {
             //pass member types name for better perfomance
             var retVal = _memberService.GetByIds(ids, responseGroup, memberTypes != null ? memberTypes : null);
@@ -206,7 +206,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             {
                 _memberService.Delete(ids.ToArray());
             });
-            
+
 
             return StatusCode(HttpStatusCode.NoContent);
         }
@@ -341,24 +341,26 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// Get organization
         /// </summary>
         /// <param name="id">Organization id</param>
+        /// <param name="responseGroup">Response group flags controls fullness of resulting object graph</param>
         [HttpGet]
         [Route("organizations/{id}")]
         [ResponseType(typeof(Organization))]
-        public IHttpActionResult GetOrganizationById(string id)
+        public IHttpActionResult GetOrganizationById(string id, [FromUri]string responseGroup = null)
         {
-            return GetMemberById(id, null, typeof(Organization).Name);
+            return GetMemberById(id, responseGroup, typeof(Organization).Name);
         }
 
         /// <summary>
         /// Get plenty organizations 
         /// </summary>
         /// <param name="ids">Organization ids</param>
+        /// <param name="responseGroup">Response group flags controls fullness of resulting object graph</param>
         [HttpGet]
         [Route("organizations")]
         [ResponseType(typeof(Organization))]
-        public IHttpActionResult GetOrganizationsByIds([FromUri]string[] ids)
+        public IHttpActionResult GetOrganizationsByIds([FromUri]string[] ids, [FromUri]string responseGroup = null)
         {
-            return GetMembersByIds(ids, null, new[] { typeof(Organization).Name });
+            return GetMembersByIds(ids, responseGroup, new[] { typeof(Organization).Name });
         }
 
         /// <summary>
@@ -393,12 +395,16 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// Get contact
         /// </summary>
         /// <param name="id">Contact ID</param>
+        /// <param name="responseGroup">Response group flags controls fullness of resulting object graph
+        /// Possible values: Info,WithAncestors, WithNotes, WithEmails, WithAddresses, WithPhones,  WithGroups, WithSecurityAccounts, WithDynamicProperties, WithSeo
+        /// Default value: Full
+        /// </param>
         [HttpGet]
         [Route("contacts/{id}")]
         [ResponseType(typeof(Contact))]
-        public IHttpActionResult GetContactById(string id)
+        public IHttpActionResult GetContactById(string id, [FromUri]string responseGroup = null)
         {
-            return GetMemberById(id, null, typeof(Contact).Name);
+            return GetMemberById(id, responseGroup, typeof(Contact).Name);
         }
 
 
@@ -406,12 +412,16 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// Get plenty contacts 
         /// </summary>
         /// <param name="ids">contact IDs</param>
+        /// <param name="responseGroup">Response group flags controls fullness of resulting object graph
+        /// Possible values: Info,WithAncestors, WithNotes, WithEmails, WithAddresses, WithPhones,  WithGroups, WithSecurityAccounts, WithDynamicProperties, WithSeo
+        /// Default value: Full
+        /// </param>
         [HttpGet]
         [Route("contacts")]
         [ResponseType(typeof(Contact[]))]
-        public IHttpActionResult GetContactsByIds([FromUri]string[] ids)
-        {          
-            return GetMembersByIds(ids, null, new[] { typeof(Contact).Name });
+        public IHttpActionResult GetContactsByIds([FromUri]string[] ids, [FromUri]string responseGroup = null)
+        {
+            return GetMembersByIds(ids, responseGroup, new[] { typeof(Contact).Name });
         }
 
         /// <summary>
@@ -446,24 +456,26 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// Get vendor
         /// </summary>
         /// <param name="id">Vendor ID</param>
+        /// <param name="responseGroup">Response group flags controls fullness of resulting object graph</param>
         [HttpGet]
         [Route("vendors/{id}")]
         [ResponseType(typeof(Vendor))]
-        public IHttpActionResult GetVendorById(string id)
+        public IHttpActionResult GetVendorById(string id, [FromUri]string responseGroup = null)
         {
-            return GetMemberById(id, null, typeof(Vendor).Name);
+            return GetMemberById(id, responseGroup, typeof(Vendor).Name);
         }
 
         /// <summary>
         /// Get plenty vendors 
         /// </summary>
         /// <param name="ids">Vendors IDs</param>
+        /// <param name="responseGroup">Response group flags controls fullness of resulting object graph</param>
         [HttpGet]
         [Route("vendors")]
         [ResponseType(typeof(Vendor[]))]
-        public IHttpActionResult GetVendorsByIds([FromUri]string[] ids)
+        public IHttpActionResult GetVendorsByIds([FromUri]string[] ids, [FromUri]string responseGroup = null)
         {
-            return GetMembersByIds(ids, null, new[] { typeof(Vendor).Name });
+            return GetMembersByIds(ids, responseGroup, new[] { typeof(Vendor).Name });
         }
 
         /// <summary>
@@ -537,28 +549,30 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// Get plenty employees 
         /// </summary>
         /// <param name="ids">contact IDs</param>
+        /// <param name="responseGroup">Response group flags controls fullness of resulting object graph</param>
         [HttpGet]
         [Route("employees")]
         [ResponseType(typeof(Employee[]))]
-        public IHttpActionResult GetEmployeesByIds([FromUri]string[] ids)
+        public IHttpActionResult GetEmployeesByIds([FromUri]string[] ids, [FromUri]string responseGroup = null)
         {
-            return GetMembersByIds(ids, null, new[] { typeof(Employee).Name });
+            return GetMembersByIds(ids, responseGroup, new[] { typeof(Employee).Name });
         }
 
         /// <summary>
         /// Get all member organizations
         /// </summary>
         /// <param name="id">member Id</param>
+        /// <param name="responseGroup">Response group flags controls fullness of resulting object graph</param>
         [HttpGet]
         [Route("members/{id}/organizations")]
         [ResponseType(typeof(Organization[]))]
-        public IHttpActionResult GetMemberOrganizations([FromUri] string id)
+        public IHttpActionResult GetMemberOrganizations([FromUri] string id, [FromUri]string responseGroup = null)
         {
-            var member = _memberService.GetByIds(new[] { id  }, null, new[] { typeof(Employee).Name, typeof(Contact).Name }).FirstOrDefault();
+            var member = _memberService.GetByIds(new[] { id }, responseGroup, new[] { typeof(Employee).Name, typeof(Contact).Name }).FirstOrDefault();
             var organizationsIds = new List<string>();
             if (member != null)
             {
-                if(member is Contact contact)
+                if (member is Contact contact)
                 {
                     organizationsIds = contact.Organizations?.ToList();
                 }
