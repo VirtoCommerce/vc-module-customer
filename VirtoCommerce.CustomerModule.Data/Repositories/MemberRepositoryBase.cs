@@ -20,14 +20,13 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             _genericGetMembersMethodInfo = typeof(MemberRepositoryBase).GetMethod("InnerGetMembersByIds");
         }
 
-        public MemberRepositoryBase()
+        protected MemberRepositoryBase()
         {
         }
 
-        public MemberRepositoryBase(string nameOrConnectionString, params IInterceptor[] interceptors)
+        protected MemberRepositoryBase(string nameOrConnectionString, params IInterceptor[] interceptors)
             : base(nameOrConnectionString, null, interceptors)
         {
-            //Configuration.AutoDetectChangesEnabled = true;
             Configuration.ProxyCreationEnabled = false;
         }
 
@@ -164,7 +163,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
                 //for better query performance
                 var gm = _genericGetMembersMethodInfo.MakeGenericMethod(memberType);
                 return gm.Invoke(this, new object[] { memberIds, memberRespGroup }) as MemberDataEntity[];
-            };
+            }
 
             //There is loading for all corresponding members conceptual model entities types
             //query performance when TPT inheritance used it is too slow, for improve performance we are passing concrete member types in to the repository

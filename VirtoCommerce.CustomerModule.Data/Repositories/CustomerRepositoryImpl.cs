@@ -1,4 +1,4 @@
-﻿using System.Data.Common;
+using System.Data.Common;
 using System.Data.Entity;
 using System.Linq;
 using VirtoCommerce.CustomerModule.Data.Model;
@@ -16,7 +16,6 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
         public CustomerRepositoryImpl(string nameOrConnectionString, params IInterceptor[] interceptors)
             : base(nameOrConnectionString, interceptors)
         {
-            //Configuration.AutoDetectChangesEnabled = true;
             Configuration.ProxyCreationEnabled = false;
         }
 
@@ -54,7 +53,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             modelBuilder.Entity<VendorDataEntity>().ToTable("Vendor");
 
             #endregion
-      
+
             base.OnModelCreating(modelBuilder);
         }
 

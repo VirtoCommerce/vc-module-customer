@@ -12,7 +12,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 {
     public abstract class MemberDataEntity : AuditableEntity
     {
-        public MemberDataEntity()
+        protected MemberDataEntity()
         {
             Notes = new NullCollection<NoteDataEntity>();
             Addresses = new NullCollection<AddressDataEntity>();
