@@ -65,7 +65,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                     }
                 }
             }
-            var memberRespGroup = EnumUtility.SafeParse(responseGroup, MemberResponseGroup.Full);
+            var memberRespGroup = Common.EnumUtility.SafeParseFlags(responseGroup, MemberResponseGroup.Full);
             if (memberRespGroup.HasFlag(MemberResponseGroup.WithDynamicProperties))
             {
                 //Load dynamic properties for member

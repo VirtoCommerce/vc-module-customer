@@ -5,6 +5,7 @@ using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Domain.Search;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 
 namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
@@ -82,10 +83,12 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             {
                 IndexVendor(document, vendor);
             }
-
-            foreach (var property in member.DynamicProperties)
+            if (!member.DynamicProperties.IsNullOrEmpty())
             {
-                IndexDynamicProperty(document, property);
+                foreach (var property in member.DynamicProperties)
+                {
+                    IndexDynamicProperty(document, property);
+                }
             }
 
             return document;
