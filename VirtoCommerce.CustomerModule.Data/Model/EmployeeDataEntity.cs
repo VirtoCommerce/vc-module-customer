@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Omu.ValueInjecter;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Platform.Data.Common.ConventionInjections;
 
 namespace VirtoCommerce.CustomerModule.Data.Model
 {
@@ -16,7 +11,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
     {
         [StringLength(64)]
         public string Type { get; set; }
-   
+
         public bool IsActive { get; set; }
 
         [StringLength(128)]
@@ -51,7 +46,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             var employee = member as Employee;
             if (employee != null)
             {
-                employee.Organizations = this.MemberRelations.Select(x => x.Ancestor).OfType<OrganizationDataEntity>().Select(x => x.Id).ToList();
+                employee.Organizations = MemberRelations.Select(x => x.Ancestor).OfType<OrganizationDataEntity>().Select(x => x.Id).ToList();
             }
             return member;
         }
@@ -62,19 +57,19 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             if (employee != null)
             {
                 member.Name = employee.FullName;
-              
+
                 if (employee.Organizations != null)
                 {
-                    this.MemberRelations = new ObservableCollection<MemberRelationDataEntity>();
+                    MemberRelations = new ObservableCollection<MemberRelationDataEntity>();
                     foreach (var organization in employee.Organizations)
                     {
                         var memberRelation = new MemberRelationDataEntity
                         {
                             AncestorId = organization,
                             AncestorSequence = 1,
-                            DescendantId = this.Id,
+                            DescendantId = Id,
                         };
-                        this.MemberRelations.Add(memberRelation);
+                        MemberRelations.Add(memberRelation);
                     }
                 }
             }
@@ -82,20 +77,21 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             return base.FromModel(member, pkMap);
         }
 
-        public override void Patch(MemberDataEntity memberEntity)
+        public override void Patch(MemberDataEntity target)
         {
-            var target = memberEntity as EmployeeDataEntity;
-
-            target.FirstName = this.FirstName;
-            target.MiddleName = this.MiddleName;
-            target.LastName = this.LastName;
-            target.BirthDate = this.BirthDate;
-            target.DefaultLanguage = this.DefaultLanguage;
-            target.FullName = this.FullName;
-            target.IsActive = this.IsActive;
-            target.Type = this.Type;
-            target.TimeZone = this.TimeZone;
-            target.PhotoUrl = this.PhotoUrl;
+            if (target is EmployeeDataEntity targetEmployee)
+            {
+                targetEmployee.FirstName = FirstName;
+                targetEmployee.MiddleName = MiddleName;
+                targetEmployee.LastName = LastName;
+                targetEmployee.BirthDate = BirthDate;
+                targetEmployee.DefaultLanguage = DefaultLanguage;
+                targetEmployee.FullName = FullName;
+                targetEmployee.IsActive = IsActive;
+                targetEmployee.Type = Type;
+                targetEmployee.TimeZone = TimeZone;
+                targetEmployee.PhotoUrl = PhotoUrl;
+            }
             base.Patch(target);
         }
     }

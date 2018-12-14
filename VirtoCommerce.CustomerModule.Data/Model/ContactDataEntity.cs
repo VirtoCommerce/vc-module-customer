@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.Serialization;
-using System.ComponentModel.DataAnnotations;
+using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations.Schema;
-using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Platform.Data.Common.ConventionInjections;
-using Omu.ValueInjecter;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using VirtoCommerce.Domain.Customer.Model;
+using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CustomerModule.Data.Model
 {
@@ -66,7 +60,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             var contact = member as Contact;
             if (contact != null)
             {
-                contact.Organizations = this.MemberRelations.Select(x => x.Ancestor).OfType<OrganizationDataEntity>().Select(x => x.Id).ToList();
+                contact.Organizations = MemberRelations.Select(x => x.Ancestor).OfType<OrganizationDataEntity>().Select(x => x.Id).ToList();
                 member.Name = contact.FullName;
             }
             return member;
@@ -77,23 +71,23 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             var contact = member as Contact;
             if (contact != null)
             {
-                if (string.IsNullOrEmpty(this.Name))
+                if (string.IsNullOrEmpty(Name))
                 {
-                    this.Name = contact.FullName;
+                    Name = contact.FullName;
                 }
 
                 if (contact.Organizations != null)
                 {
-                    this.MemberRelations = new ObservableCollection<MemberRelationDataEntity>();
+                    MemberRelations = new ObservableCollection<MemberRelationDataEntity>();
                     foreach (var organization in contact.Organizations)
                     {
                         var memberRelation = new MemberRelationDataEntity
                         {
                             AncestorId = organization,
                             AncestorSequence = 1,
-                            DescendantId = this.Id,
+                            DescendantId = Id,
                         };
-                        this.MemberRelations.Add(memberRelation);
+                        MemberRelations.Add(memberRelation);
                     }
                 }
             }
@@ -101,23 +95,23 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             return base.FromModel(member, pkMap);
         }
 
-        public override void Patch(MemberDataEntity memberDataEntity)
+        public override void Patch(MemberDataEntity target)
         {
-            var target = memberDataEntity as ContactDataEntity;
-
-            target.FirstName = this.FirstName;
-            target.MiddleName = this.MiddleName;
-            target.LastName = this.LastName;
-            target.BirthDate = this.BirthDate;
-            target.DefaultLanguage = this.DefaultLanguage;
-            target.FullName = this.FullName;
-            target.Salutation = this.Salutation;
-            target.TimeZone = this.TimeZone;
-            target.TaxpayerId = this.TaxpayerId;
-            target.PreferredCommunication = this.PreferredCommunication;
-            target.PreferredDelivery = this.PreferredDelivery;
-            target.PhotoUrl = this.PhotoUrl;
-
+            if (target is ContactDataEntity targetContact)
+            {
+                targetContact.FirstName = FirstName;
+                targetContact.MiddleName = MiddleName;
+                targetContact.LastName = LastName;
+                targetContact.BirthDate = BirthDate;
+                targetContact.DefaultLanguage = DefaultLanguage;
+                targetContact.FullName = FullName;
+                targetContact.Salutation = Salutation;
+                targetContact.TimeZone = TimeZone;
+                targetContact.TaxpayerId = TaxpayerId;
+                targetContact.PreferredCommunication = PreferredCommunication;
+                targetContact.PreferredDelivery = PreferredDelivery;
+                targetContact.PhotoUrl = PhotoUrl;
+            }
             base.Patch(target);
         }
     }

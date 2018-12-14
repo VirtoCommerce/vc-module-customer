@@ -149,7 +149,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             get { return GetAsQueryable<MemberRelationDataEntity>(); }
         }
 
-        public virtual MemberDataEntity[] GetMembersByIds(string[] ids, string responseGroup = null, string[] memberTypeNames = null)
+        public virtual MemberDataEntity[] GetMembersByIds(string[] ids, string responseGroup = null, string[] memberTypes = null)
         {
             if (ids.IsNullOrEmpty())
             {
@@ -169,7 +169,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             //There is loading for all corresponding members conceptual model entities types
             //query performance when TPT inheritance used it is too slow, for improve performance we are passing concrete member types in to the repository
             var allKnownMemberMappedTypeInfos = AbstractTypeFactory<Member>.AllTypeInfos.Where(t => t.MappedType != null).ToArray();
-            var memberMappedTypes = allKnownMemberMappedTypeInfos.Where(x => memberTypeNames == null || memberTypeNames.Any(mt => x.IsAssignableTo(mt)))
+            var memberMappedTypes = allKnownMemberMappedTypeInfos.Where(x => memberTypes == null || memberTypes.Any(mt => x.IsAssignableTo(mt)))
                                                      .Select(x => x.MappedType.AssemblyQualifiedName)
                                                      .Distinct()
                                                      .Select(x => Type.GetType(x))
@@ -186,7 +186,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
                     result.AddRange(GetMembersViaGenericReflectionCall(ids, memberResponseGroup, memberType));
                     //Stop process other types
-                    if (result.Count() >= ids.Count())
+                    if (result.Count >= ids.Count())
                     {
                         break;
                     }
@@ -212,9 +212,9 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
                     //Iterate all known member types  and try to load ancestors for each of them 
                     foreach (var knownAncestorType in allKnownAncestorTypes)
                     {
-                        ancestors.AddRange(GetMembersViaGenericReflectionCall(ancestorIds, MemberResponseGroup.Info, knownAncestorType).ToArray());
+                        ancestors.AddRange(GetMembersViaGenericReflectionCall(ancestorIds, MemberResponseGroup.None, knownAncestorType).ToArray());
                         //Stop process other types if already loaded all ancestors
-                        if (ancestors.Count() >= ancestorIds.Count())
+                        if (ancestors.Count >= ancestorIds.Count())
                         {
                             break;
                         }

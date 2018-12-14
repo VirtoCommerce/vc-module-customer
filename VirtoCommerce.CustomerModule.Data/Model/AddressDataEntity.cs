@@ -9,82 +9,82 @@ namespace VirtoCommerce.CustomerModule.Data.Model
     public class AddressDataEntity : AuditableEntity
     {
         [StringLength(2048)]
-		public string Name { get; set; }
-			
-		[StringLength(128)]
-		public string FirstName { get; set; }
+        public string Name { get; set; }
 
-		[StringLength(128)]
-		public string LastName { get; set; }
+        [StringLength(128)]
+        public string FirstName { get; set; }
 
-		[Required]
-		[StringLength(128)]
-		public string Line1 { get; set; }
+        [StringLength(128)]
+        public string LastName { get; set; }
 
-		[StringLength(128)]
-		public string Line2 { get; set; }
+        [Required]
+        [StringLength(128)]
+        public string Line1 { get; set; }
 
-		[Required]
-		[StringLength(128)]
-		public string City { get; set; }
+        [StringLength(128)]
+        public string Line2 { get; set; }
 
-		[Required]
-		[StringLength(64)]
-		public string CountryCode  { get; set; }
+        [Required]
+        [StringLength(128)]
+        public string City { get; set; }
 
-		[StringLength(128)]
-		public string StateProvince { get; set; }
+        [Required]
+        [StringLength(64)]
+        public string CountryCode { get; set; }
 
-
-		[Required]
-		[StringLength(128)]
-		public string CountryName { get; set; }
-
-		[Required]
-		[StringLength(32)]
-		public string PostalCode { get; set; }
-
-		[StringLength(128)]
-		public string RegionId { get; set; }
+        [StringLength(128)]
+        public string StateProvince { get; set; }
 
 
-		[StringLength(128)]
-		public string RegionName { get; set; }
+        [Required]
+        [StringLength(128)]
+        public string CountryName { get; set; }
+
+        [Required]
+        [StringLength(32)]
+        public string PostalCode { get; set; }
+
+        [StringLength(128)]
+        public string RegionId { get; set; }
 
 
-		[StringLength(64)]
-		public string Type { get; set; }
+        [StringLength(128)]
+        public string RegionName { get; set; }
 
-		[StringLength(64)]
-		public string DaytimePhoneNumber { get; set; }
 
-		[StringLength(64)]
-		public string EveningPhoneNumber { get; set; }
+        [StringLength(64)]
+        public string Type { get; set; }
 
-		[StringLength(64)]
-		public string FaxNumber { get; set; }
+        [StringLength(64)]
+        public string DaytimePhoneNumber { get; set; }
+
+        [StringLength(64)]
+        public string EveningPhoneNumber { get; set; }
+
+        [StringLength(64)]
+        public string FaxNumber { get; set; }
 
         [StringLength(256)]
-		public string Email { get; set; }
+        public string Email { get; set; }
 
-		[StringLength(128)]
-		public string Organization { get; set; }
-		
-		#region Navigation Properties
+        [StringLength(128)]
+        public string Organization { get; set; }
 
-		public string MemberId { get; set; }
+        #region Navigation Properties
 
-		public virtual MemberDataEntity Member { get; set; }
+        public string MemberId { get; set; }
 
-		#endregion
+        public virtual MemberDataEntity Member { get; set; }
+
+        #endregion
 
         #region Overrides
 
         public override string ToString()
         {
-            return string.Format("{0} {1}, {2} {3}, {4}, {5} {6} {7}", 
+            return string.Format("{0} {1}, {2} {3}, {4}, {5} {6} {7}",
                 FirstName, LastName, Line1, Line2, City, StateProvince, PostalCode, CountryName);
-            
+
         }
         #endregion
 
@@ -101,8 +101,10 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         public virtual AddressDataEntity FromModel(Address address)
         {
             if (address == null)
-                throw new ArgumentNullException("address");
-         
+            {
+                throw new ArgumentNullException(nameof(address));
+            }
+
             this.InjectFrom(address);
             Id = address.Key;
             DaytimePhoneNumber = address.Phone;
@@ -131,6 +133,6 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             target.FaxNumber = FaxNumber;
             target.Organization = Organization;
             target.StateProvince = StateProvince;
-        }    
+        }
     }
 }

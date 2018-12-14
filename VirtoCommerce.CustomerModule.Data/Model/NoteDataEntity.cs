@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,24 +13,24 @@ using VirtoCommerce.Domain.Customer.Model;
 
 namespace VirtoCommerce.CustomerModule.Data.Model
 {
-	public class NoteDataEntity : AuditableEntity
-	{
+    public class NoteDataEntity : AuditableEntity
+    {
 
-		[StringLength(128)]
-		public string AuthorName { get; set; }
+        [StringLength(128)]
+        public string AuthorName { get; set; }
 
-		[StringLength(128)]
-		public string ModifierName { get; set; }
+        [StringLength(128)]
+        public string ModifierName { get; set; }
 
-		[StringLength(128)]
-		public string Title { get; set; }
+        [StringLength(128)]
+        public string Title { get; set; }
 
-		public string Body { get; set; }
+        public string Body { get; set; }
 
-		public bool IsSticky { get; set; }
+        public bool IsSticky { get; set; }
 
-		#region Navigation Properties
-		public string MemberId { get; set; }
+        #region Navigation Properties
+        public string MemberId { get; set; }
         public virtual MemberDataEntity Member { get; set; }
 
         #endregion
@@ -39,7 +39,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         public virtual Note ToModel(Note note)
         {
             if (note == null)
-                throw new ArgumentNullException("note");
+            {
+                throw new ArgumentNullException(nameof(note));
+            }
 
             note.InjectFrom(this);
             return note;
@@ -48,18 +50,20 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         public virtual NoteDataEntity FromModel(Note note)
         {
             if (note == null)
-                throw new ArgumentNullException("note");
+            {
+                throw new ArgumentNullException(nameof(note));
+            }
 
             this.InjectFrom(note);
-            this.AuthorName = note.CreatedBy;
-            this.ModifierName = note.ModifiedBy;
+            AuthorName = note.CreatedBy;
+            ModifierName = note.ModifiedBy;
             return this;
         }
 
         public virtual void Patch(NoteDataEntity target)
         {
-            target.Body = this.Body;
-            target.Title = this.Title;
+            target.Body = Body;
+            target.Title = Title;
         }
-	}
+    }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -34,15 +34,16 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             return base.FromModel(member, pkMap);
         }
 
-        public override void Patch(MemberDataEntity memberEntity)
+        public override void Patch(MemberDataEntity target)
         {
-            var target = memberEntity as VendorDataEntity;
+            if (target is VendorDataEntity targetVendor)
+            {
+                targetVendor.SiteUrl = SiteUrl;
+                targetVendor.LogoUrl = LogoUrl;
+                targetVendor.GroupName = GroupName;
+                targetVendor.Description = Description;
+            }
 
-            target.SiteUrl = this.SiteUrl;
-            target.LogoUrl = this.LogoUrl;
-            target.GroupName = this.GroupName;
-            target.Description = this.Description;
-                   
             base.Patch(target);
         }
     }

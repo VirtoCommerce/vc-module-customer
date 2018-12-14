@@ -1,4 +1,4 @@
-﻿angular.module('virtoCommerce.customerModule')
+angular.module('virtoCommerce.customerModule')
 .controller('virtoCommerce.customerModule.customerAccountsListController', ['$scope', 'platformWebApp.dialogService', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeNavigationService', 'filterFilter', 'platformWebApp.accounts',
 function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFilter, accounts) {
     $scope.uiGridConstants = uiGridHelper.uiGridConstants;
@@ -128,7 +128,4 @@ function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFil
     };
 
     $scope.$watch('blade.parentBlade.currentEntity', initializeBlade);
-
-    // on load:
-    // $scope.$watch('blade.parentBlade.currentEntity.securityAccounts' gets fired    
 }]);

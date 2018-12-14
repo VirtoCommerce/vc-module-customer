@@ -8,8 +8,8 @@ namespace VirtoCommerce.CustomerModule.Data.Model
     [Flags]
     public enum MemberResponseGroup
     {
-        Info = 0,
-        WithAncestors = 1 << 0,
+        None = 0,
+        WithAncestors = 1,
         WithNotes = 1 << 1,
         WithEmails = 1 << 2,
         WithAddresses = 1 << 3,

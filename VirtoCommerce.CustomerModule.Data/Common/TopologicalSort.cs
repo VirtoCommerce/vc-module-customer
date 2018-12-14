@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,7 +20,7 @@ namespace VirtoCommerce.CustomerModule.Data.Common
             var L = new List<T>();
 
             // Set of all nodes with no incoming edges
-            var S = new HashSet<T>(nodes.Where(n => edges.All(e => e.Item2.Equals(n) == false)));
+            var S = new HashSet<T>(nodes.Where(n => edges.All(e => !e.Item2.Equals(n))));
 
             // while S is non-empty do
             while (S.Any())
@@ -42,7 +42,7 @@ namespace VirtoCommerce.CustomerModule.Data.Common
                     edges.Remove(e);
 
                     // if m has no other incoming edges then
-                    if (edges.All(me => me.Item2.Equals(m) == false))
+                    if (edges.All(me => !me.Item2.Equals(m)))
                     {
                         // insert m into S
                         S.Add(m);
@@ -54,7 +54,7 @@ namespace VirtoCommerce.CustomerModule.Data.Common
             if (edges.Any())
             {
                 // return error (graph has at least one cycle)
-                return null;
+                return new List<T>();
             }
             else
             {
