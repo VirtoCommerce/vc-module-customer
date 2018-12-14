@@ -178,7 +178,13 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                 var isCollection = property.IsDictionary || property.IsArray;
                 IList<object> values;
 
-                if (property.IsDictionary)
+                if (!property.IsDictionary)
+                {
+                    values = property.Values.Where(x => x.Value != null)
+                        .Select(x => x.Value)
+                        .ToList();
+                }
+                else
                 {
                     //add all locales in dictionary to searchIndex
                     values = property.Values.Select(x => x.Value)
@@ -186,12 +192,6 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                                             .Where(x => !string.IsNullOrEmpty(x.Name))
                                             .Select(x => x.Name)
                                             .ToList<object>();
-                }
-                else
-                {
-                    values = property.Values.Where(x => x.Value != null)
-                                            .Select(x => x.Value)
-                                            .ToList();
                 }
 
                 document.Add(new IndexDocumentField(propertyName, values) { IsRetrievable = true, IsFilterable = true, IsCollection = isCollection });
