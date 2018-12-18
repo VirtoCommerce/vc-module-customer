@@ -32,7 +32,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         public override Member[] GetByIds(string[] memberIds, string responseGroup = null, string[] memberTypes = null)
         {
             var result = base.GetByIds(memberIds, responseGroup, memberTypes);
-            var memberRespGroup = Common.EnumUtility.SafeParseFlags(responseGroup, MemberResponseGroup.Full);
+            var memberRespGroup = EnumUtility.SafeParseFlags(responseGroup, MemberResponseGroup.Full);
             //Load member security accounts by separate request
             if (memberRespGroup.HasFlag(MemberResponseGroup.WithSecurityAccounts))
             {
