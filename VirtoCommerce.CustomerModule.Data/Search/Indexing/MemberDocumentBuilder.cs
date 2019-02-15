@@ -197,7 +197,10 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                                             .ToList<object>();
                 }
 
-                document.Add(new IndexDocumentField(propertyName, values) { IsRetrievable = true, IsFilterable = true, IsCollection = isCollection });
+                if (values.Any())
+                {
+                    document.Add(new IndexDocumentField(propertyName, values) { IsRetrievable = true, IsFilterable = true, IsCollection = isCollection });
+                }
             }
         }
     }
