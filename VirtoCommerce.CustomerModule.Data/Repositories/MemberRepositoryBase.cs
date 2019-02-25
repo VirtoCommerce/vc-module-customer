@@ -155,7 +155,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
                 return new MemberDataEntity[] { };
             }
 
-            var memberResponseGroup = Common.EnumUtility.SafeParseFlags(responseGroup, MemberResponseGroup.Full);
+            var memberResponseGroup = EnumUtility.SafeParseFlags(responseGroup, MemberResponseGroup.Full);
 
             MemberDataEntity[] GetMembersViaGenericReflectionCall(string[] memberIds, MemberResponseGroup memberRespGroup, Type memberType)
             {
