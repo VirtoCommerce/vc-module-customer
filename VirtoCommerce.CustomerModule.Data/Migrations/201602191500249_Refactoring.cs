@@ -2,7 +2,7 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
 {
     using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class Refactoring : DbMigration
     {
         public override void Up()
@@ -15,10 +15,8 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
             DropColumn("dbo.MemberRelation", "Discriminator");
             DropColumn("dbo.Note", "Discriminator");
             DropColumn("dbo.Phone", "Discriminator");
-
-            Sql(@"UPDATE PlatformAccount SET PlatformAccount.MemberId = M.Id FROM  Member AS M WHERE PlatformAccount.MemberId IS NULL AND PlatformAccount.Id = M.Id");
         }
-        
+
         public override void Down()
         {
             AddColumn("dbo.Phone", "Discriminator", c => c.String(maxLength: 128));
