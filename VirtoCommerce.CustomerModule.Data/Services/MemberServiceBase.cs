@@ -209,7 +209,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                     };
                 }
 
-                query = query.OrderBySortInfos(sortInfos);
+                query = query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id);
 
                 var totalCount = query.Count();
                 var memberIds = query.Select(m => m.Id).Skip(criteria.Skip).Take(criteria.Take).ToList();
