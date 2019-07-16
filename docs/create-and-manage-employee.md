@@ -59,10 +59,13 @@ On User Information screen all fields and widgets are editable.
 1. The user navigates to User Information screen and selects the account type from the drop down list;
 1. The system provides three default types :
 
+      1. Customer;
       1. Manager;
       1. Administrator.
 1. After selecting the account type, the user saves the changes;
 1. The selected account type will be applied to the user.
+
+**Important**: The Customer does not have access to the admin tool. Only Manager and Administrator account types can have access to the admin tool.
 
 #### Add Account Type Value
 

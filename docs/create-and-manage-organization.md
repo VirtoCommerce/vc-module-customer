@@ -80,7 +80,7 @@
 1. The user selects the ‘Phones’ widget on ‘New Organization’ screen and clicks ‘Add’;
 1. The system will display the required email input text field;
 1. The user enters the phone number and clicks ‘OK’;
-1. The system will add the entered phone and display it on the ‘Manage phones ’ screen.
+1. The system will add the entered phone and display it on the 'Manage phones' screen.
 
 ![Fig. Add phone](media/screen-add-phone.png)
 
