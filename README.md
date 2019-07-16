@@ -33,7 +33,7 @@ Employee contact type means the Organization Employee
 
  A Contact is the Shop customer. It can belong to Organizations or represent an individual shopper.
 
-[Create And Manage Contacts](manage-contacts.md)
+[Create And Manage Contacts](/docs/manage-contacts.md)
 
 ## Vendor
 
