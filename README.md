@@ -15,6 +15,8 @@ VirtoCommerce.Customer module represents contacts management system. The main pu
 1. Contact;
 1. Vendor.
 
+![Fig. Contacts Module](docs/media/screen-contacts-module.png)
+
 ## Organization
 
 Organization contact type is a container for other Organizations and Customers
