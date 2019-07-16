@@ -18,7 +18,7 @@
      1. ‘Description’ text box;
      1. ‘Create’ button remains disabled until the required fields are filled out.  
 1. The user fills out the fields and widgets displayed on the screen and clicks the ‘Create’ button;
-1. The system will create the new Organization and display it on the list of contacts.  
+1. The system will create the new Organization and display it in the list of contacts.  
 
 ![Fig. Create New Org](media/screen-create-new-org.png)
 
@@ -80,7 +80,7 @@
 1. The user selects the ‘Phones’ widget on ‘New Organization’ screen and clicks ‘Add’;
 1. The system will display the required email input text field;
 1. The user enters the phone number and clicks ‘OK’;
-1. The system will add the entered phone and display it on the ‘Manage phones ’screen.
+1. The system will add the entered phone and display it on the ‘Manage phones ’ screen.
 
 ![Fig. Add phone](media/screen-add-phone.png)
 

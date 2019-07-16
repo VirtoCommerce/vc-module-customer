@@ -59,9 +59,8 @@ On User Information screen all fields and widgets are editable.
 1. The user navigates to User Information screen and selects the account type from the drop down list;
 1. The system provides three default types :
 
-     1. Customer;
-     1. Manager;
-     1. Administrator.
+      1. Manager;
+      1. Administrator.
 1. After selecting the account type, the user saves the changes;
 1. The selected account type will be applied to the user.
 
@@ -86,6 +85,8 @@ On User Information screen all fields and widgets are editable.
 1. The system will close the ‘Manage roles’ screen and display the ‘User Information’ screen. The ‘Roles’ widget will display the number of roles assigned after editing.  
 
 ![Fig. Edit Roles](media/screen-edit-roles-widget.png)
+
+#### Add API Accounts
 
 1. On ‘User Information’ screen the user selects the ‘API Accounts’ widget;
 1. The system will display the ‘API accounts’ screen. If API accounts were added before, the list of these accounts will be displayed on this screen;

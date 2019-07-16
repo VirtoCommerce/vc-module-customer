@@ -1,11 +1,11 @@
 # VirtoCommerce.Customer
 
-VirtoCommerce.Customer module represents contacts management system. The main purpose of this functionality is to keep the users contact information. The VC Customer Module helps view, search and edit contact information. 
+VirtoCommerce.Customer module represents contacts management system. The main purpose of this functionality is to keep the users contact information. The VC Customer Module helps to view, search and edit contact information.
 
 **Key features**:
 
 1. Сontacts arrangement in hierarchical structure;
-1. Module extensibility with custom contact types.
+1. Module extensibility with custom contact types;
 1. "Organization", "Employee", "Customer" and "Vendor" contact types supported out of the box.
 
  **Contact Types**:
@@ -19,7 +19,7 @@ VirtoCommerce.Customer module represents contacts management system. The main pu
 
 ## Organization
 
-Organization contact type is a container for other Organizations and Customers
+Organization contact type is a container for other Organizations and Customers.
 
 [View Organization Details](/docs/view-organization-details.md)
 
@@ -27,7 +27,7 @@ Organization contact type is a container for other Organizations and Customers
 
 ## Employee
 
-Employee contact type means the Organization Employee
+Employee contact type means the Organization Employee.
 
 [Create And Manage Employee](/docs/create-and-manage-employee.md)
 
