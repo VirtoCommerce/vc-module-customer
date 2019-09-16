@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using Nuke.Common;
 using Nuke.Common.Execution;
 using Nuke.Common.Git;
@@ -8,14 +10,17 @@ using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.Git;
+using Nuke.Common.Tools.GitReleaseManager;
 using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Tools.Npm;
 using Nuke.Common.Utilities;
 using Nuke.Common.Utilities.Collections;
+using VirtoCommerce.Platform.Core.Modularity;
 using static Nuke.Common.EnvironmentInfo;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.IO.PathConstruction;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
+using static Nuke.Common.Tools.Git.GitTasks;
 
 [CheckBuildProjectConfigurations]
 [UnsetVisualStudioEnvironmentVariables]
@@ -38,14 +43,20 @@ class Build : NukeBuild
     [GitRepository] readonly GitRepository GitRepository;
     [GitVersion] readonly GitVersion GitVersion;
 
+    readonly string MasterBranch = "master";
+    readonly string DevelopBranch = "develop";
+    readonly string ReleaseBranchPrefix = "release";
+    readonly string HotfixBranchPrefix = "hotfix";
+
     [Parameter("ApiKey for the specified source")] readonly string ApiKey;
     [Parameter] readonly string Source = @"https://api.nuget.org/v3/index.json";
 
     [Parameter] static string GlobalModuleIgnoreFileUrl = @"https://raw.githubusercontent.com/VirtoCommerce/vc-platform-core/release/3.0.0/module.ignore";
+
     AbsolutePath SourceDirectory => RootDirectory / "src";
     AbsolutePath TestsDirectory => RootDirectory / "tests";
     AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
-    Project WebProject => Solution.AllProjects.FirstOrDefault(x => x.SolutionFolder.Name == "src" && x.Name.EndsWith("Web"));
+    Project WebProject => Solution.AllProjects.FirstOrDefault(x => x.SolutionFolder?.Name == "src" && x.Name.EndsWith("Web"));
     AbsolutePath ModuleManifest => WebProject.Directory / "module.manifest";
     AbsolutePath ModuleIgnoreFile => RootDirectory / "module.ignore";
 
@@ -54,6 +65,9 @@ class Build : NukeBuild
     string ModuleVersionTag => XmlTasks.XmlPeek(ModuleManifest, "module/version-tag").FirstOrDefault();
     AbsolutePath ModuleOutputDirectory => ArtifactsDirectory / (ModuleId + ModuleVersion);
 
+    string ModulePackageUrl => $"https://virtocommerce.blob.core.windows.net/modules3/{ModuleId + "_" + string.Join("-", ModuleVersion, ModuleVersionTag) + ".zip"}";
+    GitRepository ModulesRepository => GitRepository.FromUrl("https://github.com/VirtoCommerce/vc-modules.git");
+
     bool IsModule => FileExists(ModuleManifest);
 
     Target Clean => _ => _
@@ -61,8 +75,14 @@ class Build : NukeBuild
         .Executes(() =>
         {
             SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
-            TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
-            WebProject.Directory.GlobDirectories("**/node_modules").ForEach(DeleteDirectory);
+            if (DirectoryExists(TestsDirectory))
+            {
+                TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
+            }
+            if (DirectoryExists(TestsDirectory))
+            {
+                WebProject.Directory.GlobDirectories("**/node_modules").ForEach(DeleteDirectory);
+            }
             EnsureCleanDirectory(ArtifactsDirectory);
         });
 
@@ -121,8 +141,15 @@ class Build : NukeBuild
     Target WebPackBuild => _ => _
      .Executes(() =>
      {
-         NpmTasks.NpmInstall(s => s.SetWorkingDirectory(WebProject.Directory));
-         NpmTasks.NpmRun(s => s.SetWorkingDirectory(WebProject.Directory).SetCommand("webpack:build"));
+         if (FileExists(WebProject.Directory / "package.json"))
+         {
+             NpmTasks.NpmInstall(s => s.SetWorkingDirectory(WebProject.Directory));
+             NpmTasks.NpmRun(s => s.SetWorkingDirectory(WebProject.Directory).SetCommand("webpack:build"));
+         }
+         else
+         {
+             Logger.Info("Nothing to build.");
+         }
      });
 
     Target Compile => _ => _
@@ -176,6 +203,37 @@ class Build : NukeBuild
          DeleteFile(zipFileName);
          CompressionTasks.CompressZip(ModuleOutputDirectory, zipFileName, (x) => !ignoredFiles.Contains(x.Name, StringComparer.OrdinalIgnoreCase));
      });
+
+    Target PublishModuleManifest => _ => _
+        .Executes(() =>
+        {
+            var modulesLocalDirectory = ArtifactsDirectory / "vc-modules";
+            var modulesJsonFile = modulesLocalDirectory / "modules_v3.json";
+            if (!DirectoryExists(modulesLocalDirectory))
+            {
+                GitTasks.Git($"clone {ModulesRepository.HttpsUrl} {modulesLocalDirectory}");
+            }
+            else
+            {
+                GitTasks.Git($"pull", modulesLocalDirectory);
+            }
+            var modulesExternalManifests = JsonConvert.DeserializeObject<List<ExternalModuleManifest>>(TextTasks.ReadAllText(modulesJsonFile));
+            var manifest = ManifestReader.Read(ModuleManifest);
+            manifest.PackageUrl = ModulePackageUrl;
+            var existExternalManifest = modulesExternalManifests.FirstOrDefault(x => x.Id == manifest.Id);
+            if (existExternalManifest != null)
+            {
+                existExternalManifest.PublishNewVersion(manifest);
+            }
+            else
+            {
+                modulesExternalManifests.Add(ExternalModuleManifest.FromManifest(manifest));
+            }
+            TextTasks.WriteAllText(modulesJsonFile, JsonConvert.SerializeObject(modulesExternalManifests, Formatting.Indented));
+            GitTasks.Git($"commit -am \"{manifest.Id} {manifest.Version}-{manifest.VersionTag}\"", modulesLocalDirectory);
+
+            GitTasks.Git($"push origin HEAD:master -f", modulesLocalDirectory);
+        });
 
 }
 
