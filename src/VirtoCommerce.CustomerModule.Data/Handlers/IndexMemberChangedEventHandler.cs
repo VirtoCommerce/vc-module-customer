@@ -37,6 +37,15 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                 BackgroundJob.Enqueue(() => TryIndexMemberBackgroundJob(indexMemberIds));
             }
 
+            var delereIndexMemberIds = message.ChangedEntries.Where(x => x.EntryState == EntryState.Deleted && x.OldEntry.Id != null)
+                                                          .Select(x => x.OldEntry.Id)
+                                                          .Distinct().ToArray();
+
+            if (!delereIndexMemberIds.IsNullOrEmpty())
+            {
+                BackgroundJob.Enqueue(() => TryDeleteIndexMemberBackgroundJob(delereIndexMemberIds));
+            }
+
             return Task.CompletedTask;
         }
 
@@ -46,10 +55,21 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
             await TryIndexMember(indexMemberIds);
         }
 
+        [DisableConcurrentExecution(60 * 60 * 24)]
+        public async Task TryDeleteIndexMemberBackgroundJob(string[] indexMemberIds)
+        {
+            await TryDeleteIndexMember(indexMemberIds);
+        }
+
 
         protected virtual async Task TryIndexMember(string[] indexMemberIds)
         {
             await _indexingManager.IndexDocumentsAsync(KnownDocumentTypes.Member, indexMemberIds);
+        }
+
+        protected virtual async Task TryDeleteIndexMember(string[] indexMemberIds)
+        {
+            await _indexingManager.DeleteDocumentsAsync(KnownDocumentTypes.Member, indexMemberIds);
         }
     }
 }
