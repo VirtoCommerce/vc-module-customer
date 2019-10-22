@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using VirtoCommerce.CustomerModule.Core.Events;
 using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.SearchModule.Core.Model;
+using VirtoCommerce.SearchModule.Data.BackgroundJobs;
 
 namespace VirtoCommerce.CustomerModule.Data.Handlers
 {
@@ -19,6 +20,8 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
             var indexEntries = message.ChangedEntries
                 .Select(x => new IndexEntry { Id = x.OldEntry.Id, EntryState = x.EntryState, Type = KnownDocumentTypes.Member })
                 .ToArray();
+
+            IndexingJobs.EnqueueIndexAndDeleteDocuments(indexEntries);
 
             return Task.CompletedTask;
         }
