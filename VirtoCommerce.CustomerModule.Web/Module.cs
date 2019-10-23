@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Web.Http;
 using Microsoft.Practices.Unity;
 using VirtoCommerce.CustomerModule.Data.Handlers;
@@ -55,9 +55,8 @@ namespace VirtoCommerce.CustomerModule.Web
 
             var eventHandlerRegistrar = _container.Resolve<IHandlerRegistrar>();
 
-            eventHandlerRegistrar.RegisterHandler<MemberChangedEvent>(
-                async (message, token) =>
-                    await _container.Resolve<LogChangesMemberChangedEventHandler>().Handle(message));
+            eventHandlerRegistrar.RegisterHandler<MemberChangedEvent>(async (message, token) => await _container.Resolve<LogChangesMemberChangedEventHandler>().Handle(message));
+            eventHandlerRegistrar.RegisterHandler<MemberChangedEvent>(async (message, token) => await _container.Resolve<IndexMemberChangedEventHandler>().Handle(message));
 
 
             Func<CustomerRepositoryImpl> customerRepositoryFactory = () => new CustomerRepositoryImpl(_connectionString, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>(),

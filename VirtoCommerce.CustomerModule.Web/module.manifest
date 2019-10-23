@@ -4,7 +4,7 @@
     <version>2.14.22</version>
     <platformVersion>2.13.39</platformVersion>
     <dependencies>
-        <dependency id="VirtoCommerce.Core" version="2.25.17" />
+        <dependency id="VirtoCommerce.Core" version="2.25.28" />
     </dependencies>
 
     <title>Customer management module</title>
