@@ -85,7 +85,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
 
         [HttpGet]
         [Route("members")]
-        [ResponseType(typeof(Member))]
+        [ResponseType(typeof(Member[]))]
         public IHttpActionResult GetMembersByIds([FromUri] string[] ids, [FromUri]string responseGroup = null, string[] memberTypes = null)
         {
             //pass member types name for better perfomance
@@ -357,7 +357,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="responseGroup">Response group flags controls fullness of resulting object graph</param>
         [HttpGet]
         [Route("organizations")]
-        [ResponseType(typeof(Organization))]
+        [ResponseType(typeof(Organization[]))]
         public IHttpActionResult GetOrganizationsByIds([FromUri]string[] ids, [FromUri]string responseGroup = null)
         {
             return GetMembersByIds(ids, responseGroup, new[] { typeof(Organization).Name });
