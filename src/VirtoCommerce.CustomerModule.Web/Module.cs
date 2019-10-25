@@ -70,6 +70,7 @@ namespace VirtoCommerce.CustomerModule.Web
 
             serviceCollection.AddTransient<LogChangesEventHandler>();
             serviceCollection.AddTransient<SecurtityAccountChangesEventHandler>();
+            serviceCollection.AddTransient<IndexMemberChangedEventHandler>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
@@ -105,6 +106,8 @@ namespace VirtoCommerce.CustomerModule.Web
             var inProcessBus = appBuilder.ApplicationServices.GetService<IHandlerRegistrar>();
             inProcessBus.RegisterHandler<MemberChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<LogChangesEventHandler>().Handle(message));
             inProcessBus.RegisterHandler<UserChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<SecurtityAccountChangesEventHandler>().Handle(message));
+            inProcessBus.RegisterHandler<MemberChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<IndexMemberChangedEventHandler>().Handle(message));
+
             using (var serviceScope = appBuilder.ApplicationServices.CreateScope())
             {
                 var dbContext = serviceScope.ServiceProvider.GetRequiredService<CustomerDbContext>();
