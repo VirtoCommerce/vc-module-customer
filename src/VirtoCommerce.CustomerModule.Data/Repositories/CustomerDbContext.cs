@@ -22,7 +22,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
             modelBuilder.Entity<MemberEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<MemberEntity>().ToTable("Member");
-            modelBuilder.Entity<MemberEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<MemberEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<MemberEntity>().HasIndex(i => i.MemberType).IsUnique(false).HasName("IX_MemberType");
             modelBuilder.Entity<MemberEntity>().HasIndex(i => i.Name).IsUnique(false).HasName("IX_Member_Name");
             modelBuilder.Entity<MemberEntity>().HasDiscriminator<string>("Discriminator");
@@ -32,7 +32,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
             #region MemberRelation
             modelBuilder.Entity<MemberRelationEntity>().HasKey(x => x.Id);
-            modelBuilder.Entity<MemberRelationEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<MemberRelationEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<MemberRelationEntity>().ToTable("MemberRelation");
 
             modelBuilder.Entity<MemberRelationEntity>().HasOne(m => m.Descendant)
@@ -42,7 +42,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
             #region Address
             modelBuilder.Entity<AddressEntity>().HasKey(x => x.Id);
-            modelBuilder.Entity<AddressEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<AddressEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<AddressEntity>().ToTable("Address");
 
             modelBuilder.Entity<AddressEntity>().HasOne(m => m.Member).WithMany(m => m.Addresses)
@@ -51,7 +51,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
             #region Email
             modelBuilder.Entity<EmailEntity>().HasKey(x => x.Id);
-            modelBuilder.Entity<EmailEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<EmailEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<EmailEntity>().ToTable("Email");
 
             modelBuilder.Entity<EmailEntity>().HasOne(m => m.Member).WithMany(m => m.Emails)
@@ -61,7 +61,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
             #region Group
             modelBuilder.Entity<MemberGroupEntity>().HasKey(x => x.Id);
-            modelBuilder.Entity<MemberGroupEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<MemberGroupEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<MemberGroupEntity>().ToTable("MemberGroup");
 
             modelBuilder.Entity<MemberGroupEntity>().HasOne(m => m.Member).WithMany(m => m.Groups)
@@ -71,7 +71,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
             #region Phone
             modelBuilder.Entity<PhoneEntity>().HasKey(x => x.Id);
-            modelBuilder.Entity<PhoneEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<PhoneEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<PhoneEntity>().ToTable("Phone");
 
             modelBuilder.Entity<PhoneEntity>().HasOne(m => m.Member).WithMany(m => m.Phones)
@@ -80,7 +80,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
             #region Note
             modelBuilder.Entity<NoteEntity>().HasKey(x => x.Id);
-            modelBuilder.Entity<NoteEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<NoteEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<NoteEntity>().ToTable("Note");
 
             modelBuilder.Entity<NoteEntity>().HasOne(m => m.Member).WithMany(m => m.Notes)
@@ -122,7 +122,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
             #region SeoInfo
             modelBuilder.Entity<SeoInfoEntity>().ToTable("MemberSeoInfo").HasKey(x => x.Id);
-            modelBuilder.Entity<SeoInfoEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<SeoInfoEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<SeoInfoEntity>().HasOne(x => x.Member).WithMany(x => x.SeoInfos).HasForeignKey(x => x.MemberId)
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -131,7 +131,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             #region DynamicProperty
 
             modelBuilder.Entity<MemberDynamicPropertyObjectValueEntity>().ToTable("MemberDynamicPropertyObjectValue").HasKey(x => x.Id);
-            modelBuilder.Entity<MemberDynamicPropertyObjectValueEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<MemberDynamicPropertyObjectValueEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<MemberDynamicPropertyObjectValueEntity>().Property(x => x.DecimalValue).HasColumnType("decimal(18,5)");
             modelBuilder.Entity<MemberDynamicPropertyObjectValueEntity>().HasOne(p => p.Member)
                 .WithMany(s => s.DynamicPropertyObjectValues).HasForeignKey(k => k.ObjectId)
