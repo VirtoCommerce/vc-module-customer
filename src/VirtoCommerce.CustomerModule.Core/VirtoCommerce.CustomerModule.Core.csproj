@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp3.0</TargetFramework>
         <noWarn>1591</noWarn>
-		<IsPackable>False</IsPackable>
+        <IsPackable>True</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
