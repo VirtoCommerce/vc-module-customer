@@ -131,6 +131,8 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
                 }
             }
 
+            // TODO: There was Task.WhenAll before EF 3.0, but in 3.0 it does not implemented. Check later in EF 3.1 LTS.
+
             return retVal;
         }
 
