@@ -82,57 +82,55 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             //Use OfType() clause very much accelerates the query performance when used TPT inheritance
             var query = Members.OfType<T>().Where(x => ids.Contains(x.Id));
 
-            var retVal = await query.ToArrayAsync();
-            ids = retVal.Select(x => x.Id).ToArray();
-            var tasks = new List<Task>();
+            var result = await query.ToArrayAsync();
+            ids = result.Select(x => x.Id).ToArray();
             if (!ids.IsNullOrEmpty())
             {
                 var relations = await MemberRelations.Where(x => ids.Contains(x.DescendantId)).ToArrayAsync();
                 var ancestorIds = relations.Select(x => x.AncestorId).ToArray();
                 if (!ancestorIds.IsNullOrEmpty())
                 {
-                    tasks.Add(Members.Where(x => ancestorIds.Contains(x.Id)).ToArrayAsync());
+                    await Members.Where(x => ancestorIds.Contains(x.Id)).LoadAsync();
                 }
 
                 var memberResponseGroup = EnumUtility.SafeParseFlags(responseGroup, MemberResponseGroup.Full);
 
                 if (memberResponseGroup.HasFlag(MemberResponseGroup.WithNotes))
                 {
-                    tasks.Add(Notes.Where(x => ids.Contains(x.MemberId)).ToArrayAsync());
+                    await Notes.Where(x => ids.Contains(x.MemberId)).LoadAsync();
                 }
 
                 if (memberResponseGroup.HasFlag(MemberResponseGroup.WithEmails))
                 {
-                    tasks.Add(Emails.Where(x => ids.Contains(x.MemberId)).ToArrayAsync());
+                    await Emails.Where(x => ids.Contains(x.MemberId)).LoadAsync();
                 }
 
                 if (memberResponseGroup.HasFlag(MemberResponseGroup.WithAddresses))
                 {
-                    tasks.Add(Addresses.Where(x => ids.Contains(x.MemberId)).ToArrayAsync());
+                    await Addresses.Where(x => ids.Contains(x.MemberId)).LoadAsync();
                 }
 
                 if (memberResponseGroup.HasFlag(MemberResponseGroup.WithPhones))
                 {
-                    tasks.Add(Phones.Where(x => ids.Contains(x.MemberId)).ToArrayAsync());
+                    await Phones.Where(x => ids.Contains(x.MemberId)).LoadAsync();
                 }
 
                 if (memberResponseGroup.HasFlag(MemberResponseGroup.WithGroups))
                 {
-                    tasks.Add(Groups.Where(x => ids.Contains(x.MemberId)).ToArrayAsync());
+                    await Groups.Where(x => ids.Contains(x.MemberId)).LoadAsync();
                 }
 
                 if (memberResponseGroup.HasFlag(MemberResponseGroup.WithSeo))
                 {
-                    tasks.Add(SeoInfos.Where(x => ids.Contains(x.MemberId)).ToArrayAsync());
+                    await SeoInfos.Where(x => ids.Contains(x.MemberId)).LoadAsync();
                 }
 
                 if (memberResponseGroup.HasFlag(MemberResponseGroup.WithDynamicProperties))
                 {
-                    tasks.Add(DynamicPropertyObjectValues.Where(x => ids.Contains(x.ObjectId)).ToArrayAsync());
+                    await DynamicPropertyObjectValues.Where(x => ids.Contains(x.ObjectId)).LoadAsync();
                 }
             }
-            await Task.WhenAll(tasks);
-            return retVal;
+            return result;
         }
 
     }
