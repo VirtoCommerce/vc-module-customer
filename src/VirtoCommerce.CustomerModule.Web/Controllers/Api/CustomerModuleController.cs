@@ -213,9 +213,10 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpPost]
         [Route("contacts")]
         [Authorize(ModuleConstants.Security.Permissions.Create)]
-        public Task<ActionResult<Contact>> CreateContact([FromBody] Contact contact)
+        public async Task<ActionResult<Contact>> CreateContact([FromBody] Contact contact)
         {
-            return UpdateContact(contact);
+            await _memberService.SaveChangesAsync(new[] { contact });
+            return Ok(contact);
         }
 
         /// <summary>
@@ -224,11 +225,11 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpPost]
         [Route("contacts/bulk")]
         [Authorize(ModuleConstants.Security.Permissions.Create)]
-        public Task<ActionResult<Contact[]>> BulkCreateContacts([FromBody] Contact[] contacts)
+        public async Task<ActionResult<Contact[]>> BulkCreateContacts([FromBody] Contact[] contacts)
         {
-            return BulkUpdateContacts(contacts);
+            await _memberService.SaveChangesAsync(contacts);
+            return Ok(contacts);
         }
-    
 
         /// <summary>
         /// Update contact
@@ -239,7 +240,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public async Task<ActionResult<Contact>> UpdateContact([FromBody] Contact contact)
         {
             await _memberService.SaveChangesAsync(new[] { contact });
-            return Ok(contact);
+            return NoContent(); // TODO: write here return Ok(contact) when updating storefront AutoRest proxies to VC v3
         }
 
         /// <summary>
@@ -251,7 +252,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public async Task<ActionResult<Contact[]>> BulkUpdateContacts([FromBody] Contact[] contacts)
         {
             await _memberService.SaveChangesAsync(contacts);
-            return Ok(contacts);
+            return NoContent(); // TODO: write here return Ok(contacts) when updating storefront AutoRest proxies to VC v3            
         }
 
         /// <summary>
@@ -285,7 +286,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public async Task<ActionResult<Organization>> UpdateOrganization([FromBody]Organization organization)
         {
             await _memberService.SaveChangesAsync(new[] { organization });
-            return Ok(organization);
+            return NoContent(); // TODO: write here return Ok(organization) when updating storefront AutoRest proxies to VC v3
         }
 
         /// <summary>
@@ -297,7 +298,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public async Task<ActionResult<Organization[]>> BulkUpdateOrganizations([FromBody] Organization[] organizations)
         {
             await _memberService.SaveChangesAsync(organizations);
-            return Ok(organizations);
+            return NoContent(); // TODO: write here return Ok(organizations) when updating storefront AutoRest proxies to VC v3            
         }
 
         /// <summary>
