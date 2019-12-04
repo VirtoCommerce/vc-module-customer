@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Model;
@@ -135,6 +136,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpPut]
         [Route("members")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> UpdateMember([FromBody] Member member)
         {
             await _memberService.SaveChangesAsync(new[] { member });
@@ -148,6 +150,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpPut]
         [Route("members/bulk")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> BulkUpdateMembers([FromBody] Member[] members)
         {
             await _memberService.SaveChangesAsync(members);
@@ -162,6 +165,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpDelete]
         [Route("members")]
         [Authorize(ModuleConstants.Security.Permissions.Delete)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeleteMembers([FromQuery] string[] ids)
         {
             await _memberService.DeleteAsync(ids);
@@ -176,6 +180,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpPost]
         [Route("members/delete")]
         [Authorize(ModuleConstants.Security.Permissions.Delete)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> BulkDeleteMembersBySearchCriteria([FromBody] MembersSearchCriteria criteria)
         {
             bool hasSearchCriteriaMembers;
@@ -237,6 +242,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpPut]
         [Route("contacts")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult<Contact>> UpdateContact([FromBody] Contact contact)
         {
             await _memberService.SaveChangesAsync(new[] { contact });
@@ -249,6 +255,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpPut]
         [Route("contacts/bulk")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult<Contact[]>> BulkUpdateContacts([FromBody] Contact[] contacts)
         {
             await _memberService.SaveChangesAsync(contacts);
@@ -261,9 +268,10 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpPost]
         [Route("organizations")]
         [Authorize(ModuleConstants.Security.Permissions.Create)]
-        public Task<ActionResult<Organization>> CreateOrganization([FromBody] Organization organization)
+        public async Task<ActionResult<Organization>> CreateOrganization([FromBody] Organization organization)
         {
-            return UpdateOrganization(organization);
+            await _memberService.SaveChangesAsync(new[] { organization });
+            return Ok(organization);
         }
 
         /// <summary>
@@ -272,6 +280,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpPost]
         [Route("organizations/bulk")]
         [Authorize(ModuleConstants.Security.Permissions.Create)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public Task<ActionResult<Organization[]>> BulkCreateOrganizations([FromBody] Organization[] organizations)
         {
             return BulkUpdateOrganizations(organizations);
@@ -283,6 +292,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpPut]
         [Route("organizations")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult<Organization>> UpdateOrganization([FromBody]Organization organization)
         {
             await _memberService.SaveChangesAsync(new[] { organization });
@@ -295,6 +305,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpPut]
         [Route("organizations/bulk")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult<Organization[]>> BulkUpdateOrganizations([FromBody] Organization[] organizations)
         {
             await _memberService.SaveChangesAsync(organizations);
@@ -309,6 +320,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpDelete]
         [Route("organizations")]
         [Authorize(ModuleConstants.Security.Permissions.Delete)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public Task<ActionResult> DeleteOrganizations([FromQuery] string[] ids)
         {
             return DeleteMembers(ids);
@@ -491,6 +503,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpPut]
         [Route("addresses")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> UpdateAddesses([FromQuery] string memberId, [FromBody] IEnumerable<Address> addresses)
         {
             var member = await _memberService.GetByIdAsync(memberId);
