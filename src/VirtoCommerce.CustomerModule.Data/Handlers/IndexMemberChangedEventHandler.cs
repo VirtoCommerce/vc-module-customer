@@ -1,24 +1,15 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Hangfire;
 using VirtoCommerce.CustomerModule.Core.Events;
-using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.SearchModule.Core.Model;
-using VirtoCommerce.SearchModule.Core.Services;
+using VirtoCommerce.SearchModule.Data.BackgroundJobs;
 
 namespace VirtoCommerce.CustomerModule.Data.Handlers
 {
     public class IndexMemberChangedEventHandler : IEventHandler<MemberChangedEvent>
     {
-        private readonly IIndexingManager _indexingManager;
-
-        public IndexMemberChangedEventHandler(IIndexingManager indexingManager)
-        {
-            _indexingManager = indexingManager;
-        }
-
         public Task Handle(MemberChangedEvent message)
         {
             if (message == null)
@@ -26,48 +17,13 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                 throw new ArgumentNullException(nameof(message));
             }
 
-            var indexMemberIds = message.ChangedEntries.Where(x => (x.EntryState == EntryState.Modified || x.EntryState == EntryState.Added) && x.OldEntry.Id != null)
-                                                          .Select(x => x.OldEntry.Id)
-                                                          .Distinct().ToArray();
+            var indexEntries = message.ChangedEntries
+                .Select(x => new IndexEntry { Id = x.OldEntry.Id, EntryState = x.EntryState, Type = KnownDocumentTypes.Member })
+                .ToArray();
 
-            if (!indexMemberIds.IsNullOrEmpty())
-            {
-                BackgroundJob.Enqueue(() => TryIndexMemberBackgroundJob(indexMemberIds));
-            }
-
-            var deletedIndexMemberIds = message.ChangedEntries.Where(x => x.EntryState == EntryState.Deleted && x.OldEntry.Id != null)
-                                                          .Select(x => x.OldEntry.Id)
-                                                          .Distinct().ToArray();
-
-            if (!deletedIndexMemberIds.IsNullOrEmpty())
-            {
-                BackgroundJob.Enqueue(() => TryDeleteIndexMemberBackgroundJob(deletedIndexMemberIds));
-            }
+            IndexingJobs.EnqueueIndexAndDeleteDocuments(indexEntries);
 
             return Task.CompletedTask;
-        }
-
-        [DisableConcurrentExecution(60 * 60 * 24)]
-        public Task TryIndexMemberBackgroundJob(string[] indexMemberIds)
-        {
-            return TryIndexMember(indexMemberIds);
-        }
-
-        [DisableConcurrentExecution(60 * 60 * 24)]
-        public Task TryDeleteIndexMemberBackgroundJob(string[] deletedIndexMemberIds)
-        {
-            return TryDeleteIndexMember(deletedIndexMemberIds);
-        }
-
-
-        protected virtual Task TryIndexMember(string[] indexMemberIds)
-        {
-            return _indexingManager.IndexDocumentsAsync(KnownDocumentTypes.Member, indexMemberIds);
-        }
-
-        protected virtual Task TryDeleteIndexMember(string[] deletedIndexMemberIds)
-        {
-            return _indexingManager.DeleteDocumentsAsync(KnownDocumentTypes.Member, deletedIndexMemberIds);
         }
     }
 }
