@@ -108,7 +108,7 @@ namespace VirtoCommerce.CustomerModule.Web
             inProcessBus.RegisterHandler<UserChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<SecurtityAccountChangesEventHandler>().Handle(message));
 
             var settingsManager = appBuilder.ApplicationServices.GetService<ISettingsManager>();
-            if (settingsManager.GetValue("Customer.Search.EventBasedIndexation.Enable", false))
+            if (settingsManager.GetValue(ModuleConstants.Settings.General.EventBasedIndexation.Name, false))
             {
                 inProcessBus.RegisterHandler<MemberChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<IndexMemberChangedEventHandler>().Handle(message));
             }
