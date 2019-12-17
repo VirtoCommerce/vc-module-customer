@@ -106,7 +106,12 @@ namespace VirtoCommerce.CustomerModule.Web
             var inProcessBus = appBuilder.ApplicationServices.GetService<IHandlerRegistrar>();
             inProcessBus.RegisterHandler<MemberChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<LogChangesEventHandler>().Handle(message));
             inProcessBus.RegisterHandler<UserChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<SecurtityAccountChangesEventHandler>().Handle(message));
-            inProcessBus.RegisterHandler<MemberChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<IndexMemberChangedEventHandler>().Handle(message));
+
+            var settingsManager = appBuilder.ApplicationServices.GetService<ISettingsManager>();
+            if (settingsManager.GetValue(ModuleConstants.Settings.General.EventBasedIndexation.Name, false))
+            {
+                inProcessBus.RegisterHandler<MemberChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<IndexMemberChangedEventHandler>().Handle(message));
+            }
 
             using (var serviceScope = appBuilder.ApplicationServices.CreateScope())
             {
