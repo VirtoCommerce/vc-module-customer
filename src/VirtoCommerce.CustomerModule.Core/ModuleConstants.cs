@@ -50,13 +50,25 @@ namespace VirtoCommerce.CustomerModule.Core
                     DefaultValue = default(DateTime),
                 };
 
+                public static SettingDescriptor EventBasedIndexation = new SettingDescriptor
+                {
+                    Name = "Customer.Search.EventBasedIndexation.Enable",
+                    GroupName = "Customer|General",
+                    ValueType = SettingValueType.Boolean,
+                    DefaultValue = false
+                };
+
                 public static IEnumerable<SettingDescriptor> AllSettings
                 {
                     get
                     {
-                        yield return MemberGroups;
-                        yield return ExportImportPageSize;
-                        yield return MemberIndexationDate;
+                        return new List<SettingDescriptor>
+                               {
+                                   MemberGroups,
+                                   ExportImportPageSize,
+                                   MemberIndexationDate,
+                                   EventBasedIndexation
+                               };
                     }
                 }
             }
