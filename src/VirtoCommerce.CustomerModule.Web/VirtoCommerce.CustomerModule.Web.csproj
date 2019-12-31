@@ -19,7 +19,7 @@
       <None Remove="node_modules\**" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.0.0-rc2-0128" />
+        <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.0.0-rc2-0134" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.0" />
     </ItemGroup>
 
