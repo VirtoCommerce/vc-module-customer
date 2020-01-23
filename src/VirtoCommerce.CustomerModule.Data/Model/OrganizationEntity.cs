@@ -40,20 +40,23 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         {
             var organization = member as Organization;
 
-            if (organization != null && organization.ParentId != null)
+            if (organization != null)
             {
                 Description = organization.Description;
                 OwnerId = organization.OwnerId;
                 BusinessCategory = organization.BusinessCategory;
 
-                MemberRelations = new ObservableCollection<MemberRelationEntity>();
-                var memberRelation = new MemberRelationEntity
+                if (organization.ParentId != null)
                 {
-                    AncestorId = organization.ParentId,
-                    DescendantId = organization.Id,
-                    AncestorSequence = 1
-                };
-                MemberRelations.Add(memberRelation);
+                    MemberRelations = new ObservableCollection<MemberRelationEntity>();
+                    var memberRelation = new MemberRelationEntity
+                    {
+                        AncestorId = organization.ParentId,
+                        DescendantId = organization.Id,
+                        AncestorSequence = 1
+                    };
+                    MemberRelations.Add(memberRelation);
+                }
             }
 
             //Call base converter
