@@ -37,7 +37,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
             modelBuilder.Entity<MemberRelationEntity>().HasOne(m => m.Descendant)
                 .WithMany(m => m.MemberRelations)
-                .OnDelete(DeleteBehavior.Restrict).IsRequired();
+                .OnDelete(DeleteBehavior.ClientCascade).IsRequired();
             #endregion
 
             #region Address
