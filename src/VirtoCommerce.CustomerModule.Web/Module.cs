@@ -49,7 +49,6 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddSingleton<Func<ICustomerRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<ICustomerRepository>());
             serviceCollection.AddSingleton<Func<IMemberRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<ICustomerRepository>());
 
-            serviceCollection.AddSingleton<ISearchRequestBuilder, MemberSearchRequestBuilder>();
             serviceCollection.AddTransient<IIndexedMemberSearchService, MemberIndexedSearchService>();
             serviceCollection.AddTransient<IMemberSearchService, MemberSearchService>();
             serviceCollection.AddTransient<IMemberService, MemberService>();
@@ -112,6 +111,15 @@ namespace VirtoCommerce.CustomerModule.Web
             {
                 inProcessBus.RegisterHandler<MemberChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<IndexMemberChangedEventHandler>().Handle(message));
             }
+
+            var searchRequestBuilderRegistrar = appBuilder.ApplicationServices.GetService<ISearchRequestBuilderRegistrar>();
+            searchRequestBuilderRegistrar.Register(KnownDocumentTypes.Member, () =>
+            {
+                var searchPhraseParser = appBuilder.ApplicationServices.GetService<ISearchPhraseParser>();
+
+                return new MemberSearchRequestBuilder(searchPhraseParser);
+            });
+
 
             using (var serviceScope = appBuilder.ApplicationServices.CreateScope())
             {
