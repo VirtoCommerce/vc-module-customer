@@ -117,7 +117,7 @@ namespace VirtoCommerce.CustomerModule.Web
                 .WithFactory(appBuilder.ApplicationServices.GetService<MemberSearchRequestBuilder>);
 
             var searchRequestBuilderRegistrar = appBuilder.ApplicationServices.GetService<ISearchRequestBuilderRegistrar>();
-            searchRequestBuilderRegistrar.Register(KnownDocumentTypes.Member, AbstractTypeFactory<MemberSearchRequestBuilder>.TryCreateInstance<MemberSearchRequestBuilder>);
+            searchRequestBuilderRegistrar.Register(KnownDocumentTypes.Member, AbstractTypeFactory<MemberSearchRequestBuilder>.TryCreateInstance);
 
             using (var serviceScope = appBuilder.ApplicationServices.CreateScope())
             {
