@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,16 +13,13 @@ namespace VirtoCommerce.CustomerModule.Data.Search
 {
     public class MemberIndexedSearchService : IIndexedMemberSearchService
     {
-        private readonly IEnumerable<ISearchRequestBuilder> _searchRequestBuilders;
+        private readonly ISearchRequestBuilderRegistrar _searchRequestBuilderRegistrar;
         private readonly ISearchProvider _searchProvider;
         private readonly IMemberService _memberService;
 
-        public MemberIndexedSearchService(
-            IEnumerable<ISearchRequestBuilder> searchRequestBuilders
-            , ISearchProvider searchProvider
-            , IMemberService memberService)
+        public MemberIndexedSearchService(ISearchRequestBuilderRegistrar searchRequestBuilderRegistrar, ISearchProvider searchProvider, IMemberService memberService)
         {
-            _searchRequestBuilders = searchRequestBuilders;
+            _searchRequestBuilderRegistrar = searchRequestBuilderRegistrar;
             _searchProvider = searchProvider;
             _memberService = memberService;
         }
@@ -41,13 +37,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search
 
         protected virtual ISearchRequestBuilder GetRequestBuilder(MembersSearchCriteria criteria)
         {
-            var requestBuilder = _searchRequestBuilders?.FirstOrDefault(b => b.DocumentType.Equals(criteria.ObjectType)) ??
-                                 _searchRequestBuilders?.FirstOrDefault(b => string.IsNullOrEmpty(b.DocumentType));
-
-            if (requestBuilder == null)
-                throw new InvalidOperationException($"No query builders found for document type '{criteria.ObjectType}'");
-
-            return requestBuilder;
+            return _searchRequestBuilderRegistrar.GetRequestBuilderByDocumentType(criteria.ObjectType);
         }
 
         protected virtual async Task<MemberSearchResult> ConvertResponseAsync(SearchResponse response, MembersSearchCriteria criteria)
