@@ -3,12 +3,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using VirtoCommerce.CustomerModule.Core;
-using Microsoft.AspNetCore.Mvc;
 using VirtoCommerce.CustomerModule.Core.Events;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
@@ -49,11 +49,11 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddSingleton<Func<ICustomerRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<ICustomerRepository>());
             serviceCollection.AddSingleton<Func<IMemberRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<ICustomerRepository>());
 
-            serviceCollection.AddSingleton<ISearchRequestBuilder, MemberSearchRequestBuilder>();
             serviceCollection.AddTransient<IIndexedMemberSearchService, MemberIndexedSearchService>();
             serviceCollection.AddTransient<IMemberSearchService, MemberSearchService>();
             serviceCollection.AddTransient<IMemberService, MemberService>();
             serviceCollection.AddSingleton<CustomerExportImport>();
+            serviceCollection.AddTransient<MemberSearchRequestBuilder>();
 
             serviceCollection.AddSingleton<MemberDocumentChangesProvider>();
             serviceCollection.AddSingleton<MemberDocumentBuilder>();
@@ -112,6 +112,10 @@ namespace VirtoCommerce.CustomerModule.Web
             {
                 inProcessBus.RegisterHandler<MemberChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<IndexMemberChangedEventHandler>().Handle(message));
             }
+
+            var searchRequestBuilderRegistrar = appBuilder.ApplicationServices.GetService<ISearchRequestBuilderRegistrar>();
+
+            searchRequestBuilderRegistrar.Register(KnownDocumentTypes.Member, appBuilder.ApplicationServices.GetService<MemberSearchRequestBuilder>);
 
             using (var serviceScope = appBuilder.ApplicationServices.CreateScope())
             {

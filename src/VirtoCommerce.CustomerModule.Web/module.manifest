@@ -2,7 +2,7 @@
 <module>
     <id>VirtoCommerce.Customer</id>
     <version>3.0.0</version>
-	<version-tag>rc.3</version-tag>
+    <version-tag>rc.3</version-tag>
     <platformVersion>3.0.0</platformVersion>
     <dependencies>
         <dependency id="VirtoCommerce.Core" version="3.0.0" />
@@ -19,7 +19,7 @@
     <owners>
         <owner>Virto Commerce</owner>
     </owners>
-	<groups>
+    <groups>
         <group>commerce</group>
     </groups>
     <projectUrl>https://virtocommerce.com/apps/extensions/virto-customer-module</projectUrl>
