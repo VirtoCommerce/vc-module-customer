@@ -113,11 +113,9 @@ namespace VirtoCommerce.CustomerModule.Web
                 inProcessBus.RegisterHandler<MemberChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<IndexMemberChangedEventHandler>().Handle(message));
             }
 
-            AbstractTypeFactory<MemberSearchRequestBuilder>.RegisterType<MemberSearchRequestBuilder>()
-                .WithFactory(appBuilder.ApplicationServices.GetService<MemberSearchRequestBuilder>);
-
             var searchRequestBuilderRegistrar = appBuilder.ApplicationServices.GetService<ISearchRequestBuilderRegistrar>();
-            searchRequestBuilderRegistrar.Register(KnownDocumentTypes.Member, AbstractTypeFactory<MemberSearchRequestBuilder>.TryCreateInstance);
+
+            searchRequestBuilderRegistrar.Register(KnownDocumentTypes.Member, appBuilder.ApplicationServices.GetService<MemberSearchRequestBuilder>);
 
             using (var serviceScope = appBuilder.ApplicationServices.CreateScope())
             {
