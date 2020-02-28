@@ -1,4 +1,4 @@
-﻿<div class="blade-static __bottom" ng-include="'$(Platform)/Scripts/common/templates/create.tpl.html'" ng-if="blade.isNew"></div>
+<div class="blade-static __bottom" ng-include="'$(Platform)/Scripts/common/templates/create.tpl.html'" ng-if="blade.isNew"></div>
 <div class="blade-content">
     <div class="blade-inner">
         <div class="inner-block clearfix" ng-controller="virtoCommerce.customerModule.employeeDetailController">
@@ -53,25 +53,19 @@
                         <va-widget-container group="employeeDetail1" blade="blade" gridster-opts="{columns: 3}"></va-widget-container>
                     </div>
                 </fieldset>
-                <div class="columns clearfix">
-                    <div class="column">
-                        <div class="form-group">
-                            <label class="form-label">{{'customer.blades.employee-detail.labels.type' | translate}}</label>
-                            <div class="form-input">
-                                <input ng-model="blade.currentEntity.memberType" placeholder="{{'customer.blades.employee-detail.placeholders.type' | translate}}" ng-disabled="true" />
-                            </div>
-                        </div>
+                <div class="form-group">
+                    <label class="form-label">{{'customer.blades.employee-detail.labels.type' | translate}}</label>
+                    <div class="form-input">
+                        <input ng-model="blade.currentEntity.memberType" placeholder="{{'customer.blades.employee-detail.placeholders.type' | translate}}" ng-disabled="true" />
                     </div>
-                    <div class="column">
-                        <div class="form-group">
-                            <label class="form-label">{{'customer.blades.employee-detail.labels.birthday' | translate}}</label>
-                            <div class="form-input __calendar">
-                                <input type="text" class="form-control" ng-model="blade.currentEntity.birthDate" datepicker-popup name="bd" is-open="datepickers.bd" max-date="today" placeholder="{{'customer.blades.employee-detail.placeholders.birthday' | translate}}" />
-                                <button class="btn" type="button" ng-click="open($event,'bd')">
-                                    <i class="btn-ico fa fa-calendar"></i>
-                                </button>
-                            </div>
-                        </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">{{'customer.blades.employee-detail.labels.birthday' | translate}}</label>
+                    <div class="form-input __calendar">
+                        <input type="text" class="form-control" ng-model="blade.currentEntity.birthDate" datepicker-popup name="bd" is-open="datepickers.bd" max-date="today" placeholder="{{'customer.blades.employee-detail.placeholders.birthday' | translate}}" />
+                        <button class="btn" type="button" ng-click="open($event,'bd')">
+                            <i class="btn-ico fa fa-calendar"></i>
+                        </button>
                     </div>
                 </div>
                 <div class="form-group">
