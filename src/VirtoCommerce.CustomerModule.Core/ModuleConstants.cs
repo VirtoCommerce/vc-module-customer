@@ -16,7 +16,7 @@ namespace VirtoCommerce.CustomerModule.Core
                 public const string Update = "customer:update";
                 public const string Delete = "customer:delete";
 
-                public static string[] AllPermissions = { Read, Create, Access, Update, Delete };
+                public static string[] AllPermissions { get; } = { Read, Create, Access, Update, Delete };
             }
         }
 
@@ -24,7 +24,7 @@ namespace VirtoCommerce.CustomerModule.Core
         {
             public static class General
             {
-                public static SettingDescriptor MemberGroups = new SettingDescriptor
+                public static SettingDescriptor MemberGroups { get; } = new SettingDescriptor
                 {
                     Name = "Customer.MemberGroups",
                     GroupName = "Customer|General",
@@ -34,7 +34,7 @@ namespace VirtoCommerce.CustomerModule.Core
                     AllowedValues = new object[] { "VIP", "Wholesaler" }
                 };
 
-                public static SettingDescriptor ExportImportPageSize = new SettingDescriptor
+                public static SettingDescriptor ExportImportPageSize { get; } = new SettingDescriptor
                 {
                     Name = "Customer.ExportImport.PageSize",
                     GroupName = "Customer|General",
@@ -42,7 +42,7 @@ namespace VirtoCommerce.CustomerModule.Core
                     DefaultValue = 50
                 };
 
-                public static SettingDescriptor MemberIndexationDate = new SettingDescriptor
+                public static SettingDescriptor MemberIndexationDate { get; } = new SettingDescriptor
                 {
                     Name = "VirtoCommerce.Search.IndexingJobs.IndexationDate.Member",
                     GroupName = "Customer|General",
@@ -50,7 +50,7 @@ namespace VirtoCommerce.CustomerModule.Core
                     DefaultValue = default(DateTime),
                 };
 
-                public static SettingDescriptor EventBasedIndexation = new SettingDescriptor
+                public static SettingDescriptor EventBasedIndexation { get; } = new SettingDescriptor
                 {
                     Name = "Customer.Search.EventBasedIndexation.Enable",
                     GroupName = "Customer|General",
