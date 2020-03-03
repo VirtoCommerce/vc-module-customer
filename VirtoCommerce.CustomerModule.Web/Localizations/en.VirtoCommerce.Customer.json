@@ -1,4 +1,4 @@
-﻿{
+{
     "customer": {
         "main-menu-title": "Contacts",
         "blades": {
@@ -133,12 +133,20 @@
             "member-list": {
                 "title": "Organizations & Contacts",
                 "subtitle": "Browsing '{{name}}'",
-                "labels": {
-                    "type": "Type",
-                    "name": "Name",
-                    "address": "Address",
-                    "email": "Email"
-                }
+              "labels": {
+                "type": "Type",
+                "name": "Name",
+                "address": "Address",
+                "email": "Email",
+                "filter-new": "Add new filter",
+                "unnamed-filter": "Unnamed filter",
+                "filter-vendor": "Vendors",
+                "filter-contact": "Contacts",
+                "filter-organization": "Organizations"
+              },
+                "placeholders": {
+                  "select-filter": "Select filter" 
+                } 
             },
             "member-phones-list": {
                 "labels": {
@@ -153,7 +161,21 @@
                     "link": "Link account",
                     "unlink": "Unlink account"
                 }
-            }
+            },
+            "filter-detail": {
+                "subtitle": "Edit filter",
+                "new-title": "New filter",
+                "new-subtitle": "Create new filter",
+                "labels": {
+                  "criteria": "Search phrase",
+                  "name": "Filter name",
+                  "searchInVariations": "Display product variations"
+                },
+                "placeholders": {
+                  "criteria": "Enter search phrase",
+                  "name": "How will you call this filter?"
+                }
+           }
         },
         "widgets": {
             "address-list": {

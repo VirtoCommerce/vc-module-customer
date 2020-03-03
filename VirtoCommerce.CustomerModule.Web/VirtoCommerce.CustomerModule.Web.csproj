@@ -147,6 +147,8 @@
   <ItemGroup>
     <Content Include="Scripts\blades\customer-accounts-list.js" />
     <Content Include="Scripts\blades\customer-accounts-list.tpl.html" />
+    <Content Include="Scripts\blades\filter-detail.js" />
+    <Content Include="Scripts\blades\filter-detail.tpl.html" />
     <Content Include="Scripts\blades\vendor-detail.js" />
     <Content Include="Scripts\blades\customer-detail.js" />
     <Content Include="Scripts\blades\employee-detail.tpl.html" />
@@ -166,6 +168,8 @@
     <Content Include="Scripts\blades\member-emails-list.tpl.html" />
     <Content Include="Scripts\blades\pick-store-list.js" />
     <Content Include="Scripts\blades\pick-store-list.tpl.html" />
+    <Content Include="Scripts\directives\customerSearch.js" />
+    <Content Include="Scripts\directives\customerSearch.tpl.html" />
     <Content Include="Scripts\resources\members.js" />
     <Content Include="Scripts\customer.js" />
     <Content Include="Scripts\services\memberTypesResolver.js" />

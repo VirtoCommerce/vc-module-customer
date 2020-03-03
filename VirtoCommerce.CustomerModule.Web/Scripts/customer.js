@@ -27,8 +27,34 @@ angular.module(moduleName, [])
           });
   }]
 )
+
+// define search filters to be accessible platform-wide
+.factory('virtoCommerce.customerModule.predefinedSearchFilters', ['$localStorage', function ($localStorage) {
+    $localStorage.customerSearchFilters = $localStorage.customerSearchFilters || [];
+
+    return {
+        register: function (currentFiltersUpdateTime, currentFiltersStorageKey, newFilters) {
+            _.each(newFilters, function (newFilter) {
+                var found = _.find($localStorage.customerSearchFilters, function (x) {
+                    return x.id == newFilter.id;
+                });
+                if (found) {
+                    if (found && (!found.lastUpdateTime || found.lastUpdateTime < currentFiltersUpdateTime)) {
+                        angular.copy(newFilter, found);
+                    }
+                } else if (!$localStorage[currentFiltersStorageKey] || $localStorage[currentFiltersStorageKey] < currentFiltersUpdateTime) {
+                    $localStorage.customerSearchFilters.splice(0, 0, newFilter);
+                }
+            });
+
+            $localStorage[currentFiltersStorageKey] = currentFiltersUpdateTime;
+        }
+    };
+}])
+
+
 .run(
-    ['$rootScope', 'platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', 'virtoCommerce.customerModule.members', function ($rootScope, mainMenuService, widgetService, $state, memberTypesResolverService, settings, members) {
+    ['$rootScope', 'platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', 'virtoCommerce.customerModule.members', 'virtoCommerce.customerModule.predefinedSearchFilters', function ($rootScope, mainMenuService, widgetService, $state, memberTypesResolverService, settings, members, predefinedSearchFilters) {
       //Register module in main menu
       var menuItem = {
           path: 'browse/member',
@@ -187,4 +213,12 @@ angular.module(moduleName, [])
               }]
           }
       });
+
+      // predefine search filters for customer search
+        predefinedSearchFilters.register(1583235535540, 'customerSearchFiltersDate', [
+          { name: 'customer.blades.member-list.labels.filter-new' },
+          { keyword: 'membertype:Vendor', id: 3, name: 'customer.blades.member-list.labels.filter-vendor' },
+          { keyword: 'membertype:Contact', id: 2, name: 'customer.blades.member-list.labels.filter-contact' },
+          { keyword: 'membertype:Organization', id: 1, name: 'customer.blades.member-list.labels.filter-organization' }
+      ]);
   }]);
