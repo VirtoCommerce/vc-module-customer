@@ -39,7 +39,7 @@ angular.module(moduleName, [])
                     return x.id == newFilter.id;
                 });
                 if (found) {
-                    if (found && (!found.lastUpdateTime || found.lastUpdateTime < currentFiltersUpdateTime)) {
+                    if (!found.lastUpdateTime || found.lastUpdateTime < currentFiltersUpdateTime) {
                         angular.copy(newFilter, found);
                     }
                 } else if (!$localStorage[currentFiltersStorageKey] || $localStorage[currentFiltersStorageKey] < currentFiltersUpdateTime) {
@@ -51,7 +51,6 @@ angular.module(moduleName, [])
         }
     };
 }])
-
 
 .run(
     ['$rootScope', 'platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', 'virtoCommerce.customerModule.members', 'virtoCommerce.customerModule.predefinedSearchFilters', function ($rootScope, mainMenuService, widgetService, $state, memberTypesResolverService, settings, members, predefinedSearchFilters) {

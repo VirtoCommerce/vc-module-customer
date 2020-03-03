@@ -48,7 +48,7 @@ angular.module('virtoCommerce.customerModule')
                     };
                     angular.extend(newBlade, bladeData);
                     bladeNavigationService.showBlade(newBlade, blade);
-                };
+                }
 
                 filter.criteriaChanged();
             }
