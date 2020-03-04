@@ -1,4 +1,4 @@
-﻿{
+{
     "customer": {
         "main-menu-title": "Contacts",
         "blades": {
@@ -133,12 +133,20 @@
             "member-list": {
                 "title": "Organizations & Contacts",
                 "subtitle": "Browsing '{{name}}'",
-                "labels": {
-                    "type": "Type",
-                    "name": "Name",
-                    "address": "Address",
-                    "email": "Email"
-                }
+              "labels": {
+                "type": "Type",
+                "name": "Name",
+                "address": "Address",
+                "email": "Email",
+                "filter-new": "Add new filter",
+                "unnamed-filter": "Unnamed filter",
+                "filter-vendor": "Vendors",
+                "filter-contact": "Contacts",
+                "filter-organization": "Organizations"
+              },
+                "placeholders": {
+                  "select-filter": "Select filter" 
+                } 
             },
             "member-phones-list": {
                 "labels": {
@@ -153,7 +161,32 @@
                     "link": "Link account",
                     "unlink": "Unlink account"
                 }
-            }
+            },
+            "filter-detail": {
+                "subtitle": "Edit filter",
+                "new-title": "New filter",
+                "new-subtitle": "Create new filter",
+              "labels": {
+                "criteria": "Search phrase",
+                "name": "Filter name",
+                "searchInVariations": "Display product variations",
+                "syntax-example-1": "all contacts with word 'org1.com' in indexed property values",
+                "syntax-example-2": "all contacts with words 'James' AND 'Smith' in indexed property values",
+                "syntax-example-3": "use '*' to replace zero or more characters",
+                "syntax-example-4": "all contacts where first name contains words 'Alex' or 'James'. ",
+                "syntax-example-5": "use ! as NOT operator on filters",
+                "syntax-example-6": "all contacts with the selected member type",
+                "syntax-example-7": "all contacts with creation period, between values including bounds ",
+                "syntax-example-8": "all contacts with creation period, between values excluding bounds",
+                "syntax-example-9": "where the modified date is greater or equal than '2016-12-26'",
+                "syntax-example-10": "combine keywords and filters"
+
+              },
+                "placeholders": {
+                  "criteria": "Enter search phrase",
+                  "name": "How will you call this filter?"
+                }
+           }
         },
         "widgets": {
             "address-list": {

@@ -1,0 +1,68 @@
+<div class="blade-content">
+    <div class="blade-inner">
+        <div class="inner-block">
+            <form name="formScope">
+                <div class="form-group" ng-init="setForm(formScope)">
+                    <label class="form-label">{{ 'customer.blades.filter-detail.labels.name' | translate }}</label>
+                    <div class="form-input">
+                        <input ng-model="blade.currentEntity.name" required placeholder="{{ 'customer.blades.filter-detail.placeholders.name' | translate }}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">{{ 'customer.blades.filter-detail.labels.criteria' | translate }}</label>
+                    <div class="form-input">
+                        <input ng-model="blade.currentEntity.keyword" placeholder="{{ 'customer.blades.filter-detail.placeholders.criteria' | translate }}" />
+                    </div>
+                </div>
+            </form>
+            <div class="form-group">
+                <div class="list __info">
+                    <div class="list-t">org1.com</div>
+                    <div class="list-descr">{{ 'customer.blades.filter-detail.labels.syntax-example-1' | translate }}</div>
+                </div>
+                <div class="list __info">
+                    <div class="list-t">James Smith</div>
+                    <div class="list-descr">{{ 'customer.blades.filter-detail.labels.syntax-example-2' | translate }}</div>
+                </div>
+                <div class="list __info">
+                    <div class="list-t">Ale*</div>
+                    <div class="list-descr">{{ 'customer.blades.filter-detail.labels.syntax-example-3' | translate }}</div>
+                </div>
+
+                <div class="list __info">
+                    <div class="list-t">firstname:Alex,James</div>
+                    <div class="list-descr">{{ 'customer.blades.filter-detail.labels.syntax-example-4' | translate }}</div>
+                </div>
+                <div class="list __info">
+                    <div class="list-t">!lastname:Smith</div>
+                    <div class="list-descr">{{ 'customer.blades.filter-detail.labels.syntax-example-5' | translate }}</div>
+                </div>
+                <div class="list __info">
+                    <div class="list-t">membertype:Contact</div>
+                    <div class="list-descr">{{ 'customer.blades.filter-detail.labels.syntax-example-6' | translate }}</div>
+                </div>
+                <div class="list __info">
+                    <div class="list-t">createddate:[2016-12-26 TO 2018-12-29]</div>
+                    <div class="list-descr">{{ 'customer.blades.filter-detail.labels.syntax-example-7' | translate }}</div>
+                </div>
+                <div class="list __info">
+                    <div class="list-t">createddate:(2016-12-26 TO 2018-12-29)</div>
+                    <div class="list-descr">{{ 'customer.blades.filter-detail.labels.syntax-example-8' | translate }}</div>
+                </div>
+                <div class="list __info">
+                    <div class="list-t">modifieddate:[2016-12-26 TO]</div>
+                    <div class="list-descr">{{ 'customer.blades.filter-detail.labels.syntax-example-9' | translate }}</div>
+                </div>
+                <div class="list __info">
+                    <div class="list-t">org1.com membertype:Contact</div>
+                    <div class="list-descr">{{ 'customer.blades.filter-detail.labels.syntax-example-10' | translate }}</div>
+                </div>
+                <div class="list __info">
+                    <div class="list-item">
+                        <a ng-href="https://github.com/VirtoCommerce/vc-module-search#search-phrase-syntax" target="_blank">Search phrase syntax reference</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

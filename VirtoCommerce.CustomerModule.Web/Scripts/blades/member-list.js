@@ -207,8 +207,8 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
     ];
 
 
-    // filtering
-    var filter = $scope.filter = {};
+    // simple and advanced filtering
+    var filter = blade.filter = { keyword: null };
 
     filter.criteriaChanged = function () {
         if (filter.keyword === null) {
