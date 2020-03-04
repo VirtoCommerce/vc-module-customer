@@ -213,8 +213,9 @@ angular.module(moduleName, [])
           }
       });
 
+      const lastTimeModificationDate = 1583235535540;
       // predefine search filters for customer search
-        predefinedSearchFilters.register(1583235535540, 'customerSearchFiltersDate', [
+        predefinedSearchFilters.register(lastTimeModificationDate, 'customerSearchFiltersDate', [
           { name: 'customer.blades.member-list.labels.filter-new' },
           { keyword: 'membertype:Vendor', id: 3, name: 'customer.blades.member-list.labels.filter-vendor' },
           { keyword: 'membertype:Contact', id: 2, name: 'customer.blades.member-list.labels.filter-contact' },
