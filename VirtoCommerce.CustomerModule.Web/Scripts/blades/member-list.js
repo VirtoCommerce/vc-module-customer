@@ -25,7 +25,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
 
                 //Set navigation breadcrumbs
                 setBreadcrumbs();
-            }, function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
+            });
 
         if (parentRefresh && blade.parentRefresh) {
             blade.parentRefresh();
