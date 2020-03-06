@@ -10,6 +10,11 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
     blade.refresh = function (parentRefresh) {
         blade.isLoading = true;
         var searchCriteria = getSearchCriteria();
+
+        if (blade.searchCriteria) {
+            angular.extend(searchCriteria, blade.searchCriteria);
+        }
+
         members.search(searchCriteria,
             function (data) {
                 blade.isLoading = false;
