@@ -43,6 +43,7 @@ Vendor contact type is the Shop Vendor.
 
 [Create And Manage Vendors](/docs/manage-vendors.md)
 
+[Advanced Filter](/docs/advanced-filter.md)
 
 ## Documentation
 
