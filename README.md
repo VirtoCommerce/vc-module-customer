@@ -43,6 +43,9 @@ Vendor contact type is the Shop Vendor.
 
 [Create And Manage Vendors](/docs/manage-vendors.md)
 
+## Advanced Filter
+
+[Advanced Filter](/docs/advanced-filter.md)
 
 ## Documentation
 
@@ -50,9 +53,9 @@ Developer guide: <a href="https://virtocommerce.com/docs/vc2devguide/extending-c
 
 ## Installation
 
-Installing the module:
-* Automatically: in VC Manager go to Configuration -> Modules -> Customer management module -> Install
-* Manually: download module zip package from https://github.com/VirtoCommerce/vc-module-customer/releases. In VC Manager go to Configuration -> Modules -> Advanced -> upload module package -> Install.
+1. Automatically: in VC Manager go to More -> Modules -> Customer management module -> Install;
+
+1. Manually: download module zip package from https://github.com/VirtoCommerce/vc-module-customer/releases. In VC Manager go to More -> Modules -> Advanced -> upload module package -> Install.
 
 ## Available resources
 
