@@ -8,6 +8,11 @@ namespace VirtoCommerce.CustomerModule.Core.Model.Search
     /// </summary>
     public class MembersSearchCriteria : SearchCriteriaBase
     {
+        public MembersSearchCriteria()
+        {
+            //this default value is required for  indexed search
+            ObjectType = nameof(Member);
+        }
         /// <summary>
         /// Search member type (Contact, Organization etc)
         /// </summary>
