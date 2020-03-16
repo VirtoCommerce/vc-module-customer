@@ -1,4 +1,4 @@
-﻿angular.module('virtoCommerce.customerModule')
+angular.module('virtoCommerce.customerModule')
 .factory('virtoCommerce.customerModule.members', ['$resource', function ($resource) {
     return $resource('api/members/:id', {}, {
         search: { method: 'POST', url: 'api/members/search' },
@@ -13,6 +13,7 @@
                 method: 'GET',
                 url: 'api/organizations',
                 isArray: true
-            }
+            },
+            search: { method: 'POST', url: 'api/organizations/search' }
         });
 }]);
