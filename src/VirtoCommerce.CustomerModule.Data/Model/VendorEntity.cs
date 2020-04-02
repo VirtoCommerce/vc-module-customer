@@ -44,14 +44,15 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             return base.FromModel(member, pkMap);
         }
 
-        public override void Patch(MemberEntity memberEntity)
+        public override void Patch(MemberEntity target)
         {
-            var target = memberEntity as VendorEntity;
-
-            target.SiteUrl = SiteUrl;
-            target.LogoUrl = LogoUrl;
-            target.GroupName = GroupName;
-            target.Description = Description;
+            if (target is VendorEntity vendorTarget)
+            {
+                vendorTarget.SiteUrl = SiteUrl;
+                vendorTarget.LogoUrl = LogoUrl;
+                vendorTarget.GroupName = GroupName;
+                vendorTarget.Description = Description;
+            }
 
             base.Patch(target);
         }

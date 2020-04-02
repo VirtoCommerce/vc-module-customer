@@ -43,8 +43,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             //Call base converter first
             base.ToModel(member);
 
-            var employee = member as Employee;
-            if (employee != null)
+            if (member is Employee employee)
             {
                 employee.FirstName = FirstName;
                 employee.MiddleName = MiddleName;
@@ -63,8 +62,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         public override MemberEntity FromModel(Member member, PrimaryKeyResolvingMap pkMap)
         {
-            var employee = member as Employee;
-            if (employee != null)
+            if (member is Employee employee)
             {
                 member.Name = employee.FullName;
                 FirstName = employee.FirstName;
@@ -97,23 +95,23 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             return base.FromModel(member, pkMap);
         }
 
-        public override void Patch(MemberEntity memberEntity)
+        public override void Patch(MemberEntity target)
         {
-            if (memberEntity is EmployeeEntity target)
+            if (target is EmployeeEntity employee)
             {
-                target.FirstName = this.FirstName;
-                target.MiddleName = this.MiddleName;
-                target.LastName = this.LastName;
-                target.BirthDate = this.BirthDate;
-                target.DefaultLanguage = this.DefaultLanguage;
-                target.FullName = this.FullName;
-                target.IsActive = this.IsActive;
-                target.Type = this.Type;
-                target.TimeZone = this.TimeZone;
-                target.PhotoUrl = this.PhotoUrl;
+                employee.FirstName = FirstName;
+                employee.MiddleName = MiddleName;
+                employee.LastName = LastName;
+                employee.BirthDate = BirthDate;
+                employee.DefaultLanguage = DefaultLanguage;
+                employee.FullName = FullName;
+                employee.IsActive = IsActive;
+                employee.Type = Type;
+                employee.TimeZone = TimeZone;
+                employee.PhotoUrl = PhotoUrl;
             }
 
-            base.Patch(memberEntity);
+            base.Patch(target);
         }
     }
 }

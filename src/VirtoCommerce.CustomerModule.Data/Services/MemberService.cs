@@ -57,6 +57,10 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                 var retVal = new List<Member>();
                 using (var repository = _repositoryFactory())
                 {
+                    //It is so important to generate change tokens for all ids even for not existing members to prevent an issue
+                    //with caching of empty results for non - existing objects that have the infinitive lifetime in the cache
+                    //and future unavailability to create objects with these ids.
+                    cacheEntry.AddExpirationToken(CustomerCacheRegion.CreateChangeToken(memberIds));
                     repository.DisableChangesTracking();
                     //There is loading for all corresponding members conceptual model entities types
                     //query performance when TPT inheritance used it is too slow, for improve performance we are passing concrete member types in to the repository
@@ -78,7 +82,6 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                             member.ReduceDetails(responseGroup);
 
                             retVal.Add(member);
-                            cacheEntry.AddExpirationToken(CustomerCacheRegion.CreateChangeToken(member));
                         }
                     }
                 }
@@ -127,11 +130,15 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                         var dataSourceMember = AbstractTypeFactory<MemberEntity>.TryCreateInstance(memberEntityType.Name);
                         if (dataSourceMember != null)
                         {
-                            dataSourceMember.FromModel(member, pkMap);
+                           dataSourceMember.FromModel(member, pkMap);
 
                             var dataTargetMember = existingMemberEntities.FirstOrDefault(m => m.Id == member.Id);
                             if (dataTargetMember != null)
                             {
+                                if (!dataTargetMember.GetType().IsInstanceOfType(dataSourceMember))
+                                {
+                                    throw new OperationCanceledException($"Unable to update an member with type { dataTargetMember.MemberType } by an member with type { dataSourceMember.MemberType } because they aren't in the inheritance hierarchy");
+                                }
                                 changedEntries.Add(new GenericChangedEntry<Member>(member, dataTargetMember.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(member.MemberType)), EntryState.Modified));
                                 dataSourceMember.Patch(dataTargetMember);
                             }

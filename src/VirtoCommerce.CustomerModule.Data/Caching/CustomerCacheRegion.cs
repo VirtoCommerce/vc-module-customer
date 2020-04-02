@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using Microsoft.Extensions.Primitives;
-using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.Platform.Core.Caching;
 
 namespace VirtoCommerce.CustomerModule.Data.Caching
@@ -13,14 +11,18 @@ namespace VirtoCommerce.CustomerModule.Data.Caching
     {
         private static readonly ConcurrentDictionary<string, CancellationTokenSource> _memberRegionTokenLookup = new ConcurrentDictionary<string, CancellationTokenSource>();
 
-        public static IChangeToken CreateChangeToken(Member member)
+        public static IChangeToken CreateChangeToken(string[] memberIds)
         {
-            if (member == null)
+            if (memberIds == null)
             {
-                throw new ArgumentNullException(nameof(member));
+                throw new ArgumentNullException(nameof(memberIds));
             }
-            var cancellationTokenSource = _memberRegionTokenLookup.GetOrAdd(member.Id, new CancellationTokenSource());
-            return new CompositeChangeToken(new[] { CreateChangeToken(), new CancellationChangeToken(cancellationTokenSource.Token) });
+            var changeTokens = new List<IChangeToken>() { CreateChangeToken() };
+            foreach (var memberId in memberIds)
+            {
+                changeTokens.Add(new CancellationChangeToken(_memberRegionTokenLookup.GetOrAdd(memberId, new CancellationTokenSource()).Token));
+            }
+            return new CompositeChangeToken(changeTokens);
         }
 
         public static void ExpireMemberById(string memberId)

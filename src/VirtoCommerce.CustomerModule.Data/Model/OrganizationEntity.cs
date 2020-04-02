@@ -21,8 +21,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             //Call base converter first
             base.ToModel(member);
 
-            var organization = member as Organization;
-            if (organization != null)
+            if (member is Organization organization)
             {
                 organization.Description = Description;
                 organization.OwnerId = OwnerId;
@@ -38,9 +37,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         public override MemberEntity FromModel(Member member, PrimaryKeyResolvingMap pkMap)
         {
-            var organization = member as Organization;
-
-            if (organization != null)
+            if (member is Organization organization)
             {
                 Description = organization.Description;
                 OwnerId = organization.OwnerId;
@@ -63,15 +60,15 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             return base.FromModel(member, pkMap);
         }
 
-        public override void Patch(MemberEntity memberEntity)
+        public override void Patch(MemberEntity target)
         {
-            var target = memberEntity as OrganizationEntity;
-
-            target.Name = Name;
-            target.Description = Description;
-            target.OwnerId = OwnerId;
-            target.BusinessCategory = BusinessCategory;
-
+            if (target is OrganizationEntity org)
+            {
+                org.Name = Name;
+                org.Description = Description;
+                org.OwnerId = OwnerId;
+                org.BusinessCategory = BusinessCategory;
+            }
             base.Patch(target);
         }
     }

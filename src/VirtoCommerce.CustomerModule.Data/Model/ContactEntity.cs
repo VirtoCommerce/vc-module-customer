@@ -58,8 +58,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         {
             //Call base converter first
             base.ToModel(member);
-            var contact = member as Contact;
-            if (contact != null)
+            if (member is Contact contact)
             {
                 contact.FirstName = FirstName;
                 contact.MiddleName = MiddleName;
@@ -81,8 +80,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         public override MemberEntity FromModel(Member member, PrimaryKeyResolvingMap pkMap)
         {
-            var contact = member as Contact;
-            if (contact != null)
+            if (member is Contact contact)
             {
                 FirstName = contact.FirstName;
                 MiddleName = contact.MiddleName;
@@ -121,22 +119,23 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             return base.FromModel(member, pkMap);
         }
 
-        public override void Patch(MemberEntity memberDataEntity)
+        public override void Patch(MemberEntity target)
         {
-            var target = memberDataEntity as ContactEntity;
-
-            target.FirstName = FirstName;
-            target.MiddleName = MiddleName;
-            target.LastName = LastName;
-            target.BirthDate = BirthDate;
-            target.DefaultLanguage = DefaultLanguage;
-            target.FullName = FullName;
-            target.Salutation = Salutation;
-            target.TimeZone = TimeZone;
-            target.TaxpayerId = TaxpayerId;
-            target.PreferredCommunication = PreferredCommunication;
-            target.PreferredDelivery = PreferredDelivery;
-            target.PhotoUrl = PhotoUrl;
+            if (target is ContactEntity contact)
+            {
+                contact.FirstName = FirstName;
+                contact.MiddleName = MiddleName;
+                contact.LastName = LastName;
+                contact.BirthDate = BirthDate;
+                contact.DefaultLanguage = DefaultLanguage;
+                contact.FullName = FullName;
+                contact.Salutation = Salutation;
+                contact.TimeZone = TimeZone;
+                contact.TaxpayerId = TaxpayerId;
+                contact.PreferredCommunication = PreferredCommunication;
+                contact.PreferredDelivery = PreferredDelivery;
+                contact.PhotoUrl = PhotoUrl;
+            }
 
             base.Patch(target);
         }
