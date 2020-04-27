@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,7 @@ using VirtoCommerce.CustomerModule.Data.Repositories;
 using VirtoCommerce.CustomerModule.Data.Search;
 using VirtoCommerce.CustomerModule.Data.Search.Indexing;
 using VirtoCommerce.CustomerModule.Data.Services;
+using VirtoCommerce.CustomerModule.Web.Authorization;
 using VirtoCommerce.CustomerModule.Web.JsonConverters;
 using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
@@ -71,6 +73,8 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<LogChangesEventHandler>();
             serviceCollection.AddTransient<SecurtityAccountChangesEventHandler>();
             serviceCollection.AddTransient<IndexMemberChangedEventHandler>();
+
+            serviceCollection.AddTransient<IAuthorizationHandler, CustomerAuthorizationHandler>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
@@ -100,6 +104,15 @@ namespace VirtoCommerce.CustomerModule.Web
             permissionsProvider.RegisterPermissions(ModuleConstants.Security.Permissions.AllPermissions.Select(x =>
                 new Permission() { GroupName = "Customer", Name = x }).ToArray());
 
+            AbstractTypeFactory<PermissionScope>.RegisterType<AssociatedOrganizationsOnlyScope>();
+
+            permissionsProvider.WithAvailabeScopesForPermissions(new[] {
+                ModuleConstants.Security.Permissions.Create,
+                ModuleConstants.Security.Permissions.Access,
+                ModuleConstants.Security.Permissions.Read,
+                ModuleConstants.Security.Permissions.Update
+            }, new AssociatedOrganizationsOnlyScope());
+
             var mvcJsonOptions = appBuilder.ApplicationServices.GetService<IOptions<MvcNewtonsoftJsonOptions>>();
             mvcJsonOptions.Value.SerializerSettings.Converters.Add(new PolymorphicMemberJsonConverter());
 
@@ -124,7 +137,6 @@ namespace VirtoCommerce.CustomerModule.Web
                 dbContext.Database.EnsureCreated();
                 dbContext.Database.Migrate();
             }
-
         }
 
         public void Uninstall()

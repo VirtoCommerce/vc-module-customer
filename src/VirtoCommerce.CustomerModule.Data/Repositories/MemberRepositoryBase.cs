@@ -65,19 +65,12 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
         public virtual async Task RemoveMembersByIdsAsync(string[] ids, string[] memberTypes = null)
         {
-            var dbMembers = await GetMembersByIdsAsync(ids, null, memberTypes);
-            foreach (var dbMember in dbMembers)
-            {
-                foreach (var relation in dbMember.MemberRelations.ToArray())
-                {
-                    Remove(relation);
-                }
-                Remove(dbMember);
-            }
+            var members = await GetMembersByIdsAsync(ids, null, memberTypes);
+            await InnerRemoveMembersAsync(members);
         }
         #endregion
 
-        public async Task<T[]> InnerGetMembersByIds<T>(string[] ids, string responseGroup = null) where T : MemberEntity
+        public virtual async Task<T[]> InnerGetMembersByIds<T>(string[] ids, string responseGroup = null) where T : MemberEntity
         {
             //Use OfType() clause very much accelerates the query performance when used TPT inheritance
             var query = Members.OfType<T>().Where(x => ids.Contains(x.Id));
@@ -133,5 +126,20 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             return result;
         }
 
+        public virtual Task InnerRemoveMembersAsync<T>(T[] members)
+            where T : MemberEntity
+        {
+            foreach (var member in members)
+            {
+                foreach (var relation in member.MemberRelations.ToArray())
+                {
+                    Remove(relation);
+                }
+
+                Remove(member);
+            }
+
+            return Task.CompletedTask;
+        }
     }
 }

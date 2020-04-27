@@ -28,7 +28,8 @@ angular.module(moduleName, [])
   }]
 )
 .run(
-    ['$rootScope', 'platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', 'virtoCommerce.customerModule.members', function ($rootScope, mainMenuService, widgetService, $state, memberTypesResolverService, settings, members) {
+    ['$rootScope', 'platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'platformWebApp.permissionScopeResolver', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', 'virtoCommerce.customerModule.members',
+      function ($rootScope, mainMenuService, widgetService, $state, scopeResolver, memberTypesResolverService, settings, members) {
       //Register module in main menu
       var menuItem = {
           path: 'browse/member',
@@ -183,4 +184,11 @@ angular.module(moduleName, [])
               }]
           }
       });
+
+      // Register permission scopes
+      var associatedOrganizationsOnlyScope = {
+          type: 'AssociatedOrganizationsOnlyScope',
+          title: 'Only for associated organizations'
+      };
+      scopeResolver.register(associatedOrganizationsOnlyScope);
   }]);

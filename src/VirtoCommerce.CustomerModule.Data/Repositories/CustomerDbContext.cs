@@ -1,5 +1,6 @@
 using EntityFrameworkCore.Triggers;
 using Microsoft.EntityFrameworkCore;
+using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Data.Model;
 
 namespace VirtoCommerce.CustomerModule.Data.Repositories
@@ -35,6 +36,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             modelBuilder.Entity<MemberRelationEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<MemberRelationEntity>().ToTable("MemberRelation");
 
+            modelBuilder.Entity<MemberRelationEntity>().Property(x => x.RelationType).HasDefaultValueSql($"'{RelationType.Membership}'");
             modelBuilder.Entity<MemberRelationEntity>().HasOne(m => m.Descendant)
                 .WithMany(m => m.MemberRelations)
                 .OnDelete(DeleteBehavior.ClientCascade).IsRequired();

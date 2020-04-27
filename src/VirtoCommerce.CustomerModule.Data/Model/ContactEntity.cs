@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.ObjectModel;
@@ -72,7 +73,18 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 contact.PreferredCommunication = PreferredCommunication;
                 contact.PreferredDelivery = PreferredDelivery;
                 contact.PhotoUrl = PhotoUrl;
-                contact.Organizations = MemberRelations.Select(x => x.Ancestor).OfType<OrganizationEntity>().Select(x => x.Id).ToList();
+                contact.Organizations = MemberRelations
+                    .Where(x => x.RelationType == RelationType.Membership.ToString())
+                    .Select(x => x.Ancestor)
+                    .OfType<OrganizationEntity>()
+                    .Select(x => x.Id)
+                    .ToList();
+                contact.AssociatedOrganizations = MemberRelations
+                    .Where(x => x.RelationType == RelationType.Association.ToString())
+                    .Select(x => x.Ancestor)
+                    .OfType<OrganizationEntity>()
+                    .Select(x => x.Id)
+                    .ToList();
                 contact.Name = contact.FullName;
             }
             return member;
@@ -102,7 +114,11 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
                 if (contact.Organizations != null)
                 {
-                    MemberRelations = new ObservableCollection<MemberRelationEntity>();
+                    if (MemberRelations.IsNullCollection())
+                    {
+                        MemberRelations = new ObservableCollection<MemberRelationEntity>();
+                    }
+
                     foreach (var organization in contact.Organizations)
                     {
                         var memberRelation = new MemberRelationEntity
@@ -110,6 +126,26 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                             AncestorId = organization,
                             AncestorSequence = 1,
                             DescendantId = Id,
+                            RelationType = RelationType.Membership.ToString()
+                        };
+                        MemberRelations.Add(memberRelation);
+                    }
+                }
+
+                if (contact.AssociatedOrganizations != null)
+                {
+                    if (MemberRelations.IsNullCollection())
+                    {
+                        MemberRelations = new ObservableCollection<MemberRelationEntity>();
+                    }
+                    foreach (var organization in contact.AssociatedOrganizations)
+                    {
+                        var memberRelation = new MemberRelationEntity
+                        {
+                            AncestorId = organization,
+                            AncestorSequence = 1,
+                            DescendantId = Id,
+                            RelationType = RelationType.Association.ToString()
                         };
                         MemberRelations.Add(memberRelation);
                     }

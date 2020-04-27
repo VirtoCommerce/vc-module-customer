@@ -14,7 +14,8 @@
                     "birthday": "Birthday",
                     "salutation": "Salutation",
                     "defaultLanguage": "Default language",
-                    "organizations": "Organization(s)",
+                    "organizations": "Member of organization(s)",
+                    "associated-organizations": "Associated organization(s)",
                     "taxpayerId": "Taxpayer ID",
                     "preferred-communication": "Preferred communication",
                     "preferred-delivery": "Preferred delivery",
@@ -33,6 +34,7 @@
                     "preferred-delivery": "Enter value",
                     "taxpayerId": "Enter value",
                     "organizations": "Select organization",
+                    "associated-organizations": "Select organization",
                     "timezone": "Select value"
                 }
             },

@@ -17,6 +17,7 @@ namespace VirtoCommerce.CustomerModule.Core.Model
         public string DefaultLanguage { get; set; }
         public string TimeZone { get; set; }
         public IList<string> Organizations { get; set; }
+        public IList<string> AssociatedOrganizations { get; set; }
 
         public string TaxPayerId { get; set; }
         public string PreferredDelivery { get; set; }
