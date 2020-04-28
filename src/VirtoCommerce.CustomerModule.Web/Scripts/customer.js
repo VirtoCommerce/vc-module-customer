@@ -28,7 +28,7 @@ angular.module(moduleName, [])
   }]
 )
 .run(
-    ['$rootScope', 'platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', 'virtoCommerce.customerModule.members', function ($rootScope, mainMenuService, widgetService, $state, memberTypesResolverService, settings, members) {
+    ['platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', 'platformWebApp.authService', function (mainMenuService, widgetService, $state, memberTypesResolverService, settings, authService) {
       //Register module in main menu
       var menuItem = {
           path: 'browse/member',
@@ -60,7 +60,7 @@ angular.module(moduleName, [])
       var dynamicPropertyWidget = {
           controller: 'platformWebApp.dynamicPropertyWidgetController',
           template: '$(Platform)/Scripts/app/dynamicProperties/widgets/dynamicPropertyWidget.tpl.html',
-          isVisible: function (blade) { return !blade.isNew; }
+          isVisible: function (blade) { return !blade.isNew && authService.checkPermission('platform:dynamic_properties:read');}
       }
       var vendorSeoWidget = {
           controller: 'virtoCommerce.coreModule.seo.seoWidgetController',
