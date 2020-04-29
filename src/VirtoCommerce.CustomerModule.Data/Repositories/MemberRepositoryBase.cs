@@ -76,15 +76,11 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             
             foreach (var dbMember in dbMembers)
             {
+                foreach (var relation in dbMember.MemberRelations.ToArray())
+                {
+                    Remove(relation);
+                }
                 Remove(dbMember);
-            }
-        }
-
-        public virtual async Task RemoveRelationsByEntitiesAsync(MemberRelationEntity[] relationEntities)
-        {
-            foreach (var relationEntity in relationEntities)
-            {
-                Remove(relationEntity);
             }
         }
         #endregion

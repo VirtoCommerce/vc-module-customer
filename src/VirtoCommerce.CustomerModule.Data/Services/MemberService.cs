@@ -84,6 +84,18 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                             retVal.Add(member);
                         }
                     }
+
+                    var ancestorIds = dataMembers.SelectMany(r => r.MemberRelations)
+                        .Where(x => !string.IsNullOrEmpty(x.AncestorId))
+                        .Select(x => x.AncestorId)
+                        .ToArray();
+                    cacheEntry.AddExpirationToken(CustomerCacheRegion.CreateChangeToken(ancestorIds));
+
+                    var descendantIds = dataMembers.SelectMany(x => x.MemberRelations)
+                        .Where(x => !string.IsNullOrEmpty(x.DescendantId))
+                        .Select(x => x.DescendantId)
+                        .ToArray();
+                    cacheEntry.AddExpirationToken(CustomerCacheRegion.CreateChangeToken(descendantIds));
                 }
                 var memberRespGroup = EnumUtility.SafeParseFlags(responseGroup, MemberResponseGroup.Full);
                 //Load member security accounts by separate request
@@ -171,17 +183,6 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                     var changedEntries = members.Select(x => new GenericChangedEntry<Member>(x, EntryState.Deleted)).ToArray();
                     await _eventPublisher.Publish(new MemberChangingEvent(changedEntries));
 
-                    var relations = await repository.GetRelationsByMembersAsync(members.ToDictionary(x => x.Id, y => y.MemberType));
-                    await repository.RemoveRelationsByEntitiesAsync(relations);
-
-                    //need to clear cache for Ancestors and Descendants
-                    ClearCacheByMembers(relations.Where(x => x.Ancestor != null)
-                        .Select(r => r.Ancestor.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(r.Ancestor.MemberType)))
-                        .ToArray());
-                    ClearCacheByMembers(relations.Where(x => x.Descendant != null)
-                        .Select(r => r.Descendant.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(r.Descendant.MemberType)))
-                        .ToArray());
-
                     await repository.RemoveMembersByIdsAsync(members.Select(m => m.Id).ToArray());
                     await repository.UnitOfWork.CommitAsync();
                     await _eventPublisher.Publish(new MemberChangedEvent(changedEntries));
@@ -194,11 +195,6 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         protected virtual void ClearCache(IEnumerable<Member> members)
         {
             CustomerSearchCacheRegion.ExpireRegion();
-            ClearCacheByMembers(members);
-        }
-
-        protected virtual void ClearCacheByMembers(IEnumerable<Member> members)
-        {
             foreach (var member in members.Where(x => !x.IsTransient()))
             {
                 CustomerCacheRegion.ExpireMemberById(member.Id);

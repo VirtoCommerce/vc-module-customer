@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VirtoCommerce.CustomerModule.Data.Model;
@@ -16,8 +15,6 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
         IQueryable<MemberRelationEntity> MemberRelations { get; }
         
         Task<MemberEntity[]> GetMembersByIdsAsync(string[] ids, string responseGroup = null, string[] memberTypes = null);
-        Task<MemberRelationEntity[]> GetRelationsByMembersAsync(IDictionary<string, string> memberIdAndTypeMap);
         Task RemoveMembersByIdsAsync(string[] ids, string[] memberTypes = null);
-        Task RemoveRelationsByEntitiesAsync(MemberRelationEntity[] relationEntities);
     }
 }
