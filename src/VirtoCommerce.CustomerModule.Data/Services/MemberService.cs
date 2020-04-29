@@ -195,6 +195,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         protected virtual void ClearCache(IEnumerable<Member> members)
         {
             CustomerSearchCacheRegion.ExpireRegion();
+
             foreach (var member in members.Where(x => !x.IsTransient()))
             {
                 CustomerCacheRegion.ExpireMemberById(member.Id);

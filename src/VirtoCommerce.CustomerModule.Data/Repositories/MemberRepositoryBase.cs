@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.CustomerModule.Core.Model;
-using VirtoCommerce.CustomerModule.Data.Caching;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Data.Infrastructure;
@@ -13,14 +11,8 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 {
     public abstract class MemberRepositoryBase : DbContextRepositoryBase<CustomerDbContext>, IMemberRepository
     {
-        private static string[] Descendants = new[] { nameof(Contact), nameof(Employee) };
-        private static string[] Ancestors = new[] { nameof(Organization) };
-
-        private readonly CustomerDbContext _dbContext;
-
         protected MemberRepositoryBase(CustomerDbContext dbContext) : base(dbContext)
         {
-            _dbContext = dbContext;
         }
 
         #region IMemberRepository Members
@@ -73,7 +65,6 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
         public virtual async Task RemoveMembersByIdsAsync(string[] ids, string[] memberTypes = null)
         {
             var dbMembers = await GetMembersByIdsAsync(ids, null, memberTypes);
-            
             foreach (var dbMember in dbMembers)
             {
                 foreach (var relation in dbMember.MemberRelations.ToArray())
@@ -138,21 +129,6 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
                     await DynamicPropertyObjectValues.Where(x => ids.Contains(x.ObjectId)).LoadAsync();
                 }
             }
-            return result;
-        }
-
-        public async Task<MemberRelationEntity[]> GetRelationsByMembersAsync(IDictionary<string, string> memberIdAndTypeMap)
-        {
-            var result = Array.Empty<MemberRelationEntity>();
-
-            var descendantIds = memberIdAndTypeMap.Where(x => Descendants.Contains(x.Value)).Select(x => x.Key).Distinct().ToArray();
-            var relationsDescendants = await MemberRelations.Where(x => descendantIds.Contains(x.DescendantId)).Include(x => x.Ancestor).ToArrayAsync();
-            result = relationsDescendants;
-            
-            var ancestorIds = memberIdAndTypeMap.Where(x => Ancestors.Contains(x.Value)).Select(x => x.Key).Distinct().ToArray();
-            var relationsAncestors = await MemberRelations.Where(x => ancestorIds.Contains(x.AncestorId)).Include(x => x.Descendant).ToArrayAsync();
-            result = result.Union(relationsAncestors).ToArray();
-
             return result;
         }
     }
