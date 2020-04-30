@@ -351,14 +351,14 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
-        /// Get plenty organizations 
+        /// Get plenty organizations
         /// </summary>
         /// <param name="ids">Organization ids</param>
         /// <param name="responseGroup">Response group flags controls fullness of resulting object graph</param>
-        [HttpGet]
-        [Route("organizations")]
+        [HttpPost]
+        [Route("get-organizations")]
         [ResponseType(typeof(Organization[]))]
-        public IHttpActionResult GetOrganizationsByIds([FromUri]string[] ids, [FromUri]string responseGroup = null)
+        public IHttpActionResult GetOrganizationsByIds([FromBody]string[] ids, [FromUri]string responseGroup = null)
         {
             return GetMembersByIds(ids, responseGroup, new[] { typeof(Organization).Name });
         }
@@ -409,7 +409,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
 
 
         /// <summary>
-        /// Get plenty contacts 
+        /// Get plenty contacts
         /// </summary>
         /// <param name="ids">contact IDs</param>
         /// <param name="responseGroup">Response group flags controls fullness of resulting object graph
@@ -466,7 +466,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
-        /// Get plenty vendors 
+        /// Get plenty vendors
         /// </summary>
         /// <param name="ids">Vendors IDs</param>
         /// <param name="responseGroup">Response group flags controls fullness of resulting object graph</param>
@@ -546,7 +546,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
-        /// Get plenty employees 
+        /// Get plenty employees
         /// </summary>
         /// <param name="ids">contact IDs</param>
         /// <param name="responseGroup">Response group flags controls fullness of resulting object graph</param>
@@ -569,20 +569,23 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public IHttpActionResult GetMemberOrganizations([FromUri] string id, [FromUri]string responseGroup = null)
         {
             var member = _memberService.GetByIds(new[] { id }, responseGroup, new[] { typeof(Employee).Name, typeof(Contact).Name }).FirstOrDefault();
-            var organizationsIds = new List<string>();
+            var organizationsIds = Enumerable.Empty<string>();
+
             if (member != null)
             {
                 if (member is Contact contact)
                 {
-                    organizationsIds = contact.Organizations?.ToList();
+                    organizationsIds = contact.Organizations ?? organizationsIds;
                 }
                 else if (member is Employee employee)
                 {
-                    organizationsIds = employee.Organizations?.ToList();
+                    organizationsIds = employee.Organizations ?? organizationsIds;
                 }
             }
+
             return GetOrganizationsByIds(organizationsIds.ToArray());
         }
-        #endregion
+
+        #endregion Special members for storefront C# API client  (because it not support polymorph types)
     }
 }
