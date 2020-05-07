@@ -11,7 +11,7 @@ angular.module('virtoCommerce.customerModule')
             {
                 getByIds: {
                     method: 'POST',
-                    url: 'api/get-organizations',
+                    url: 'api/organizations/plenty',
                     isArray: true
                 },
                 search: { method: 'POST', url: 'api/organizations/search' }
