@@ -10,6 +10,11 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
     blade.refresh = function (parentRefresh) {
         blade.isLoading = true;
         var searchCriteria = getSearchCriteria();
+
+        if (blade.searchCriteria) {
+            angular.extend(searchCriteria, blade.searchCriteria);
+        }
+
         members.search(searchCriteria,
             function (data) {
                 blade.isLoading = false;
@@ -25,7 +30,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
 
                 //Set navigation breadcrumbs
                 setBreadcrumbs();
-            }, function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
+            });
 
         if (parentRefresh && blade.parentRefresh) {
             blade.parentRefresh();
@@ -207,8 +212,8 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
     ];
 
 
-    // filtering
-    var filter = $scope.filter = {};
+    // simple and advanced filtering
+    var filter = blade.filter = { keyword: null };
 
     filter.criteriaChanged = function () {
         if (filter.keyword === null) {

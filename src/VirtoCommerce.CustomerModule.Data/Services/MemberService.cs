@@ -84,6 +84,18 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                             retVal.Add(member);
                         }
                     }
+
+                    var ancestorIds = dataMembers.SelectMany(r => r.MemberRelations)
+                        .Where(x => !string.IsNullOrEmpty(x.AncestorId))
+                        .Select(x => x.AncestorId)
+                        .ToArray();
+                    cacheEntry.AddExpirationToken(CustomerCacheRegion.CreateChangeToken(ancestorIds));
+
+                    var descendantIds = dataMembers.SelectMany(x => x.MemberRelations)
+                        .Where(x => !string.IsNullOrEmpty(x.DescendantId))
+                        .Select(x => x.DescendantId)
+                        .ToArray();
+                    cacheEntry.AddExpirationToken(CustomerCacheRegion.CreateChangeToken(descendantIds));
                 }
                 var memberRespGroup = EnumUtility.SafeParseFlags(responseGroup, MemberResponseGroup.Full);
                 //Load member security accounts by separate request

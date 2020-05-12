@@ -27,9 +27,32 @@ angular.module(moduleName, [])
           });
   }]
 )
+// define search filters to be accessible platform-wide
+.factory('virtoCommerce.customerModule.predefinedSearchFilters', ['$localStorage', function ($localStorage) {
+    $localStorage.customerSearchFilters = $localStorage.customerSearchFilters || [];
+
+    return {
+        register: function (currentFiltersUpdateTime, currentFiltersStorageKey, newFilters) {
+            _.each(newFilters, function (newFilter) {
+                var found = _.find($localStorage.customerSearchFilters, function (x) {
+                    return x.id == newFilter.id;
+                });
+                if (found) {
+                    if (!found.lastUpdateTime || found.lastUpdateTime < currentFiltersUpdateTime) {
+                        angular.copy(newFilter, found);
+                    }
+                } else if (!$localStorage[currentFiltersStorageKey] || $localStorage[currentFiltersStorageKey] < currentFiltersUpdateTime) {
+                    $localStorage.customerSearchFilters.splice(0, 0, newFilter);
+                }
+            });
+
+            $localStorage[currentFiltersStorageKey] = currentFiltersUpdateTime;
+        }
+    };
+}])
 .run(
-    ['$rootScope', 'platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'platformWebApp.permissionScopeResolver', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', 'virtoCommerce.customerModule.members',
-      function ($rootScope, mainMenuService, widgetService, $state, scopeResolver, memberTypesResolverService, settings, members) {
+    ['platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'platformWebApp.permissionScopeResolver', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', 'virtoCommerce.customerModule.members', 'virtoCommerce.customerModule.predefinedSearchFilters',
+        function (mainMenuService, widgetService, $state, scopeResolver, memberTypesResolverService, settings, members, predefinedSearchFilters) {
       //Register module in main menu
       var menuItem = {
           path: 'browse/member',
@@ -61,7 +84,7 @@ angular.module(moduleName, [])
       var dynamicPropertyWidget = {
           controller: 'platformWebApp.dynamicPropertyWidgetController',
           template: '$(Platform)/Scripts/app/dynamicProperties/widgets/dynamicPropertyWidget.tpl.html',
-          isVisible: function (blade) { return !blade.isNew; }
+          isVisible: function (blade) { return !blade.isNew && authService.checkPermission('platform:dynamic_properties:read');}
       }
       var vendorSeoWidget = {
           controller: 'virtoCommerce.coreModule.seo.seoWidgetController',
@@ -185,10 +208,20 @@ angular.module(moduleName, [])
           }
       });
 
+      const lastTimeModificationDate = 1583235535540;
+      // predefine search filters for customer search
+        predefinedSearchFilters.register(lastTimeModificationDate, 'customerSearchFiltersDate', [
+          { name: 'customer.blades.member-list.labels.filter-new' },
+          { keyword: 'membertype:Vendor', id: 3, name: 'customer.blades.member-list.labels.filter-vendor' },
+          { keyword: 'membertype:Contact', id: 2, name: 'customer.blades.member-list.labels.filter-contact' },
+          { keyword: 'membertype:Organization', id: 1, name: 'customer.blades.member-list.labels.filter-organization' }
+      ]);
+
       // Register permission scopes
       var associatedOrganizationsOnlyScope = {
           type: 'AssociatedOrganizationsOnlyScope',
           title: 'Only for associated organizations'
       };
       scopeResolver.register(associatedOrganizationsOnlyScope);
+
   }]);

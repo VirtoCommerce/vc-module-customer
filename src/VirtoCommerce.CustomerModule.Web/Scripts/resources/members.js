@@ -13,6 +13,7 @@
                 method: 'GET',
                 url: 'api/organizations',
                 isArray: true
-            }
+            },
+            search: { method: 'POST', url: 'api/organizations/search' }
         });
 }]);
