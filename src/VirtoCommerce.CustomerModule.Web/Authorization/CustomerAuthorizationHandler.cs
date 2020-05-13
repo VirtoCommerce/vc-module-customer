@@ -9,7 +9,6 @@ using Microsoft.Extensions.Options;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Model.Search;
 using VirtoCommerce.CustomerModule.Core.Services;
-using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Security.Authorization;
 
@@ -59,60 +58,52 @@ namespace VirtoCommerce.CustomerModule.Web.Authorization
                 return;
             }
 
-            var currentContact = (Contact) await _memberService.GetByIdAsync(currentUser.MemberId);
+            var currentContact = (Contact)await _memberService.GetByIdAsync(currentUser.MemberId);
             switch (context.Resource)
             {
                 case MembersSearchCriteria criteria when !string.IsNullOrEmpty(criteria.MemberId):
-                {
-                    if (currentContact.AssociatedOrganizations.Contains(criteria.MemberId))
                     {
-                        context.Succeed(requirement);
-                    }
+                        if (currentContact.AssociatedOrganizations.Contains(criteria.MemberId))
+                        {
+                            context.Succeed(requirement);
+                        }
 
-                    break;
-                }
+                        break;
+                    }
                 case MembersSearchCriteria criteria:
                     criteria.ObjectIds = currentContact.AssociatedOrganizations;
                     context.Succeed(requirement);
                     break;
-                case Member[] members:
-                {
-                    var filteredOrganizations = members.OfType<Organization>()
-                        .Where(o => IsOrganizationInAssociatedOrganizations(currentContact, o)).ToArray();
-                    var filteredContacts = members.OfType<Contact>()
-                        .Where(c => IsContactHasAssociatedOrganization(currentContact, c)).ToArray();
-                    if (filteredOrganizations.Any())
+                case List<Member> members:
                     {
-                        CopyMembers(ref members, filteredOrganizations);
-                        context.Succeed(requirement);
-                    }
+                        members.RemoveAll(x => !(((x is Organization org) && IsOrganizationInAssociatedOrganizations(currentContact, org))
+                            || ((x is Contact contact) && IsContactHasAssociatedOrganization(currentContact, contact))));
 
-                    if (filteredContacts.Any())
-                    {
-                        CopyMembers(ref members, filteredContacts, filteredOrganizations.Length);
-                        context.Succeed(requirement);
-                    }
+                        if (members.Any())
+                        {
+                            context.Succeed(requirement);
+                        }
 
-                    break;
-                }
+                        break;
+                    }
                 case Organization organization:
-                {
-                    if (IsOrganizationInAssociatedOrganizations(currentContact, organization))
                     {
-                        context.Succeed(requirement);
-                    }
+                        if (IsOrganizationInAssociatedOrganizations(currentContact, organization))
+                        {
+                            context.Succeed(requirement);
+                        }
 
-                    break;
-                }
+                        break;
+                    }
                 case Contact contact:
-                {
-                    if (IsContactHasAssociatedOrganization(currentContact, contact))
                     {
-                        context.Succeed(requirement);
-                    }
+                        if (IsContactHasAssociatedOrganization(currentContact, contact))
+                        {
+                            context.Succeed(requirement);
+                        }
 
-                    break;
-                }
+                        break;
+                    }
             }
         }
 
@@ -124,14 +115,6 @@ namespace VirtoCommerce.CustomerModule.Web.Authorization
         private bool IsContactHasAssociatedOrganization(Contact currentContact, Contact checkingContact)
         {
             return currentContact.AssociatedOrganizations.Any(o => checkingContact.Organizations.Contains(o));
-        }
-
-        private void CopyMembers<TDestination, TSource>(ref TDestination[] destination, TSource[] source, int destinationIndex = 0)
-            where TDestination : Member
-            where TSource : Member, TDestination
-        {
-            Array.Resize(ref destination, source.Length);
-            Array.Copy(source, 0, destination, destinationIndex, source.Length + destinationIndex);
         }
     }
 }
