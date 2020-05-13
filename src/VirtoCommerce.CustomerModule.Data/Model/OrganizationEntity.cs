@@ -28,7 +28,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 organization.BusinessCategory = BusinessCategory;
                 if (MemberRelations.Any())
                 {
-                    organization.ParentId = MemberRelations.FirstOrDefault().AncestorId;
+                    organization.ParentId = MemberRelations
+                        .FirstOrDefault(x => x.RelationType == RelationType.Membership.ToString())?
+                        .AncestorId;
                 }
 
             }
@@ -50,7 +52,8 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                     {
                         AncestorId = organization.ParentId,
                         DescendantId = organization.Id,
-                        AncestorSequence = 1
+                        AncestorSequence = 1,
+                        RelationType = RelationType.Membership.ToString()
                     };
                     MemberRelations.Add(memberRelation);
                 }
@@ -62,12 +65,12 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         public override void Patch(MemberEntity target)
         {
-            if (target is OrganizationEntity org)
+            if (target is OrganizationEntity organization)
             {
-                org.Name = Name;
-                org.Description = Description;
-                org.OwnerId = OwnerId;
-                org.BusinessCategory = BusinessCategory;
+                organization.Name = Name;
+                organization.Description = Description;
+                organization.OwnerId = OwnerId;
+                organization.BusinessCategory = BusinessCategory;
             }
             base.Patch(target);
         }

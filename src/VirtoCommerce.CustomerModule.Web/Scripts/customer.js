@@ -51,7 +51,8 @@ angular.module(moduleName, [])
     };
 }])
 .run(
-    ['platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', 'virtoCommerce.customerModule.members', 'virtoCommerce.customerModule.predefinedSearchFilters', function (mainMenuService, widgetService, $state, memberTypesResolverService, settings, members, predefinedSearchFilters) {
+    ['platformWebApp.mainMenuService', 'platformWebApp.authService', 'platformWebApp.widgetService', '$state', 'platformWebApp.permissionScopeResolver', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', 'virtoCommerce.customerModule.members', 'virtoCommerce.customerModule.predefinedSearchFilters',
+        function (mainMenuService, authService, widgetService, $state, scopeResolver, memberTypesResolverService, settings, members, predefinedSearchFilters) {
       //Register module in main menu
       var menuItem = {
           path: 'browse/member',
@@ -215,4 +216,12 @@ angular.module(moduleName, [])
           { keyword: 'membertype:Contact', id: 2, name: 'customer.blades.member-list.labels.filter-contact' },
           { keyword: 'membertype:Organization', id: 1, name: 'customer.blades.member-list.labels.filter-organization' }
       ]);
+
+      // Register permission scopes
+      var associatedOrganizationsOnlyScope = {
+          type: 'AssociatedOrganizationsOnlyScope',
+          title: 'Only for associated organizations'
+      };
+      scopeResolver.register(associatedOrganizationsOnlyScope);
+
   }]);

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using VirtoCommerce.Platform.Core.Common;
@@ -22,6 +23,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [Required]
         public int AncestorSequence { get; set; }
 
+        [Required]
         [StringLength(64)]
         public string RelationType { get; set; }
 

@@ -93,6 +93,11 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         {
             var query = repository.Members;
 
+            if (!criteria.ObjectIds.IsNullOrEmpty())
+            {
+                query = query.Where(m => criteria.ObjectIds.Contains(m.Id));
+            }
+
             if (!criteria.MemberTypes.IsNullOrEmpty())
             {
                 query = query.Where(m => criteria.MemberTypes.Contains(m.MemberType));
@@ -106,11 +111,13 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             if (criteria.MemberId != null)
             {
                 //TODO: DeepSearch in specified member
-                query = query.Where(m => m.MemberRelations.Any(r => r.AncestorId == criteria.MemberId));
+                query = query.Where(m => m.MemberRelations
+                    .Where(x => x.RelationType == RelationType.Membership.ToString())
+                    .Any(r => r.AncestorId == criteria.MemberId));
             }
             else if (!criteria.DeepSearch)
             {
-                query = query.Where(m => !m.MemberRelations.Any());
+                query = query.Where(m => m.MemberRelations.All(x => x.RelationType != RelationType.Membership.ToString()));
             }
 
             if (!string.IsNullOrEmpty(criteria.Keyword))

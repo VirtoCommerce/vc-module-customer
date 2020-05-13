@@ -5,21 +5,22 @@
             "contact-detail": {
                 "title-new": "Neuer Kunde",
                 "subtitle": "Kunden details",
-                "labels": {
-                    "first-name": "Vorname",
-                    "middle-name": "Zweiter Vorname",
-                    "last-name": "Nachname",
-                    "groups": "Benutzergruppen",
-                    "full-name": "Name",
-                    "birthday": "Geburtstag",
-                    "salutation": "Anrede",
-                    "defaultLanguage": "Standardsprache",
-                    "organizations": "Organisation(en)",
-                    "taxpayerId": "Steuerzahler ID",
-                    "preferred-communication": "Bevorzugte Kommunikation",
-                    "preferred-delivery": "Bevorzugte Lieferung",
-                    "timezone": "Zeitzone"
-                },
+              "labels": {
+                "first-name": "Vorname",
+                "middle-name": "Zweiter Vorname",
+                "last-name": "Nachname",
+                "groups": "Benutzergruppen",
+                "full-name": "Name",
+                "birthday": "Geburtstag",
+                "salutation": "Anrede",
+                "defaultLanguage": "Standardsprache",
+                "organizations": "Mitglied der Organisation(en)",
+                "associated-organizations": "Assoziierte Organisation(en)",
+                "taxpayerId": "Steuerzahler ID",
+                "preferred-communication": "Bevorzugte Kommunikation",
+                "preferred-delivery": "Bevorzugte Lieferung",
+                "timezone": "Zeitzone"
+              },
                 "placeholders": {
                     "groups": "Benutzergruppen auswählen",
                     "first-name": "Wert eingeben",
@@ -33,6 +34,7 @@
                     "preferred-delivery": "Wert eingeben",
                     "taxpayerId": "Wert eingeben",
                     "organizations": "Wählen Sie die Organisation",
+                    "associated-organizations": "Wählen Sie die Organisation",
                     "timezone": "Wert auswählen"
                 }
             },

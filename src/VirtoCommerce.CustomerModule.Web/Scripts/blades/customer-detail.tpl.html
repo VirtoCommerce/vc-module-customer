@@ -35,7 +35,7 @@
                                 <div class="form-input" data-role="input-control">
                                     <ui-select multiple ng-model="blade.currentEntity.groups">
                                         <ui-select-match placeholder="{{'customer.blades.contact-detail.placeholders.groups' | translate}}">{{$item}}</ui-select-match>
-                                        <ui-select-choices repeat="x in groups | filter: $select.search" >
+                                        <ui-select-choices repeat="x in groups | filter: $select.search">
                                             <span ng-bind-html="x | highlight: $select.search"></span>
                                         </ui-select-choices>
                                     </ui-select>
@@ -59,7 +59,16 @@
                     <label class="form-label">{{'customer.blades.contact-detail.labels.organizations' | translate}}</label>
                     <ui-select multiple ng-model="blade.currentEntity.organizations">
                         <ui-select-match placeholder="{{'customer.blades.contact-detail.placeholders.organizations' | translate}}">{{$item.name}}</ui-select-match>
-                        <ui-select-choices repeat="x.id as x in organizations" refresh="fetchOrganizations($select)" when-scrolled="fetchNextOrganizations($select)">
+                        <ui-select-choices repeat="x.id as x in customerOrganizations" refresh="fetchCustomerOrganizations($select)" when-scrolled="fetchNextCustomerOrganizations($select)">
+                            <span ng-bind-html="x.name | highlight: $select.search"></span>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">{{'customer.blades.contact-detail.labels.associated-organizations' | translate}}</label>
+                    <ui-select multiple ng-model="blade.currentEntity.associatedOrganizations">
+                        <ui-select-match placeholder="{{'customer.blades.contact-detail.placeholders.associated-organizations' | translate}}">{{$item.name}}</ui-select-match>
+                        <ui-select-choices repeat="x.id as x in associatedOrganizations" refresh="fetchAssociatedOrganizations($select)" when-scrolled="fetchNextAssociatedOrganizations($select)">
                             <span ng-bind-html="x.name | highlight: $select.search"></span>
                         </ui-select-choices>
                     </ui-select>

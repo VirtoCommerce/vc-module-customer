@@ -1,4 +1,4 @@
-﻿angular.module('virtoCommerce.customerModule')
+angular.module('virtoCommerce.customerModule')
 .controller('virtoCommerce.customerModule.customerDetailController', ['$scope', 'virtoCommerce.customerModule.members', 'platformWebApp.common.timeZones', 'platformWebApp.settings', 'platformWebApp.bladeNavigationService', function ($scope, members, timeZones, settings, bladeNavigationService) {
     var blade = $scope.blade;
 
@@ -43,5 +43,27 @@
         bladeNavigationService.showBlade(newBlade, blade);
     };
 
+    $scope.fetchCustomerOrganizations = function($select) {
+        $scope.fetchOrganizations($select).then(function() {
+            $scope.customerOrganizations = angular.copy($scope.organizations);
+        });
+    }
 
+    $scope.fetchAssociatedOrganizations = function ($select) {
+        $scope.fetchOrganizations($select).then(function () {
+            $scope.associatedOrganizations = angular.copy($scope.organizations);
+        });
+    }
+
+    $scope.fetchNextCustomerOrganizations = function ($select) {
+        $scope.fetchNextOrganizations($select).then(function () {
+            $scope.customerOrganizations = angular.copy($scope.organizations);
+        });
+    }
+
+    $scope.fetchNextAssociatedOrganizations = function ($select) {
+        $scope.fetchNextOrganizations($select).then(function () {
+            $scope.associatedOrganizations = angular.copy($scope.organizations);
+        });
+    }
 }]);

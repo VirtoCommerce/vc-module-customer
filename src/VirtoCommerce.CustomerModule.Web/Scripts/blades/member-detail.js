@@ -1,5 +1,5 @@
-﻿angular.module('virtoCommerce.customerModule')
-.controller('virtoCommerce.customerModule.memberDetailController', ['$scope', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.members', 'platformWebApp.dynamicProperties.api', 'virtoCommerce.customerModule.organizations', function ($scope, bladeNavigationService, members, dynamicPropertiesApi, organizationsResource) {
+angular.module('virtoCommerce.customerModule')
+.controller('virtoCommerce.customerModule.memberDetailController', ['$scope', '$q', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.members', 'platformWebApp.dynamicProperties.api', 'virtoCommerce.customerModule.organizations', function ($scope, $q, bladeNavigationService, members, dynamicPropertiesApi, organizationsResource) {
     var blade = $scope.blade;
     blade.updatePermission = 'customer:update';
     blade.currentEntityId = blade.currentEntity.id;
@@ -110,12 +110,11 @@
     $scope.fetchOrganizations = function ($select) {
         $select.page = 0;
         $scope.organizations = [];
-        loadCustomerOrganizations();
-        $scope.fetchNextOrganizations($select);
+        return $q.all([loadCustomerOrganizations(), $scope.fetchNextOrganizations($select)]);
     }
 
     $scope.fetchNextOrganizations = function ($select) {
-        members.search(
+        return members.search(
             {
                 memberType: 'Organization',
                 SearchPhrase: $select.search,
@@ -126,16 +125,17 @@
             function (data) {
                 joinOrganizations(data.results);
                 $select.page++;
-            });
+            }).$promise;
     };
 
     function loadCustomerOrganizations() {
         if (blade.currentEntity.organizations && blade.currentEntity.organizations.length > 0) {
-            organizationsResource.getByIds({ ids: blade.currentEntity.organizations }, function (data) {
+            return organizationsResource.getByIds({ ids: blade.currentEntity.organizations }, function (data) {
                     joinOrganizations(data);
                 }
-            );
+            ).$promise;
         };
+        return $q.resolve();
     };
 
     function joinOrganizations(organizations) {

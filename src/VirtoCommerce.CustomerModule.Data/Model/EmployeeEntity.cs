@@ -55,7 +55,12 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 employee.EmployeeType = Type;
                 employee.TimeZone = TimeZone;
                 employee.PhotoUrl = PhotoUrl;
-                employee.Organizations = MemberRelations.Select(x => x.Ancestor).OfType<OrganizationEntity>().Select(x => x.Id).ToList();
+                employee.Organizations = MemberRelations
+                    .Where(x => x.RelationType == RelationType.Membership.ToString())
+                    .Select(x => x.Ancestor)
+                    .OfType<OrganizationEntity>()
+                    .Select(x => x.Id)
+                    .ToList();
             }
             return member;
         }
@@ -86,6 +91,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                             AncestorId = organization,
                             AncestorSequence = 1,
                             DescendantId = Id,
+                            RelationType = RelationType.Membership.ToString()
                         };
                         MemberRelations.Add(memberRelation);
                     }
