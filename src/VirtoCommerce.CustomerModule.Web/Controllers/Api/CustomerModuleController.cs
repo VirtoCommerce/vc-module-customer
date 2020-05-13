@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
 using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Model.Search;
@@ -16,7 +15,7 @@ using VirtoCommerce.Platform.Core.Common;
 namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
 {
     [Route("api")]
-
+    [Authorize]
     public class CustomerModuleController : Controller
     {
         private readonly IAuthorizationService _authorizationService;
@@ -104,7 +103,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         {
             //pass member types name for better performance
             var retVal = await _memberService.GetByIdsAsync(ids, responseGroup, memberTypes);
-            if (!(await AuthorizeAsync(retVal, ModuleConstants.Security.Permissions.Read)).Succeeded)
+            if (!AuthorizeMemeberList(ref retVal, ModuleConstants.Security.Permissions.Read))
             {
                 return Unauthorized();
             }
@@ -147,7 +146,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Member[]>> BulkCreateMembers([FromBody] Member[] members)
         {
-            if (!(await AuthorizeAsync(members, ModuleConstants.Security.Permissions.Create)).Succeeded)
+            if (!AuthorizeMemeberList(ref members, ModuleConstants.Security.Permissions.Create))
             {
                 return Unauthorized();
             }
@@ -186,7 +185,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> BulkUpdateMembers([FromBody] Member[] members)
         {
-            if (!(await AuthorizeAsync(members, ModuleConstants.Security.Permissions.Update)).Succeeded)
+            if (!AuthorizeMemeberList(ref members, ModuleConstants.Security.Permissions.Update))
             {
                 return Unauthorized();
             }
@@ -528,7 +527,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
 
             criteria.MemberType = typeof(Contact).Name;
             criteria.MemberTypes = new[] { criteria.MemberType };
-            
+
             if (!(await AuthorizeAsync(criteria, ModuleConstants.Security.Permissions.Read)).Succeeded)
             {
                 return Unauthorized();
@@ -688,6 +687,30 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         private async Task<AuthorizationResult> AuthorizeAsync(object resource, string permission)
         {
             return await _authorizationService.AuthorizeAsync(User, resource, new CustomerAuthorizationRequirement(permission));
+        }
+
+        /// <summary>
+        /// Filter members to which user has the access
+        /// </summary>
+        /// <param name="members"></param>
+        /// <param name="permission"></param>
+        /// <returns>True, if authorization was successfull.</returns>
+        private bool AuthorizeMemeberList(ref Member[] members, string permission)
+        {
+            var result = members.Length == 0;
+            var resultingList = new List<Member>();
+
+            foreach (var member in members)
+            {
+                if (AuthorizeAsync(member, permission).GetAwaiter().GetResult().Succeeded)
+                {
+                    result = true;
+                    resultingList.Add(member);
+                }
+            }
+            members = resultingList.ToArray();
+
+            return result;
         }
     }
 }
