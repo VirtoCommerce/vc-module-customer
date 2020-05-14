@@ -132,8 +132,7 @@ angular.module('virtoCommerce.customerModule')
         function loadCustomerOrganizations() {
             if (blade.currentEntity.organizations && blade.currentEntity.organizations.length > 0) {
                 organizationsResource
-                    .getByIds({},
-                        { ids: blade.currentEntity.organizations },
+                    .getByIds({}, blade.currentEntity.organizations,
                         function (data) { joinOrganizations(data); }
                     );
             };
