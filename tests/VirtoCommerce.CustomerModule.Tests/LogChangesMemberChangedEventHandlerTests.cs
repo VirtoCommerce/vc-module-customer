@@ -1,17 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Moq;
-using VirtoCommerce.CustomerModule.Core.Events;
-using VirtoCommerce.CustomerModule.Core.Model;
-using VirtoCommerce.CustomerModule.Data.Handlers;
-using VirtoCommerce.Platform.Core.ChangeLog;
-using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Platform.Core.Events;
-using Xunit;
-using Hangfire;
-
-namespace VirtoCommerce.CustomerModule.Test
+namespace VirtoCommerce.CustomerModule.Tests
 {
     //[Trait("Category", "CI")]
     public class LogChangesMemberChangedEventHandlerTests
