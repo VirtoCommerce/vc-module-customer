@@ -344,7 +344,9 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             {
                 return Unauthorized();
             }
-            return await BulkUpdateOrganizations(organizations);
+
+            await _memberService.SaveChangesAsync(organizations);
+            return NoContent(); // TODO: write here return Ok(organizations) when updating storefront AutoRest proxies to VC v3            
         }
 
         /// <summary>
@@ -676,12 +678,8 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                     organizationsIds = employee.Organizations?.ToList() ?? organizationsIds;
                 }
             }
-            var organizations = await GetOrganizationsByIds(organizationsIds.ToArray());
-            if (!(await AuthorizeAsync(organizations, ModuleConstants.Security.Permissions.Read)).Succeeded)
-            {
-                return Unauthorized();
-            }
-            return organizations;
+
+            return await GetOrganizationsByIds(organizationsIds.ToArray());
         }
         #endregion
 
