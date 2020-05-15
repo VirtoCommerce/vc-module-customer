@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -74,12 +73,10 @@ namespace VirtoCommerce.CustomerModule.Web.Authorization
                     criteria.ObjectIds = currentContact.AssociatedOrganizations;
                     context.Succeed(requirement);
                     break;
-                case List<Member> members:
+                case Member[] members:
                     {
-                        members.RemoveAll(x => !(((x is Organization org) && IsOrganizationInAssociatedOrganizations(currentContact, org))
-                            || ((x is Contact contact) && IsContactHasAssociatedOrganization(currentContact, contact))));
-
-                        if (members.Any())
+                        if (members.All(x => (((x is Organization org) && IsOrganizationInAssociatedOrganizations(currentContact, org))
+                            || ((x is Contact contact) && IsContactHasAssociatedOrganization(currentContact, contact)))))
                         {
                             context.Succeed(requirement);
                         }
