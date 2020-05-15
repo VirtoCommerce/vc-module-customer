@@ -103,15 +103,15 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public async Task<ActionResult<Member[]>> GetMembersByIds([FromQuery] string[] ids, [FromQuery]  string responseGroup = null, [FromQuery]  string[] memberTypes = null)
         {
             //pass member types name for better performance
-            var memberList = (await _memberService.GetByIdsAsync(ids, responseGroup, memberTypes)).ToList();
-            if (!(await AuthorizeAsync(memberList, ModuleConstants.Security.Permissions.Read)).Succeeded)
+            var retVal = await _memberService.GetByIdsAsync(ids, responseGroup, memberTypes);
+            if (!(await AuthorizeAsync(retVal.ToList(), ModuleConstants.Security.Permissions.Read)).Succeeded)
             {
                 return Unauthorized();
             }
-            if (memberList != null)
+            if (retVal != null)
             {
                 // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
-                return Ok(memberList.Cast<dynamic>().ToArray());
+                return Ok(retVal.Cast<dynamic>().ToArray());
             }
             return Ok();
         }
@@ -147,20 +147,15 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Member[]>> BulkCreateMembers([FromBody] Member[] members)
         {
-            var memberList = members.ToList();
-
-            if (!(await AuthorizeAsync(memberList, ModuleConstants.Security.Permissions.Create)).Succeeded)
+            if (!(await AuthorizeAsync(members.ToList(), ModuleConstants.Security.Permissions.Create)).Succeeded)
             {
                 return Unauthorized();
             }
-
-            var membersToSave = memberList.ToArray();
-
-            await _memberService.SaveChangesAsync(membersToSave);
-            var result = await _memberService.GetByIdsAsync(membersToSave.Select(m => m.Id).ToArray(), null, membersToSave.Select(m => m.MemberType).Distinct().ToArray());
+            await _memberService.SaveChangesAsync(members);
+            var retVal = await _memberService.GetByIdsAsync(members.Select(m => m.Id).ToArray(), null, members.Select(m => m.MemberType).Distinct().ToArray());
 
             // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
-            return Ok((dynamic)result);
+            return Ok((dynamic)retVal);
         }
 
         /// <summary>
@@ -191,17 +186,11 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> BulkUpdateMembers([FromBody] Member[] members)
         {
-            var memberList = members.ToList();
-
-            if (!(await AuthorizeAsync(memberList, ModuleConstants.Security.Permissions.Update)).Succeeded)
+            if (!(await AuthorizeAsync(members.ToList(), ModuleConstants.Security.Permissions.Update)).Succeeded)
             {
                 return Unauthorized();
             }
-
-            var membersToSave = memberList.ToArray();
-
-            await _memberService.SaveChangesAsync(membersToSave);
-
+            await _memberService.SaveChangesAsync(members);
             return NoContent();
         }
 
@@ -284,18 +273,12 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Contact[]>> BulkCreateContacts([FromBody] Contact[] contacts)
         {
-            var contactList = contacts.ToList();
-
-            if (!(await AuthorizeAsync(contactList, ModuleConstants.Security.Permissions.Create)).Succeeded)
+            if (!(await AuthorizeAsync(contacts, ModuleConstants.Security.Permissions.Create)).Succeeded)
             {
                 return Unauthorized();
             }
-
-            var contactsToSave = contactList.ToArray();
-
-            await _memberService.SaveChangesAsync(contactsToSave);
-
-            return Ok(contactsToSave);
+            await _memberService.SaveChangesAsync(contacts);
+            return Ok(contacts);
         }
 
         /// <summary>
@@ -324,17 +307,11 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult<Contact[]>> BulkUpdateContacts([FromBody] Contact[] contacts)
         {
-            var contactList = contacts.ToList();
-
-            if (!(await AuthorizeAsync(contactList, ModuleConstants.Security.Permissions.Update)).Succeeded)
+            if (!(await AuthorizeAsync(contacts, ModuleConstants.Security.Permissions.Update)).Succeeded)
             {
                 return Unauthorized();
             }
-
-            var contactsToSave = contactList.ToArray();
-
-            await _memberService.SaveChangesAsync(contactsToSave);
-
+            await _memberService.SaveChangesAsync(contacts);
             return NoContent(); // TODO: write here return Ok(contacts) when updating storefront AutoRest proxies to VC v3            
         }
 
@@ -363,18 +340,11 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult<Organization[]>> BulkCreateOrganizations([FromBody] Organization[] organizations)
         {
-            var organizationList = organizations.ToList();
-
-            if (!(await AuthorizeAsync(organizationList, ModuleConstants.Security.Permissions.Create)).Succeeded)
+            if (!(await AuthorizeAsync(organizations, ModuleConstants.Security.Permissions.Create)).Succeeded)
             {
                 return Unauthorized();
             }
-
-            var organizationsToUpdate = organizationList.ToArray();
-
-            await _memberService.SaveChangesAsync(organizationsToUpdate);
-
-            return NoContent(); // TODO: write here return Ok(organizations) when updating storefront AutoRest proxies to VC v3 
+            return await BulkUpdateOrganizations(organizations);
         }
 
         /// <summary>
@@ -403,17 +373,11 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult<Organization[]>> BulkUpdateOrganizations([FromBody] Organization[] organizations)
         {
-            var organizationList = organizations.ToList();
-
-            if (!(await AuthorizeAsync(organizationList, ModuleConstants.Security.Permissions.Update)).Succeeded)
+            if (!(await AuthorizeAsync(organizations, ModuleConstants.Security.Permissions.Update)).Succeeded)
             {
                 return Unauthorized();
             }
-
-            var organizationsToUpdate = organizationList.ToArray();
-
-            await _memberService.SaveChangesAsync(organizationsToUpdate);
-
+            await _memberService.SaveChangesAsync(organizations);
             return NoContent(); // TODO: write here return Ok(organizations) when updating storefront AutoRest proxies to VC v3            
         }
 
@@ -470,15 +434,11 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Organization[]>> GetOrganizationsByIds([FromQuery] string[] ids)
         {
-            var organizationList = (await _memberService.GetByIdsAsync(ids, null, new[] { typeof(Organization).Name })).ToList();
-
-            if (!(await AuthorizeAsync(organizationList, ModuleConstants.Security.Permissions.Read)).Succeeded)
+            var result = await _memberService.GetByIdsAsync(ids, null, new[] { typeof(Organization).Name });
+            if (!(await AuthorizeAsync(result, ModuleConstants.Security.Permissions.Read)).Succeeded)
             {
                 return Unauthorized();
             }
-
-            var result = organizationList.ToArray();
-
             return Ok(result);
         }
 
@@ -543,15 +503,11 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Contact[]>> GetContactsByIds([FromQuery]string[] ids)
         {
-            var contactList = (await _memberService.GetByIdsAsync(ids, null, new[] { typeof(Contact).Name })).ToList();
-
-            if (!(await AuthorizeAsync(contactList, ModuleConstants.Security.Permissions.Read)).Succeeded)
+            var result = await _memberService.GetByIdsAsync(ids, null, new[] { typeof(Contact).Name });
+            if (!(await AuthorizeAsync(result, ModuleConstants.Security.Permissions.Read)).Succeeded)
             {
                 return Unauthorized();
             }
-
-            var result = contactList.ToArray();
-
             return Ok(result);
         }
 
@@ -720,8 +676,12 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                     organizationsIds = employee.Organizations?.ToList() ?? organizationsIds;
                 }
             }
-
-            return await GetOrganizationsByIds(organizationsIds.ToArray());
+            var organizations = await GetOrganizationsByIds(organizationsIds.ToArray());
+            if (!(await AuthorizeAsync(organizations, ModuleConstants.Security.Permissions.Read)).Succeeded)
+            {
+                return Unauthorized();
+            }
+            return organizations;
         }
         #endregion
 
