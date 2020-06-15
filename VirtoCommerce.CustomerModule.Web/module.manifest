@@ -18,7 +18,7 @@
         <owner>Virto Commerce</owner>
     </owners>
     <projectUrl>https://virtocommerce.com/apps/extensions/virto-customer-module</projectUrl>
-    <iconUrl>https://raw.githubusercontent.com/VirtoCommerce/vc-module-customer/master/VirtoCommerce.CustomerModule.Web/Content/logo.png</iconUrl>
+    <iconUrl>Modules/$(VirtoCommerce.Customer)/Content/logo.png</iconUrl>
     <releaseNotes>First version.</releaseNotes>
     <copyright>Copyright © 2011-2019 Virto Commerce. All rights reserved</copyright>
     <tags>customer</tags>
