@@ -106,7 +106,9 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                             if (dataTargetMember != null)
                             {
                                 changeTracker.Attach(dataTargetMember);
-                                changedEntries.Add(new GenericChangedEntry<Member>(member, dataTargetMember.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(member.MemberType)), EntryState.Modified));
+                                var oldEntry = dataTargetMember.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(member.MemberType));
+                                DynamicPropertyService.LoadDynamicPropertyValues(oldEntry);
+                                changedEntries.Add(new GenericChangedEntry<Member>(member, oldEntry, EntryState.Modified));
                                 dataSourceMember.Patch(dataTargetMember);
                             }
                             else
