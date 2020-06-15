@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <module>
   <id>VirtoCommerce.Customer</id>
   <version>3.1.0</version>
@@ -12,9 +12,8 @@
   <title>Customer management module</title>
   <description>Managing customers contacts and organizations</description>
   <authors>
-    <author>Virto Commerce</author>
     <author>Artem Dudarev</author>
-    <author>Egidijus MaЕѕeika</author>
+    <author>Egidijus Mažeika</author>
   </authors>
   <owners>
     <owner>Virto Commerce</owner>
@@ -23,7 +22,7 @@
     <group>commerce</group>
   </groups>
   <projectUrl>https://virtocommerce.com/apps/extensions/virto-customer-module</projectUrl>
-  <iconUrl>https://raw.githubusercontent.com/VirtoCommerce/vc-module-customer/master/VirtoCommerce.CustomerModule.Web/Content/logo.png</iconUrl>
+  <iconUrl>Modules/$(VirtoCommerce.Customer)/Content/logo.png</iconUrl>
   <releaseNotes>First version.</releaseNotes>
   <copyright>Copyright В© 2011-2020 Virto Commerce. All rights reserved</copyright>
   <tags>customer</tags>
