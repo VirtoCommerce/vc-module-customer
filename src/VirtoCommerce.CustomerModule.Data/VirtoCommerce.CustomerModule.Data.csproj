@@ -18,8 +18,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="VirtoCommerce.CoreModule.Core" Version="3.1.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.0.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Security" Version="3.0.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.5.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Security" Version="3.5.0" />
     <PackageReference Include="VirtoCommerce.SearchModule.Core" Version="3.1.0" />
     <PackageReference Include="VirtoCommerce.SearchModule.Data" Version="3.1.0" />
   </ItemGroup>
