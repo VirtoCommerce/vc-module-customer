@@ -104,7 +104,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         {
             //pass member types name for better performance
             var retVal = await _memberService.GetByIdsAsync(ids, responseGroup, memberTypes);
-            if (!(await AuthorizeAsync(retVal.ToList(), ModuleConstants.Security.Permissions.Read)).Succeeded)
+            if (!(await AuthorizeAsync(retVal, ModuleConstants.Security.Permissions.Read)).Succeeded)
             {
                 return Unauthorized();
             }
@@ -147,7 +147,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Member[]>> BulkCreateMembers([FromBody] Member[] members)
         {
-            if (!(await AuthorizeAsync(members.ToList(), ModuleConstants.Security.Permissions.Create)).Succeeded)
+            if (!(await AuthorizeAsync(members, ModuleConstants.Security.Permissions.Create)).Succeeded)
             {
                 return Unauthorized();
             }
@@ -186,7 +186,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> BulkUpdateMembers([FromBody] Member[] members)
         {
-            if (!(await AuthorizeAsync(members.ToList(), ModuleConstants.Security.Permissions.Update)).Succeeded)
+            if (!(await AuthorizeAsync(members, ModuleConstants.Security.Permissions.Update)).Succeeded)
             {
                 return Unauthorized();
             }
@@ -344,7 +344,9 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             {
                 return Unauthorized();
             }
-            return await BulkUpdateOrganizations(organizations);
+
+            await _memberService.SaveChangesAsync(organizations);
+            return NoContent(); // TODO: write here return Ok(organizations) when updating storefront AutoRest proxies to VC v3            
         }
 
         /// <summary>
@@ -676,12 +678,8 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                     organizationsIds = employee.Organizations?.ToList() ?? organizationsIds;
                 }
             }
-            var organizations = await GetOrganizationsByIds(organizationsIds.ToArray());
-            if (!(await AuthorizeAsync(organizations, ModuleConstants.Security.Permissions.Read)).Succeeded)
-            {
-                return Unauthorized();
-            }
-            return organizations;
+
+            return await GetOrganizationsByIds(organizationsIds.ToArray());
         }
         #endregion
 
