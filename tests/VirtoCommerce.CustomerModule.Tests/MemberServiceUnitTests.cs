@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Moq;
@@ -41,7 +39,8 @@ namespace VirtoCommerce.CustomerModule.Tests
             _repositoryFactory = () => _repositoryMock.Object;
             _eventPublisherMock = new Mock<IEventPublisher>();
             _platformMemoryCacheMock = new Mock<IPlatformMemoryCache>();
-            
+            _platformMemoryCacheMock.Setup(x => x.GetDefaultCacheEntryOptions()).Returns(() => new MemoryCacheEntryOptions());
+
             _userSearchServiceMock = new Mock<IUserSearchService>();
             _mockUnitOfWork = new Mock<IUnitOfWork>();
             _repositoryMock.Setup(ss => ss.UnitOfWork).Returns(_mockUnitOfWork.Object);
@@ -85,7 +84,7 @@ namespace VirtoCommerce.CustomerModule.Tests
 
             var cacheKeyOrg = CacheKey.With(service.GetType(), nameof(service.GetByIdsAsync), string.Join("-", new[] { organizationEntity.Id }), null, null);
             _platformMemoryCacheMock.Setup(pmc => pmc.CreateEntry(cacheKeyOrg)).Returns(_cacheEntryMock.Object);
-            
+
             _repositoryMock.Setup(x => x.RemoveMembersByIdsAsync(new[] { organizationEntity.Id }, null))
                 .Callback(() =>
                 {
@@ -99,14 +98,14 @@ namespace VirtoCommerce.CustomerModule.Tests
 
             //Act
             var contact = (Contact)await service.GetByIdAsync(contactEntity.Id);
-            await service.DeleteAsync(new []{ organizationEntity.Id });
+            await service.DeleteAsync(new[] { organizationEntity.Id });
             var afterDeleteContact = (Contact)await service.GetByIdAsync(contactEntity.Id);
 
             //Assert
             Assert.Contains(organizationEntity.Id, contact.Organizations);
             Assert.DoesNotContain(organizationEntity.Id, afterDeleteContact.Organizations);
         }
-        
+
         [Fact]
         public async Task GetByIdsAsync_GetThenSaveContact_ReturnCachedContact()
         {
@@ -134,7 +133,7 @@ namespace VirtoCommerce.CustomerModule.Tests
             //Assert
             Assert.NotEqual(nullContact, contact);
         }
-        
+
 
         private MemberService GetMemberService()
         {
