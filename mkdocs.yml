@@ -38,8 +38,8 @@ site_author: Virto Commerce
 site_url: https://virtocommerce.com/docs/latest
 
 # Repository
-repo_name: VirtoCommerce/vc-module-catalog
-repo_url: https://github.com/VirtoCommerce/vc-module-catalog
+repo_name: VirtoCommerce/vc-module-customer
+repo_url: https://github.com/VirtoCommerce/vc-module-customer
 
 # Copyright
 copyright: Copyright &copy; 2020. All rights reserved.
