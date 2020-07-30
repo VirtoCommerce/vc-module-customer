@@ -4,7 +4,7 @@ using System.Linq;
 using VirtoCommerce.Platform.Core.Common;
 using Xunit;
 
-namespace VirtoCommerce.CustomerModule.Test
+namespace VirtoCommerce.CustomerModule.Tests
 {
     public class TopologicalSortTests
     {
