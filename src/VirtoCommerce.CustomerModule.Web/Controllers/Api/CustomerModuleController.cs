@@ -36,7 +36,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <remarks>Get array of all organizations.</remarks>
         [HttpGet]
         [Route("members/organizations")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Organization[]>> ListOrganizations()
         {
             var searchCriteria = new MembersSearchCriteria
@@ -61,7 +60,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
         [HttpPost]
         [Route("members/search")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<MemberSearchResult>> SearchMember([FromBody] MembersSearchCriteria criteria)
         {
             if (!(await AuthorizeAsync(criteria, ModuleConstants.Security.Permissions.Access)).Succeeded)
@@ -80,7 +78,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="memberType">member type</param>
         [HttpGet]
         [Route("members/{id}")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Member>> GetMemberById(string id, [FromQuery] string responseGroup = null, [FromQuery]  string memberType = null)
         {
             //pass member type name for better perfomance
@@ -99,7 +96,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
 
         [HttpGet]
         [Route("members")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Member[]>> GetMembersByIds([FromQuery] string[] ids, [FromQuery]  string responseGroup = null, [FromQuery]  string[] memberTypes = null)
         {
             //pass member types name for better performance
@@ -123,7 +119,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <returns></returns>
         [HttpPost]
         [Route("members")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Member>> CreateMember([FromBody] Member member)
         {
             if (!(await AuthorizeAsync(member, ModuleConstants.Security.Permissions.Create)).Succeeded)
@@ -144,7 +139,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <returns></returns>
         [HttpPost]
         [Route("members/bulk")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Member[]>> BulkCreateMembers([FromBody] Member[] members)
         {
             if (!(await AuthorizeAsync(members, ModuleConstants.Security.Permissions.Create)).Succeeded)
@@ -164,7 +158,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="member">concrete instance of abstract member type will be created by using PolymorphicMemberJsonConverter</param>
         [HttpPut]
         [Route("members")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> UpdateMember([FromBody] Member member)
         {
@@ -182,7 +175,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="members">Array of concrete instances of abstract member type will be created by using PolymorphicMemberJsonConverter</param>
         [HttpPut]
         [Route("members/bulk")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> BulkUpdateMembers([FromBody] Member[] members)
         {
@@ -254,7 +246,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// </summary>
         [HttpPost]
         [Route("contacts")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Contact>> CreateContact([FromBody] Contact contact)
         {
             if (!(await AuthorizeAsync(contact, ModuleConstants.Security.Permissions.Create)).Succeeded)
@@ -270,7 +261,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// </summary>
         [HttpPost]
         [Route("contacts/bulk")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Contact[]>> BulkCreateContacts([FromBody] Contact[] contacts)
         {
             if (!(await AuthorizeAsync(contacts, ModuleConstants.Security.Permissions.Create)).Succeeded)
@@ -286,7 +276,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// </summary>
         [HttpPut]
         [Route("contacts")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult<Contact>> UpdateContact([FromBody] Contact contact)
         {
@@ -303,7 +292,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// </summary>
         [HttpPut]
         [Route("contacts/bulk")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult<Contact[]>> BulkUpdateContacts([FromBody] Contact[] contacts)
         {
@@ -320,7 +308,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// </summary>
         [HttpPost]
         [Route("organizations")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Organization>> CreateOrganization([FromBody] Organization organization)
         {
             if (!(await AuthorizeAsync(organization, ModuleConstants.Security.Permissions.Create)).Succeeded)
@@ -336,7 +323,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// </summary>
         [HttpPost]
         [Route("organizations/bulk")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult<Organization[]>> BulkCreateOrganizations([FromBody] Organization[] organizations)
         {
@@ -354,7 +340,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// </summary>
         [HttpPut]
         [Route("organizations")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult<Organization>> UpdateOrganization([FromBody]Organization organization)
         {
@@ -371,7 +356,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// </summary>
         [HttpPut]
         [Route("organizations/bulk")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult<Organization[]>> BulkUpdateOrganizations([FromBody] Organization[] organizations)
         {
@@ -416,7 +400,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="id">Organization id</param>
         [HttpGet]
         [Route("organizations/{id}")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Organization>> GetOrganizationById(string id)
         {
             var result = await _memberService.GetByIdAsync(id, null, typeof(Organization).Name);
@@ -433,7 +416,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="ids">Organization ids</param>
         [HttpGet]
         [Route("organizations")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Organization[]>> GetOrganizationsByIds([FromQuery] string[] ids)
         {
             var result = await _memberService.GetByIdsAsync(ids, null, new[] { typeof(Organization).Name });
@@ -451,7 +433,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
         [HttpPost]
         [Route("organizations/search")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<OrganizationSearchResult>> SearchOrganizations([FromBody] MembersSearchCriteria criteria)
         {
             if (criteria == null)
@@ -484,7 +465,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="id">Contact ID</param>
         [HttpGet]
         [Route("contacts/{id}")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Contact>> GetContactById(string id)
         {
             var result = await _memberService.GetByIdAsync(id, null, typeof(Contact).Name);
@@ -502,7 +482,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="ids">contact IDs</param>
         [HttpGet]
         [Route("contacts")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Contact[]>> GetContactsByIds([FromQuery]string[] ids)
         {
             var result = await _memberService.GetByIdsAsync(ids, null, new[] { typeof(Contact).Name });
@@ -520,7 +499,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
         [HttpPost]
         [Route("contacts/search")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<ContactSearchResult>> SearchContacts(MembersSearchCriteria criteria)
         {
             if (criteria == null)
@@ -601,7 +579,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
 
         [HttpPut]
         [Route("addresses")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> UpdateAddesses([FromQuery] string memberId, [FromBody] IEnumerable<Address> addresses)
         {
@@ -661,7 +638,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="id">member Id</param>
         [HttpGet]
         [Route("members/{id}/organizations")]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<Organization[]>> GetMemberOrganizations([FromQuery] string id)
         {
             var members = await _memberService.GetByIdsAsync(new[] { id }, null, new[] { typeof(Employee).Name, typeof(Contact).Name });
