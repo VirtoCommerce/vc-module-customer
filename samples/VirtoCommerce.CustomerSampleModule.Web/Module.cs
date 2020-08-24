@@ -31,6 +31,7 @@ namespace VirtoCommerce.CustomerSampleModule.Web
             AbstractTypeFactory<MemberEntity>.RegisterType<SupplierEntity>();
             AbstractTypeFactory<Member>.RegisterType<Supplier>().MapToType<SupplierEntity>();
 
+            AbstractTypeFactory<Contact>.OverrideType<Contact, Contact2>().MapToType<Contact2Entity>();
             AbstractTypeFactory<Member>.OverrideType<Contact, Contact2>().MapToType<Contact2Entity>();
             AbstractTypeFactory<MemberEntity>.OverrideType<ContactEntity, Contact2Entity>();
             AbstractTypeFactory<MembersSearchCriteria>.RegisterType<Contact2SearchCriteria>();

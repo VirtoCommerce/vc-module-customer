@@ -6,6 +6,11 @@ namespace VirtoCommerce.CustomerModule.Core.Model
 {
     public class Employee : Member, IHasSecurityAccounts
     {
+        public Employee()
+        {
+            //Retain Employee as discriminator  in case of  derived types must have the same MemberType 
+            MemberType = nameof(Employee);
+        }
         public string Salutation { get; set; }
         public string FullName { get; set; }
         public string FirstName { get; set; }

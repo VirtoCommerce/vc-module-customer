@@ -7,6 +7,11 @@ namespace VirtoCommerce.CustomerModule.Core.Model
 {
     public class Contact : Member, IHasSecurityAccounts
     {
+        public Contact()
+        {
+            //Retain Contact as discriminator  in case of  derived types must have the same MemberType 
+            MemberType = nameof(Contact);
+        }
         public string Salutation { get; set; }
         public string FullName { get; set; }
         public string FirstName { get; set; }

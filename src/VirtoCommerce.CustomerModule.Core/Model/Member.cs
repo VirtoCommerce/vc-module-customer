@@ -16,7 +16,7 @@ namespace VirtoCommerce.CustomerModule.Core.Model
         }
 
         public string Name { get; set; }
-        public string MemberType { get; set; }
+        public virtual string MemberType { get; set; }
         public string OuterId { get; set; }
 
         public IList<Address> Addresses { get; set; }

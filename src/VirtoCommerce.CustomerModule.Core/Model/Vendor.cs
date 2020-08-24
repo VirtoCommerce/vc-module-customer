@@ -4,6 +4,11 @@ namespace VirtoCommerce.CustomerModule.Core.Model
 {
     public class Vendor : Member, ISeoSupport
     {
+        public Vendor()
+        {
+            //Retain Vendor as discriminator  in case of  derived types must have the same MemberType 
+            MemberType = nameof(Vendor);
+        }
         /// <summary>
         /// Vendor description
         /// </summary>
