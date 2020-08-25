@@ -27,6 +27,8 @@ namespace VirtoCommerce.CustomerModule.Core.Model
         public string TaxPayerId { get; set; }
         public string PreferredDelivery { get; set; }
         public string PreferredCommunication { get; set; }
+        public string DefaultShippingAddressId { get; set; }
+        public string DefaultBillingAddressId { get; set; }
         public string PhotoUrl { get; set; }
 
         public override string ObjectType => typeof(Contact).FullName;
