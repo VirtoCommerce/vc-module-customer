@@ -47,6 +47,12 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(64)]
         public string PreferredCommunication { get; set; }
 
+        [StringLength(128)]
+        public string DefaultShippingAddressId { get; set; }
+
+        [StringLength(128)]
+        public string DefaultBillingAddressId { get; set; }
+
         [StringLength(2083)]
         public string PhotoUrl { get; set; }
 
@@ -72,6 +78,8 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 contact.TaxPayerId = TaxpayerId;
                 contact.PreferredCommunication = PreferredCommunication;
                 contact.PreferredDelivery = PreferredDelivery;
+                contact.DefaultShippingAddressId = DefaultShippingAddressId;
+                contact.DefaultBillingAddressId = DefaultBillingAddressId;
                 contact.PhotoUrl = PhotoUrl;
                 contact.Organizations = MemberRelations
                     .Where(x => x.RelationType == RelationType.Membership.ToString())
@@ -105,6 +113,8 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 TaxpayerId = contact.TaxPayerId;
                 PreferredCommunication = contact.PreferredCommunication;
                 PreferredDelivery = contact.PreferredDelivery;
+                DefaultShippingAddressId = contact.DefaultShippingAddressId;
+                DefaultBillingAddressId = contact.DefaultBillingAddressId;
                 PhotoUrl = contact.PhotoUrl;
 
                 if (string.IsNullOrEmpty(Name))
