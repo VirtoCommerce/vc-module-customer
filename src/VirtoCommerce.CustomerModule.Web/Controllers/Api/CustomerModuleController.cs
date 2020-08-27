@@ -499,7 +499,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
         [HttpPost]
         [Route("contacts/search")]
-        public async Task<ActionResult<ContactSearchResult>> SearchContacts(MembersSearchCriteria criteria)
+        public async Task<ActionResult<ContactSearchResult>> SearchContacts([FromBody] MembersSearchCriteria criteria)
         {
             if (criteria == null)
             {
