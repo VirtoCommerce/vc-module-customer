@@ -17,7 +17,7 @@
   <iconUrl>Modules/$(VirtoCommerce.Customer)/Content/logo.png</iconUrl>
   <requireLicenseAcceptance>false</requireLicenseAcceptance>
   <releaseNotes>First version.</releaseNotes>
-  <copyright>Copyright В© 2011-2020 Virto Commerce. All rights reserved</copyright>
+  <copyright>Copyright © 2011-2020 Virto Commerce. All rights reserved</copyright>
   <tags>customer</tags>
   <assemblyFile>VirtoCommerce.CustomerModule.Web.dll</assemblyFile>
   <moduleType>VirtoCommerce.CustomerModule.Web.Module, VirtoCommerce.CustomerModule.Web</moduleType>
