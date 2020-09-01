@@ -180,6 +180,8 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 contact.TaxpayerId = TaxpayerId;
                 contact.PreferredCommunication = PreferredCommunication;
                 contact.PreferredDelivery = PreferredDelivery;
+                contact.DefaultShippingAddressId = DefaultShippingAddressId;
+                contact.DefaultBillingAddressId = DefaultBillingAddressId;
                 contact.PhotoUrl = PhotoUrl;
             }
 
