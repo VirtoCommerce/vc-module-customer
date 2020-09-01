@@ -161,6 +161,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         {
             target.Name = Name;
             target.MemberType = MemberType;
+            target.OuterId = OuterId;
 
             if (!Phones.IsNullCollection())
             {
