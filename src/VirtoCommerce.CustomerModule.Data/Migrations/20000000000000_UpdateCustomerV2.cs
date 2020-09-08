@@ -11,7 +11,7 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
                     BEGIN
 
 	                    BEGIN
-		                    INSERT INTO [EFMigrationsHistory] ([MigrationId],[ProductVersion]) VALUES ('20190510074541_InitialCustomer', '2.2.3-servicing-35854')
+		                    INSERT INTO [__EFMigrationsHistory] ([MigrationId],[ProductVersion]) VALUES ('20190510074541_InitialCustomer', '2.2.3-servicing-35854')
 	                    END
 	                    
 	                    BEGIN
