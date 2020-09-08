@@ -6,7 +6,7 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql("UPDATE [dbo].[MemberRelation] SET RelationType = 'Membership' WHERE RelationType IS NULL");
+            migrationBuilder.Sql("UPDATE [MemberRelation] SET RelationType = 'Membership' WHERE RelationType IS NULL");
             migrationBuilder.AlterColumn<string>(
                 name: "RelationType",
                 table: "MemberRelation",
@@ -30,7 +30,7 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
                 oldClrType: typeof(string),
                 oldMaxLength: 64,
                 oldDefaultValueSql: "'Membership'");
-            migrationBuilder.Sql("UPDATE [dbo].[MemberRelation] SET RelationType = NULL WHERE RelationType = 'Membership'");
+            migrationBuilder.Sql("UPDATE [MemberRelation] SET RelationType = NULL WHERE RelationType = 'Membership'");
         }
     }
 }

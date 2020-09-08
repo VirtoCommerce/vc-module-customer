@@ -11,7 +11,7 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
                     BEGIN
 
 	                    BEGIN
-		                    INSERT INTO [dbo].[__EFMigrationsHistory] ([MigrationId],[ProductVersion]) VALUES ('20190510074541_InitialCustomer', '2.2.3-servicing-35854')
+		                    INSERT INTO [EFMigrationsHistory] ([MigrationId],[ProductVersion]) VALUES ('20190510074541_InitialCustomer', '2.2.3-servicing-35854')
 	                    END
 	                    
 	                    BEGIN
@@ -75,7 +75,7 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
             migrationBuilder.Sql(@"IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '__MigrationHistory'))
                 IF (EXISTS (SELECT * FROM __MigrationHistory WHERE ContextKey = 'VirtoCommerce.CustomerModule.Data.Migrations.Configuration'))
                     BEGIN
-                        CREATE TABLE [dbo].[MemberSeoInfo](
+                        CREATE TABLE [MemberSeoInfo](
 	                        [Id] [nvarchar](128) NOT NULL,
 	                        [CreatedDate] [datetime2](7) NOT NULL,
 	                        [ModifiedDate] [datetime2](7) NULL,
@@ -97,9 +97,9 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
                         ) ON [PRIMARY]
                         
                         BEGIN
-                            ALTER TABLE [dbo].[MemberSeoInfo]  WITH CHECK ADD  CONSTRAINT [FK_MemberSeoInfo_Member_MemberId] FOREIGN KEY([MemberId])
-                                REFERENCES [dbo].[Member] ([Id]) ON DELETE CASCADE
-                            ALTER TABLE [dbo].[MemberSeoInfo] CHECK CONSTRAINT [FK_MemberSeoInfo_Member_MemberId]
+                            ALTER TABLE [MemberSeoInfo]  WITH CHECK ADD  CONSTRAINT [FK_MemberSeoInfo_Member_MemberId] FOREIGN KEY([MemberId])
+                                REFERENCES [Member] ([Id]) ON DELETE CASCADE
+                            ALTER TABLE [MemberSeoInfo] CHECK CONSTRAINT [FK_MemberSeoInfo_Member_MemberId]
                         END
                     END");
 
