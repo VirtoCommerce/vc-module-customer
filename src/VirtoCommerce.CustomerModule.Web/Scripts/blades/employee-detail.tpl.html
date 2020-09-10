@@ -4,7 +4,8 @@
         <div class="inner-block clearfix" ng-controller="virtoCommerce.customerModule.employeeDetailController">
             <form class="form" name="detailForm">
                 <fieldset>
-                    <div ng-if="!blade.isNew">
+                    <!-- hide "isActive" switch as there is no functionality under it yet-->
+                    <!--<div ng-if="!blade.isNew">
                         <label class="form-label">{{'customer.blades.employee-detail.labels.is-active' | translate}}</label>
                         <div class="form-input">
                             <label class="form-label __switch">
@@ -12,7 +13,7 @@
                                 <span class="switch"></span>
                             </label>
                         </div>
-                    </div>
+                    </div>-->
                     <div class="columns">
                         <div class="column">
                             <div class="form-group">
