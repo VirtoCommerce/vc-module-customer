@@ -34,8 +34,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search
                 {
                     SearchKeywords = categorySearchCriteria.Keyword,
                     SearchFields = new[] { IndexDocumentExtensions.SearchableFieldName },
-                    //TODO will check
-                    Filter = filters.FirstOrDefault(),
+                    Filter = filters.And(),
                     Sorting = GetSorting(categorySearchCriteria),
                     Skip = criteria.Skip,
                     Take = criteria.Take,
