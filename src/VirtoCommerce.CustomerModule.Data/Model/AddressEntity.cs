@@ -99,6 +99,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             address.Line2 = Line2;
             address.Key = Id;
             address.Phone = DaytimePhoneNumber;
+            address.Organization = Organization;
             address.AddressType = EnumUtility.SafeParseFlags(Type, AddressType.BillingAndShipping);
             return address;
         }
@@ -122,6 +123,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             Line2 = address.Line2;
             Id = address.Key;
             DaytimePhoneNumber = address.Phone;
+            Organization = address.Organization;
             Type = address.AddressType.ToString();
 
             return this;
