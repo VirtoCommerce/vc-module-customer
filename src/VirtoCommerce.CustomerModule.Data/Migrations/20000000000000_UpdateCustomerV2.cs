@@ -10,12 +10,12 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
                 IF (EXISTS (SELECT * FROM __MigrationHistory WHERE ContextKey = 'VirtoCommerce.CustomerModule.Data.Migrations.Configuration'))
                     BEGIN
 
-	                    BEGIN
-		                    INSERT INTO [__EFMigrationsHistory] ([MigrationId],[ProductVersion]) VALUES ('20190510074541_InitialCustomer', '2.2.3-servicing-35854')
-	                    END
-	                    
-	                    BEGIN
-		                    ALTER TABLE [Member] ADD [Discriminator] nvarchar(128) NOT NULL DEFAULT ('Member')
+                        BEGIN
+                            INSERT INTO [__EFMigrationsHistory] ([MigrationId],[ProductVersion]) VALUES ('20190510074541_InitialCustomer', '2.2.3-servicing-35854')
+                        END
+                        
+                        BEGIN
+                            ALTER TABLE [Member] ADD [Discriminator] nvarchar(128) NOT NULL DEFAULT ('Member')
                             ALTER TABLE [Member] ADD [FirstName] nvarchar(128) NULL
                             ALTER TABLE [Member] ADD [MiddleName] nvarchar(128) NULL
                             ALTER TABLE [Member] ADD [LastName] nvarchar(128) NULL
@@ -36,26 +36,30 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
                             ALTER TABLE [Member] ADD [SiteUrl] nvarchar(2048) NULL
                             ALTER TABLE [Member] ADD [LogoUrl] nvarchar(2048) NULL
                             ALTER TABLE [Member] ADD [GroupName] nvarchar(64) NULL
-	                    END
+                        END
 
-	                    BEGIN
-		                    EXEC (N'UPDATE Member SET Discriminator = CONCAT(MemberType, ''Entity'') , FirstName = c.FirstName,
+                        BEGIN
+                            EXEC (N'UPDATE Member SET Discriminator = CONCAT(MemberType, ''Entity'') , FirstName = c.FirstName,
                                     MiddleName = c.MiddleName, LastName = c.LastName, FullName = c.FullName, TimeZone = c.TimeZone,
-	                                DefaultLanguage = c.DefaultLanguage, BirthDate = c.BirthDate, TaxpayerId = c.TaxpayerId,
+                                    DefaultLanguage = c.DefaultLanguage, BirthDate = c.BirthDate, TaxpayerId = c.TaxpayerId,
                                     PreferredDelivery = c.PreferredDelivery, PreferredCommunication = c.PreferredCommunication, 
-	                                PhotoUrl = c.PhotoUrl, Salutation = c.Salutation
+                                    PhotoUrl = c.PhotoUrl, Salutation = c.Salutation
                                     FROM Member m INNER JOIN Contact c ON c.Id = m.Id')
-		                    EXEC (N'UPDATE Member SET Discriminator = CONCAT(MemberType, ''Entity'') , [Type] = o.OrgType,
+                            EXEC (N'UPDATE Member SET Discriminator = CONCAT(MemberType, ''Entity'') , [Type] = o.OrgType,
                                     [Description] = o.Description, BusinessCategory = o.BusinessCategory, OwnerId = o.OwnerId
                                     FROM Member m INNER JOIN Organization o ON o.Id = m.Id')
-		                    EXEC (N'UPDATE Member SET Discriminator = CONCAT(MemberType, ''Entity'') , [Description] = v.Description,
+                            EXEC (N'UPDATE Member SET Discriminator = CONCAT(MemberType, ''Entity'') , [Description] = v.Description,
                                     SiteUrl = v.SiteUrl, LogoUrl = v.LogoUrl, GroupName = v.GroupName
                                     FROM Member m INNER JOIN Vendor v ON v.Id = m.Id')
                             EXEC (N'UPDATE Member SET Discriminator = CONCAT(MemberType, ''Entity'') , [Type] = e.[Type], FirstName = e.FirstName,
                                     MiddleName = e.MiddleName, LastName = e.LastName, FullName = e.FullName, TimeZone = e.TimeZone,
-	                                    DefaultLanguage = e.DefaultLanguage, BirthDate = e.BirthDate, PhotoUrl = e.PhotoUrl, IsActive = e.IsActive
+                                        DefaultLanguage = e.DefaultLanguage, BirthDate = e.BirthDate, PhotoUrl = e.PhotoUrl, IsActive = e.IsActive
                                     FROM Member m INNER JOIN Employee e ON e.Id = m.Id')
-	                    END
+                        END
+
+                        BEGIN
+                            ALTER TABLE [Contact] DROP CONSTRAINT [FK_dbo.Contact_dbo.Member_Id]
+                        END
 
                         BEGIN
                             UPDATE [PlatformDynamicProperty] SET ObjectType = 'VirtoCommerce.CustomerModule.Core.Model.Contact' WHERE ObjectType = 'VirtoCommerce.Domain.Customer.Model.Contact'
@@ -76,23 +80,23 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
                 IF (EXISTS (SELECT * FROM __MigrationHistory WHERE ContextKey = 'VirtoCommerce.CustomerModule.Data.Migrations.Configuration'))
                     BEGIN
                         CREATE TABLE [MemberSeoInfo](
-	                        [Id] [nvarchar](128) NOT NULL,
-	                        [CreatedDate] [datetime2](7) NOT NULL,
-	                        [ModifiedDate] [datetime2](7) NULL,
-	                        [CreatedBy] [nvarchar](64) NULL,
-	                        [ModifiedBy] [nvarchar](64) NULL,
-	                        [Keyword] [nvarchar](255) NOT NULL,
-	                        [StoreId] [nvarchar](128) NULL,
-	                        [IsActive] [bit] NOT NULL,
-	                        [Language] [nvarchar](5) NULL,
-	                        [Title] [nvarchar](255) NULL,
-	                        [MetaDescription] [nvarchar](1024) NULL,
-	                        [MetaKeywords] [nvarchar](255) NULL,
-	                        [ImageAltDescription] [nvarchar](255) NULL,
-	                        [MemberId] [nvarchar](128) NULL,
+                            [Id] [nvarchar](128) NOT NULL,
+                            [CreatedDate] [datetime2](7) NOT NULL,
+                            [ModifiedDate] [datetime2](7) NULL,
+                            [CreatedBy] [nvarchar](64) NULL,
+                            [ModifiedBy] [nvarchar](64) NULL,
+                            [Keyword] [nvarchar](255) NOT NULL,
+                            [StoreId] [nvarchar](128) NULL,
+                            [IsActive] [bit] NOT NULL,
+                            [Language] [nvarchar](5) NULL,
+                            [Title] [nvarchar](255) NULL,
+                            [MetaDescription] [nvarchar](1024) NULL,
+                            [MetaKeywords] [nvarchar](255) NULL,
+                            [ImageAltDescription] [nvarchar](255) NULL,
+                            [MemberId] [nvarchar](128) NULL,
                          CONSTRAINT [PK_MemberSeoInfo] PRIMARY KEY CLUSTERED 
                         (
-	                        [Id] ASC
+                            [Id] ASC
                         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
                         ) ON [PRIMARY]
                         
@@ -108,7 +112,7 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
                     BEGIN
                         INSERT INTO [MemberSeoInfo] ([Id], [CreatedDate], [ModifiedDate], [CreatedBy], [ModifiedBy], [Keyword], [StoreId], [IsActive], [Language], [Title], [MetaDescription], [MetaKeywords], [ImageAltDescription], [MemberId])
                               SELECT [Id], [CreatedDate], [ModifiedDate], [CreatedBy], [ModifiedBy], [Keyword], [StoreId], [IsActive], [Language], [Title], [MetaDescription], [MetaKeywords], [ImageAltDescription], [ObjectId] as [MemberId]  FROM [SeoUrlKeyword] WHERE ObjectType = 'Vendor'
-				    END");
+                    END");
 
         }
 
