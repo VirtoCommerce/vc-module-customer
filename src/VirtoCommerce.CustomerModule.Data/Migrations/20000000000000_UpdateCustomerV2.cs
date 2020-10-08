@@ -59,6 +59,9 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
 
                         BEGIN
                             ALTER TABLE [Contact] DROP CONSTRAINT [FK_dbo.Contact_dbo.Member_Id]
+                            ALTER TABLE [Organization] DROP CONSTRAINT [FK_dbo.Organization_dbo.Member_Id]
+                            ALTER TABLE [Vendor] DROP CONSTRAINT [FK_dbo.Vendor_dbo.Member_Id]
+                            ALTER TABLE [Employee] DROP CONSTRAINT [FK_dbo.Employee_dbo.Member_Id]
                         END
 
                         BEGIN
