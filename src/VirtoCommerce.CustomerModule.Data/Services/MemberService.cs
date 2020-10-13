@@ -166,11 +166,10 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                 await _eventPublisher.Publish(new MemberChangingEvent(changedEntries));
                 await repository.UnitOfWork.CommitAsync();
                 pkMap.ResolvePrimaryKeys();
+                ClearCache(members);
 
                 await _eventPublisher.Publish(new MemberChangedEvent(changedEntries));
             }
-
-            ClearCache(members);
         }
 
         public virtual async Task DeleteAsync(string[] ids, string[] memberTypes = null)
@@ -185,10 +184,10 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
                     await repository.RemoveMembersByIdsAsync(members.Select(m => m.Id).ToArray());
                     await repository.UnitOfWork.CommitAsync();
+                    ClearCache(members);
+
                     await _eventPublisher.Publish(new MemberChangedEvent(changedEntries));
                 }
-
-                ClearCache(members);
             }
         }
 
