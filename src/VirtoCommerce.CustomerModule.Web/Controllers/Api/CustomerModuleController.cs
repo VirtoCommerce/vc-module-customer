@@ -389,6 +389,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpDelete]
         [Route("contacts")]
         [Authorize(ModuleConstants.Security.Permissions.Delete)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public Task<ActionResult> DeleteContacts([FromQuery] string[] ids)
         {
             return DeleteMembers(ids);
