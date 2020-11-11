@@ -3,7 +3,7 @@
   <id>VirtoCommerce.Customer</id>
   <version>3.14.0</version>
   <version-tag />
-  <platformVersion>3.5.0</platformVersion>
+  <platformVersion>3.30.0</platformVersion>
   <title>Customer management module</title>
   <description>Managing customers contacts and organizations</description>
   <authors>
