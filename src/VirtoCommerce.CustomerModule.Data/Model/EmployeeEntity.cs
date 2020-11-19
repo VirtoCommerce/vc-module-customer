@@ -86,13 +86,12 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                     MemberRelations = new ObservableCollection<MemberRelationEntity>();
                     foreach (var organization in employee.Organizations)
                     {
-                        var memberRelation = new MemberRelationEntity
-                        {
-                            AncestorId = organization,
-                            AncestorSequence = 1,
-                            DescendantId = Id,
-                            RelationType = RelationType.Membership.ToString()
-                        };
+                        var memberRelation = AbstractTypeFactory<MemberRelationEntity>.TryCreateInstance();
+                        memberRelation.AncestorId = organization;
+                        memberRelation.AncestorSequence = 1;
+                        memberRelation.DescendantId = Id;
+                        memberRelation.RelationType = RelationType.Membership.ToString();
+
                         MemberRelations.Add(memberRelation);
                     }
                 }

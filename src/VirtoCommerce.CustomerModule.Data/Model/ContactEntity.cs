@@ -1,8 +1,7 @@
 using System;
-using System.Collections;
-using System.Linq;
-using System.ComponentModel.DataAnnotations;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.Platform.Core.Common;
 
@@ -131,13 +130,12 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
                     foreach (var organization in contact.Organizations)
                     {
-                        var memberRelation = new MemberRelationEntity
-                        {
-                            AncestorId = organization,
-                            AncestorSequence = 1,
-                            DescendantId = Id,
-                            RelationType = RelationType.Membership.ToString()
-                        };
+                        var memberRelation = AbstractTypeFactory<MemberRelationEntity>.TryCreateInstance();
+                        memberRelation.AncestorId = organization;
+                        memberRelation.AncestorSequence = 1;
+                        memberRelation.DescendantId = Id;
+                        memberRelation.RelationType = RelationType.Membership.ToString();
+
                         MemberRelations.Add(memberRelation);
                     }
                 }
@@ -150,13 +148,12 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                     }
                     foreach (var organization in contact.AssociatedOrganizations)
                     {
-                        var memberRelation = new MemberRelationEntity
-                        {
-                            AncestorId = organization,
-                            AncestorSequence = 1,
-                            DescendantId = Id,
-                            RelationType = RelationType.Association.ToString()
-                        };
+                        var memberRelation = AbstractTypeFactory<MemberRelationEntity>.TryCreateInstance();
+                        memberRelation.AncestorId = organization;
+                        memberRelation.AncestorSequence = 1;
+                        memberRelation.DescendantId = Id;
+                        memberRelation.RelationType = RelationType.Association.ToString();
+
                         MemberRelations.Add(memberRelation);
                     }
                 }
