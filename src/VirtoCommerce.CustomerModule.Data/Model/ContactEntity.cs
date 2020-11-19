@@ -131,7 +131,6 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                     foreach (var organization in contact.Organizations)
                     {
                         var memberRelation = AbstractTypeFactory<MemberRelationEntity>.TryCreateInstance();
-
                         memberRelation.AncestorId = organization;
                         memberRelation.AncestorSequence = 1;
                         memberRelation.DescendantId = Id;
@@ -150,7 +149,6 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                     foreach (var organization in contact.AssociatedOrganizations)
                     {
                         var memberRelation = AbstractTypeFactory<MemberRelationEntity>.TryCreateInstance();
-
                         memberRelation.AncestorId = organization;
                         memberRelation.AncestorSequence = 1;
                         memberRelation.DescendantId = Id;
