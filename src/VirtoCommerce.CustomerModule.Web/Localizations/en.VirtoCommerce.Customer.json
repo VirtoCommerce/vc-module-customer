@@ -3,8 +3,8 @@
         "main-menu-title": "Contacts",
         "blades": {
             "contact-detail": {
-                "title-new": "New Customer",
-                "subtitle": "Customer details",
+                "title-new": "New Contact",
+                "subtitle": "Contact details",
                 "labels": {
                     "first-name": "First name",
                     "middle-name": "Middle name",
@@ -109,7 +109,7 @@
                 "title": "New contact",
                 "subtitle": "Select contact type",
                 "organization": {
-                    "description": "A container for other Organizations and Customers."
+                    "description": "A container for other Organizations and Contacts."
                 },
                 "employee": {
                     "description": "The Organization Employee."
