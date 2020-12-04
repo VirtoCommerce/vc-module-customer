@@ -9,7 +9,7 @@
                             <div class="form-group">
                                 <label class="form-label">{{'customer.blades.contact-detail.labels.first-name' | translate}}</label>
                                 <div class="form-input">
-                                    <input ng-model="blade.currentEntity.firstName" focus-on="" required placeholder="{{'customer.blades.contact-detail.placeholders.first-name' | translate}}" />
+                                    <input ng-model="blade.currentEntity.firstName" ng-blur="blade.currentEntity.fullName= blade.currentEntity.firstName+' ' + blade.currentEntity.lastName" focus-on="" required placeholder="{{'customer.blades.contact-detail.placeholders.first-name' | translate}}" />
                                 </div>
                             </div>
                         </div>
@@ -17,7 +17,7 @@
                             <div class="form-group">
                                 <label class="form-label">{{'customer.blades.contact-detail.labels.last-name' | translate}}</label>
                                 <div class="form-input">
-                                    <input ng-model="blade.currentEntity.lastName" required placeholder="{{'customer.blades.contact-detail.placeholders.last-name' | translate}}" />
+                                    <input ng-model="blade.currentEntity.lastName" ng-blur="blade.currentEntity.fullName= blade.currentEntity.firstName+' ' + blade.currentEntity.lastName" required placeholder="{{'customer.blades.contact-detail.placeholders.last-name' | translate}}" />
                                 </div>
                             </div>
                         </div>
@@ -25,7 +25,7 @@
                     <div class="form-group">
                         <label class="form-label">{{'customer.blades.contact-detail.labels.full-name' | translate}}</label>
                         <div class="form-input">
-                            <input ng-model="blade.currentEntity.fullName" required placeholder="{{'customer.blades.contact-detail.placeholders.full-name' | translate}}" />
+                            <input ng-model="blade.currentEntity.fullName" placeholder="{{'customer.blades.contact-detail.placeholders.full-name' | translate}}" />
                         </div>
                     </div>
                     <div class="columns clearfix">
