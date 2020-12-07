@@ -38,7 +38,7 @@ namespace VirtoCommerce.CustomerModule.Core
                 {
                     Name = "Customer.ExportImport.PageSize",
                     GroupName = "Customer|General",
-                    ValueType = SettingValueType.Integer,
+                    ValueType = SettingValueType.PositiveInteger,
                     DefaultValue = 50
                 };
 
@@ -81,6 +81,5 @@ namespace VirtoCommerce.CustomerModule.Core
                 }
             }
         }
-
     }
 }

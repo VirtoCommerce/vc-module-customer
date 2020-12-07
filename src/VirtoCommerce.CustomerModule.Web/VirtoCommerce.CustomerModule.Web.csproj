@@ -18,8 +18,8 @@
     <None Remove="node_modules\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.5.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.2" />
+    <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.30.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.CustomerModule.Core\VirtoCommerce.CustomerModule.Core.csproj" />

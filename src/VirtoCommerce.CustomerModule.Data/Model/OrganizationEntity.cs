@@ -1,8 +1,8 @@
-using System.Linq;
-using System.ComponentModel.DataAnnotations;
-using VirtoCommerce.Platform.Core.Common;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using VirtoCommerce.CustomerModule.Core.Model;
+using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CustomerModule.Data.Model
 {
@@ -48,13 +48,13 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 if (organization.ParentId != null)
                 {
                     MemberRelations = new ObservableCollection<MemberRelationEntity>();
-                    var memberRelation = new MemberRelationEntity
-                    {
-                        AncestorId = organization.ParentId,
-                        DescendantId = organization.Id,
-                        AncestorSequence = 1,
-                        RelationType = RelationType.Membership.ToString()
-                    };
+
+                    var memberRelation = AbstractTypeFactory<MemberRelationEntity>.TryCreateInstance();
+                    memberRelation.AncestorId = organization.ParentId;
+                    memberRelation.DescendantId = organization.Id;
+                    memberRelation.AncestorSequence = 1;
+                    memberRelation.RelationType = RelationType.Membership.ToString();
+
                     MemberRelations.Add(memberRelation);
                 }
             }
