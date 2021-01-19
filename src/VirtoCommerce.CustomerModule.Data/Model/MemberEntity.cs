@@ -20,6 +20,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(128)]
         public string OuterId { get; set; }
 
+        [StringLength(64)]
+        public string Status { get; set; }
+
         #region NavigationProperties
 
         public virtual ObservableCollection<NoteEntity> Notes { get; set; } = new NullCollection<NoteEntity>();
@@ -39,7 +42,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         public virtual ObservableCollection<MemberDynamicPropertyObjectValueEntity> DynamicPropertyObjectValues { get; set; }
             = new NullCollection<MemberDynamicPropertyObjectValueEntity>();
 
-        #endregion
+        #endregion NavigationProperties
 
         public virtual Member ToModel(Member member)
         {
@@ -53,6 +56,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             member.MemberType = MemberType;
             member.Name = Name;
             member.OuterId = OuterId;
+            member.Status = Status;
 
             member.Addresses = Addresses.OrderBy(x => x.Id).Select(x => x.ToModel(AbstractTypeFactory<Address>.TryCreateInstance())).ToList();
             member.Emails = Emails.OrderBy(x => x.Id).Select(x => x.Address).ToList();
@@ -88,6 +92,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             MemberType = member.MemberType;
             Name = member.Name;
             OuterId = member.OuterId;
+            Status = member.Status;
 
             if (member.Phones != null)
             {
@@ -162,6 +167,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             target.Name = Name;
             target.MemberType = MemberType;
             target.OuterId = OuterId;
+            target.Status = Status;
 
             if (!Phones.IsNullCollection())
             {

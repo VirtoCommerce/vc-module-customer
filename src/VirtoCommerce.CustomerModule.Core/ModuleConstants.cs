@@ -58,28 +58,64 @@ namespace VirtoCommerce.CustomerModule.Core
                     DefaultValue = false
                 };
 
-                public static IEnumerable<SettingDescriptor> AllSettings
+                #region Statuses
+
+                public static SettingDescriptor OrganizationStatuses { get; } = new SettingDescriptor
                 {
-                    get
-                    {
-                        return new List<SettingDescriptor>
-                               {
-                                   MemberGroups,
-                                   ExportImportPageSize,
-                                   MemberIndexationDate,
-                                   EventBasedIndexation
-                               };
-                    }
-                }
+                    Name = "Customer.OrganizationStatuses",
+                    ValueType = SettingValueType.ShortText,
+                    GroupName = "Customer|Statuses",
+                    IsDictionary = true,
+                    DefaultValue = "New",
+                    AllowedValues = new[] { "New", "Approved", "Rejected", "Deleted" }
+                };
+
+                public static SettingDescriptor VendorStatuses { get; } = new SettingDescriptor
+                {
+                    Name = "Customer.VendorStatuses",
+                    ValueType = SettingValueType.ShortText,
+                    GroupName = "Customer|Statuses",
+                    IsDictionary = true,
+                    DefaultValue = "New",
+                    AllowedValues = new[] { "New", "Approved", "Rejected", "Deleted" }
+                };
+
+                public static SettingDescriptor EmployeeStatuses { get; } = new SettingDescriptor
+                {
+                    Name = "Customer.EmployeeStatuses",
+                    ValueType = SettingValueType.ShortText,
+                    GroupName = "Customer|Statuses",
+                    IsDictionary = true,
+                    DefaultValue = "New",
+                    AllowedValues = new[] { "New", "Approved", "Rejected", "Deleted" }
+                };
+
+                public static SettingDescriptor ContactStatuses { get; } = new SettingDescriptor
+                {
+                    Name = "Customer.ContactStatuses",
+                    ValueType = SettingValueType.ShortText,
+                    GroupName = "Customer|Statuses",
+                    IsDictionary = true,
+                    DefaultValue = "New",
+                    AllowedValues = new[] { "New", "Approved", "Rejected", "Deleted" }
+                };
+
+                #endregion Statuses
+
+                public static IEnumerable<SettingDescriptor> AllSettings => new List<SettingDescriptor>
+                {
+                    MemberGroups,
+                    ExportImportPageSize,
+                    MemberIndexationDate,
+                    EventBasedIndexation,
+                    OrganizationStatuses,
+                    VendorStatuses,
+                    EmployeeStatuses,
+                    ContactStatuses
+                };
             }
 
-            public static IEnumerable<SettingDescriptor> AllSettings
-            {
-                get
-                {
-                    return General.AllSettings;
-                }
-            }
+            public static IEnumerable<SettingDescriptor> AllSettings => General.AllSettings;
         }
     }
 }
