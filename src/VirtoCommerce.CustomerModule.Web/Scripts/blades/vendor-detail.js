@@ -1,5 +1,5 @@
 angular.module('virtoCommerce.customerModule').controller('virtoCommerce.customerModule.vendorDetailController',
-    ['$scope', 'platformWebApp.settings', function ($scope, settings) {
+    ['$scope', function ($scope) {
         var blade = $scope.blade;
 
         if (blade.isNew) {
