@@ -32,13 +32,6 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
             $scope.timeZones = timeZones.query();
             $scope.groups = settings.getValues({ id: 'Customer.MemberGroups' });
 
-            $scope.statusSettings = settings.get({ id: 'Customer.ContactStatuses' }, function (data) {
-                if (blade.isNew) {
-                    blade.currentEntity.status = data.defaultValue;
-                    blade.origEntity.status = data.defaultValue;
-                }
-            });
-
             $scope.openGroupsDictionarySettingManagement = function () {
                 var newBlade = {
                     id: 'settingDetailChild',

@@ -19,13 +19,6 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                 blade.subtitle = 'customer.blades.employee-detail.subtitle';
             }
 
-            $scope.statusSettings = settings.get({ id: 'Customer.EmployeeStatuses' }, function (data) {
-                if (blade.isNew) {
-                    blade.currentEntity.status = data.defaultValue;
-                    blade.origEntity.status = data.defaultValue;
-                }
-            });
-
             // datepicker
             $scope.datepickers = {};
             $scope.today = new Date();

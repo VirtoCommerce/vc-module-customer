@@ -1,6 +1,6 @@
-angular.module('virtoCommerce.customerModule')
-    .controller('virtoCommerce.customerModule.memberDetailController',
-        ['$scope', '$q', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.members', 'platformWebApp.dynamicProperties.api', 'virtoCommerce.customerModule.organizations', function ($scope, $q, bladeNavigationService, members, dynamicPropertiesApi, organizationsResource) {
+angular.module('virtoCommerce.customerModule').controller('virtoCommerce.customerModule.memberDetailController',
+    ['$scope', '$q', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.members', 'platformWebApp.dynamicProperties.api', 'virtoCommerce.customerModule.organizations', 'platformWebApp.settings',
+        function ($scope, $q, bladeNavigationService, members, dynamicPropertiesApi, organizationsResource, settings) {
             var blade = $scope.blade;
             blade.updatePermission = 'customer:update';
             blade.currentEntityId = blade.currentEntity.id;
@@ -34,6 +34,17 @@ angular.module('virtoCommerce.customerModule')
                 };
                 bladeNavigationService.showBlade(newBlade, blade);
             };
+
+            blade.statuses = [];
+            blade.loadStatuses = function (currentEntityId) {
+                settings.get({ id: currentEntityId }, function (data) {
+                    blade.statuses = data.allowedValues;
+                    if (blade.isNew) {
+                        blade.currentEntity.status = data.defaultValue;
+                        blade.origEntity.status = data.defaultValue;
+                    }
+                });
+            }
 
             blade.fillDynamicProperties = function () {
                 dynamicPropertiesApi.query({ id: blade.memberTypeDefinition.fullTypeName }, function (results) {
