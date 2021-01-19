@@ -37,7 +37,6 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             return result;
         }
 
-
         protected virtual Task<Member[]> GetMembers(IList<string> documentIds)
         {
             return _memberService.GetByIdsAsync(documentIds.ToArray());
@@ -51,6 +50,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             document.AddFilterableAndSearchableValue("Name", member.Name);
             document.AddFilterableAndSearchableValues("Emails", member.Emails);
             document.AddFilterableAndSearchableValues("Phones", member.Phones);
+            document.AddFilterableAndSearchableValue("Status", member.Status);
             document.AddFilterableValues("Groups", member.Groups);
 
             document.AddFilterableValue("CreatedDate", member.CreatedDate);
@@ -226,7 +226,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                     }
                 }
 
-                // Use default or empty value for the property in index to be able to filter by it 
+                // Use default or empty value for the property in index to be able to filter by it
                 if (values.IsNullOrEmpty())
                 {
                     values = new[] { property.IsRequired
@@ -236,7 +236,6 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                 }
 
                 document.Add(new IndexDocumentField(propertyName, values) { IsRetrievable = true, IsFilterable = true, IsCollection = isCollection });
-
             }
         }
 
@@ -252,18 +251,23 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                 case DynamicPropertyValueType.Image:
                     result = default(string);
                     break;
+
                 case DynamicPropertyValueType.Integer:
                     result = default(int);
                     break;
+
                 case DynamicPropertyValueType.Decimal:
                     result = default(decimal);
                     break;
+
                 case DynamicPropertyValueType.DateTime:
                     result = default(DateTime);
                     break;
+
                 case DynamicPropertyValueType.Boolean:
                     result = default(bool);
                     break;
+
                 default:
                     result = default(object);
                     break;

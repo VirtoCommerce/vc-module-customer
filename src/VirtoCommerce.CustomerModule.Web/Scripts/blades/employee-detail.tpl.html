@@ -50,6 +50,20 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            {{ 'customer.blades.shared.labels.status' | translate }}
+                            <a href="" ng-click="blade.openStatusSettingManagement()" class="form-edit" va-permission="platform:setting:update"><i class="form-ico fa fa-pencil"></i></a>
+                        </label>
+                        <div class="form-input">
+                            <ui-select ng-model="blade.currentEntity.status" ng-disabled="false">
+                                <ui-select-match placeholder="{{ 'customer.blades.shared.placeholders.status' | translate }}">{{ blade.currentEntity.status }}</ui-select-match>
+                                <ui-select-choices repeat="x in statuseSettings.allowedValues | filter: $select.search">
+                                    <span ng-bind-html="x | highlight: $select.search"></span>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
                     <div class="form-group" ng-init="setForm(detailForm)">
                         <va-widget-container group="employeeDetail1" blade="blade" gridster-opts="{columns: 3}"></va-widget-container>
                     </div>
@@ -90,7 +104,7 @@
                     </div>
                 </div>
                 <va-metaform registered-inputs="blade.metaFields" blade="blade" column-count="2"></va-metaform>
-                
+
                 <div class="form-group">
                     <va-widget-container group="employeeDetail2" blade="blade" data="blade.currentEntity" gridster-opts="{columns: 3}"></va-widget-container>
                 </div>

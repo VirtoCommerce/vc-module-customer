@@ -19,6 +19,8 @@ namespace VirtoCommerce.CustomerModule.Core.Model
         public virtual string MemberType { get; set; }
         public string OuterId { get; set; }
 
+        public string Status { get; set; }
+
         public IList<Address> Addresses { get; set; }
         public IList<string> Phones { get; set; }
         public IList<string> Emails { get; set; }
@@ -30,7 +32,7 @@ namespace VirtoCommerce.CustomerModule.Core.Model
         public virtual string ObjectType => typeof(Member).FullName;
         public ICollection<DynamicObjectProperty> DynamicProperties { get; set; }
 
-        #endregion
+        #endregion IHasDynamicProperties Members
 
         #region ISeoSupport Members
 
@@ -38,7 +40,7 @@ namespace VirtoCommerce.CustomerModule.Core.Model
 
         public virtual IList<SeoInfo> SeoInfos { get; set; }
 
-        #endregion
+        #endregion ISeoSupport Members
 
         public virtual void ReduceDetails(string responseGroup)
         {
@@ -89,6 +91,6 @@ namespace VirtoCommerce.CustomerModule.Core.Model
             return result;
         }
 
-        #endregion
+        #endregion ICloneable members
     }
 }

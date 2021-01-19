@@ -1,4 +1,4 @@
-﻿<div class="blade-static __bottom" ng-include="'$(Platform)/Scripts/common/templates/create.tpl.html'" ng-if="blade.isNew"></div>
+<div class="blade-static __bottom" ng-include="'$(Platform)/Scripts/common/templates/create.tpl.html'" ng-if="blade.isNew"></div>
 <div class="blade-content">
     <div class="blade-inner">
         <div class="inner-block clearfix" ng-controller="virtoCommerce.customerModule.organizationDetailController">
@@ -16,6 +16,20 @@
                             <ui-select multiple ng-model="blade.currentEntity.groups">
                                 <ui-select-match placeholder="{{'customer.blades.contact-detail.placeholders.groups' | translate}}">{{$item}}</ui-select-match>
                                 <ui-select-choices repeat="x in groups | filter: $select.search">
+                                    <span ng-bind-html="x | highlight: $select.search"></span>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            {{ 'customer.blades.shared.labels.status' | translate }}
+                            <a href="" ng-click="blade.openStatusSettingManagement()" class="form-edit" va-permission="platform:setting:update"><i class="form-ico fa fa-pencil"></i></a>
+                        </label>
+                        <div class="form-input">
+                            <ui-select ng-model="blade.currentEntity.status" ng-disabled="false">
+                                <ui-select-match placeholder="{{ 'customer.blades.shared.placeholders.status' | translate }}">{{ blade.currentEntity.status }}</ui-select-match>
+                                <ui-select-choices repeat="x in statuseSettings.allowedValues | filter: $select.search">
                                     <span ng-bind-html="x | highlight: $select.search"></span>
                                 </ui-select-choices>
                             </ui-select>
