@@ -14,7 +14,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
 
             $scope.groups = settings.getValues({ id: 'Customer.MemberGroups' });
 
-            $scope.statuseSettings = settings.get({ id: 'Customer.OrganizationStatuses' }, function (data) {
+            $scope.statusSettings = settings.get({ id: 'Customer.OrganizationStatuses' }, function (data) {
                 if (blade.isNew) {
                     blade.currentEntity.status = data.defaultValue;
                     blade.origEntity.status = data.defaultValue;

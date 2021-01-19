@@ -13,7 +13,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
             blade.subtitle = 'customer.blades.vendor-detail.subtitle';
         }
 
-        $scope.statuseSettings = settings.get({ id: 'Customer.VendorStatuses' }, function (data) {
+        $scope.statusSettings = settings.get({ id: 'Customer.VendorStatuses' }, function (data) {
             if (blade.isNew) {
                 blade.currentEntity.status = data.defaultValue;
                 blade.origEntity.status = data.defaultValue;

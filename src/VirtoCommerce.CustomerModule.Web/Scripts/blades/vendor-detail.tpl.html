@@ -18,7 +18,7 @@
                         <div class="form-input">
                             <ui-select ng-model="blade.currentEntity.status" ng-disabled="false">
                                 <ui-select-match placeholder="{{ 'customer.blades.shared.placeholders.status' | translate }}">{{ blade.currentEntity.status }}</ui-select-match>
-                                <ui-select-choices repeat="x in statuseSettings.allowedValues | filter: $select.search">
+                                <ui-select-choices repeat="x in statusSettings.allowedValues | filter: $select.search">
                                     <span ng-bind-html="x | highlight: $select.search"></span>
                                 </ui-select-choices>
                             </ui-select>
