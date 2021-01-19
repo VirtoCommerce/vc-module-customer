@@ -1,6 +1,6 @@
 angular.module('virtoCommerce.customerModule').controller('virtoCommerce.customerModule.employeeDetailController',
-    ['$scope', 'platformWebApp.common.timeZones', 'platformWebApp.settings', 'platformWebApp.bladeNavigationService',
-        function ($scope, timeZones, settings, bladeNavigationService) {
+    ['$scope', 'platformWebApp.common.timeZones', 'platformWebApp.settings',
+        function ($scope, timeZones, settings) {
             var blade = $scope.blade;
 
             if (blade.isNew) {
@@ -25,17 +25,6 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                     blade.origEntity.status = data.defaultValue;
                 }
             });
-
-            blade.openStatusSettingManagement = function () {
-                var newBlade = {
-                    id: 'settingDetailChild',
-                    isApiSave: true,
-                    currentEntityId: 'Customer.EmployeeStatuses',
-                    controller: 'platformWebApp.settingDictionaryController',
-                    template: '$(Platform)/Scripts/app/settings/blades/setting-dictionary.tpl.html'
-                };
-                bladeNavigationService.showBlade(newBlade, blade);
-            };
 
             // datepicker
             $scope.datepickers = {};

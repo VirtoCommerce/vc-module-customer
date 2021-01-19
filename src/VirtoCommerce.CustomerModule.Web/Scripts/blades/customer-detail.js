@@ -39,17 +39,6 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                 }
             });
 
-            blade.openStatusSettingManagement = function () {
-                var newBlade = {
-                    id: 'settingDetailChild',
-                    isApiSave: true,
-                    currentEntityId: 'Customer.ContactStatuses',
-                    controller: 'platformWebApp.settingDictionaryController',
-                    template: '$(Platform)/Scripts/app/settings/blades/setting-dictionary.tpl.html'
-                };
-                bladeNavigationService.showBlade(newBlade, blade);
-            };
-
             $scope.openGroupsDictionarySettingManagement = function () {
                 var newBlade = {
                     id: 'settingDetailChild',

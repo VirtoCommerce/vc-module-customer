@@ -13,7 +13,7 @@
                     <div class="form-group">
                         <label class="form-label">
                             {{ 'customer.blades.shared.labels.status' | translate }}
-                            <a href="" ng-click="blade.openStatusSettingManagement()" class="form-edit" va-permission="platform:setting:update"><i class="form-ico fa fa-pencil"></i></a>
+                            <a href="" ng-click="blade.openStatusSettingManagement('Customer.VendorStatuses')" class="form-edit" va-permission="platform:setting:update"><i class="form-ico fa fa-pencil"></i></a>
                         </label>
                         <div class="form-input">
                             <ui-select ng-model="blade.currentEntity.status" ng-disabled="false">
