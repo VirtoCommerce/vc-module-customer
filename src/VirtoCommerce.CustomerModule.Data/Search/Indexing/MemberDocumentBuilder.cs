@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,11 +14,14 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 {
     public class MemberDocumentBuilder : IIndexDocumentBuilder
     {
+        public static readonly string NoValueString = "__null";
         private readonly IMemberService _memberService;
+        private readonly IDynamicPropertySearchService _dynamicPropertySearchService;
 
-        public MemberDocumentBuilder(IMemberService memberService)
+        public MemberDocumentBuilder(IMemberService memberService, IDynamicPropertySearchService dynamicPropertySearchService)
         {
             _memberService = memberService;
+            _dynamicPropertySearchService = dynamicPropertySearchService;
         }
 
         public virtual async Task<IList<IndexDocument>> GetDocumentsAsync(IList<string> documentIds)
@@ -28,9 +32,11 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             return result;
         }
 
-        protected virtual Task<Member[]> GetMembers(IList<string> documentIds)
+        protected virtual async Task<Member[]> GetMembers(IList<string> documentIds)
         {
-            return _memberService.GetByIdsAsync(documentIds.ToArray());
+            var result = await _memberService.GetByIdsAsync(documentIds.ToArray());
+            //await LoadDependencies(result);
+            return result;
         }
 
         protected virtual IndexDocument CreateDocument(Member member)
@@ -203,6 +209,86 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                     document.Add(new IndexDocumentField(propertyName, values) { IsRetrievable = true, IsFilterable = true, IsCollection = isCollection });
                 }
             }
+        }
+
+        private async Task LoadDependencies(Member[] members)
+        {
+            //Load Dynamic Properties
+            var criteria = AbstractTypeFactory<DynamicPropertySearchCriteria>.TryCreateInstance();
+            criteria.ObjectTypes = members.Select(x => x.GetType().FullName).Distinct().ToArray();
+            criteria.Take = int.MaxValue;
+
+            var searchResult = await _dynamicPropertySearchService.SearchDynamicPropertiesAsync(criteria);
+            var comparer = AnonymousComparer.Create((DynamicProperty x) => x.Id);
+
+            if (!searchResult.Results.IsNullOrEmpty())
+            {
+                foreach (var member in members)
+                {
+                    // Use default or empty value for the property in index to be able to filter by it
+                    var exceptDynamicProperties = searchResult.Results.Except(member.DynamicProperties, comparer)
+                        .Select(x => FillMetaData(AbstractTypeFactory<DynamicObjectProperty>.TryCreateInstance(), x)).ToList();
+                    member.DynamicProperties = member.DynamicProperties.Union(exceptDynamicProperties).ToArray();
+                }
+            }
+        }
+
+        private DynamicObjectProperty FillMetaData(DynamicObjectProperty objectProperty, DynamicProperty property)
+        {
+            var propertyName = property.Name?.ToLowerInvariant();
+
+            if(!string.IsNullOrEmpty(propertyName))
+            {
+                objectProperty.Id = property.Id;
+                objectProperty.Name = propertyName;
+                objectProperty.ValueType = property.ValueType;
+
+                if (objectProperty.Values.IsNullOrEmpty())
+                {
+                    objectProperty.Values = new[] { new DynamicPropertyObjectValue{ Value = property.IsRequired ?
+                        GetDynamicPropertyDefaultValue(property)
+                        ?? NoValueString : NoValueString }};
+                }
+            }
+
+            return objectProperty;
+        }
+
+        private object GetDynamicPropertyDefaultValue(DynamicProperty property)
+        {
+            object result;
+
+            switch (property.ValueType)
+            {
+                case DynamicPropertyValueType.ShortText:
+                case DynamicPropertyValueType.Html:
+                case DynamicPropertyValueType.LongText:
+                case DynamicPropertyValueType.Image:
+                    result = default(string);
+                    break;
+
+                case DynamicPropertyValueType.Integer:
+                    result = default(int);
+                    break;
+
+                case DynamicPropertyValueType.Decimal:
+                    result = default(decimal);
+                    break;
+
+                case DynamicPropertyValueType.DateTime:
+                    result = default(DateTime);
+                    break;
+
+                case DynamicPropertyValueType.Boolean:
+                    result = default(bool);
+                    break;
+
+                default:
+                    result = default(object);
+                    break;
+            }
+
+            return result;
         }
     }
 }
