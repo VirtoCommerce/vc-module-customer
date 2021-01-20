@@ -35,7 +35,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
         protected virtual async Task<Member[]> GetMembers(IList<string> documentIds)
         {
             var result = await _memberService.GetByIdsAsync(documentIds.ToArray());
-            //await LoadDependencies(result);
+            await LoadDependencies(result);
             return result;
         }
 
@@ -227,13 +227,13 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                 {
                     // Use default or empty value for the property in index to be able to filter by it
                     var exceptDynamicProperties = searchResult.Results.Except(member.DynamicProperties, comparer)
-                        .Select(x => FillMetaData(AbstractTypeFactory<DynamicObjectProperty>.TryCreateInstance(), x)).ToList();
+                        .Select(x => FillDynamicPropertyMetaData(AbstractTypeFactory<DynamicObjectProperty>.TryCreateInstance(), x)).ToList();
                     member.DynamicProperties = member.DynamicProperties.Union(exceptDynamicProperties).ToArray();
                 }
             }
         }
 
-        private DynamicObjectProperty FillMetaData(DynamicObjectProperty objectProperty, DynamicProperty property)
+        private DynamicObjectProperty FillDynamicPropertyMetaData(DynamicObjectProperty objectProperty, DynamicProperty property)
         {
             var propertyName = property.Name?.ToLowerInvariant();
 
