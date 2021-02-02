@@ -1,4 +1,4 @@
-﻿angular.module('virtoCommerce.customerModule')
+angular.module('virtoCommerce.customerModule')
 .controller('virtoCommerce.customerModule.memberListController', ['$scope', 'virtoCommerce.customerModule.members', 'platformWebApp.dialogService', 'platformWebApp.bladeUtils', 'platformWebApp.uiGridHelper', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.ui-grid.extension',
 function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesResolverService, gridOptionExtension) {
     $scope.uiGridConstants = uiGridHelper.uiGridConstants;
@@ -173,7 +173,7 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
         }
     };
 
-    blade.headIcon = 'fa-user __customers';
+    blade.headIcon = 'fa fa-user __customers';
 
     blade.toolbarCommands = [
         {
