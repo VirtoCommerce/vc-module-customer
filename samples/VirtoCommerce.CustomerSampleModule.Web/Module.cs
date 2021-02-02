@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,10 +18,11 @@ namespace VirtoCommerce.CustomerSampleModule.Web
         public ManifestModuleInfo ModuleInfo { get; set; }
         public void Initialize(IServiceCollection serviceCollection)
         {
-            var snapshot = serviceCollection.BuildServiceProvider();
-            var configuration = snapshot.GetService<IConfiguration>();
-            var connectionString = configuration.GetConnectionString("VirtoCommerce.Customer") ?? configuration.GetConnectionString("VirtoCommerce");
-            serviceCollection.AddDbContext<CustomerSampleDbContext>(options => options.UseSqlServer(connectionString));
+            serviceCollection.AddDbContext<CustomerSampleDbContext>((provider, options) =>
+            {
+                var configuration = provider.GetRequiredService<IConfiguration>();
+                options.UseSqlServer(configuration.GetConnectionString("VirtoCommerce.Customer") ?? configuration.GetConnectionString("VirtoCommerce"));
+            });
             serviceCollection.AddTransient<ICustomerRepository, CustomerSampleRepositoryImpl>();
         }
 
