@@ -47,7 +47,7 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddDbContext<CustomerDbContext>((provider, options) =>
             {
                 var configuration = provider.GetRequiredService<IConfiguration>();
-                options.UseSqlServer(configuration.GetConnectionString("VirtoCommerce.Customer") ?? configuration.GetConnectionString("VirtoCommerce"));
+                options.UseSqlServer(configuration.GetConnectionString(ModuleInfo.Id) ?? configuration.GetConnectionString("VirtoCommerce"));
             });
             serviceCollection.AddTransient<ICustomerRepository, CustomerRepository>();
             serviceCollection.AddSingleton<Func<ICustomerRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<ICustomerRepository>());

@@ -21,7 +21,7 @@ namespace VirtoCommerce.CustomerSampleModule.Web
             serviceCollection.AddDbContext<CustomerSampleDbContext>((provider, options) =>
             {
                 var configuration = provider.GetRequiredService<IConfiguration>();
-                options.UseSqlServer(configuration.GetConnectionString("VirtoCommerce.Customer") ?? configuration.GetConnectionString("VirtoCommerce"));
+                options.UseSqlServer(configuration.GetConnectionString(ModuleInfo.Id) ?? configuration.GetConnectionString("VirtoCommerce.Customer") ?? configuration.GetConnectionString("VirtoCommerce"));
             });
             serviceCollection.AddTransient<ICustomerRepository, CustomerSampleRepositoryImpl>();
         }
