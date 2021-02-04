@@ -56,7 +56,7 @@ angular.module(moduleName, [])
       //Register module in main menu
       var menuItem = {
           path: 'browse/member',
-          icon: 'fa fa-user __customers',
+          icon: 'fas fa-user-tie __customers',
           title: 'customer.main-menu-title',
           priority: 180,
           action: function () { $state.go('workspace.customerModule'); },
@@ -159,7 +159,7 @@ angular.module(moduleName, [])
           memberType: 'Employee',
           description: 'customer.blades.member-add.employee.description',
           fullTypeName: 'VirtoCommerce.CustomerModule.Core.Model.Employee',
-          icon: 'fa fa-user',
+          icon: 'fas fa-user-tie',
           detailBlade: {
               template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/employee-detail.tpl.html',
               metaFields: [{
