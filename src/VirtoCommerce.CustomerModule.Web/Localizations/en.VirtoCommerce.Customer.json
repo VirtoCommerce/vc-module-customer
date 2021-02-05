@@ -259,7 +259,7 @@
         "EventBasedIndexation": {
           "Enable": {
             "title": "Enable event-based indexation for customer entities (Restart required)",
-            "description": "Any changes to the catalog entity will trigger a background task that will apply these changes in the search index."
+            "description": "Any changes to the customer entity will trigger a background task that will apply these changes in the search index."
           }
         }
       },
