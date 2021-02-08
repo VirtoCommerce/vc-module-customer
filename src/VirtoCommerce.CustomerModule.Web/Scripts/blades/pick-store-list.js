@@ -1,4 +1,4 @@
-﻿angular.module('virtoCommerce.customerModule')
+angular.module('virtoCommerce.customerModule')
 .controller('virtoCommerce.customerModule.pickStoreListController', ['$scope', 'virtoCommerce.storeModule.stores', 'platformWebApp.bladeUtils', 'uiGridConstants', 'platformWebApp.uiGridHelper',
     function ($scope, stores, bladeUtils, uiGridConstants, uiGridHelper) {
         $scope.uiGridConstants = uiGridConstants;
@@ -29,7 +29,7 @@
             });
         };
 
-        blade.headIcon = 'fa-archive';
+        blade.headIcon = 'fa fa-archive';
 
         blade.toolbarCommands = [
             {
