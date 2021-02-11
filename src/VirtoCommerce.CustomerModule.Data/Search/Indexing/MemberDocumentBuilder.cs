@@ -133,8 +133,11 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             document.AddFilterableAndSearchableValue("FirstName", contact.FirstName);
             document.AddFilterableAndSearchableValue("MiddleName", contact.MiddleName);
             document.AddFilterableAndSearchableValue("LastName", contact.LastName);
+            document.AddFilterableAndSearchableValue("DefaultLanguage", contact.DefaultLanguage);
+            document.AddFilterableAndSearchableValue("TimeZone", contact.TimeZone);
             document.AddFilterableValue("BirthDate", contact.BirthDate);
             AddParentOrganizations(document, contact.Organizations);
+            AddAssociatedOrganizations(document, contact.AssociatedOrganizations);
 
             document.AddFilterableValue("TaxpayerId", contact.TaxPayerId);
             document.AddFilterableValue("PreferredDelivery", contact.PreferredDelivery);
@@ -175,6 +178,14 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 
             document.AddFilterableValues("ParentOrganizations", nonEmptyValues);
             document.AddFilterableValue("HasParentOrganizations", nonEmptyValues?.Any() ?? false);
+        }
+
+        protected virtual void AddAssociatedOrganizations(IndexDocument document, ICollection<string> values)
+        {
+            var nonEmptyValues = values?.Where(v => !string.IsNullOrEmpty(v)).ToArray();
+
+            document.AddFilterableValues("AssociatedOrganizations", nonEmptyValues);
+            document.AddFilterableValue("HasAssociatedOrganizations", nonEmptyValues?.Any() ?? false);
         }
 
         protected virtual async Task IndexDynamicProperties(Member member, IndexDocument document)
