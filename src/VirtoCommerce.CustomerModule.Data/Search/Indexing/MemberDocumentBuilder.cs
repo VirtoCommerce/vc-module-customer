@@ -133,9 +133,9 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             document.AddFilterableAndSearchableValue("FirstName", contact.FirstName);
             document.AddFilterableAndSearchableValue("MiddleName", contact.MiddleName);
             document.AddFilterableAndSearchableValue("LastName", contact.LastName);
-            document.AddFilterableAndSearchableValue("DefaultLanguage", contact.DefaultLanguage);
-            document.AddFilterableAndSearchableValue("TimeZone", contact.TimeZone);
             document.AddFilterableValue("BirthDate", contact.BirthDate);
+            document.AddFilterableValue("DefaultLanguage", contact.DefaultLanguage);
+            document.AddFilterableValue("TimeZone", contact.TimeZone);
             AddParentOrganizations(document, contact.Organizations);
             AddAssociatedOrganizations(document, contact.AssociatedOrganizations);
 
