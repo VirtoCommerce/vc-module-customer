@@ -3,106 +3,22 @@
     <div class="blade-inner">
         <div class="inner-block clearfix" ng-controller="virtoCommerce.customerModule.employeeDetailController">
             <form class="form" name="detailForm">
-                <fieldset>
-                    <!-- hide "isActive" switch as there is no functionality under it yet-->
-                    <!--<div ng-if="!blade.isNew">
-                        <label class="form-label">{{'customer.blades.employee-detail.labels.is-active' | translate}}</label>
-                        <div class="form-input">
-                            <label class="form-label __switch">
-                                <input type="checkbox" ng-model="blade.currentEntity.isActive" />
-                                <span class="switch"></span>
-                            </label>
-                        </div>
-                    </div>-->
-                    <div class="columns">
-                        <div class="column">
-                            <div class="form-group">
-                                <label class="form-label">{{'customer.blades.employee-detail.labels.first-name' | translate}}</label>
-                                <div class="form-input">
-                                    <input ng-model="blade.currentEntity.firstName" ng-blur="blade.currentEntity.fullName= blade.currentEntity.firstName+' ' + blade.currentEntity.lastName" focus-on="" required placeholder="{{'customer.blades.employee-detail.placeholders.first-name' | translate}}" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="column">
-                            <div class="form-group">
-                                <label class="form-label">{{'customer.blades.employee-detail.labels.middle-name' | translate}}</label>
-                                <div class="form-input">
-                                    <input ng-model="blade.currentEntity.middleName" placeholder="{{'customer.blades.employee-detail.placeholders.middle-name' | translate}}" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="columns clearfix">
-                        <div class="column">
-                            <div class="form-group">
-                                <label class="form-label">{{'customer.blades.employee-detail.labels.last-name' | translate}}</label>
-                                <div class="form-input">
-                                    <input ng-model="blade.currentEntity.lastName" ng-blur="blade.currentEntity.fullName= blade.currentEntity.firstName+' ' + blade.currentEntity.lastName" required placeholder="{{'customer.blades.employee-detail.placeholders.last-name' | translate}}" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="column">
-                            <div class="form-group">
-                                <label class="form-label">{{'customer.blades.employee-detail.labels.full-name' | translate}}</label>
-                                <div class="form-input">
-                                    <input ng-model="blade.currentEntity.fullName" placeholder="{{'customer.blades.employee-detail.placeholders.full-name' | translate}}" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">
-                            {{ 'customer.blades.shared.labels.status' | translate }}
-                            <a href="" ng-click="blade.openStatusSettingManagement('Customer.EmployeeStatuses')" class="form-edit" va-permission="platform:setting:update"><i class="form-ico fa fa-pencil"></i></a>
+                <!-- hide "isActive" switch as there is no functionality under it yet-->
+                <!--<div ng-if="!blade.isNew">
+                    <label class="form-label">{{'customer.blades.employee-detail.labels.is-active' | translate}}</label>
+                    <div class="form-input">
+                        <label class="form-label __switch">
+                            <input type="checkbox" ng-model="blade.currentEntity.isActive" />
+                            <span class="switch"></span>
                         </label>
-                        <div class="form-input">
-                            <ui-select ng-model="blade.currentEntity.status" ng-disabled="false" ng-init="blade.loadStatuses('Customer.EmployeeStatuses')">
-                                <ui-select-match placeholder="{{ 'customer.blades.shared.placeholders.status' | translate }}">{{ blade.currentEntity.status }}</ui-select-match>
-                                <ui-select-choices repeat="x in blade.statuses | filter: $select.search">
-                                    <span ng-bind-html="x | highlight: $select.search"></span>
-                                </ui-select-choices>
-                            </ui-select>
-                        </div>
                     </div>
-                    <div class="form-group" ng-init="setForm(detailForm)">
-                        <va-widget-container group="employeeDetail1" blade="blade" gridster-opts="{columns: 3}"></va-widget-container>
-                    </div>
-                </fieldset>
-                <div class="form-group">
-                    <label class="form-label">{{'customer.blades.employee-detail.labels.type' | translate}}</label>
-                    <div class="form-input">
-                        <input ng-model="blade.currentEntity.memberType" placeholder="{{'customer.blades.employee-detail.placeholders.type' | translate}}" ng-disabled="true" />
-                    </div>
+                </div>-->
+                <va-metaform registered-inputs="blade.metaFields0" blade="blade" column-count="2"></va-metaform>
+
+                <div class="form-group" ng-init="setForm(detailForm)">
+                    <va-widget-container group="employeeDetail1" blade="blade" gridster-opts="{columns: 3}"></va-widget-container>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">{{'customer.blades.employee-detail.labels.birthday' | translate}}</label>
-                    <div class="form-input __calendar">
-                        <input type="text" class="form-control" ng-model="blade.currentEntity.birthDate" datepicker-popup name="bd" is-open="datepickers.bd" max-date="today" placeholder="{{'customer.blades.employee-detail.placeholders.birthday' | translate}}" />
-                        <button class="btn" type="button" ng-click="open($event,'bd')">
-                            <i class="btn-ico fa fa-calendar"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">{{'customer.blades.employee-detail.labels.organizations' | translate}}</label>
-                    <ui-select multiple ng-model="blade.currentEntity.organizations">
-                        <ui-select-match placeholder="{{'customer.blades.contact-detail.placeholders.organizations' | translate}}">{{$item.name}}</ui-select-match>
-                        <ui-select-choices repeat="x.id as x in organizations" refresh="fetchOrganizations($select)" when-scrolled="fetchNextOrganizations($select)">
-                            <span ng-bind-html="x.name | highlight: $select.search"></span>
-                        </ui-select-choices>
-                    </ui-select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">{{'customer.blades.employee-detail.labels.timezone' | translate }}</label>
-                    <div class="form-input">
-                        <ui-select ng-model="blade.currentEntity.timeZone">
-                            <ui-select-match placeholder="{{'customer.blades.employee-detail.placeholders.timezone' | translate }}">{{$select.selected.name}}</ui-select-match>
-                            <ui-select-choices repeat="x.id as x in timeZones | filter: { name: $select.search }">
-                                <span ng-bind-html="x.name | highlight: $select.search"></span>
-                            </ui-select-choices>
-                        </ui-select>
-                    </div>
-                </div>
+                
                 <va-metaform registered-inputs="blade.metaFields" blade="blade" column-count="2"></va-metaform>
 
                 <div class="form-group">
@@ -112,3 +28,56 @@
         </div>
     </div>
 </div>
+<script type="text/ng-template" id="firstName.html">
+    <div class="form-input">
+        <input ng-model="blade.currentEntity.firstName" ng-blur="blade.currentEntity.fullName=blade.currentEntity.firstName+' '+blade.currentEntity.lastName" focus-on="" required placeholder="{{'customer.blades.employee-detail.placeholders.first-name' | translate}}" />
+    </div>
+</script>
+<script type="text/ng-template" id="lastName.html">
+    <div class="form-input">
+        <input ng-model="blade.currentEntity.lastName" ng-blur="blade.currentEntity.fullName=blade.currentEntity.firstName+' '+blade.currentEntity.lastName" required placeholder="{{'customer.blades.employee-detail.placeholders.last-name' | translate}}" />
+    </div>
+</script>
+<script type="text/ng-template" id="status.html">
+    <div class="form-group">
+        <label class="form-label">
+            {{ 'customer.blades.shared.labels.status' | translate }}
+            <a href="" ng-click="blade.openStatusSettingManagement('Customer.EmployeeStatuses')" class="form-edit" va-permission="platform:setting:update"><i class="form-ico fa fa-pencil"></i></a>
+        </label>
+        <div class="form-input">
+            <ui-select ng-model="blade.currentEntity.status" ng-init="blade.loadStatuses('Customer.EmployeeStatuses')">
+                <ui-select-match placeholder="{{ 'customer.blades.shared.placeholders.status' | translate }}">{{ blade.currentEntity.status }}</ui-select-match>
+                <ui-select-choices repeat="x in blade.statuses | filter: $select.search">
+                    <span ng-bind-html="x | highlight: $select.search"></span>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="birthDate.html">
+    <div class="form-input __calendar">
+        <input type="text" class="form-control" ng-model="blade.currentEntity.birthDate" datepicker-popup name="bd" is-open="blade.datepickers.bd" max-date="blade.today" placeholder="{{'customer.blades.employee-detail.placeholders.birthday' | translate}}" />
+        <button class="btn" type="button" ng-click="blade.open($event,'bd')">
+            <i class="btn-ico fa fa-calendar"></i>
+        </button>
+    </div>
+</script>
+<script type="text/ng-template" id="organizations.html">
+    <ui-select multiple ng-model="blade.currentEntity.organizations">
+        <ui-select-match placeholder="{{'customer.blades.contact-detail.placeholders.organizations' | translate}}">{{$item.name}}</ui-select-match>
+        <ui-select-choices repeat="x.id as x in blade.organizations" refresh="blade.fetchOrganizations($select)" when-scrolled="blade.fetchNextOrganizations($select)">
+            <span ng-bind-html="x.name | highlight: $select.search"></span>
+        </ui-select-choices>
+    </ui-select>
+</script>
+<script type="text/ng-template" id="timeZone.html">
+    <div class="form-input">
+        <ui-select ng-model="blade.currentEntity.timeZone">
+            <ui-select-match placeholder="{{'customer.blades.employee-detail.placeholders.timezone' | translate }}">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="x.id as x in blade.timeZones | filter: { name: $select.search }">
+                <span ng-bind-html="x.name | highlight: $select.search"></span>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+</script>

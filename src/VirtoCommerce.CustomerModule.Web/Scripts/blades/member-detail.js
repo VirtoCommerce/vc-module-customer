@@ -130,13 +130,13 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
             // If scrollbar doesn't appear auto loading won't work.
             $scope.pageSize = 50;
 
-            $scope.fetchOrganizations = function ($select) {
+            blade.fetchOrganizations = function ($select) {
                 $select.page = 0;
-                $scope.organizations = [];
-                return $q.all([loadCustomerOrganizations(), $scope.fetchNextOrganizations($select)]);
+                blade.organizations = [];
+                return $q.all([loadCustomerOrganizations(), blade.fetchNextOrganizations($select)]);
             }
 
-            $scope.fetchNextOrganizations = function ($select) {
+            blade.fetchNextOrganizations = function ($select) {
                 return members.search(
                     {
                         memberType: 'Organization',
@@ -157,13 +157,13 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                         joinOrganizations(data);
                     }
                     ).$promise;
-                };
+                }
                 return $q.resolve();
-            };
+            }
 
             function joinOrganizations(organizations) {
-                $scope.organizations = $scope.organizations.concat(organizations);
-            };
+                blade.organizations = blade.organizations.concat(organizations);
+            }
 
             blade.refresh(false);
         }]);

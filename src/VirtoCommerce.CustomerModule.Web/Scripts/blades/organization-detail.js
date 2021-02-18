@@ -12,14 +12,14 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                 blade.subtitle = 'customer.blades.organization-detail.subtitle';
             }
 
-            $scope.groups = settings.getValues({ id: 'Customer.MemberGroups' });
+            blade.groups = settings.getValues({ id: 'Customer.MemberGroups' });
 
-            $scope.openGroupsDictionarySettingManagement = function () {
+            blade.openGroupsDictionarySettingManagement = function () {
                 var newBlade = {
                     id: 'settingDetailChild',
                     isApiSave: true,
                     currentEntityId: 'Customer.MemberGroups',
-                    parentRefresh: function (data) { $scope.groups = data; },
+                    parentRefresh: function (data) { blade.groups = data; },
                     controller: 'platformWebApp.settingDictionaryController',
                     template: '$(Platform)/Scripts/app/settings/blades/setting-dictionary.tpl.html'
                 };

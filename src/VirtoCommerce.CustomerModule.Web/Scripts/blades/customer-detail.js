@@ -19,20 +19,20 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
             }
 
             // datepicker
-            $scope.datepickers = {};
-            $scope.today = new Date();
+            blade.datepickers = {};
+            blade.today = new Date();
 
-            $scope.open = function ($event, which) {
+            blade.open = function ($event, which) {
                 $event.preventDefault();
                 $event.stopPropagation();
 
-                $scope.datepickers[which] = true;
+                blade.datepickers[which] = true;
             };
 
-            $scope.timeZones = timeZones.query();
-            $scope.groups = settings.getValues({ id: 'Customer.MemberGroups' });
+            blade.timeZones = timeZones.query();
+            blade.groups = settings.getValues({ id: 'Customer.MemberGroups' });
 
-            $scope.openGroupsDictionarySettingManagement = function () {
+            blade.openGroupsDictionarySettingManagement = function () {
                 var newBlade = {
                     id: 'settingDetailChild',
                     isApiSave: true,
@@ -44,27 +44,27 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                 bladeNavigationService.showBlade(newBlade, blade);
             };
 
-            $scope.fetchCustomerOrganizations = function ($select) {
+            blade.fetchCustomerOrganizations = function ($select) {
                 $scope.fetchOrganizations($select).then(function () {
-                    $scope.customerOrganizations = angular.copy($scope.organizations);
+                    blade.customerOrganizations = angular.copy($scope.organizations);
                 });
             }
 
-            $scope.fetchAssociatedOrganizations = function ($select) {
+            blade.fetchAssociatedOrganizations = function ($select) {
                 $scope.fetchOrganizations($select).then(function () {
-                    $scope.associatedOrganizations = angular.copy($scope.organizations);
+                    blade.associatedOrganizations = angular.copy($scope.organizations);
                 });
             }
 
-            $scope.fetchNextCustomerOrganizations = function ($select) {
+            blade.fetchNextCustomerOrganizations = function ($select) {
                 $scope.fetchNextOrganizations($select).then(function () {
-                    $scope.customerOrganizations = angular.copy($scope.organizations);
+                    blade.customerOrganizations = angular.copy($scope.organizations);
                 });
             }
 
-            $scope.fetchNextAssociatedOrganizations = function ($select) {
+            blade.fetchNextAssociatedOrganizations = function ($select) {
                 $scope.fetchNextOrganizations($select).then(function () {
-                    $scope.associatedOrganizations = angular.copy($scope.organizations);
+                    blade.associatedOrganizations = angular.copy($scope.organizations);
                 });
             }
         }]);

@@ -3,57 +3,34 @@
     <div class="blade-inner">
         <div class="inner-block clearfix" ng-controller="virtoCommerce.customerModule.vendorDetailController">
             <form class="form" name="detailForm">
-                <fieldset>
-                    <div ng-init="setForm(detailForm)">
-                        <label class="form-label">{{'customer.blades.vendor-detail.labels.name' | translate}}</label>
-                        <div class="form-input">
-                            <input ng-model="blade.currentEntity.name" focus-on="" required placeholder="{{'customer.blades.vendor-detail.placeholders.name' | translate}}" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">
-                            {{ 'customer.blades.shared.labels.status' | translate }}
-                            <a href="" ng-click="blade.openStatusSettingManagement('Customer.VendorStatuses')" class="form-edit" va-permission="platform:setting:update"><i class="form-ico fa fa-pencil"></i></a>
-                        </label>
-                        <div class="form-input">
-                            <ui-select ng-model="blade.currentEntity.status" ng-disabled="false" ng-init="blade.loadStatuses('Customer.VendorStatuses')">
-                                <ui-select-match placeholder="{{ 'customer.blades.shared.placeholders.status' | translate }}">{{ blade.currentEntity.status }}</ui-select-match>
-                                <ui-select-choices repeat="x in blade.statuses | filter: $select.search">
-                                    <span ng-bind-html="x | highlight: $select.search"></span>
-                                </ui-select-choices>
-                            </ui-select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <va-widget-container group="vendorDetail1" data="blade.currentEntity" blade="blade" gridster-opts="{columns: 3}"></va-widget-container>
-                    </div>
-                </fieldset>
-                <fieldset>
-                    <div class="form-group">
-                        <label class="form-label">{{ 'customer.blades.vendor-detail.labels.site-url' | translate }}</label>
-                        <div class="form-input">
-                            <input ng-model="blade.currentEntity.siteUrl" type="url" placeholder="{{ 'customer.blades.vendor-detail.placeholders.site-url' | translate }}">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">{{ 'customer.blades.vendor-detail.labels.logo-url' | translate }}</label>
-                        <div class="form-input">
-                            <input ng-model="blade.currentEntity.logoUrl" type="url" placeholder="{{ 'customer.blades.vendor-detail.placeholders.logo-url' | translate }}">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">{{'customer.blades.vendor-detail.labels.group-name' | translate}}</label>
-                        <div class="form-input">
-                            <input ng-model="blade.currentEntity.groupName" placeholder="{{'customer.blades.vendor-detail.placeholders.group-name' | translate}}" />
-                        </div>
-                    </div>
-                    <va-metaform registered-inputs="blade.metaFields" blade="blade"></va-metaform>
+                <va-metaform registered-inputs="blade.metaFields0" blade="blade" column-count="2"></va-metaform>
 
-                    <div class="form-group">
-                        <va-widget-container group="vendorDetail2" data="blade.currentEntity" blade="blade" gridster-opts="{columns: 3}"></va-widget-container>
-                    </div>
-                </fieldset>
+                <div class="form-group" ng-init="setForm(detailForm)">
+                    <va-widget-container group="vendorDetail1" data="blade.currentEntity" blade="blade" gridster-opts="{columns: 3}"></va-widget-container>
+                </div>
+
+                <va-metaform registered-inputs="blade.metaFields" blade="blade" column-count="2"></va-metaform>
+
+                <div class="form-group">
+                    <va-widget-container group="vendorDetail2" data="blade.currentEntity" blade="blade" gridster-opts="{columns: 3}"></va-widget-container>
+                </div>
             </form>
         </div>
     </div>
 </div>
+<script type="text/ng-template" id="status.html">
+    <div class="form-group">
+        <label class="form-label">
+            {{ 'customer.blades.shared.labels.status' | translate }}
+            <a href="" ng-click="blade.openStatusSettingManagement('Customer.VendorStatuses')" class="form-edit" va-permission="platform:setting:update"><i class="form-ico fa fa-pencil"></i></a>
+        </label>
+        <div class="form-input">
+            <ui-select ng-model="blade.currentEntity.status" ng-init="blade.loadStatuses('Customer.VendorStatuses')">
+                <ui-select-match placeholder="{{ 'customer.blades.shared.placeholders.status' | translate }}">{{ blade.currentEntity.status }}</ui-select-match>
+                <ui-select-choices repeat="x in blade.statuses | filter: $select.search">
+                    <span ng-bind-html="x | highlight: $select.search"></span>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+    </div>
+</script>

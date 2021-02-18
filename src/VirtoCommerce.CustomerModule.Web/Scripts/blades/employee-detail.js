@@ -19,15 +19,15 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
         }
 
         // datepicker
-        $scope.datepickers = {};
-        $scope.today = new Date();
+        blade.datepickers = {};
+        blade.today = new Date();
 
-        $scope.open = function ($event, which) {
+        blade.open = function ($event, which) {
             $event.preventDefault();
             $event.stopPropagation();
 
-            $scope.datepickers[which] = true;
+            blade.datepickers[which] = true;
         };
 
-        $scope.timeZones = timeZones.query();
+        blade.timeZones = timeZones.query();
     }]);
