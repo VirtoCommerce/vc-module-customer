@@ -1,4 +1,4 @@
-﻿angular.module('virtoCommerce.customerModule')
+angular.module('virtoCommerce.customerModule')
 .controller('virtoCommerce.customerModule.customerAccountsListController', ['$scope', 'platformWebApp.dialogService', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeNavigationService', 'filterFilter', 'platformWebApp.accounts',
 function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFilter, accounts) {
     $scope.uiGridConstants = uiGridHelper.uiGridConstants;
@@ -64,11 +64,11 @@ function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFil
         dialogService.showConfirmationDialog(dialog);
     };
 
-    blade.headIcon = 'fa-key';
+    blade.headIcon = 'fas fa-key';
 
     blade.toolbarCommands = [
         {
-            name: "platform.commands.add", icon: 'fa fa-plus',
+            name: "platform.commands.add", icon: 'fas fa-plus',
             executeMethod: function () {
                 bladeNavigationService.closeChildrenBlades(blade, function () {
                     var newBlade = {
@@ -86,7 +86,7 @@ function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFil
             permission: 'platform:security:create'
         },
         {
-            name: "platform.commands.delete", icon: 'fa fa-trash-o',
+            name: "platform.commands.delete", icon: 'fas fa-trash-alt',
             executeMethod: function () { $scope.deleteList($scope.gridApi.selection.getSelectedRows()); },
             canExecuteMethod: function () {
                 return $scope.gridApi && _.any($scope.gridApi.selection.getSelectedRows());
@@ -94,7 +94,7 @@ function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFil
             permission: 'platform:security:delete'
         //},
         //{
-        //    name: "customer.blades.customer-accounts-list.commands.link", icon: 'fa fa-link',
+        //    name: "customer.blades.customer-accounts-list.commands.link", icon: 'fas fa-link',
         //    executeMethod: function () { },
         //    canExecuteMethod: function () { return true; },
         //    permission: 'platform:security:update'

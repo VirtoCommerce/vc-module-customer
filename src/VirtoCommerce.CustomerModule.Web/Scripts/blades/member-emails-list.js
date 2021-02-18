@@ -51,7 +51,7 @@
 
     blade.toolbarCommands = [
         {
-            name: "platform.commands.add", icon: 'fa fa-plus',
+            name: "platform.commands.add", icon: 'fas fa-plus',
             executeMethod: function () {
                 blade.currentEntities.push(transformDataElement(''));
             },
@@ -69,7 +69,7 @@
             permission: blade.updatePermission
         },
         {
-            name: "platform.commands.delete", icon: 'fa fa-trash-o',
+            name: "platform.commands.delete", icon: 'fas fa-trash-alt',
             executeMethod: function () {
                 var idx = blade.currentEntities.indexOf($scope.selectedItem);
                 if (idx >= 0) {

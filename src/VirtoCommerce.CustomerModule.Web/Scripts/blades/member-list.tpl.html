@@ -1,4 +1,4 @@
-﻿<div class="blade-static __expanded">
+<div class="blade-static __expanded">
     <va-breadcrumb ng-model="blade.breadcrumbs" blade-id="blade.id"></va-breadcrumb>
     <div class="form-group">
         <vc-customer-search blade="blade"></vc-customer-search>
@@ -31,7 +31,7 @@
                         <i class="menu-ico fa fa-edit"></i> {{'platform.commands.manage' | translate}}
                     </li>
                     <li class="menu-item" ng-click='delete(contextMenuEntity)' va-permission="customer:delete">
-                        <i class="menu-ico fa fa-trash-o"></i> {{'platform.commands.delete' | translate}}
+                        <i class="menu-ico fas fa-trash-alt"></i> {{'platform.commands.delete' | translate}}
                     </li>
                 </ul>
             </div>
@@ -50,7 +50,7 @@
 <script type="text/ng-template" id="member-list-icon.cell.html">
     <div class="ui-grid-cell-contents">
         <div class="product-img" ng-attr-title="{{COL_FIELD}}">
-            <i class="table-ico fa" ng-class="row.entity._memberTypeIcon ? row.entity._memberTypeIcon : 'fa-user'"></i>
+            <i class="table-ico" ng-class="row.entity._memberTypeIcon ? row.entity._memberTypeIcon : 'fa-user'"></i>
         </div>
     </div>
 </script>

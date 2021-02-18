@@ -56,7 +56,7 @@ angular.module(moduleName, [])
       //Register module in main menu
       var menuItem = {
           path: 'browse/member',
-          icon: 'fa fa-user __customers',
+          icon: 'fas fa-user-tie __customers',
           title: 'customer.main-menu-title',
           priority: 180,
           action: function () { $state.go('workspace.customerModule'); },
@@ -144,7 +144,7 @@ angular.module(moduleName, [])
           memberType: 'Organization',
           description: 'customer.blades.member-add.organization.description',
           fullTypeName: 'VirtoCommerce.CustomerModule.Core.Model.Organization',
-          icon: 'fa-university',
+          icon: 'fas fa-building',
           detailBlade: {
               template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/organization-detail.tpl.html',
               metaFields: [{
@@ -159,7 +159,7 @@ angular.module(moduleName, [])
           memberType: 'Employee',
           description: 'customer.blades.member-add.employee.description',
           fullTypeName: 'VirtoCommerce.CustomerModule.Core.Model.Employee',
-          icon: ' fa-user',
+          icon: 'fas fa-user-tie',
           detailBlade: {
               template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/employee-detail.tpl.html',
               metaFields: [{
@@ -178,7 +178,7 @@ angular.module(moduleName, [])
           memberType: 'Contact',
           description: 'customer.blades.member-add.contact.description',
           fullTypeName: 'VirtoCommerce.CustomerModule.Core.Model.Contact',
-          icon: 'fa-smile-o',
+          icon: 'far fa-smile',
           detailBlade: {
               template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/customer-detail.tpl.html',
               metaFields: [{
@@ -197,7 +197,7 @@ angular.module(moduleName, [])
           memberType: 'Vendor',
           description: 'customer.blades.member-add.vendor.description',
           fullTypeName: 'VirtoCommerce.CustomerModule.Core.Model.Vendor',
-          icon: 'fa-balance-scale',
+          icon: 'fas fa-briefcase',
           detailBlade: {
               template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/vendor-detail.tpl.html',
               metaFields: [{

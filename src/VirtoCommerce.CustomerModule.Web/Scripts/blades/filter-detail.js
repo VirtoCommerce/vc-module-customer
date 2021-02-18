@@ -33,7 +33,7 @@ angular.module('virtoCommerce.customerModule')
                 return !angular.equals(blade.currentEntity, blade.origEntity);
             }
 
-            blade.headIcon = 'fa-filter';
+            blade.headIcon = 'fa fa-filter';
 
             blade.toolbarCommands = [
                 {
@@ -53,7 +53,7 @@ angular.module('virtoCommerce.customerModule')
                     canExecuteMethod: isDirty
                 },
                 {
-                    name: "platform.commands.delete", icon: 'fa fa-trash-o',
+                    name: "platform.commands.delete", icon: 'fas fa-trash-alt',
                     executeMethod: deleteEntry,
                     canExecuteMethod: function () {
                         return !blade.isNew;
