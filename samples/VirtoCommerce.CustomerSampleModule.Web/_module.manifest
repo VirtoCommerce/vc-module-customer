@@ -19,13 +19,9 @@
     </owners>
     <projectUrl>https://virtocommerce.com/apps/extensions/virto-customer-module</projectUrl>
     <releaseNotes>First version.</releaseNotes>
-    <copyright>Copyright © 2011-2018 Virto Commerce. All rights reserved</copyright>
+    <copyright>Copyright © 2011-2021 Virto Commerce. All rights reserved</copyright>
     <tags>customer</tags>
 
     <assemblyFile>VirtoCommerce.CustomerSampleModule.Web.dll</assemblyFile>
     <moduleType>VirtoCommerce.CustomerSampleModule.Web.Module, VirtoCommerce.CustomerSampleModule.Web</moduleType>
-
-    <scripts>
-        <directory virtualPath="$/Scripts" searchPattern="*.js" searchSubdirectories="true" />
-    </scripts>
 </module>
