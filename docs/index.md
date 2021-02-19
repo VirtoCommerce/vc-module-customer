@@ -23,28 +23,28 @@ VirtoCommerce.Customer module represents contacts management system. The main pu
 
 Organization contact type is a container for other Organizations and Customers.
 
-1. [View Organization Details](/docs/view-organization-details.md)
+1. [View Organization Details](view-organization-details.md)
 
-1. [Create And Manage Organization](/docs/create-and-manage-organization.md)
+1. [Create And Manage Organization](create-and-manage-organization.md)
 
 ## Employee
 
 Employee contact type means the Organization Employee.
 
-[Create And Manage Employee](/docs/create-and-manage-employee.md)
+[Create And Manage Employee](create-and-manage-employee.md)
 
 ## Contact
 
  A Contact is the Shop customer. It can belong to Organizations or represent an individual shopper.
 
-[Create And Manage Contacts](/docs/manage-contacts.md)
+[Create And Manage Contacts](manage-contacts.md)
 
 ## Vendor
 
 Vendor contact type is the Shop Vendor.
 
-[Create And Manage Vendors](/docs/manage-vendors.md)
+[Create And Manage Vendors](manage-vendors.md)
 
 ## Advanced Filter
 
-[Advanced Filter](/docs/advanced-filter.md)
+[Advanced Filter](advanced-filter.md)
