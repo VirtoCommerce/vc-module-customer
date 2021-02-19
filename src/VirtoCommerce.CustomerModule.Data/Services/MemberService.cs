@@ -148,7 +148,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                             if (dataTargetMember != null)
                             {
                                 /// Workaround to trigger update of audtiable fields when only updating navigation properties.
-                                /// Otherwise on update trigger is fired only when non navgation properties.
+                                /// Otherwise on update trigger is fired only when non navigation properties are updated.
                                 repository.SetChangedState(dataTargetMember);
 
                                 /// This extension is allow to get around breaking changes is introduced in EF Core 3.0 that leads to throw
