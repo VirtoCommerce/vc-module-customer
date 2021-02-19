@@ -4,9 +4,6 @@ angular.module('virtoCommerce.customerSampleModule')
         
         if (blade.isNew) {
             blade.title = 'New Supplier';
-            blade.currentEntity = angular.extend({
-                reviews: []
-            }, blade.currentEntity);
 
             blade.fillDynamicProperties();
         } else {

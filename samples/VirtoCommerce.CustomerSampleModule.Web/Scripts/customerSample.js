@@ -6,34 +6,30 @@ if (AppDependencies != undefined) {
 }
 
 angular.module(moduleName, [])
-.run(
-  ['$rootScope', 'virtoCommerce.customerModule.memberTypesResolverService', function ($rootScope, memberTypesResolverService) {
+    .run(
+        ['$rootScope', 'virtoCommerce.customerModule.memberTypesResolverService', function ($rootScope, memberTypesResolverService) {
 
-      // add JobTitle field to Contact detail blade
-      var contactInfo = memberTypesResolverService.resolve("Contact");
-      contactInfo.detailBlade.metaFields.unshift({
-          name: 'jobTitle',
-          title: "JobTitle",
-          valueType: "ShortText"
-      });
+            // add JobTitle field to Contact detail blade
+            var contactInfo = memberTypesResolverService.resolve("Contact");
+            contactInfo.detailBlade.metaFields.unshift({
+                name: 'jobTitle',
+                title: "JobTitle",
+                valueType: "ShortText"
+            });
 
-      // register new Supplier member type
-      memberTypesResolverService.registerType({
-          memberType: 'Supplier',
-          description: 'Supplier description',
-          fullTypeName: 'virtoCommerce.customerSampleModule.Web.Model.Supplier',
-          icon: 'fa fa-truck',
-          detailBlade: {
-              template: 'Modules/$(VirtoCommerce.customerSample)/Scripts/blades/supplier-detail.tpl.html',
-              metaFields: [{
-                  name: 'contractNumber',
-                  title: "Contract Number",
-                  valueType: "ShortText"
-              }]
-          }
-      });
-
-      // registering Supplier as possible child for Organization
-      var organizationMetadata = memberTypesResolverService.resolve('Organization');
-      organizationMetadata.knownChildrenTypes.push('Supplier');
-  }]);
+            // register new Supplier member type
+            memberTypesResolverService.registerType({
+                memberType: 'Supplier',
+                description: 'Supplier description',
+                fullTypeName: 'virtoCommerce.customerSampleModule.Web.Model.Supplier',
+                icon: 'fa fa-truck',
+                detailBlade: {
+                    template: 'Modules/$(VirtoCommerce.customerSample)/Scripts/blades/supplier-detail.tpl.html',
+                    metaFields: [{
+                        name: 'contractNumber',
+                        title: "Contract Number",
+                        valueType: "ShortText"
+                    }]
+                }
+            });
+        }]);
