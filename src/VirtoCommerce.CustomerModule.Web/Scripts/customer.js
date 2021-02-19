@@ -147,8 +147,8 @@ angular.module(moduleName, [])
                     detailBlade: {
                         template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/organization-detail.tpl.html',
                         metaFields0: [{
-                            title: "customer.blades.organization-detail.labels.name",
                             name: 'name',
+                            title: "customer.blades.organization-detail.labels.name",
                             placeholder: "customer.blades.organization-detail.placeholders.name",
                             isRequired: true,
                             spanAllColumns: true,
@@ -189,16 +189,16 @@ angular.module(moduleName, [])
                             title: "customer.blades.employee-detail.labels.first-name",
                             templateUrl: "firstName.html"
                         }, {
-                            title: "customer.blades.employee-detail.labels.middle-name",
                             name: 'middleName',
+                            title: "customer.blades.employee-detail.labels.middle-name",
                             placeholder: "customer.blades.employee-detail.placeholders.middle-name",
                             valueType: "ShortText"
                         }, {
                             title: "customer.blades.employee-detail.labels.last-name",
                             templateUrl: "lastName.html"
                         }, {
-                            title: "customer.blades.employee-detail.labels.full-name",
                             name: 'fullName',
+                            title: "customer.blades.employee-detail.labels.full-name",
                             placeholder: "customer.blades.employee-detail.placeholders.full-name",
                             valueType: "ShortText"
                         }, {
@@ -206,31 +206,39 @@ angular.module(moduleName, [])
                             templateUrl: "status.html"
                         }],
                         metaFields: [{
-                            title: "customer.blades.employee-detail.labels.type",
                             name: 'memberType',
+                            title: "customer.blades.employee-detail.labels.type",
                             placeholder: "customer.blades.employee-detail.placeholders.type",
                             colSpan: 2,
                             disabled: true,
                             valueType: "ShortText"
-                        }, {
+                        },
+                        {
                             colSpan: 2,
                             title: "customer.blades.employee-detail.labels.birthday",
+                            placeholder: "customer.blades.employee-detail.placeholders.birthday",
                             templateUrl: "birthDate.html"
-                        }, {
+                        },
+                        {
                             colSpan: 2,
                             title: "customer.blades.employee-detail.labels.organizations",
                             templateUrl: "organizations.html"
-                        }, {
+                        },
+                        {
                             colSpan: 2,
                             title: "customer.blades.employee-detail.labels.timezone",
                             templateUrl: "timeZone.html"
-                        }, {
+                        },
+                        {
                             name: 'defaultLanguage',
                             title: "customer.blades.employee-detail.labels.defaultLanguage",
+                            placeholder: "customer.blades.employee-detail.placeholders.defaultLanguage",
                             valueType: "ShortText"
-                        }, {
+                        },
+                        {
                             name: 'photoUrl',
                             title: "customer.blades.employee-detail.labels.photo-url",
+                            placeholder: "customer.blades.employee-detail.placeholders.photo-url",
                             valueType: "Url"
                         }]
                     }
@@ -245,21 +253,26 @@ angular.module(moduleName, [])
                         metaFields0: [{
                             title: "customer.blades.contact-detail.labels.first-name",
                             templateUrl: "firstName.html"
-                        }, {
+                        },
+                        {
                             title: "customer.blades.contact-detail.labels.last-name",
                             templateUrl: "lastName.html"
-                        }, {
+                        },
+                        {
                             name: 'fullName',
                             title: "customer.blades.contact-detail.labels.full-name",
                             placeholder: "customer.blades.contact-detail.placeholders.full-name",
                             colSpan: 2,
                             valueType: "ShortText"
-                        }, {
+                        },
+                        {
                             spanAllColumns: true,
                             templateUrl: "status.html"
-                        }, {
+                        },
+                        {
                             templateUrl: "groups.html"
-                        }, {
+                        },
+                        {
                             name: 'salutation',
                             title: "customer.blades.contact-detail.labels.salutation",
                             placeholder: "customer.blades.contact-detail.placeholders.salutation",
@@ -269,35 +282,44 @@ angular.module(moduleName, [])
                             colSpan: 2,
                             title: "customer.blades.contact-detail.labels.organizations",
                             templateUrl: "organizations.html"
-                        }, {
+                        },
+                        {
                             colSpan: 2,
                             title: "customer.blades.contact-detail.labels.associated-organizations",
                             templateUrl: "associatedOrganizations.html"
-                        }, {
+                        },
+                        {
                             colSpan: 2,
                             title: "customer.blades.contact-detail.labels.birthday",
                             templateUrl: "birthDate.html"
-                        }, {
+                        },
+                        {
                             colSpan: 2,
                             title: "customer.blades.contact-detail.labels.timezone",
                             templateUrl: "timeZone.html"
-                        }, {
+                        },
+                        {
                             name: 'defaultLanguage',
                             title: "customer.blades.contact-detail.labels.defaultLanguage",
                             placeholder: "customer.blades.contact-detail.placeholders.defaultLanguage",
                             valueType: "ShortText"
-                        }, {
+                        },
+                        {
                             name: 'taxPayerId',
                             title: "customer.blades.contact-detail.labels.taxpayerId",
-                            placeholder: "customer.blades.contact-detail.placeholders.taxpayerId",
+                            placeholder: "customer.blades.contact-detail.placeholders.preferred-delivery",
                             valueType: "ShortText"
-                        }, {
+                        },
+                        {
                             name: 'preferredCommunication',
                             title: "customer.blades.contact-detail.labels.preferred-communication",
+                            placeholder: "customer.blades.contact-detail.placeholders.preferred-communication",
                             valueType: "ShortText"
-                        }, {
+                        },
+                        {
                             name: 'preferredDelivery',
                             title: "customer.blades.contact-detail.labels.preferred-delivery",
+                            placeholder: "customer.blades.contact-detail.placeholders.preferred-delivery",
                             valueType: "ShortText"
                         }]
                     }
