@@ -101,7 +101,6 @@ angular.module(moduleName, [])
                 var indexWidget = {
                     documentType: 'Member',
                     controller: 'virtoCommerce.searchModule.indexWidgetController',
-                    // size: [3, 1],
                     template: 'Modules/$(VirtoCommerce.Search)/Scripts/widgets/index-widget.tpl.html',
                     isVisible: function (blade) { return !blade.isNew; }
                 };

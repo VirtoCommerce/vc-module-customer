@@ -3,22 +3,12 @@
     <div class="blade-inner">
         <div class="inner-block clearfix" ng-controller="virtoCommerce.customerModule.employeeDetailController">
             <form class="form" name="detailForm">
-                <!-- hide "isActive" switch as there is no functionality under it yet-->
-                <!--<div ng-if="!blade.isNew">
-                    <label class="form-label">{{'customer.blades.employee-detail.labels.is-active' | translate}}</label>
-                    <div class="form-input">
-                        <label class="form-label __switch">
-                            <input type="checkbox" ng-model="blade.currentEntity.isActive" />
-                            <span class="switch"></span>
-                        </label>
-                    </div>
-                </div>-->
                 <va-metaform registered-inputs="blade.metaFields0" blade="blade" column-count="2"></va-metaform>
 
                 <div class="form-group" ng-init="setForm(detailForm)">
                     <va-widget-container group="employeeDetail1" blade="blade" gridster-opts="{columns: 3}"></va-widget-container>
                 </div>
-                
+
                 <va-metaform registered-inputs="blade.metaFields" blade="blade" column-count="2"></va-metaform>
 
                 <div class="form-group">

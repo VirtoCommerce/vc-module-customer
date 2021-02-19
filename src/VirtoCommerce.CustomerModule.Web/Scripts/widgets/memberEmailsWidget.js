@@ -1,16 +1,15 @@
-﻿angular.module('virtoCommerce.customerModule')
-.controller('virtoCommerce.customerModule.memberEmailsWidgetController', ['$scope', 'platformWebApp.bladeNavigationService', function ($scope, bladeNavigationService) {
-    $scope.blade = $scope.widget.blade;
+angular.module('virtoCommerce.customerModule')
+    .controller('virtoCommerce.customerModule.memberEmailsWidgetController', ['$scope', 'platformWebApp.bladeNavigationService', function ($scope, bladeNavigationService) {
+        $scope.blade = $scope.widget.blade;
 
-    $scope.openBlade = function () {
-        var newBlade = {
-            id: "customerChildBlade",
-            //data: $scope.blade.currentEntity.emails,
-            title: $scope.blade.title,
-            subtitle: 'customer.widgets.member-emails-list.blade-subtitle',
-            controller: 'virtoCommerce.customerModule.memberEmailsListController',
-            template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/member-emails-list.tpl.html'
+        $scope.openBlade = function () {
+            var newBlade = {
+                id: "customerChildBlade",
+                title: $scope.blade.title,
+                subtitle: 'customer.widgets.member-emails-list.blade-subtitle',
+                controller: 'virtoCommerce.customerModule.memberEmailsListController',
+                template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/member-emails-list.tpl.html'
+            };
+            bladeNavigationService.showBlade(newBlade, $scope.blade);
         };
-        bladeNavigationService.showBlade(newBlade, $scope.blade);
-    };
-}]);
+    }]);
