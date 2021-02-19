@@ -16,7 +16,5 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
         Task<MemberEntity[]> GetMembersByIdsAsync(string[] ids, string responseGroup = null, string[] memberTypes = null);
         Task RemoveMembersByIdsAsync(string[] ids, string[] memberTypes = null);
-
-        void SetChangedState(MemberEntity entity);
     }
 }

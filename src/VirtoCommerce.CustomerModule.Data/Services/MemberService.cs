@@ -149,7 +149,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                             {
                                 /// Workaround to trigger update of audtiable fields when only updating navigation properties.
                                 /// Otherwise on update trigger is fired only when non navigation properties are updated.
-                                repository.SetChangedState(dataTargetMember);
+                                dataTargetMember.ModifiedDate = DateTime.UtcNow;
 
                                 /// This extension is allow to get around breaking changes is introduced in EF Core 3.0 that leads to throw
                                 /// Database operation expected to affect 1 row(s) but actually affected 0 row(s) exception when trying to add the new children entities with manually set keys
