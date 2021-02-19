@@ -13,8 +13,10 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
         IQueryable<NoteEntity> Notes { get; }
         IQueryable<PhoneEntity> Phones { get; }
         IQueryable<MemberRelationEntity> MemberRelations { get; }
-        
+
         Task<MemberEntity[]> GetMembersByIdsAsync(string[] ids, string responseGroup = null, string[] memberTypes = null);
         Task RemoveMembersByIdsAsync(string[] ids, string[] memberTypes = null);
+
+        void SetChangedState(MemberEntity entity);
     }
 }

@@ -141,5 +141,10 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
             return Task.CompletedTask;
         }
+
+        public void SetChangedState(MemberEntity entity)
+        {
+            DbContext.Entry(entity).State = EntityState.Modified;
+        }
     }
 }
