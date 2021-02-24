@@ -134,6 +134,31 @@ namespace VirtoCommerce.CustomerModule.Tests
             Assert.NotEqual(nullContact, contact);
         }
 
+        [Fact]
+        public async Task SaveChanges_SaveExistingContact_ModifiedDateIsSet()
+        {
+            //Arrange
+            var id = Guid.NewGuid().ToString();
+            var contact = new Contact
+            {
+                Id = id,
+            };
+
+            var originalEntity = new ContactEntity
+            {
+                Id = id,
+            };
+
+            _repositoryMock.Setup(x => x.GetMembersByIdsAsync(new[] { contact.Id }, It.IsAny<string>(), It.IsAny<string[]>())).ReturnsAsync(new[] { originalEntity });
+            var service = GetMemberService();
+
+            //Act
+            await service.SaveChangesAsync(new[] { contact });
+
+            //Assert
+            Assert.NotNull(originalEntity.ModifiedDate);
+        }
+
 
         private MemberService GetMemberService()
         {
