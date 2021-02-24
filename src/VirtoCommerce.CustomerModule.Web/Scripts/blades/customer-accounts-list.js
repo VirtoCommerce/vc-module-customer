@@ -92,20 +92,6 @@ function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFil
                 return $scope.gridApi && _.any($scope.gridApi.selection.getSelectedRows());
             },
             permission: 'platform:security:delete'
-        //},
-        //{
-        //    name: "customer.blades.customer-accounts-list.commands.link", icon: 'fas fa-link',
-        //    executeMethod: function () { },
-        //    canExecuteMethod: function () { return true; },
-        //    permission: 'platform:security:update'
-        //},
-        //{
-        //    name: "customer.blades.customer-accounts-list.commands.unlink", icon: 'fa fa-chain-broken',
-        //    executeMethod: function () { $scope.unlinkList($scope.gridApi.selection.getSelectedRows()); },
-        //    canExecuteMethod: function () {
-        //        return $scope.gridApi && _.any($scope.gridApi.selection.getSelectedRows());
-        //    },
-        //    permission: 'platform:security:update'
         }
     ];
 

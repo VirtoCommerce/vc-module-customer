@@ -137,7 +137,7 @@ namespace VirtoCommerce.CustomerModule.Tests
         [Fact]
         public async Task SaveChanges_SaveExistingContact_ModifiedDateIsSet()
         {
-            //Arragne
+            //Arrange
             var id = Guid.NewGuid().ToString();
             var contact = new Contact
             {

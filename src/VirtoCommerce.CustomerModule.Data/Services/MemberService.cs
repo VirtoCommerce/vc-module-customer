@@ -147,7 +147,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                             var dataTargetMember = existingMemberEntities.FirstOrDefault(m => m.Id == member.Id);
                             if (dataTargetMember != null)
                             {
-                                /// Workaround to trigger update of audtiable fields when only updating navigation properties.
+                                /// Workaround to trigger update of auditable fields when only updating navigation properties.
                                 /// Otherwise on update trigger is fired only when non navigation properties are updated.
                                 dataTargetMember.ModifiedDate = DateTime.UtcNow;
 
