@@ -85,7 +85,7 @@ angular.module(moduleName, [])
                     controller: 'platformWebApp.dynamicPropertyWidgetController',
                     template: '$(Platform)/Scripts/app/dynamicProperties/widgets/dynamicPropertyWidget.tpl.html',
                     isVisible: function (blade) { return !blade.isNew && authService.checkPermission('platform:dynamic_properties:read'); }
-                }
+                };
                 var vendorSeoWidget = {
                     controller: 'virtoCommerce.coreModule.seo.seoWidgetController',
                     template: 'Modules/$(VirtoCommerce.Core)/Scripts/SEO/widgets/seoWidget.tpl.html',
