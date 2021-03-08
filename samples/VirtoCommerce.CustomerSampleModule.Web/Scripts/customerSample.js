@@ -7,7 +7,7 @@ if (AppDependencies != undefined) {
 
 angular.module(moduleName, [])
     .run(
-        ['$rootScope', 'virtoCommerce.customerModule.memberTypesResolverService', function ($rootScope, memberTypesResolverService) {
+        ['virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.authService', 'platformWebApp.widgetService', function (memberTypesResolverService, authService, widgetService) {
 
             // add JobTitle field to Contact detail blade
             var contactInfo = memberTypesResolverService.resolve("Contact");
@@ -32,4 +32,22 @@ angular.module(moduleName, [])
                     }]
                 }
             });
-        }]);
+
+            // Demonstrate dynamic properties management and ability to index them.
+            // Shows fixed https://virtocommerce.atlassian.net/browse/PT-214
+            var dynamicPropertyWidget = {
+                controller: 'platformWebApp.dynamicPropertyWidgetController',
+                template: '$(Platform)/Scripts/app/dynamicProperties/widgets/dynamicPropertyWidget.tpl.html',
+                isVisible: function (blade) { return !blade.isNew && authService.checkPermission('platform:dynamic_properties:read'); }
+            };
+            widgetService.registerWidget(dynamicPropertyWidget, 'supplierDetail1');
+
+            var indexWidget = {
+                documentType: 'Member',
+                controller: 'virtoCommerce.searchModule.indexWidgetController',
+                template: 'Modules/$(VirtoCommerce.Search)/Scripts/widgets/index-widget.tpl.html',
+                isVisible: function (blade) { return !blade.isNew; }
+            };
+            widgetService.registerWidget(indexWidget, 'supplierDetail1');
+        }]
+    );
