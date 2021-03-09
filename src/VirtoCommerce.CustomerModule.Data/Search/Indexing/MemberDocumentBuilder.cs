@@ -191,7 +191,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
         protected virtual async Task IndexDynamicProperties(Member member, IndexDocument document)
         {
             var criteria = AbstractTypeFactory<DynamicPropertySearchCriteria>.TryCreateInstance();
-            criteria.ObjectTypes = new[] { member.GetType().FullName };
+            criteria.ObjectTypes = new[] { member.ObjectType };
             criteria.Take = int.MaxValue;
 
             var searchResult = await _dynamicPropertySearchService.SearchDynamicPropertiesAsync(criteria);

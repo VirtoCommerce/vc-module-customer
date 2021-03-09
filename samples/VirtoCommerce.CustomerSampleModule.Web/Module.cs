@@ -9,6 +9,7 @@ using VirtoCommerce.CustomerModule.Data.Repositories;
 using VirtoCommerce.CustomerSampleModule.Web.Model;
 using VirtoCommerce.CustomerSampleModule.Web.Repositories;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Modularity;
 
 namespace VirtoCommerce.CustomerSampleModule.Web
@@ -31,6 +32,10 @@ namespace VirtoCommerce.CustomerSampleModule.Web
             AbstractTypeFactory<MemberEntity>.RegisterType<SupplierEntity>();
             AbstractTypeFactory<Member>.RegisterType<Supplier>().MapToType<SupplierEntity>();
 
+            // working with dynamic properties: https://virtocommerce.com/docs/latest/fundamentals/extensibility/using-dynamic-properties/
+            var dynamicPropertyRegistrar = appBuilder.ApplicationServices.GetRequiredService<IDynamicPropertyRegistrar>();
+            dynamicPropertyRegistrar.RegisterType<Supplier>();
+
             AbstractTypeFactory<Contact>.OverrideType<Contact, Contact2>().MapToType<Contact2Entity>();
             AbstractTypeFactory<Member>.OverrideType<Contact, Contact2>().MapToType<Contact2Entity>();
             AbstractTypeFactory<MemberEntity>.OverrideType<ContactEntity, Contact2Entity>();
@@ -48,6 +53,7 @@ namespace VirtoCommerce.CustomerSampleModule.Web
 
         public void Uninstall()
         {
+            // Method intentionally left empty.
         }
     }
 }
