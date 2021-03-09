@@ -26,10 +26,11 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
         protected virtual void InnerHandle<T>(GenericChangedEntryEvent<T> @event) where T : IEntity
         {
-            // TODO: after next platform ver. released, use .FromChangedEntry(x, nameof(Member)) override
+            // TODO https://virtocommerce.atlassian.net/browse/PT-365: use .FromChangedEntry(x, nameof(Member)) override
             var logOperations = @event.ChangedEntries.Select(x =>
             {
                 var result = AbstractTypeFactory<OperationLog>.TryCreateInstance().FromChangedEntry(x);
+                // ObjectType has to be 'Member' as MemberDocumentChangesProvider uses it to get all changed members in 1 request.
                 result.ObjectType = nameof(Member);
                 return result;
             }).ToArray();
