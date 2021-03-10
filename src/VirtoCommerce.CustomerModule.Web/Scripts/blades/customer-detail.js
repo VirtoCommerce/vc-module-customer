@@ -37,7 +37,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                     id: 'settingDetailChild',
                     isApiSave: true,
                     currentEntityId: 'Customer.MemberGroups',
-                    parentRefresh: function (data) { $scope.groups = data; },
+                    parentRefresh: function (data) { blade.groups = data; },
                     controller: 'platformWebApp.settingDictionaryController',
                     template: '$(Platform)/Scripts/app/settings/blades/setting-dictionary.tpl.html'
                 };
@@ -45,26 +45,26 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
             };
 
             blade.fetchCustomerOrganizations = function ($select) {
-                $scope.fetchOrganizations($select).then(function () {
-                    blade.customerOrganizations = angular.copy($scope.organizations);
+                blade.fetchOrganizations($select).then(function () {
+                    blade.customerOrganizations = angular.copy(blade.organizations);
                 });
             }
 
             blade.fetchAssociatedOrganizations = function ($select) {
-                $scope.fetchOrganizations($select).then(function () {
-                    blade.associatedOrganizations = angular.copy($scope.organizations);
+                blade.fetchOrganizations($select).then(function () {
+                    blade.associatedOrganizations = angular.copy(blade.organizations);
                 });
             }
 
             blade.fetchNextCustomerOrganizations = function ($select) {
-                $scope.fetchNextOrganizations($select).then(function () {
-                    blade.customerOrganizations = angular.copy($scope.organizations);
+                blade.fetchNextOrganizations($select).then(function () {
+                    blade.customerOrganizations = angular.copy(blade.organizations);
                 });
             }
 
             blade.fetchNextAssociatedOrganizations = function ($select) {
-                $scope.fetchNextOrganizations($select).then(function () {
-                    blade.associatedOrganizations = angular.copy($scope.organizations);
+                blade.fetchNextOrganizations($select).then(function () {
+                    blade.associatedOrganizations = angular.copy(blade.organizations);
                 });
             }
         }]);

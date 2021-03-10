@@ -140,7 +140,8 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                 return members.search(
                     {
                         memberType: 'Organization',
-                        SearchPhrase: $select.search,
+                        responseGroup: 'default',
+                        searchPhrase: $select.search,
                         deepSearch: true,
                         take: $scope.pageSize,
                         skip: $select.page * $scope.pageSize
@@ -162,7 +163,10 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
             }
 
             function joinOrganizations(organizations) {
-                blade.organizations = blade.organizations.concat(organizations);
+                organizations = _.reject(organizations, x => _.any(blade.organizations, y => y.id === x.id));
+                if (_.any(organizations)) {
+                    blade.organizations = blade.organizations.concat(organizations);
+                }
             }
 
             blade.refresh(false);
