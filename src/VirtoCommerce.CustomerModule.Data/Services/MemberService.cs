@@ -127,6 +127,8 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         /// <param name="members"></param>
         public virtual async Task SaveChangesAsync(Member[] members)
         {
+            FillContactFullName(members);
+
             var pkMap = new PrimaryKeyResolvingMap();
             var changedEntries = new List<GenericChangedEntry<Member>>();
 
@@ -210,5 +212,16 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             }
         }
         #endregion
+
+        protected virtual void FillContactFullName(Member[] members)
+        {
+            foreach (var contact in members.OfType<Contact>())
+            {
+                if (string.IsNullOrEmpty(contact.FullName))
+                {
+                    contact.FullName = $"{contact.FirstName} {contact.LastName}".Trim();
+                }
+            }
+        }
     }
 }
