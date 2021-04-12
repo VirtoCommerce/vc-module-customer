@@ -259,11 +259,9 @@ angular.module(moduleName, [])
                             templateUrl: "lastName.html"
                         },
                         {
-                            name: 'fullName',
                             title: "customer.blades.contact-detail.labels.full-name",
-                            placeholder: "customer.blades.contact-detail.placeholders.full-name",
+                            templateUrl: "fullName.html",
                             colSpan: 2,
-                            valueType: "ShortText"
                         },
                         {
                             spanAllColumns: true,
