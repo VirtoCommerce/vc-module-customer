@@ -217,7 +217,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         {
             foreach (var contact in members.OfType<Contact>())
             {
-                if (string.IsNullOrEmpty(contact.FullName))
+                if (string.IsNullOrWhiteSpace(contact.FullName))
                 {
                     contact.FullName = $"{contact.FirstName} {contact.LastName}".Trim();
                 }
