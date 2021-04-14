@@ -28,6 +28,11 @@
         <input ng-model="blade.currentEntity.lastName" ng-blur="blade.currentEntity.fullName=blade.currentEntity.firstName+' '+blade.currentEntity.lastName" required placeholder="{{'customer.blades.employee-detail.placeholders.last-name' | translate}}" />
     </div>
 </script>
+<script type="text/ng-template" id="fullName.html">
+    <div class="form-input">
+        <input ng-model="blade.currentEntity.fullName" ng-blur="!blade.currentEntity.fullName && (blade.currentEntity.fullName=blade.currentEntity.firstName+' '+blade.currentEntity.lastName)" placeholder="{{'customer.blades.employee-detail.placeholders.full-name' | translate}}" />
+    </div>
+</script>
 <script type="text/ng-template" id="status.html">
     <div class="form-group">
         <label class="form-label">

@@ -5,7 +5,7 @@ using VirtoCommerce.Platform.Core.Security;
 
 namespace VirtoCommerce.CustomerModule.Core.Model
 {
-    public class Contact : Member, IHasSecurityAccounts
+    public class Contact : Member, IHasSecurityAccounts, IHasPersonName
     {
         public Contact()
         {

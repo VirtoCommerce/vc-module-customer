@@ -215,11 +215,11 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
         protected virtual void FillContactFullName(Member[] members)
         {
-            foreach (var contact in members.OfType<Contact>())
+            foreach (var member in members.OfType<IHasPersonName>())
             {
-                if (string.IsNullOrWhiteSpace(contact.FullName))
+                if (string.IsNullOrWhiteSpace(member.FullName))
                 {
-                    contact.FullName = $"{contact.FirstName} {contact.LastName}".Trim();
+                    member.FullName = $"{member.FirstName} {member.LastName}".Trim();
                 }
             }
         }
