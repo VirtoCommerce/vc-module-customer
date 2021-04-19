@@ -45,14 +45,10 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         /// <summary>
         /// Return members by requested ids can be override for load extra data for resulting members
         /// </summary>
-        /// <param name="memberIds"></param>
-        /// <param name="responseGroup"></param>
-        /// <param name="memberTypes"></param>
-        /// <returns></returns>
-        public virtual async Task<Member[]> GetByIdsAsync(string[] memberIds, string responseGroup = null, string[] memberTypes = null)
+        public virtual Task<Member[]> GetByIdsAsync(string[] memberIds, string responseGroup = null, string[] memberTypes = null)
         {
             var cacheKey = CacheKey.With(GetType(), nameof(GetByIdsAsync), string.Join("-", memberIds), responseGroup, memberTypes == null ? null : string.Join("-", memberTypes));
-            return await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async (cacheEntry) =>
+            return _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async (cacheEntry) =>
             {
                 var retVal = new List<Member>();
                 using (var repository = _repositoryFactory())
@@ -69,6 +65,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                     {
                         memberTypeInfos = memberTypeInfos.Where(x => memberTypes.Any(mt => x.IsAssignableTo(mt)));
                     }
+
                     memberTypes = memberTypeInfos.Select(t => t.MappedType.AssemblyQualifiedName).Distinct().ToArray();
 
                     var dataMembers = await repository.GetMembersByIdsAsync(memberIds, responseGroup, memberTypes);
@@ -211,7 +208,8 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                 CustomerCacheRegion.ExpireMemberById(member.Id);
             }
         }
-        #endregion
+
+        #endregion IMemberService Members
 
         protected virtual void FillContactFullName(Member[] members)
         {
