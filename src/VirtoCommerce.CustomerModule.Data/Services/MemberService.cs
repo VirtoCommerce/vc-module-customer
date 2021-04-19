@@ -50,7 +50,8 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             var cacheKey = CacheKey.With(GetType(), nameof(GetByIdsAsync), string.Join("-", memberIds), responseGroup, memberTypes == null ? null : string.Join("-", memberTypes));
             return _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async (cacheEntry) =>
             {
-                var retVal = new List<Member>();
+                var members = new List<Member>();
+
                 using (var repository = _repositoryFactory())
                 {
                     //It is so important to generate change tokens for all ids even for not existing members to prevent an issue
@@ -72,43 +73,54 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                     foreach (var dataMember in dataMembers)
                     {
                         var member = AbstractTypeFactory<Member>.TryCreateInstance(dataMember.MemberType);
-                        if (member != null)
-                        {
-                            dataMember.ToModel(member);
+                        if (member is null) continue;
 
-                            member.ReduceDetails(responseGroup);
-
-                            retVal.Add(member);
-                        }
+                        dataMember.ToModel(member);
+                        member.ReduceDetails(responseGroup);
+                        members.Add(member);
                     }
 
                     var ancestorIds = dataMembers.SelectMany(r => r.MemberRelations)
                         .Where(x => !string.IsNullOrEmpty(x.AncestorId))
                         .Select(x => x.AncestorId)
                         .ToArray();
-                    cacheEntry.AddExpirationToken(CustomerCacheRegion.CreateChangeToken(ancestorIds));
 
                     var descendantIds = dataMembers.SelectMany(x => x.MemberRelations)
                         .Where(x => !string.IsNullOrEmpty(x.DescendantId))
                         .Select(x => x.DescendantId)
                         .ToArray();
+
+                    cacheEntry.AddExpirationToken(CustomerCacheRegion.CreateChangeToken(ancestorIds));
                     cacheEntry.AddExpirationToken(CustomerCacheRegion.CreateChangeToken(descendantIds));
                 }
-                var memberRespGroup = EnumUtility.SafeParseFlags(responseGroup, MemberResponseGroup.Full);
-                //Load member security accounts by separate request
-                if (memberRespGroup.HasFlag(MemberResponseGroup.WithSecurityAccounts))
+
+                #region Load member security accounts by separate request
+
+                if (!EnumUtility.SafeParseFlags(responseGroup, MemberResponseGroup.Full).HasFlag(MemberResponseGroup.WithSecurityAccounts))
                 {
-                    var hasSecurityAccountMembers = retVal.OfType<IHasSecurityAccounts>().ToArray();
-                    if (hasSecurityAccountMembers.Any())
-                    {
-                        var usersSearchResult = await _userSearchService.SearchUsersAsync(new UserSearchCriteria { MemberIds = hasSecurityAccountMembers.Select(x => x.Id).ToList(), Take = int.MaxValue });
-                        foreach (var hasAccountMember in hasSecurityAccountMembers)
-                        {
-                            hasAccountMember.SecurityAccounts = usersSearchResult.Results.Where(x => x.MemberId.EqualsInvariant(hasAccountMember.Id)).ToList();
-                        }
-                    }
+                    return members.ToArray();
                 }
-                return retVal.ToArray();
+
+                var hasSecurityAccountMembers = members.OfType<IHasSecurityAccounts>().ToArray();
+                if (!hasSecurityAccountMembers.Any())
+                {
+                    return members.ToArray();
+                }
+
+                var usersSearchResult = await _userSearchService.SearchUsersAsync(new UserSearchCriteria
+                {
+                    MemberIds = hasSecurityAccountMembers.Select(x => x.Id).ToList(),
+                    Take = int.MaxValue
+                });
+
+                foreach (var hasAccountMember in hasSecurityAccountMembers)
+                {
+                    hasAccountMember.SecurityAccounts = usersSearchResult.Results.Where(x => x.MemberId.EqualsInvariant(hasAccountMember.Id)).ToList();
+                }
+
+                #endregion Load member security accounts by separate request
+
+                return members.ToArray();
             });
         }
 
