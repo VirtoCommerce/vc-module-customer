@@ -142,6 +142,8 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             document.AddFilterableValue("TaxpayerId", contact.TaxPayerId);
             document.AddFilterableValue("PreferredDelivery", contact.PreferredDelivery);
             document.AddFilterableValue("PreferredCommunication", contact.PreferredCommunication);
+
+            document.AddFilterableAndSearchableValues("Login", contact.SecurityAccounts.Select(sa => sa.UserName).ToList());
         }
 
         protected virtual void IndexEmployee(IndexDocument document, Employee employee)
