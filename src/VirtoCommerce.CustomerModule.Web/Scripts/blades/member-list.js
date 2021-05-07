@@ -26,6 +26,10 @@ angular.module('virtoCommerce.customerModule')
                                 x._memberTypeIcon = memberTypeDefinition.icon;
                             }
                         });
+                        if (data.results) {
+                            if (data.results[0] != undefined && !data.results[0].outerId)
+                                data.results[0].outerId = null;
+                        }
                         $scope.listEntries = data.results ? data.results : [];
 
                         //Set navigation breadcrumbs
