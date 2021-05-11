@@ -206,7 +206,10 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 
             foreach (var property in typeDynamicProperties)
             {
-                var memberPropertyValue = member.DynamicProperties?.FirstOrDefault(x => x.Id == property.Id);
+                // PT-1668: add check for deleted properties
+                var memberPropertyValue = member.DynamicProperties?.FirstOrDefault(x => x.Id == property.Id) ??
+                     member.DynamicProperties?.FirstOrDefault(x => x.Name.EqualsInvariant(property.Name) && HasValuesOfType(x, property.ValueType));
+
                 IndexDynamicProperty(document, property, memberPropertyValue);
             }
         }
@@ -287,6 +290,12 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             }
 
             return result;
+        }
+
+        private bool HasValuesOfType(DynamicObjectProperty objectProperty, DynamicPropertyValueType valueType)
+        {
+            return objectProperty.Values?.Any(x => x.ValueType == valueType) ??
+                objectProperty.ValueType == valueType;
         }
     }
 }
