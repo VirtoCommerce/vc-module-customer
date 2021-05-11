@@ -26,6 +26,10 @@ angular.module('virtoCommerce.customerModule')
                                 x._memberTypeIcon = memberTypeDefinition.icon;
                             }
                         });
+                        // add outerId property to the first element(if it doesn't exist) so that the outer id column appears
+                        if (Array.isArray(data.results) && data.results.length && !data.results[0].outerId) {
+                                data.results[0].outerId = null;
+                        }
                         $scope.listEntries = data.results ? data.results : [];
 
                         //Set navigation breadcrumbs
