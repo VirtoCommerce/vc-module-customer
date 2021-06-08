@@ -28,7 +28,7 @@ angular.module('virtoCommerce.customerModule')
                         });
                         // add outerId property to the first element(if it doesn't exist) so that the outer id column appears
                         if (Array.isArray(data.results) && data.results.length && !data.results[0].outerId) {
-                                data.results[0].outerId = null;
+                            data.results[0].outerId = null;
                         }
                         $scope.listEntries = data.results ? data.results : [];
 
@@ -54,7 +54,7 @@ angular.module('virtoCommerce.customerModule')
                     }
                     blade.breadcrumbs = breadcrumbs;
                 } else {
-                    blade.breadcrumbs = [generateBreadcrumb(null, 'all')];
+                    blade.breadcrumbs = [generateBreadcrumb(null, 'customer.blades.member-list.breadcrumb-all')];
                 }
             }
 

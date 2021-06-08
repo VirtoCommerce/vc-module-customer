@@ -135,6 +135,7 @@
       "member-list": {
         "title": "Organizations & Contacts",
         "subtitle": "Browsing '{{name}}'",
+        "breadcrumb-all": "All contacts",
         "labels": {
           "type": "Type",
           "name": "Name",
