@@ -106,7 +106,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 LastName = contact.LastName;
                 BirthDate = contact.BirthDate;
                 DefaultLanguage = contact.DefaultLanguage;
-                FullName = contact.FullName;
+                FullName = member.Name = contact.FullName;
                 Salutation = contact.Salutation;
                 TimeZone = contact.TimeZone;
                 TaxpayerId = contact.TaxPayerId;
@@ -115,11 +115,6 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 DefaultShippingAddressId = contact.DefaultShippingAddressId;
                 DefaultBillingAddressId = contact.DefaultBillingAddressId;
                 PhotoUrl = contact.PhotoUrl;
-
-                if (string.IsNullOrEmpty(Name))
-                {
-                    Name = contact.FullName;
-                }
 
                 if (contact.Organizations != null)
                 {
