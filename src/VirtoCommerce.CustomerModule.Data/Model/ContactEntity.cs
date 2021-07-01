@@ -116,11 +116,6 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 DefaultBillingAddressId = contact.DefaultBillingAddressId;
                 PhotoUrl = contact.PhotoUrl;
 
-                if (string.IsNullOrEmpty(Name))
-                {
-                    Name = contact.FullName;
-                }
-
                 if (contact.Organizations != null)
                 {
                     if (MemberRelations.IsNullCollection())
