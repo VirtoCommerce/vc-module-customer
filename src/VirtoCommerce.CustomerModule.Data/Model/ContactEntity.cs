@@ -101,13 +101,12 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         {
             if (member is Contact contact)
             {
-                member.Name = contact.FullName;
                 FirstName = contact.FirstName;
                 MiddleName = contact.MiddleName;
                 LastName = contact.LastName;
                 BirthDate = contact.BirthDate;
                 DefaultLanguage = contact.DefaultLanguage;
-                FullName = contact.FullName;
+                FullName = member.Name = contact.FullName;
                 Salutation = contact.Salutation;
                 TimeZone = contact.TimeZone;
                 TaxpayerId = contact.TaxPayerId;
