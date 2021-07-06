@@ -51,8 +51,8 @@ angular.module(moduleName, [])
         };
     }])
     .run(
-        ['platformWebApp.mainMenuService', 'platformWebApp.authService', 'platformWebApp.widgetService', '$state', 'platformWebApp.permissionScopeResolver', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', 'virtoCommerce.customerModule.predefinedSearchFilters',
-            function (mainMenuService, authService, widgetService, $state, scopeResolver, memberTypesResolverService, settings, predefinedSearchFilters) {
+        ['platformWebApp.mainMenuService', 'platformWebApp.toolbarService', 'platformWebApp.breadcrumbHistoryService', 'platformWebApp.authService', 'platformWebApp.widgetService', '$state', 'platformWebApp.permissionScopeResolver', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', 'virtoCommerce.customerModule.predefinedSearchFilters',
+            function (mainMenuService, toolbarService, breadcrumbHistoryService, authService, widgetService, $state, scopeResolver, memberTypesResolverService, settings, predefinedSearchFilters) {
                 //Register module in main menu
                 var menuItem = {
                     path: 'browse/member',
@@ -64,6 +64,10 @@ angular.module(moduleName, [])
                 };
                 mainMenuService.addMenuItem(menuItem);
 
+                // register back-button
+                toolbarService.register(breadcrumbHistoryService.getBackButtonInstance(), 'virtoCommerce.customerModule.memberListController');
+
+                // create required WIDGETS
                 var accountsWidget = {
                     isVisible: function (blade) { return !blade.isNew; },
                     controller: 'virtoCommerce.customerModule.customerAccountsWidgetController',
@@ -96,16 +100,12 @@ angular.module(moduleName, [])
                     },
                     isVisible: function (blade) { return !blade.isNew; }
                 };
-
-                // register WIDGETS
                 var indexWidget = {
                     documentType: 'Member',
                     controller: 'virtoCommerce.searchModule.indexWidgetController',
                     template: 'Modules/$(VirtoCommerce.Search)/Scripts/widgets/index-widget.tpl.html',
                     isVisible: function (blade) { return !blade.isNew; }
                 };
-
-
 
                 //Register widgets in customer details
                 widgetService.registerWidget(accountsWidget, 'customerDetail1');
