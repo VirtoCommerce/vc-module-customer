@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -46,15 +45,15 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
         {
             var document = new IndexDocument(member.Id);
 
-            document.AddFilterableValue("MemberType", member.MemberType);
+            document.AddFilterableValue("MemberType", member.MemberType, IndexDocumentFieldValueType.String);
             document.AddFilterableAndSearchableValue("Name", member.Name);
             document.AddFilterableAndSearchableValues("Emails", member.Emails);
             document.AddFilterableAndSearchableValues("Phones", member.Phones);
             document.AddFilterableAndSearchableValue("Status", member.Status);
             document.AddFilterableValues("Groups", member.Groups);
 
-            document.AddFilterableValue("CreatedDate", member.CreatedDate);
-            document.AddFilterableValue("ModifiedDate", member.ModifiedDate ?? member.CreatedDate);
+            document.AddFilterableValue("CreatedDate", member.CreatedDate, IndexDocumentFieldValueType.DateTime);
+            document.AddFilterableValue("ModifiedDate", member.ModifiedDate ?? member.CreatedDate, IndexDocumentFieldValueType.DateTime);
 
             if (member.Addresses?.Any() == true)
             {
@@ -133,15 +132,15 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             document.AddFilterableAndSearchableValue("FirstName", contact.FirstName);
             document.AddFilterableAndSearchableValue("MiddleName", contact.MiddleName);
             document.AddFilterableAndSearchableValue("LastName", contact.LastName);
-            document.AddFilterableValue("BirthDate", contact.BirthDate);
-            document.AddFilterableValue("DefaultLanguage", contact.DefaultLanguage);
-            document.AddFilterableValue("TimeZone", contact.TimeZone);
+            document.AddFilterableValue("BirthDate", contact.BirthDate, IndexDocumentFieldValueType.DateTime);
+            document.AddFilterableValue("DefaultLanguage", contact.DefaultLanguage, IndexDocumentFieldValueType.String);
+            document.AddFilterableValue("TimeZone", contact.TimeZone, IndexDocumentFieldValueType.String);
             AddParentOrganizations(document, contact.Organizations);
             AddAssociatedOrganizations(document, contact.AssociatedOrganizations);
 
-            document.AddFilterableValue("TaxpayerId", contact.TaxPayerId);
-            document.AddFilterableValue("PreferredDelivery", contact.PreferredDelivery);
-            document.AddFilterableValue("PreferredCommunication", contact.PreferredCommunication);
+            document.AddFilterableValue("TaxpayerId", contact.TaxPayerId, IndexDocumentFieldValueType.String);
+            document.AddFilterableValue("PreferredDelivery", contact.PreferredDelivery, IndexDocumentFieldValueType.String);
+            document.AddFilterableValue("PreferredCommunication", contact.PreferredCommunication, IndexDocumentFieldValueType.String);
 
             document.AddFilterableAndSearchableValues("Login", contact.SecurityAccounts.Select(sa => sa.UserName).ToList());
         }
@@ -153,25 +152,25 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             document.AddFilterableAndSearchableValue("FirstName", employee.FirstName);
             document.AddFilterableAndSearchableValue("MiddleName", employee.MiddleName);
             document.AddFilterableAndSearchableValue("LastName", employee.LastName);
-            document.AddFilterableValue("BirthDate", employee.BirthDate);
+            document.AddFilterableValue("BirthDate", employee.BirthDate, IndexDocumentFieldValueType.DateTime);
             AddParentOrganizations(document, employee.Organizations);
 
-            document.AddFilterableValue("EmployeeType", employee.EmployeeType);
-            document.AddFilterableValue("IsActive", employee.IsActive);
+            document.AddFilterableValue("EmployeeType", employee.EmployeeType, IndexDocumentFieldValueType.String);
+            document.AddFilterableValue("IsActive", employee.IsActive, IndexDocumentFieldValueType.Boolean);
         }
 
         protected virtual void IndexOrganization(IndexDocument document, Organization organization)
         {
             document.AddSearchableValue(organization.Description);
-            document.AddFilterableValue("BusinessCategory", organization.BusinessCategory);
-            document.AddFilterableValue("OwnerId", organization.OwnerId);
+            document.AddFilterableValue("BusinessCategory", organization.BusinessCategory, IndexDocumentFieldValueType.String);
+            document.AddFilterableValue("OwnerId", organization.OwnerId, IndexDocumentFieldValueType.String);
             AddParentOrganizations(document, new[] { organization.ParentId });
         }
 
         protected virtual void IndexVendor(IndexDocument document, Vendor vendor)
         {
             document.AddSearchableValue(vendor.Description);
-            document.AddFilterableValue("GroupName", vendor.GroupName);
+            document.AddFilterableValue("GroupName", vendor.GroupName, IndexDocumentFieldValueType.String);
         }
 
         protected virtual void AddParentOrganizations(IndexDocument document, ICollection<string> values)
@@ -179,7 +178,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             var nonEmptyValues = values?.Where(v => !string.IsNullOrEmpty(v)).ToArray();
 
             document.AddFilterableValues("ParentOrganizations", nonEmptyValues);
-            document.AddFilterableValue("HasParentOrganizations", nonEmptyValues?.Any() ?? false);
+            document.AddFilterableValue("HasParentOrganizations", nonEmptyValues?.Any() ?? false, IndexDocumentFieldValueType.Boolean);
         }
 
         protected virtual void AddAssociatedOrganizations(IndexDocument document, ICollection<string> values)
@@ -187,7 +186,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             var nonEmptyValues = values?.Where(v => !string.IsNullOrEmpty(v)).ToArray();
 
             document.AddFilterableValues("AssociatedOrganizations", nonEmptyValues);
-            document.AddFilterableValue("HasAssociatedOrganizations", nonEmptyValues?.Any() ?? false);
+            document.AddFilterableValue("HasAssociatedOrganizations", nonEmptyValues?.Any() ?? false, IndexDocumentFieldValueType.Boolean);
         }
 
         protected virtual async Task IndexDynamicProperties(Member member, IndexDocument document)
@@ -242,54 +241,40 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                     }
                 }
 
-                // Use default or empty value for the property in index to be able to filter by it
-                if (values.IsNullOrEmpty())
+                // TODO PT-2562 handle null values correctly
+                if (!values.IsNullOrEmpty())
                 {
-                    values = new[] { property.IsRequired
-                        ? GetDynamicPropertyDefaultValue(property) ?? NoValueString
-                        : NoValueString
-                    };
+                    var valueType = GetDynamicPropertyDefaultValue(property);
+                    document.Add(new IndexDocumentField(propertyName, values) { IsRetrievable = true, IsFilterable = true, IsCollection = isCollection, ValueType = valueType });
                 }
-
-                document.Add(new IndexDocumentField(propertyName, values) { IsRetrievable = true, IsFilterable = true, IsCollection = isCollection });
             }
         }
 
-        private object GetDynamicPropertyDefaultValue(DynamicProperty property)
+        private IndexDocumentFieldValueType GetDynamicPropertyDefaultValue(DynamicProperty property)
         {
-            object result;
-
-            switch (property.ValueType)
+            switch (property?.ValueType ?? DynamicPropertyValueType.Undefined)
             {
                 case DynamicPropertyValueType.ShortText:
                 case DynamicPropertyValueType.Html:
                 case DynamicPropertyValueType.LongText:
                 case DynamicPropertyValueType.Image:
-                    result = default(string);
-                    break;
+                    return IndexDocumentFieldValueType.String;
 
                 case DynamicPropertyValueType.Integer:
-                    result = default(int);
-                    break;
+                    return IndexDocumentFieldValueType.Integer;
 
                 case DynamicPropertyValueType.Decimal:
-                    result = default(decimal);
-                    break;
+                    return IndexDocumentFieldValueType.Double;
 
                 case DynamicPropertyValueType.DateTime:
-                    result = default(DateTime);
-                    break;
+                    return IndexDocumentFieldValueType.DateTime;
 
                 case DynamicPropertyValueType.Boolean:
-                    result = default(bool);
-                    break;
+                    return IndexDocumentFieldValueType.Boolean;
 
                 default:
-                    result = default(object);
-                    break;
+                    return IndexDocumentFieldValueType.Undefined;
             }
-
-            return result;
         }
 
         private bool HasValuesOfType(DynamicObjectProperty objectProperty, DynamicPropertyValueType valueType)
