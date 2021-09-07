@@ -241,16 +241,26 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                     }
                 }
 
-                // TODO PT-2562 handle null values correctly
+                // replace empty value for Boolean property with default 'False'
+                if (values.IsNullOrEmpty() && property.ValueType == DynamicPropertyValueType.Boolean)
+                {
+                    values = new[] { (object)false };
+                }
+
                 if (!values.IsNullOrEmpty())
                 {
-                    var valueType = GetDynamicPropertyDefaultValue(property);
-                    document.Add(new IndexDocumentField(propertyName, values) { IsRetrievable = true, IsFilterable = true, IsCollection = isCollection, ValueType = valueType });
+                    document.Add(new IndexDocumentField(propertyName, values)
+                    {
+                        IsRetrievable = true,
+                        IsFilterable = true,
+                        IsCollection = isCollection,
+                        ValueType = GetDynamicPropertyIndexedValueType(property)
+                    });
                 }
             }
         }
 
-        private IndexDocumentFieldValueType GetDynamicPropertyDefaultValue(DynamicProperty property)
+        private IndexDocumentFieldValueType GetDynamicPropertyIndexedValueType(DynamicProperty property)
         {
             switch (property?.ValueType ?? DynamicPropertyValueType.Undefined)
             {
