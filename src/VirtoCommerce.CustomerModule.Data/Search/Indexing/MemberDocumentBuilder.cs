@@ -242,7 +242,8 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                 }
 
                 // replace empty value for Boolean property with default 'False'
-                if (values.IsNullOrEmpty() && property.ValueType == DynamicPropertyValueType.Boolean)
+                if (property.ValueType == DynamicPropertyValueType.Boolean && values.IsNullOrEmpty())
+
                 {
                     values = new[] { (object)false };
                 }
