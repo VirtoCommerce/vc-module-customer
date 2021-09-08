@@ -245,7 +245,15 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                 if (property.ValueType == DynamicPropertyValueType.Boolean && values.IsNullOrEmpty())
 
                 {
-                    values = new[] { (object)false };
+                    document.Add(new IndexDocumentField(propertyName, (object)false))
+                    {
+                        IsRetrievable = true,
+                        IsFilterable = true,
+                        IsCollection = isCollection,
+                        ValueType = GetDynamicPropertyIndexedValueType(property)
+                    });
+
+                    return;
                 }
 
                 if (!values.IsNullOrEmpty())
