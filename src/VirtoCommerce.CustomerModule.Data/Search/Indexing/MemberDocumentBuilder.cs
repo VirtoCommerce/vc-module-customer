@@ -13,7 +13,6 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 {
     public class MemberDocumentBuilder : IIndexDocumentBuilder
     {
-        public static readonly string NoValueString = "__null";
         private readonly IMemberService _memberService;
         private readonly IDynamicPropertySearchService _dynamicPropertySearchService;
 
@@ -217,81 +216,56 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
         {
             var propertyName = property.Name?.ToLowerInvariant();
 
-            if (!string.IsNullOrEmpty(propertyName))
+            if (string.IsNullOrEmpty(propertyName))
             {
-                IList<object> values = null;
-                var isCollection = property.IsDictionary || property.IsArray;
+                return;
+            }
 
-                if (objectProperty != null)
+            IList<object> values = null;
+            var isCollection = property.IsDictionary || property.IsArray;
+
+            if (objectProperty != null)
+            {
+                if (!objectProperty.IsDictionary)
                 {
-                    if (!objectProperty.IsDictionary)
-                    {
-                        values = objectProperty.Values.Where(x => x.Value != null)
-                            .Select(x => x.Value)
-                            .ToList();
-                    }
-                    else
-                    {
-                        //add all locales in dictionary to searchIndex
-                        values = objectProperty.Values.Select(x => x.Value)
-                                                .Cast<DynamicPropertyDictionaryItem>()
-                                                .Where(x => !string.IsNullOrEmpty(x.Name))
-                                                .Select(x => x.Name)
-                                                .ToList<object>();
-                    }
+                    values = objectProperty.Values.Where(x => x.Value != null)
+                        .Select(x => x.Value)
+                        .ToList();
                 }
-
-                // replace empty value for Boolean property with default 'False'
-                if (property.ValueType == DynamicPropertyValueType.Boolean && values.IsNullOrEmpty())
+                else
                 {
-                    document.Add(new IndexDocumentField(propertyName, false)
-                    {
-                        IsRetrievable = true,
-                        IsFilterable = true,
-                        IsCollection = isCollection,
-                        ValueType = GetDynamicPropertyIndexedValueType(property)
-                    });
-
-                    return;
-                }
-
-                if (!values.IsNullOrEmpty())
-                {
-                    document.Add(new IndexDocumentField(propertyName, values)
-                    {
-                        IsRetrievable = true,
-                        IsFilterable = true,
-                        IsCollection = isCollection,
-                        ValueType = GetDynamicPropertyIndexedValueType(property)
-                    });
+                    //add all locales in dictionary to searchIndex
+                    values = objectProperty.Values.Select(x => x.Value)
+                                            .Cast<DynamicPropertyDictionaryItem>()
+                                            .Where(x => !string.IsNullOrEmpty(x.Name))
+                                            .Select(x => x.Name)
+                                            .ToList<object>();
                 }
             }
-        }
 
-        private IndexDocumentFieldValueType GetDynamicPropertyIndexedValueType(DynamicProperty property)
-        {
-            switch (property?.ValueType ?? DynamicPropertyValueType.Undefined)
+            // replace empty value for Boolean property with default 'False'
+            if (property.ValueType == DynamicPropertyValueType.Boolean && values.IsNullOrEmpty())
             {
-                case DynamicPropertyValueType.ShortText:
-                case DynamicPropertyValueType.Html:
-                case DynamicPropertyValueType.LongText:
-                case DynamicPropertyValueType.Image:
-                    return IndexDocumentFieldValueType.String;
+                document.Add(new IndexDocumentField(propertyName, false)
+                {
+                    IsRetrievable = true,
+                    IsFilterable = true,
+                    IsCollection = isCollection,
+                    ValueType = property.ValueType.ToIndexedDocumentFieldValueType()
+                });
 
-                case DynamicPropertyValueType.Integer:
-                    return IndexDocumentFieldValueType.Integer;
+                return;
+            }
 
-                case DynamicPropertyValueType.Decimal:
-                    return IndexDocumentFieldValueType.Double;
-
-                case DynamicPropertyValueType.DateTime:
-                    return IndexDocumentFieldValueType.DateTime;
-
-                case DynamicPropertyValueType.Boolean:
-                    return IndexDocumentFieldValueType.Boolean;
-
-                default:
-                    return IndexDocumentFieldValueType.Undefined;
+            if (!values.IsNullOrEmpty())
+            {
+                document.Add(new IndexDocumentField(propertyName, values)
+                {
+                    IsRetrievable = true,
+                    IsFilterable = true,
+                    IsCollection = isCollection,
+                    ValueType = property.ValueType.ToIndexedDocumentFieldValueType()
+                });
             }
         }
 
