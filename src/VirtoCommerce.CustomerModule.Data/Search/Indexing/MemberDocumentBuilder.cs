@@ -243,9 +243,8 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 
                 // replace empty value for Boolean property with default 'False'
                 if (property.ValueType == DynamicPropertyValueType.Boolean && values.IsNullOrEmpty())
-
                 {
-                    document.Add(new IndexDocumentField(propertyName, (object)false))
+                    document.Add(new IndexDocumentField(propertyName, false)
                     {
                         IsRetrievable = true,
                         IsFilterable = true,
