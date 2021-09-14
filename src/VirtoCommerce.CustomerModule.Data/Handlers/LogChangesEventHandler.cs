@@ -26,15 +26,8 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
         protected virtual void InnerHandle<T>(GenericChangedEntryEvent<T> @event) where T : IEntity
         {
-            // TODO PT-365: Simplify and refactor LogChangesEventHandler
-            var logOperations = @event.ChangedEntries.Select(x =>
-            {
-                var result = AbstractTypeFactory<OperationLog>.TryCreateInstance().FromChangedEntry(x);
-                // ObjectType has to be 'Member' as MemberDocumentChangesProvider uses it to get all changed members in 1 request.
-                result.ObjectType = nameof(Member);
-                return result;
-            }).ToArray();
-
+            // ObjectType has to be 'Member' as MemberDocumentChangesProvider uses it to get all changed members in 1 request.
+            var logOperations = @event.ChangedEntries.Select(x => AbstractTypeFactory<OperationLog>.TryCreateInstance().FromChangedEntry(x, nameof(Member))).ToArray();
             //Background task is used here for performance reasons
             BackgroundJob.Enqueue(() => LogEntityChangesInBackground(logOperations));
         }
