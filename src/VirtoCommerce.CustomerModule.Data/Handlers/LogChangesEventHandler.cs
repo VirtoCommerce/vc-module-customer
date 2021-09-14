@@ -26,6 +26,7 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
         protected virtual void InnerHandle<T>(GenericChangedEntryEvent<T> @event) where T : IEntity
         {
+            // ObjectType has to be 'Member' as MemberDocumentChangesProvider uses it to get all changed members in 1 request.
             var logOperations = @event.ChangedEntries.Select(x => AbstractTypeFactory<OperationLog>.TryCreateInstance().FromChangedEntry(x, nameof(Member))).ToArray();
             //Background task is used here for performance reasons
             BackgroundJob.Enqueue(() => LogEntityChangesInBackground(logOperations));
