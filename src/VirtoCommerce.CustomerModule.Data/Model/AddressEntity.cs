@@ -6,7 +6,7 @@ using Address = VirtoCommerce.CustomerModule.Core.Model.Address;
 
 namespace VirtoCommerce.CustomerModule.Data.Model
 {
-    public class AddressEntity : AuditableEntity
+    public class AddressEntity : AuditableEntity, IHasOuterId
     {
         [StringLength(2048)]
         public string Name { get; set; }
@@ -67,6 +67,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(128)]
         public string Organization { get; set; }
 
+        [StringLength(128)]
+        public string OuterId { get; set; }
+
         #region Navigation Properties
 
         public string MemberId { get; set; }
@@ -101,6 +104,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             address.Phone = DaytimePhoneNumber;
             address.Organization = Organization;
             address.AddressType = EnumUtility.SafeParseFlags(Type, AddressType.BillingAndShipping);
+            address.OuterId = OuterId;
             return address;
         }
 
@@ -125,6 +129,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             DaytimePhoneNumber = address.Phone;
             Organization = address.Organization;
             Type = address.AddressType.ToString();
+            OuterId = address.OuterId;
 
             return this;
         }
@@ -149,6 +154,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             target.Line1 = Line1;
             target.Line2 = Line2;
             target.Organization = Organization;
+            target.OuterId = OuterId;
         }
     }
 }
