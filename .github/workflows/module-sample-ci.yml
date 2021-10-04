@@ -95,7 +95,17 @@ jobs:
 
       - name: Packaging
         run: vc-build Compress -skip Clean+Restore+Compile+Test -DefaultProject "SampleModule.Web"
-      
+
+      - name: Rename artifact
+        run: |
+          cd artifacts
+          for zip in *.zip
+          do
+            newzip="${{ matrix.projectName }}-sample-${zip}"
+            mv "${zip}" "${newzip}"
+            echo "${zip} renamed to ${newzip}"
+          done
+
       - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master') }}
         id: blobRelease
