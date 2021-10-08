@@ -20,6 +20,7 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
         {
             foreach (var change in @event.ChangedEntries ?? Array.Empty<GenericChangedEntry<ApplicationUser>>())
             {
+                CustomerSearchCacheRegion.ExpireRegion();
                 CustomerCacheRegion.ExpireMemberById(change.NewEntry.MemberId);
 
                 if (!change.NewEntry.MemberId.EqualsInvariant(change.OldEntry.MemberId))
