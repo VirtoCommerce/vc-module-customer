@@ -117,7 +117,6 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             document.AddSearchableValue(address.Phone);
             document.AddSearchableValue(address.Email);
             document.AddSearchableValue(address.OuterId);
-            document.AddSearchableValue(address.DefaultAddress.ToString());
         }
 
         protected virtual void IndexNote(IndexDocument document, Note note)

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace VirtoCommerce.CustomerModule.Data.Migrations
 {
@@ -7,7 +7,7 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
-                name: "DefaultAddress",
+                name: "IsDefault",
                 table: "Address",
                 nullable: false,
                 defaultValue: false);
@@ -16,7 +16,7 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "DefaultAddress",
+                name: "IsDefault",
                 table: "Address");
         }
     }
