@@ -70,6 +70,8 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(128)]
         public string OuterId { get; set; }
 
+        public bool DefaultAddress { get; set; }
+
         #region Navigation Properties
 
         public string MemberId { get; set; }
@@ -105,6 +107,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             address.Organization = Organization;
             address.AddressType = EnumUtility.SafeParseFlags(Type, AddressType.BillingAndShipping);
             address.OuterId = OuterId;
+            address.DefaultAddress = DefaultAddress;
             return address;
         }
 
@@ -130,6 +133,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             Organization = address.Organization;
             Type = address.AddressType.ToString();
             OuterId = address.OuterId;
+            DefaultAddress = address.DefaultAddress;
 
             return this;
         }
@@ -155,6 +159,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             target.Line2 = Line2;
             target.Organization = Organization;
             target.OuterId = OuterId;
+            target.DefaultAddress = DefaultAddress;
         }
     }
 }
