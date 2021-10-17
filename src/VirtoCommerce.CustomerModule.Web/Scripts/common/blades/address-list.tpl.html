@@ -1,0 +1,23 @@
+<div class="blade-content">
+    <div class="blade-inner">
+        <div class="inner-block">
+            <ul class="list __items" style="list-style-type: none" ng-if="blade.currentEntities.length">
+                <li class="list-head" ng-repeat="(addressType, listType) in blade.currentEntities | groupBy:'addressType'">
+                    {{addressType}}
+                    <ul>
+                        <li class="list-item" ng-click="openDetailBlade(address)" ng-repeat="address in listType" ng-class="{'__selected': address == selectedItem}">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span class="list-t">{{getAddressName(address) | limitTo:50}}</span>
+                                <div ng-if="address.isDefault">
+                                    <span class="table-statusDefault">Default</span>
+                                </div>
+                            </div>
+                            <span class="list-descr">{{address.addressType}}</span>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <p class="note" ng-if="!blade.currentEntities.length">{{ 'core.blades.address-list.labels.no-addresses' | translate }}</p>
+        </div>
+    </div>
+</div>
