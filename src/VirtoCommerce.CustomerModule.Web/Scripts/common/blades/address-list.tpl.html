@@ -7,12 +7,14 @@
                     <ul>
                         <li class="list-item" ng-click="openDetailBlade(address)" ng-repeat="address in listType" ng-class="{'__selected': address == selectedItem}">
                             <div style="display: flex; justify-content: space-between;">
-                                <span class="list-t">{{getAddressName(address) | limitTo:50}}</span>
-                                <div ng-if="address.isDefault">
+                                <div>
+                                    <span class="list-t">{{getAddressName(address) | limitTo:50}}</span>
+                                    <span class="list-descr">{{address.addressType}}</span>
+                                </div>
+                                <div style="align-self: center;" ng-if="address.isDefault">
                                     <span class="table-statusDefault">Default</span>
                                 </div>
                             </div>
-                            <span class="list-descr">{{address.addressType}}</span>
                         </li>
                     </ul>
                 </li>

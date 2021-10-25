@@ -88,23 +88,29 @@ angular.module('virtoCommerce.customerModule.common')
                 executeMethod: function () {
 
                     // Assigning a default address
-                    if (blade.currentEntity.isNew) {
-                        if (blade.numberOfAddresses(blade.currentEntity.addressType) == 0) {
+                    if (blade.currentEntity.isNew) { // If you added a new address
+                        if (blade.numberOfAddresses(blade.currentEntity.addressType) == 0) { // If he will the only one
                             blade.currentEntity.isDefault = true;
+                        }
+                        else {
+                            blade.currentEntity.isDefault = false;
                         }
                     }
                     else {
-                        if (!angular.equals(blade.currentEntity.addressType, blade.origEntity.addressType)) {
+                        if (!angular.equals(blade.currentEntity.addressType, blade.origEntity.addressType)) { // If the type of the current address has changed
                             blade.currentEntity.isDefault = false;
-                            if (blade.numberOfAddresses(blade.currentEntity.addressType) == 0) {
+                            if (blade.numberOfAddresses(blade.currentEntity.addressType) == 0) { // The current address will be the only one in the group
                                 blade.currentEntity.isDefault = true;
+                            }
+                            if (blade.numberOfAddresses(blade.origEntity.addressType) == 2 && blade.origEntity.addressType !== blade.addressTypes[2]) {
+                                blade.searchSecondAddress(blade.origEntity.addressType, blade.currentEntity.name);
                             }
                         }
                         else {
                             blade.searchDefaultAddress(blade.currentEntity.addressType);
                         }
                     }
-                    if (blade.currentEntity.addressType == blade.addressTypes[2]) {
+                    if (blade.currentEntity.addressType == blade.addressTypes[2]) { // If the current address is from BillingAndShipping
                         blade.currentEntity.isDefault = false;
                     }
 
@@ -175,6 +181,9 @@ angular.module('virtoCommerce.customerModule.common')
                             blade.deleteFn(blade.currentEntity);
                         }
                         $scope.bladeClose();
+                        if (blade.numberOfAddresses(blade.origEntity.addressType) == 1 && blade.currentEntity.addressType !== blade.addressTypes[2]) {
+                            blade.searchSecondAddress(blade.origEntity.addressType, blade.currentEntity.name);
+                        }
                     }
                 }
             }

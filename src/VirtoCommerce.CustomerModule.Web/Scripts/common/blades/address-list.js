@@ -44,6 +44,13 @@ angular.module('virtoCommerce.customerModule.common')
                     });
                     return count;
                 },
+                searchSecondAddress: function (addressType, name) {
+                    blade.currentEntities.find((defAddress, i) => {
+                        if (defAddress.addressType === addressType && defAddress.name !== name) {
+                            blade.currentEntities[i].isDefault = true;
+                        }
+                    });
+                },
                 searchDefaultAddress: function (addressType) {
                     blade.currentEntities.find((defAddress, i) => {
                         if (defAddress.addressType === addressType && defAddress.isDefault) {
