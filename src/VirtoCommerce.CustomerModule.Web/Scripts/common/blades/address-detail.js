@@ -93,7 +93,12 @@ angular.module('virtoCommerce.customerModule.common')
                             blade.currentEntity.isDefault = true;
                         }
                         else {
-                            blade.currentEntity.isDefault = false;
+                            if (blade.currentEntity.isDefault === true) { // If at creation made the default address
+                                blade.searchDefaultAddress(blade.currentEntity.addressType);
+                            }
+                            else {
+                                blade.currentEntity.isDefault = false;
+                            }
                         }
                     }
                     else {
