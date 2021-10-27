@@ -1,0 +1,43 @@
+<div class="blade-content">
+    <div class="blade-inner">
+        <div class="inner-block">
+            <form class="form" name="detailForm">
+                <va-metaform blade="blade" registered-inputs="blade.metaFields" column-count="1" ng-init="setForm(detailForm)"></va-metaform>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script id="addressTypeSelector.html" type="text/ng-template">
+    <label class="form-label">{{ 'core.blades.address-detail.labels.address-type' | translate }}</label>
+    <div class="form-input">
+        <ui-select ng-model="blade.currentEntity.addressType">
+            <ui-select-match placeholder="{{ 'core.blades.address-detail.placeholders.address-type' | translate }}">{{$select.selected}}</ui-select-match>
+            <ui-select-choices repeat="x as x in blade.addressTypes | filter: $select.search">
+                <span ng-bind-html="x | highlight: $select.search"></span>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+</script>
+<script id="countrySelector.html" type="text/ng-template">
+    <label class="form-label">{{ 'core.blades.address-detail.labels.country' | translate }}</label>
+    <div class="form-input">
+        <ui-select ng-model="blade.currentEntity.countryCode" required>
+            <ui-select-match placeholder="{{ 'core.blades.address-detail.placeholders.country' | translate }}">{{$select.selected.displayName}}</ui-select-match>
+            <ui-select-choices repeat="x.id as x in blade.countries | filter: $select.search">
+                <span ng-bind-html="x.displayName | highlight: $select.search"></span>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+</script>
+<script id="countryRegionSelector.html" type="text/ng-template">
+    <label class="form-label">{{ 'core.blades.address-detail.labels.region' | translate }}</label>
+    <div class="form-input">
+        <ui-select ng-model="blade.currentEntity.regionName" required>
+            <ui-select-match placeholder="{{ 'core.blades.address-detail.placeholders.region' | translate }}">{{$select.selected.displayName}}</ui-select-match>
+            <ui-select-choices repeat="x.name as x in blade.getRegions($select.search) | filter: $select.search track by $index">
+                <span ng-bind-html="x.displayName | highlight: $select.search"></span>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+</script>

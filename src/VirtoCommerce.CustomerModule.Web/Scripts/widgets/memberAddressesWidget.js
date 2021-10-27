@@ -1,4 +1,4 @@
-﻿angular.module('virtoCommerce.customerModule')
+angular.module('virtoCommerce.customerModule')
 .controller('virtoCommerce.customerModule.memberAddressesWidgetController', ['$scope', 'platformWebApp.bladeNavigationService', function ($scope, bladeNavigationService) {
     var blade = $scope.widget.blade;
 
@@ -8,8 +8,8 @@
             currentEntities: blade.currentEntity.addresses,
             title: blade.title,
             subtitle: 'customer.widgets.address-list.blade-subtitle',
-            controller: 'virtoCommerce.coreModule.common.coreAddressListController',
-            template: 'Modules/$(VirtoCommerce.Core)/Scripts/common/blades/address-list.tpl.html'
+            controller: 'virtoCommerce.customerModule.common.coreAddressListController',
+            template: 'Modules/$(VirtoCommerce.Customer)/Scripts/common/blades/address-list.tpl.html'
         };
         bladeNavigationService.showBlade(newBlade, blade);
     };
