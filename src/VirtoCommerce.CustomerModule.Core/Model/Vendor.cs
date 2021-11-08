@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using VirtoCommerce.CoreModule.Core.Seo;
+using VirtoCommerce.Platform.Core.Security;
 
 namespace VirtoCommerce.CustomerModule.Core.Model
 {
-    public class Vendor : Member, ISeoSupport
+    public class Vendor : Member, ISeoSupport, IHasSecurityAccounts
     {
         public Vendor()
         {
@@ -28,6 +30,16 @@ namespace VirtoCommerce.CustomerModule.Core.Model
         /// Vendor group
         /// </summary>
         public string GroupName { get; set; }
+
+        #region IHasSecurityAccounts Members
+
+        /// <summary>
+        /// All security accounts associated with this vendor
+        /// </summary>
+        public ICollection<ApplicationUser> SecurityAccounts { get; set; } = new List<ApplicationUser>();
+
+        #endregion
+
 
         public override string ObjectType => typeof(Vendor).FullName;
 
