@@ -131,6 +131,7 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                 widgetService.registerWidget(indexWidget, 'employeeDetail2');
 
                 //Register widgets in vendor details
+                widgetService.registerWidget(accountsWidget, 'vendorDetail1');
                 widgetService.registerWidget(addressesWidget, 'vendorDetail1');
                 widgetService.registerWidget(emailsWidget, 'vendorDetail1');
                 widgetService.registerWidget(phonesWidget, 'vendorDetail1');
