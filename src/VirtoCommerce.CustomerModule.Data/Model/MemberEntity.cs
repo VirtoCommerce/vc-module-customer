@@ -65,14 +65,15 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             member.Groups = Groups.OrderBy(x => x.Id).Select(x => x.Group).ToList();
             member.SeoInfos = SeoInfos.Select(x => x.ToModel(AbstractTypeFactory<SeoInfo>.TryCreateInstance())).ToList();
 
-            member.DynamicProperties = DynamicPropertyObjectValues.GroupBy(x => x.PropertyId).Select(x =>
-            {
-                var property = AbstractTypeFactory<DynamicObjectProperty>.TryCreateInstance();
-                property.Id = x.Key;
-                property.Name = x.FirstOrDefault()?.PropertyName;
-                property.Values = x.Select(v => v.ToModel(AbstractTypeFactory<DynamicPropertyObjectValue>.TryCreateInstance())).ToArray();
-                return property;
-            }).ToArray();
+            member.DynamicProperties = DynamicPropertyObjectValues.GroupBy(x => x.PropertyId ?? x.PropertyName) // PropertyId is null for formally non-defined properties, therefore use the name for grouping
+                .Select(x =>
+                {
+                    var property = AbstractTypeFactory<DynamicObjectProperty>.TryCreateInstance();
+                    property.Id = x.First()?.PropertyId;
+                    property.Name = x.FirstOrDefault()?.PropertyName;
+                    property.Values = x.Select(v => v.ToModel(AbstractTypeFactory<DynamicPropertyObjectValue>.TryCreateInstance())).ToArray();
+                    return property;
+                }).ToArray();
 
             return member;
         }
