@@ -54,6 +54,7 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<IIndexedMemberSearchService, MemberIndexedSearchService>();
             serviceCollection.AddTransient<IMemberSearchService, MemberSearchService>();
             serviceCollection.AddTransient<IMemberService, MemberService>();
+            serviceCollection.AddTransient<IMemberResolver, MemberResolver>();
             serviceCollection.AddSingleton<CustomerExportImport>();
             serviceCollection.AddTransient<MemberSearchRequestBuilder>();
 
