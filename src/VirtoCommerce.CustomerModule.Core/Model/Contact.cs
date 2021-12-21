@@ -9,9 +9,10 @@ namespace VirtoCommerce.CustomerModule.Core.Model
     {
         public Contact()
         {
-            //Retain Contact as discriminator  in case of  derived types must have the same MemberType 
+            //Retain Contact as discriminator  in case of  derived types must have the same MemberType
             MemberType = nameof(Contact);
         }
+
         public string Salutation { get; set; }
         public string FullName { get; set; }
         public string FirstName { get; set; }
@@ -30,6 +31,7 @@ namespace VirtoCommerce.CustomerModule.Core.Model
         public string DefaultShippingAddressId { get; set; }
         public string DefaultBillingAddressId { get; set; }
         public string PhotoUrl { get; set; }
+        public bool IsAnonymized { get; set; }
 
         public override string ObjectType => typeof(Contact).FullName;
 
@@ -40,7 +42,7 @@ namespace VirtoCommerce.CustomerModule.Core.Model
         /// </summary>
         public ICollection<ApplicationUser> SecurityAccounts { get; set; } = new List<ApplicationUser>();
 
-        #endregion
+        #endregion IHasSecurityAccounts Members
 
         public override void ReduceDetails(string responseGroup)
         {
