@@ -40,7 +40,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             return _memberService.GetByIdsAsync(documentIds.ToArray());
         }
 
-        protected async virtual Task<IndexDocument> CreateDocument(Member member)
+        protected virtual async Task<IndexDocument> CreateDocument(Member member)
         {
             var document = new IndexDocument(member.Id);
 
@@ -143,6 +143,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             document.AddFilterableValue("PreferredCommunication", contact.PreferredCommunication, IndexDocumentFieldValueType.String);
 
             document.AddFilterableAndSearchableValues("Login", contact.SecurityAccounts.Select(sa => sa.UserName).ToList());
+            document.AddFilterableValue("IsAnonymized", contact.IsAnonymized, IndexDocumentFieldValueType.Boolean);
         }
 
         protected virtual void IndexEmployee(IndexDocument document, Employee employee)

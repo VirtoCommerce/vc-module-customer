@@ -58,7 +58,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(256)]
         public string Salutation { get; set; }
 
-        #endregion
+        public bool IsAnonymized { get; set; }
+
+        #endregion UserProfile members
 
         public override Member ToModel(Member member)
         {
