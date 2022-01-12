@@ -11,28 +11,28 @@
           "last-name": "Last name",
           "groups": "User groups",
           "full-name": "Full name",
-          "birthday": "Birthday",
-          "salutation": "Salutation",
+          "birthday": "Birth date",
+          "salutation": "Title",
           "defaultLanguage": "Default language",
           "organizations": "Member of organization(s)",
           "associated-organizations": "Associated organization(s)",
           "taxpayerId": "Taxpayer ID",
-          "preferred-communication": "Preferred communication",
-          "preferred-delivery": "Preferred delivery",
+          "preferred-communication": "Preferred communication channel",
+          "preferred-delivery": "Preferred delivery method",
           "timezone": "Time zone"
         },
         "placeholders": {
           "groups": "Select user groups",
-          "first-name": "Enter value",
-          "middle-name": "Enter value",
-          "last-name": "Enter value",
-          "full-name": "Enter value",
-          "birthday": "Enter value",
-          "salutation": "Enter value",
-          "defaultLanguage": "Enter value",
-          "preferred-communication": "Enter value",
-          "preferred-delivery": "Enter value",
-          "taxpayerId": "Enter value",
+          "first-name": "Please specify a value",
+          "middle-name": "Please specify a value",
+          "last-name": "Please specify a value",
+          "full-name": "Please specify a value",
+          "birthday": "Please specify a value",
+          "salutation": "Please specify a value",
+          "defaultLanguage": "Please specify a value",
+          "preferred-communication": "Please specify a value",
+          "preferred-delivery": "Please specify a value",
+          "taxpayerId": "Please specify a value",
           "organizations": "Select organization",
           "associated-organizations": "Select organization",
           "timezone": "Select value"
@@ -42,34 +42,34 @@
         "title-new": "New Employee",
         "subtitle": "Employee details",
         "labels": {
-          "is-active": "Is active",
+          "is-active": "Active",
           "first-name": "First name",
           "middle-name": "Middle name",
           "last-name": "Last name",
           "full-name": "Full name",
           "type": "Employee type",
-          "birthday": "Birthday",
+          "birthday": "Birth date",
           "photo-url": "Photo URL",
           "defaultLanguage": "Default language",
           "organizations": "Organization(s)",
           "timezone": "Time zone"
         },
         "placeholders": {
-          "first-name": "Enter value",
-          "middle-name": "Enter value",
-          "last-name": "Enter value",
-          "full-name": "Enter value",
-          "type": "Enter value",
-          "birthday": "Enter value",
-          "photo-url": "Enter URL",
-          "defaultLanguage": "Enter value",
-          "organizations": "Select organization",
-          "timezone": "Select value"
+          "first-name": "Please specify a value",
+          "middle-name": "Please specify a value",
+          "last-name": "Please specify a value",
+          "full-name": "Please specify a value",
+          "type": "Please specify a value",
+          "birthday": "Please specify a value",
+          "photo-url": "Please enter URL",
+          "defaultLanguage": "Please specify a value",
+          "organizations": "Please select an organization",
+          "timezone": "Please select a value"
         }
       },
       "pick-store-list": {
         "title": "New Account",
-        "subtitle": "Select a store for the new Account",
+        "subtitle": "Select a store for the new account",
         "labels": {
           "name": "Store name"
         }
@@ -84,7 +84,7 @@
         },
         "placeholders": {
           "name": "Enter name",
-          "description": "Enter description"
+          "description": "Please provide description..."
         }
       },
       "vendor-detail": {
@@ -92,33 +92,33 @@
         "subtitle": "Vendor details",
         "labels": {
           "name": "Name",
-          "site-url": "Site URL",
+          "site-url": "Website URL",
           "logo-url": "Logo URL",
           "group-name": "Group name",
           "description": "Description"
         },
         "placeholders": {
-          "name": "Enter name",
-          "site-url": "Enter URL",
-          "logo-url": "Enter URL",
-          "group-name": "Enter value",
-          "description": "Enter description"
+          "name": "Please enter name",
+          "site-url": "Please enter URL",
+          "logo-url": "Please enter URL",
+          "group-name": "Please specify a value",
+          "description": "Please provide description..."
         }
       },
       "member-add": {
         "title": "New contact",
         "subtitle": "Select contact type",
         "organization": {
-          "description": "A container for other Organizations and Contacts."
+          "description": "This is where other organizations and contacts will be stored"
         },
         "employee": {
-          "description": "The Organization Employee."
+          "description": "Employee of the organization in question"
         },
         "contact": {
-          "description": "The shop Customer. Can belong to Organizations or represent an individual shopper."
+          "description": "A customer of the store that may either be a member of an organization or act as an individual shopper"
         },
         "vendor": {
-          "description": "The shop Vendor."
+          "description": "Merchant or vendor at the store"
         }
       },
       "member-emails-list": {
@@ -129,12 +129,12 @@
           "Email": "Email"
         },
         "placeholders": {
-          "email": "Enter value"
+          "email": "Please specify a value"
         }
       },
       "member-list": {
-        "title": "Organizations & Contacts",
-        "subtitle": "Browsing '{{name}}'",
+        "title": "Organizations and Contacts",
+        "subtitle": "Loading '{{name}}'",
         "breadcrumb-all": "All contacts",
         "labels": {
           "type": "Type",
@@ -148,15 +148,15 @@
           "filter-organization": "Organizations"
         },
         "placeholders": {
-          "select-filter": "Select filter"
+          "select-filter": "Please select a filter"
         }
       },
       "member-phones-list": {
         "labels": {
-          "no-phones": "No phones yet"
+          "no-phones": "No phone numbers yet"
         },
         "placeholders": {
-          "phone": "Enter phone number"
+          "phone": "Please enter phone number..."
         }
       },
       "customer-accounts-list": {
@@ -173,20 +173,20 @@
           "criteria": "Search phrase",
           "name": "Filter name",
           "searchInVariations": "Display product variations",
-          "syntax-example-1": "all contacts with word 'org1.com' in indexed property values",
-          "syntax-example-2": "all contacts with words 'James' AND 'Smith' in indexed property values",
-          "syntax-example-3": "use '*' to replace zero or more characters",
-          "syntax-example-4": "all contacts where first name contains words 'Alex' or 'James'. ",
-          "syntax-example-5": "use ! as NOT operator on filters",
+          "syntax-example-1": "all contacts containing 'org1.com' in the indexed property values",
+          "syntax-example-2": "all contacts containing 'James' AND 'Smith' in the indexed property values",
+          "syntax-example-3": "use an asterisk (*) to replace zero or more characters",
+          "syntax-example-4": "all contacts with first name containing 'Alex' or 'James' ",
+          "syntax-example-5": "use exclamation (!) as a NOT operator for filters",
           "syntax-example-6": "all contacts with the selected member type",
-          "syntax-example-7": "all contacts with creation period, between values including bounds ",
-          "syntax-example-8": "all contacts with creation period, between values excluding bounds",
-          "syntax-example-9": "where the modified date is greater or equal than '2016-12-26'",
+          "syntax-example-7": "all contacts with a create date between two values (inclusive) ",
+          "syntax-example-8": "all contacts with a create date between two values (exclusive)",
+          "syntax-example-9": "with a modify date greater than or equaling '2016-12-26'",
           "syntax-example-10": "combine keywords and filters"
         },
         "placeholders": {
-          "criteria": "Enter search phrase",
-          "name": "How will you call this filter?"
+          "criteria": "Please enter search phrase",
+          "name": "Please give this filter a name"
         }
       },
       "shared": {
@@ -194,7 +194,7 @@
           "status": "Status"
         },
         "placeholders": {
-          "status": "Select value"
+          "status": "Please select a value"
         }
       }
     },
@@ -208,8 +208,8 @@
         "blade-subtitle": "Manage emails"
       },
       "member-phones-list": {
-        "title": "Phones",
-        "blade-subtitle": "Manage phones"
+        "title": "Phone numbers",
+        "blade-subtitle": "Manage phone numbers"
       },
       "customer-accounts-list": {
         "title": "Accounts",
@@ -218,49 +218,49 @@
     },
     "dialogs": {
       "members-delete": {
-        "title": "Delete confirmation",
-        "message": "Are you sure you want to delete selected Organizations or Contacts?"
+        "title": "Confirm Delete",
+        "message": "Are you sure you want to delete the selected organizations or contacts?"
       },
       "unknown-member-type": {
         "title": "Error",
-        "message": "Can't edit a member of unknown type '{{memberType}}'."
+        "message": "Cannot edit member of an unknown type: '{{memberType}}'"
       },
       "member-save": {
         "title": "Save changes",
-        "message": "This Contact has been modified. Do you want to save changes?"
+        "message": "This contact has been modified. Do you want to save changes?"
       },
       "email-save": {
         "title": "Save changes",
-        "message": "The Email has been modified. Do you want to save changes?"
+        "message": "The email has been modified. Do you want to save changes?"
       },
       "phone-number-save": {
         "title": "Save changes",
-        "message": "The Phone number has been modified. Do you want to save changes?"
+        "message": "The phone number has been modified. Do you want to save changes?"
       }
     }
   },
   "permissions": {
-    "customer:access": "Open customers menu",
-    "customer:create": "Create customer related data",
-    "customer:read": "View customer related data",
-    "customer:update": "Update customer related data",
-    "customer:delete": "Delete customer related data"
+    "customer:access": "Open customer menu",
+    "customer:create": "Create customer data",
+    "customer:read": "View customer data",
+    "customer:update": "Update customer data",
+    "customer:delete": "Delete customer data"
   },
   "settings": {
     "Customer": {
       "MemberGroups": {
-        "title": "Member groups dictionary",
-        "description": "All available members groups values"
+        "title": "Member group dictionary",
+        "description": "All available member group values"
       },
       "ExportImport.PageSize": {
-        "title": "The page size being used for Export / Import",
-        "description": "Large values may decrease performance"
+        "title": "Page size being used for Export / Import",
+        "description": "Note: Large values may result in decreased performance"
       },
       "Search": {
         "EventBasedIndexation": {
           "Enable": {
-            "title": "Enable event-based indexation for customer entities (Restart required)",
-            "description": "Any changes to the customer entity will trigger a background task that will apply these changes in the search index."
+            "title": "Enable event-based indexing for customer entities (restart required)",
+            "description": "Any change to a customer entity will trigger a background task that will apply these changes to the search index."
           }
         }
       },
@@ -286,8 +286,8 @@
         "IndexingJobs": {
           "IndexationDate": {
             "Member": {
-              "title": "Member indexation date and time",
-              "description": "Date and time of the member indexation task to start"
+              "title": "Member indexing date and time",
+              "description": "Date and time the member indexing task will start at"
             }
           }
         }
@@ -296,7 +296,7 @@
   },
   "module": {
     "VirtoCommerce.Customer": {
-      "description": "Export/Import contacts and organizations"
+      "description": "Export or import contacts and organizations"
     }
   }
 }
