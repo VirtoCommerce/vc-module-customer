@@ -14,8 +14,8 @@
           "birthday": "Birth date",
           "salutation": "Title",
           "defaultLanguage": "Default language",
-          "organizations": "Member of organization(s)",
-          "associated-organizations": "Associated organization(s)",
+          "organizations": "Member of company(ies)",
+          "associated-organizations": "Associated company(ies)",
           "taxpayerId": "Taxpayer ID",
           "preferred-communication": "Preferred communication channel",
           "preferred-delivery": "Preferred delivery method",
@@ -33,9 +33,9 @@
           "preferred-communication": "Please specify a value",
           "preferred-delivery": "Please specify a value",
           "taxpayerId": "Please specify a value",
-          "organizations": "Select organization",
-          "associated-organizations": "Select organization",
-          "timezone": "Select value"
+          "organizations": "Please select a company",
+          "associated-organizations": "Please select a company",
+          "timezone": "Please select"
         }
       },
       "employee-detail": {
@@ -51,7 +51,7 @@
           "birthday": "Birth date",
           "photo-url": "Photo URL",
           "defaultLanguage": "Default language",
-          "organizations": "Organization(s)",
+          "organizations": "Company(ies)",
           "timezone": "Time zone"
         },
         "placeholders": {
@@ -63,7 +63,7 @@
           "birthday": "Please specify a value",
           "photo-url": "Please enter URL",
           "defaultLanguage": "Please specify a value",
-          "organizations": "Please select an organization",
+          "organizations": "Please select a company",
           "timezone": "Please select a value"
         }
       },
@@ -75,16 +75,16 @@
         }
       },
       "organization-detail": {
-        "title-new": "New Organization",
-        "subtitle": "Organization details",
+        "title-new": "New Company",
+        "subtitle": "Company details",
         "labels": {
           "name": "Name",
           "description": "Description",
-          "business-category": "Business category"
+          "business-category": "Business domain"
         },
         "placeholders": {
           "name": "Enter name",
-          "description": "Please provide description..."
+          "description": "Please provide description"
         }
       },
       "vendor-detail": {
@@ -102,23 +102,23 @@
           "site-url": "Please enter URL",
           "logo-url": "Please enter URL",
           "group-name": "Please specify a value",
-          "description": "Please provide description..."
+          "description": "Please provide description"
         }
       },
       "member-add": {
-        "title": "New contact",
-        "subtitle": "Select contact type",
+        "title": "New Contact",
+        "subtitle": "Select a type of contact you would like to create",
         "organization": {
-          "description": "This is where other organizations and contacts will be stored"
+          "description": "A company profile that may house information on employees, regular contacts, or other companies"
         },
         "employee": {
-          "description": "Employee of the organization in question"
+          "description": "An employee that works in a company"
         },
         "contact": {
-          "description": "A customer of the store that may either be a member of an organization or act as an individual shopper"
+          "description": "A store customer that may either be a member of a company or act as an individual shopper"
         },
         "vendor": {
-          "description": "Merchant or vendor at the store"
+          "description": "A merchant or vendor"
         }
       },
       "member-emails-list": {
@@ -133,7 +133,7 @@
         }
       },
       "member-list": {
-        "title": "Organizations and Contacts",
+        "title": "Companies and Contacts",
         "subtitle": "Loading '{{name}}'",
         "breadcrumb-all": "All contacts",
         "labels": {
@@ -145,7 +145,7 @@
           "unnamed-filter": "Unnamed filter",
           "filter-vendor": "Vendors",
           "filter-contact": "Contacts",
-          "filter-organization": "Organizations"
+          "filter-organization": "Companies"
         },
         "placeholders": {
           "select-filter": "Please select a filter"
@@ -167,22 +167,22 @@
       },
       "filter-detail": {
         "subtitle": "Edit filter",
-        "new-title": "New filter",
-        "new-subtitle": "Create new filter",
+        "new-title": "New Filter",
+        "new-subtitle": "Creating a new filter",
         "labels": {
           "criteria": "Search phrase",
           "name": "Filter name",
           "searchInVariations": "Display product variations",
-          "syntax-example-1": "all contacts containing 'org1.com' in the indexed property values",
-          "syntax-example-2": "all contacts containing 'James' AND 'Smith' in the indexed property values",
-          "syntax-example-3": "use an asterisk (*) to replace zero or more characters",
-          "syntax-example-4": "all contacts with first name containing 'Alex' or 'James' ",
-          "syntax-example-5": "use exclamation (!) as a NOT operator for filters",
-          "syntax-example-6": "all contacts with the selected member type",
-          "syntax-example-7": "all contacts with a create date between two values (inclusive) ",
-          "syntax-example-8": "all contacts with a create date between two values (exclusive)",
-          "syntax-example-9": "with a modify date greater than or equaling '2016-12-26'",
-          "syntax-example-10": "combine keywords and filters"
+          "syntax-example-1": "All contacts containing 'org1.com' in the indexed property values",
+          "syntax-example-2": "All contacts containing 'James' and 'Smith' in the indexed property values",
+          "syntax-example-3": "Use an asterisk (*) to replace zero or more characters",
+          "syntax-example-4": "All contacts with first name containing 'Alex' or 'James' ",
+          "syntax-example-5": "Use exclamation (!) as a NOT operator for filters",
+          "syntax-example-6": "All contacts with the selected member type",
+          "syntax-example-7": "All contacts with a create date between two values (inclusive) ",
+          "syntax-example-8": "All contacts with a create date between two values (exclusive)",
+          "syntax-example-9": "All contacts with a modify date greater than or equaling '2016-12-26'",
+          "syntax-example-10": "Combine both keywords and filters"
         },
         "placeholders": {
           "criteria": "Please enter search phrase",
@@ -219,7 +219,7 @@
     "dialogs": {
       "members-delete": {
         "title": "Confirm Delete",
-        "message": "Are you sure you want to delete the selected organizations or contacts?"
+        "message": "Are you sure you want to delete the selected company(ies) or contact(s)?"
       },
       "unknown-member-type": {
         "title": "Error",
@@ -265,8 +265,8 @@
         }
       },
       "OrganizationStatuses": {
-        "title": "Organization statuses",
-        "description": "Edit organization statuses"
+        "title": "Company statuses",
+        "description": "Edit company statuses"
       },
       "VendorStatuses": {
         "title": "Vendor statuses",
@@ -296,7 +296,7 @@
   },
   "module": {
     "VirtoCommerce.Customer": {
-      "description": "Export or import contacts and organizations"
+      "description": "Export or import contacts and companies"
     }
   }
 }
