@@ -40,7 +40,7 @@ namespace VirtoCommerce.CustomerModule.Tests
                     }
                 )
             ).ToList();
-            System.Diagnostics.Debug.Assert(ret.SequenceEqual(new[] { 1, 7, 5, 11, 2, 3, 8, 9, 10 }));
+            Assert.True(ret.SequenceEqual(new[] { 1, 7, 5, 11, 2, 3, 10, 8, 9}));
         }
     }
 }

@@ -24,8 +24,8 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             modelBuilder.Entity<MemberEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<MemberEntity>().ToTable("Member");
             modelBuilder.Entity<MemberEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
-            modelBuilder.Entity<MemberEntity>().HasIndex(i => i.MemberType).IsUnique(false).HasName("IX_MemberType");
-            modelBuilder.Entity<MemberEntity>().HasIndex(i => i.Name).IsUnique(false).HasName("IX_Member_Name");
+            modelBuilder.Entity<MemberEntity>().HasIndex(i => i.MemberType).IsUnique(false).HasDatabaseName("IX_MemberType");
+            modelBuilder.Entity<MemberEntity>().HasIndex(i => i.Name).IsUnique(false).HasDatabaseName("IX_Member_Name");
             modelBuilder.Entity<MemberEntity>().HasDiscriminator<string>("Discriminator");
             modelBuilder.Entity<MemberEntity>().Property("Discriminator").HasMaxLength(128);
 
@@ -58,7 +58,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
             modelBuilder.Entity<EmailEntity>().HasOne(m => m.Member).WithMany(m => m.Emails)
                 .HasForeignKey(m => m.MemberId).OnDelete(DeleteBehavior.Cascade).IsRequired();
-            modelBuilder.Entity<EmailEntity>().HasIndex(i => i.Address).IsUnique(false).HasName("IX_Email_Address");
+            modelBuilder.Entity<EmailEntity>().HasIndex(i => i.Address).IsUnique(false).HasDatabaseName("IX_Email_Address");
             #endregion
 
             #region Group
@@ -68,7 +68,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
             modelBuilder.Entity<MemberGroupEntity>().HasOne(m => m.Member).WithMany(m => m.Groups)
                 .HasForeignKey(m => m.MemberId).OnDelete(DeleteBehavior.Cascade).IsRequired();
-            modelBuilder.Entity<MemberGroupEntity>().HasIndex(i => i.Group).IsUnique(false).HasName("IX_MemberGroup_Group");
+            modelBuilder.Entity<MemberGroupEntity>().HasIndex(i => i.Group).IsUnique(false).HasDatabaseName("IX_MemberGroup_Group");
             #endregion
 
             #region Phone
@@ -140,7 +140,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
                 .OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<MemberDynamicPropertyObjectValueEntity>().HasIndex(x => new { x.ObjectType, x.ObjectId })
                 .IsUnique(false)
-                .HasName("IX_ObjectType_ObjectId");
+                .HasDatabaseName("IX_ObjectType_ObjectId");
             #endregion
 
             base.OnModelCreating(modelBuilder);
