@@ -14,7 +14,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(64)]
         public string MemberType { get; set; }
 
-        [StringLength(128)]
+        [StringLength(512)]
         public string Name { get; set; }
 
         [StringLength(128)]
