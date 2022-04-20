@@ -252,8 +252,9 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             {
                 return Unauthorized();
             }
-            await _memberService.SaveChangesAsync(new[] { contact });
-            return Ok(contact);
+            var errors = await _memberService.SaveChangesWithErrorsReportAsync(new[] { contact });
+
+            return errors.Any() ? BadRequest(errors.First()) : Ok(contact);
         }
 
         /// <summary>
