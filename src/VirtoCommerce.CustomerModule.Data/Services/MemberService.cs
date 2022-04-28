@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
 using Microsoft.Extensions.Caching.Memory;
 using VirtoCommerce.CustomerModule.Core.Events;
 using VirtoCommerce.CustomerModule.Core.Model;
@@ -9,6 +10,7 @@ using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Data.Caching;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.Repositories;
+using VirtoCommerce.CustomerModule.Data.Validation;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
@@ -136,6 +138,13 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         /// <param name="members"></param>
         public virtual async Task SaveChangesAsync(Member[] members)
         {
+            var validator = new MemberValidator();
+
+            foreach (var member in members)
+            {
+                await validator.ValidateAndThrowAsync(member);
+            }
+
             FillContactFullName(members);
 
             var pkMap = new PrimaryKeyResolvingMap();
