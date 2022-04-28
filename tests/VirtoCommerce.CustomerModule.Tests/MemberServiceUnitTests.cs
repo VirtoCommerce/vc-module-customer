@@ -11,6 +11,7 @@ using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.Repositories;
 using VirtoCommerce.CustomerModule.Data.Services;
+using VirtoCommerce.CustomerModule.Data.Validation;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
@@ -184,7 +185,7 @@ namespace VirtoCommerce.CustomerModule.Tests
             _userSearchServiceMock.Setup(x => x.SearchUsersAsync(It.IsAny<UserSearchCriteria>()))
                 .ReturnsAsync(new UserSearchResult());
 
-            return new MemberService(_repositoryFactory, _userSearchServiceMock.Object, _eventPublisherMock.Object, platformMemoryCache, null);
+            return new MemberService(_repositoryFactory, _userSearchServiceMock.Object, _eventPublisherMock.Object, platformMemoryCache, new MemberValidator());
         }
     }
 }
