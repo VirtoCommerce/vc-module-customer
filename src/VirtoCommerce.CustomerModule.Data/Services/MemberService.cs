@@ -29,16 +29,19 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         private readonly IEventPublisher _eventPublisher;
         private readonly IPlatformMemoryCache _platformMemoryCache;
         private readonly IUserSearchService _userSearchService;
+        private readonly AbstractValidator<Member> _memberValidator;
 
         public MemberService(
-            Func<IMemberRepository> repositoryFactory
-            , IUserSearchService userSearchService
-            , IEventPublisher eventPublisher
-            , IPlatformMemoryCache platformMemoryCache)
+            Func<IMemberRepository> repositoryFactory,
+            IUserSearchService userSearchService,
+            IEventPublisher eventPublisher,
+            IPlatformMemoryCache platformMemoryCache,
+            AbstractValidator<Member> memberValidator)
         {
             _repositoryFactory = repositoryFactory;
             _eventPublisher = eventPublisher;
             _platformMemoryCache = platformMemoryCache;
+            _memberValidator = memberValidator;
             _userSearchService = userSearchService;
         }
 
@@ -138,11 +141,9 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         /// <param name="members"></param>
         public virtual async Task SaveChangesAsync(Member[] members)
         {
-            var validator = new MemberValidator();
-
             foreach (var member in members)
             {
-                await validator.ValidateAndThrowAsync(member);
+                await _memberValidator.ValidateAndThrowAsync(member);
             }
 
             FillContactFullName(members);
@@ -157,38 +158,36 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                 foreach (var member in members)
                 {
                     var memberEntityType = AbstractTypeFactory<Member>.AllTypeInfos.Where(t => t.MappedType != null && t.IsAssignableTo(member.MemberType)).Select(t => t.MappedType).FirstOrDefault();
-                    if (memberEntityType != null)
+                    ArgumentNullException.ThrowIfNull(memberEntityType);
+                    
+                    var dataSourceMember = AbstractTypeFactory<MemberEntity>.TryCreateInstance(memberEntityType.Name);
+                    ArgumentNullException.ThrowIfNull(dataSourceMember);
+                        
+                    dataSourceMember.FromModel(member, pkMap);
+
+                    var dataTargetMember = existingMemberEntities.FirstOrDefault(m => m.Id == member.Id);
+                    if (dataTargetMember != null)
                     {
-                        var dataSourceMember = AbstractTypeFactory<MemberEntity>.TryCreateInstance(memberEntityType.Name);
-                        if (dataSourceMember != null)
+                        /// Workaround to trigger update of auditable fields when only updating navigation properties.
+                        /// Otherwise on update trigger is fired only when non navigation properties are updated.
+                        dataTargetMember.ModifiedDate = DateTime.UtcNow;
+
+                        /// This extension is allow to get around breaking changes is introduced in EF Core 3.0 that leads to throw
+                        /// Database operation expected to affect 1 row(s) but actually affected 0 row(s) exception when trying to add the new children entities with manually set keys
+                        /// https://docs.microsoft.com/en-us/ef/core/what-is-new/ef-core-3.0/breaking-changes#detectchanges-honors-store-generated-key-values
+                        repository.TrackModifiedAsAddedForNewChildEntities(dataTargetMember);
+
+                        if (!dataTargetMember.GetType().IsInstanceOfType(dataSourceMember))
                         {
-                            dataSourceMember.FromModel(member, pkMap);
-
-                            var dataTargetMember = existingMemberEntities.FirstOrDefault(m => m.Id == member.Id);
-                            if (dataTargetMember != null)
-                            {
-                                /// Workaround to trigger update of auditable fields when only updating navigation properties.
-                                /// Otherwise on update trigger is fired only when non navigation properties are updated.
-                                dataTargetMember.ModifiedDate = DateTime.UtcNow;
-
-                                /// This extension is allow to get around breaking changes is introduced in EF Core 3.0 that leads to throw
-                                /// Database operation expected to affect 1 row(s) but actually affected 0 row(s) exception when trying to add the new children entities with manually set keys
-                                /// https://docs.microsoft.com/en-us/ef/core/what-is-new/ef-core-3.0/breaking-changes#detectchanges-honors-store-generated-key-values
-                                repository.TrackModifiedAsAddedForNewChildEntities(dataTargetMember);
-
-                                if (!dataTargetMember.GetType().IsInstanceOfType(dataSourceMember))
-                                {
-                                    throw new OperationCanceledException($"Unable to update an member with type { dataTargetMember.MemberType } by an member with type { dataSourceMember.MemberType } because they aren't in the inheritance hierarchy");
-                                }
-                                changedEntries.Add(new GenericChangedEntry<Member>(member, dataTargetMember.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(member.MemberType)), EntryState.Modified));
-                                dataSourceMember.Patch(dataTargetMember);
-                            }
-                            else
-                            {
-                                repository.Add(dataSourceMember);
-                                changedEntries.Add(new GenericChangedEntry<Member>(member, EntryState.Added));
-                            }
+                            throw new OperationCanceledException($"Unable to update an member with type { dataTargetMember.MemberType } by an member with type { dataSourceMember.MemberType } because they aren't in the inheritance hierarchy");
                         }
+                        changedEntries.Add(new GenericChangedEntry<Member>(member, dataTargetMember.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(member.MemberType)), EntryState.Modified));
+                        dataSourceMember.Patch(dataTargetMember);
+                    }
+                    else
+                    {
+                        repository.Add(dataSourceMember);
+                        changedEntries.Add(new GenericChangedEntry<Member>(member, EntryState.Added));
                     }
                 }
                 //Raise domain events

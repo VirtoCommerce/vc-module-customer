@@ -184,7 +184,7 @@ namespace VirtoCommerce.CustomerModule.Tests
             _userSearchServiceMock.Setup(x => x.SearchUsersAsync(It.IsAny<UserSearchCriteria>()))
                 .ReturnsAsync(new UserSearchResult());
 
-            return new MemberService(_repositoryFactory, _userSearchServiceMock.Object, _eventPublisherMock.Object, platformMemoryCache);
+            return new MemberService(_repositoryFactory, _userSearchServiceMock.Object, _eventPublisherMock.Object, platformMemoryCache, null);
         }
     }
 }
