@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <id>VirtoCommerce.Customer</id>
-  <version>3.201.0</version>
-  <version-tag />
-  <platformVersion>3.200.0</platformVersion>
-  <title>Customer management module</title>
-  <description>Managing customers contacts and organizations</description>
-  <authors>
-    <author>Artem Dudarev</author>
-    <author>Egidijus Mažeika</author>
-  </authors>
-  <owners>
-    <owner>Virto Commerce</owner>
-  </owners>
-  <projectUrl>https://virtocommerce.com/apps/extensions/virto-customer-module</projectUrl>
-  <iconUrl>Modules/$(VirtoCommerce.Customer)/Content/logo.png</iconUrl>
-  <requireLicenseAcceptance>false</requireLicenseAcceptance>
-  <releaseNotes>First version.</releaseNotes>
-  <copyright>Copyright © 2011-2022 Virto Commerce. All rights reserved</copyright>
-  <tags>customer</tags>
-  <assemblyFile>VirtoCommerce.CustomerModule.Web.dll</assemblyFile>
-  <moduleType>VirtoCommerce.CustomerModule.Web.Module, VirtoCommerce.CustomerModule.Web</moduleType>
-  <dependencies>
-    <dependency id="VirtoCommerce.Core" version="3.200.0" />
-    <dependency id="VirtoCommerce.Search" version="3.202.0" />
-    <dependency id="VirtoCommerce.Store" version="3.200.0" />
-  </dependencies>
-  <groups>
-    <group>commerce</group>
-  </groups>
-  <useFullTypeNameInSwagger>false</useFullTypeNameInSwagger>
+    <id>VirtoCommerce.Customer</id>
+    <version>3.202.0</version>
+    <version-tag />
+    <platformVersion>3.200.0</platformVersion>
+    <title>Customer management module</title>
+    <description>Managing customers contacts and organizations</description>
+    <authors>
+        <author>Artem Dudarev</author>
+        <author>Egidijus Mažeika</author>
+    </authors>
+    <owners>
+        <owner>Virto Commerce</owner>
+    </owners>
+    <projectUrl>https://virtocommerce.com/apps/extensions/virto-customer-module</projectUrl>
+    <iconUrl>Modules/$(VirtoCommerce.Customer)/Content/logo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <releaseNotes>First version.</releaseNotes>
+    <copyright>Copyright © 2011-2022 Virto Commerce. All rights reserved</copyright>
+    <tags>customer</tags>
+    <assemblyFile>VirtoCommerce.CustomerModule.Web.dll</assemblyFile>
+    <moduleType>VirtoCommerce.CustomerModule.Web.Module, VirtoCommerce.CustomerModule.Web</moduleType>
+    <dependencies>
+        <dependency id="VirtoCommerce.Core" version="3.200.0" />
+        <dependency id="VirtoCommerce.Search" version="3.202.0" />
+        <dependency id="VirtoCommerce.Store" version="3.200.0" />
+    </dependencies>
+    <groups>
+        <group>commerce</group>
+    </groups>
+    <useFullTypeNameInSwagger>false</useFullTypeNameInSwagger>
 </module>

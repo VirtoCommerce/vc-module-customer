@@ -23,7 +23,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(128)]
         public string LastName { get; set; }
 
-        [StringLength(254)]
+        [StringLength(512)]
         [Required]
         public string FullName { get; set; }
 
