@@ -9,6 +9,7 @@
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="FluentValidation" Version="10.3.4" />
         <PackageReference Include="Hangfire" Version="1.7.14" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0">

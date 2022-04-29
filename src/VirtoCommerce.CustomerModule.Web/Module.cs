@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ using VirtoCommerce.CustomerModule.Data.Repositories;
 using VirtoCommerce.CustomerModule.Data.Search;
 using VirtoCommerce.CustomerModule.Data.Search.Indexing;
 using VirtoCommerce.CustomerModule.Data.Services;
+using VirtoCommerce.CustomerModule.Data.Validation;
 using VirtoCommerce.CustomerModule.Web.Authorization;
 using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
@@ -76,6 +78,8 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<IndexMemberChangedEventHandler>();
 
             serviceCollection.AddTransient<IAuthorizationHandler, CustomerAuthorizationHandler>();
+
+            serviceCollection.AddTransient<AbstractValidator<Member>, MemberValidator>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
