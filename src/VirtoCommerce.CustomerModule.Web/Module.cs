@@ -145,8 +145,8 @@ namespace VirtoCommerce.CustomerModule.Web
                 dbContext.Database.Migrate();
             }
 
-            var registrar = appBuilder.ApplicationServices.GetService<INotificationRegistrar>();
-            registrar.RegisterNotification<RegisterCompanyEmailNotification>();
+            var notificationRegistrar = appBuilder.ApplicationServices.GetService<INotificationRegistrar>();
+            notificationRegistrar.RegisterNotification<RegisterCompanyEmailNotification>();
         }
 
         public void Uninstall()
