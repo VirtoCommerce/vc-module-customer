@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Events;
 using VirtoCommerce.CustomerModule.Core.Model;
+using VirtoCommerce.CustomerModule.Core.Notifications;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Core.Services.Indexed;
 using VirtoCommerce.CustomerModule.Data.ExportImport;
@@ -22,6 +23,7 @@ using VirtoCommerce.CustomerModule.Data.Search.Indexing;
 using VirtoCommerce.CustomerModule.Data.Services;
 using VirtoCommerce.CustomerModule.Data.Validation;
 using VirtoCommerce.CustomerModule.Web.Authorization;
+using VirtoCommerce.NotificationsModule.Core.Services;
 using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
@@ -142,6 +144,9 @@ namespace VirtoCommerce.CustomerModule.Web
                 dbContext.Database.EnsureCreated();
                 dbContext.Database.Migrate();
             }
+
+            var registrar = appBuilder.ApplicationServices.GetService<INotificationRegistrar>();
+            registrar.RegisterNotification<RegisterCompanyEmailNotification>();
         }
 
         public void Uninstall()

@@ -306,5 +306,11 @@
     "VirtoCommerce.Customer": {
       "description": "Export or import contacts and companies"
     }
+  },
+  "notificationTypes": {
+    "RegisterCompanyEmailNotification": {
+      "displayName": "Organization registration email notification",
+      "description": "The customer will get an email notification once his company has registered"
+    }
   }
 }
