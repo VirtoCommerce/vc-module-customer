@@ -281,12 +281,12 @@
         "description": "Edit contact statuses"
       },
       "OrganizationDefaultStatus": {
-        "title": "Organization default status",
-        "description": "This status is being assigned to a just registered B2B organization"
+        "title": "Company default status",
+        "description": "This status will be assigned to the recently registered company"
       },
       "ContactDefaultStatus": {
         "title": "Contact default status",
-        "description": "This status is being assigned to the owner of a just registered B2B organization"
+        "description": "This status will be assigned to the recently registered company's owner"
       }
     },
     "VirtoCommerce": {
