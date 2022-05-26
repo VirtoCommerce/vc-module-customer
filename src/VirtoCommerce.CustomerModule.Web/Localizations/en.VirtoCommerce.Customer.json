@@ -279,6 +279,14 @@
       "ContactStatuses": {
         "title": "Contact statuses",
         "description": "Edit contact statuses"
+      },
+      "OrganizationDefaultStatus": {
+        "title": "Company default status",
+        "description": "This status will be assigned to the recently registered company"
+      },
+      "ContactDefaultStatus": {
+        "title": "Contact default status",
+        "description": "This status will be assigned to the recently registered company's owner"
       }
     },
     "VirtoCommerce": {
@@ -297,6 +305,12 @@
   "module": {
     "VirtoCommerce.Customer": {
       "description": "Export or import contacts and companies"
+    }
+  },
+  "notificationTypes": {
+    "RegisterCompanyEmailNotification": {
+      "displayName": "Organization registration email notification",
+      "description": "The customer will get an email notification once his company has registered"
     }
   }
 }
