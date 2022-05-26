@@ -102,6 +102,20 @@ namespace VirtoCommerce.CustomerModule.Core
                     AllowedValues = new[] { "New", "Approved", "Rejected", "Deleted" }
                 };
 
+                public static SettingDescriptor OrganizationDefaultStatus { get; } = new SettingDescriptor
+                {
+                    Name = "Customer.OrganizationDefaultStatus",
+                    ValueType = SettingValueType.ShortText,
+                    GroupName = "Customer|Statuses",
+                };
+
+                public static SettingDescriptor ContactDefaultStatus { get; } = new SettingDescriptor
+                {
+                    Name = "Customer.ContactDefaultStatus",
+                    ValueType = SettingValueType.ShortText,
+                    GroupName = "Customer|Statuses",
+                };
+
                 #endregion Statuses
 
                 public static IEnumerable<SettingDescriptor> AllSettings => new List<SettingDescriptor>
@@ -113,8 +127,19 @@ namespace VirtoCommerce.CustomerModule.Core
                     OrganizationStatuses,
                     VendorStatuses,
                     EmployeeStatuses,
-                    ContactStatuses
+                    ContactStatuses,
+                    OrganizationDefaultStatus,
+                    ContactDefaultStatus
                 };
+            }
+
+            public static IEnumerable<SettingDescriptor> StoreLevelSettings
+            {
+                get
+                {
+                    yield return General.OrganizationDefaultStatus;
+                    yield return General.ContactDefaultStatus;
+                }
             }
 
             public static IEnumerable<SettingDescriptor> AllSettings => General.AllSettings;
