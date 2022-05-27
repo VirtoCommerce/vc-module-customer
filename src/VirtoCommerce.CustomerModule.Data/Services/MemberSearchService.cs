@@ -63,26 +63,42 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         protected virtual async Task<MemberSearchResult> RegularSearchMembersAsync(MembersSearchCriteria criteria)
         {
             var cacheKey = CacheKey.With(GetType(), nameof(SearchMembersAsync), criteria.GetCacheKey());
-            return await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async (cacheEntry) =>
+            return await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
             {
+                var result = AbstractTypeFactory<MemberSearchResult>.TryCreateInstance();
                 cacheEntry.AddExpirationToken(CustomerSearchCacheRegion.CreateChangeToken());
                 using (var repository = _repositoryFactory())
                 {
+                    //Optimize performance and CPU usage
                     repository.DisableChangesTracking();
-                    var result = AbstractTypeFactory<MemberSearchResult>.TryCreateInstance();
 
                     var sortInfos = BuildSortExpression(criteria);
                     var query = BuildQuery(repository, criteria);
 
-                    result.TotalCount = await query.CountAsync();
+                    var needExecuteCount = criteria.Take == 0;
+
                     if (criteria.Take > 0)
                     {
                         var ids = await query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id)
-                                            .Select(x => x.Id)
-                                            .Skip(criteria.Skip).Take(criteria.Take)
-                                            .ToArrayAsync();
+                                         .Select(x => x.Id)
+                                         .Skip(criteria.Skip).Take(criteria.Take)
+                                         .ToListAsync();
 
-                        result.Results = (await _memberService.GetByIdsAsync(ids, criteria.ResponseGroup)).OrderBy(x => Array.IndexOf(ids, x.Id)).ToList();
+                        result.TotalCount = ids.Count;
+                        // This reduces a load of a relational database by skipping count query in case of:
+                        // - First page is reading (Skip is 0)
+                        // - Count in reading result less than Take value.
+                        if (criteria.Skip > 0 || result.TotalCount == criteria.Take)
+
+                        {
+                            needExecuteCount = true;
+                        }
+                        result.Results = (await _memberService.GetByIdsAsync(ids.ToArray(), criteria.ResponseGroup)).OrderBy(x => ids.IndexOf(x.Id)).ToList();
+                    }
+
+                    if (needExecuteCount)
+                    {
+                        result.TotalCount = await query.CountAsync();
                     }
                     return result;
                 }
