@@ -35,9 +35,12 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Model
 
         public override void Patch(MemberEntity memberDataEntity)
         {
-            var target = memberDataEntity as Contact2Entity;
-            target.JobTitle = JobTitle;
-            base.Patch(target);
+            if (memberDataEntity is Contact2Entity contact2)
+            {
+                contact2.JobTitle = JobTitle;
+            }
+
+            base.Patch(memberDataEntity);
         }
     }
 }

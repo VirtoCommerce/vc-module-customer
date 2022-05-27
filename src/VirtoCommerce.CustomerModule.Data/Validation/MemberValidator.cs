@@ -1,4 +1,3 @@
-using System.Linq;
 using FluentValidation;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.Platform.Core.Common;
@@ -11,12 +10,10 @@ namespace VirtoCommerce.CustomerModule.Data.Validation
 
         public MemberValidator()
         {
-            var typeNames = AbstractTypeFactory<Member>.AllTypeInfos.Select(x => x.Type.Name).ToHashSet();
-
             RuleFor(member => member.MemberType)
                 .NotNull()
                 .NotEmpty()
-                .Must(x => typeNames.Contains(x))
+                .Must(memberType => AbstractTypeFactory<Member>.FindTypeInfoByName(memberType) != null)
                 .WithMessage(x => string.Format(MemberTypeMessage, x.MemberType));
         }
     }
