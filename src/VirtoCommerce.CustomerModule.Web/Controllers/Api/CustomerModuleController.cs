@@ -212,8 +212,8 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> BulkDeleteMembersBySearchCriteria([FromBody] MembersSearchCriteria criteria)
         {
-            bool hasSearchCriteriaMembers;
-            var listIds = new List<string>();
+            bool hasSearchCriteriaMembers;            
+            var idsToDelete = new List<string>();
             do
             {
                 var searchResult = await _memberSearchService.SearchMembersAsync(criteria);
@@ -222,7 +222,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                 {
                     foreach (var member in searchResult.Results)
                     {
-                        listIds.Add(member.Id);
+                        idsToDelete.Add(member.Id);
                     }
 
                     criteria.Skip += criteria.Take;
@@ -230,11 +230,10 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             }
             while (hasSearchCriteriaMembers);
 
-            listIds.ProcessWithPaging(criteria.Take, async (ids, currentItem, totalCount) =>
+            for (var i = 0; i < idsToDelete.Count; i += criteria.Take)
             {
-                await _memberService.DeleteAsync(ids.ToArray());
-            });
-
+                await _memberService.DeleteAsync(idsToDelete.Skip(i).Take(criteria.Take).ToArray());
+            }
 
             return NoContent();
         }
