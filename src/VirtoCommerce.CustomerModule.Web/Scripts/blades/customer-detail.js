@@ -43,28 +43,4 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                 };
                 bladeNavigationService.showBlade(newBlade, blade);
             };
-
-            blade.fetchCustomerOrganizations = function ($select) {
-                blade.fetchOrganizations($select).then(function () {
-                    blade.customerOrganizations = angular.copy(blade.organizations);
-                });
-            }
-
-            blade.fetchAssociatedOrganizations = function ($select) {
-                blade.fetchOrganizations($select).then(function () {
-                    blade.associatedOrganizations = angular.copy(blade.organizations);
-                });
-            }
-
-            blade.fetchNextCustomerOrganizations = function ($select) {
-                blade.fetchNextOrganizations($select).then(function () {
-                    blade.customerOrganizations = angular.copy(blade.organizations);
-                });
-            }
-
-            blade.fetchNextAssociatedOrganizations = function ($select) {
-                blade.fetchNextOrganizations($select).then(function () {
-                    blade.associatedOrganizations = angular.copy(blade.organizations);
-                });
-            }
         }]);
