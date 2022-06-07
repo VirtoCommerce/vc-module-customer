@@ -64,20 +64,20 @@
 </script>
 
 <script type="text/ng-template" id="organizations.html">
-    <ui-select multiple ng-model="blade.currentEntity.organizations">
-        <ui-select-match placeholder="{{'customer.blades.contact-detail.placeholders.organizations' | translate}}">{{$item.name}}</ui-select-match>
-        <ui-select-choices repeat="x.id as x in blade.customerOrganizations" refresh="blade.fetchCustomerOrganizations($select)" when-scrolled="blade.fetchNextCustomerOrganizations($select)">
-            <span ng-bind-html="x.name | highlight: $select.search"></span>
-        </ui-select-choices>
-    </ui-select>
+    <ui-scroll-drop-down multiple
+                         page-size="50"
+                         ng-model="blade.currentEntity.organizations"
+                         data="blade.fetchOrganizations(criteria)"
+                         placeholder="'customer.blades.contact-detail.placeholders.organizations'">
+    </ui-scroll-drop-down>
 </script>
 <script type="text/ng-template" id="associatedOrganizations.html">
-    <ui-select multiple ng-model="blade.currentEntity.associatedOrganizations">
-        <ui-select-match placeholder="{{'customer.blades.contact-detail.placeholders.associated-organizations' | translate}}">{{$item.name}}</ui-select-match>
-        <ui-select-choices repeat="x.id as x in blade.associatedOrganizations" refresh="blade.fetchAssociatedOrganizations($select)" when-scrolled="blade.fetchNextAssociatedOrganizations($select)">
-            <span ng-bind-html="x.name | highlight: $select.search"></span>
-        </ui-select-choices>
-    </ui-select>
+    <ui-scroll-drop-down multiple
+                         page-size="50"
+                         ng-model="blade.currentEntity.associatedOrganizations"
+                         data="blade.fetchOrganizations(criteria)"
+                         placeholder="'customer.blades.contact-detail.placeholders.associated-organizations'">
+    </ui-scroll-drop-down>
 </script>
 <script type="text/ng-template" id="birthDate.html">
     <div class="form-input __calendar">
