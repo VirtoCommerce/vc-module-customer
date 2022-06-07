@@ -59,12 +59,12 @@
     </div>
 </script>
 <script type="text/ng-template" id="organizations.html">
-    <ui-select multiple ng-model="blade.currentEntity.organizations">
-        <ui-select-match placeholder="{{'customer.blades.contact-detail.placeholders.organizations' | translate}}">{{$item.name}}</ui-select-match>
-        <ui-select-choices repeat="x.id as x in blade.organizations" refresh="blade.fetchOrganizations($select)" when-scrolled="blade.fetchNextOrganizations($select)">
-            <span ng-bind-html="x.name | highlight: $select.search"></span>
-        </ui-select-choices>
-    </ui-select>
+    <ui-scroll-drop-down multiple
+                         page-size="50"
+                         ng-model="blade.currentEntity.organizations"
+                         data="blade.fetchOrganizations(criteria)"
+                         placeholder="'customer.blades.contact-detail.placeholders.organizations'">
+    </ui-scroll-drop-down>
 </script>
 <script type="text/ng-template" id="timeZone.html">
     <div class="form-input">

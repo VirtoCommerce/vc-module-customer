@@ -126,47 +126,8 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
 
             blade.headIcon = blade.memberTypeDefinition.icon;
 
-            // pageSize amount must be enough to show scrollbar in dropdown list container.
-            // If scrollbar doesn't appear auto loading won't work.
-            $scope.pageSize = 50;
-
-            blade.fetchOrganizations = function ($select) {
-                $select.page = 0;
-                blade.organizations = [];
-                return $q.all([loadCustomerOrganizations(), blade.fetchNextOrganizations($select)]);
-            }
-
-            blade.fetchNextOrganizations = function ($select) {
-                return members.search(
-                    {
-                        memberType: 'Organization',
-                        responseGroup: 'default',
-                        searchPhrase: $select.search,
-                        deepSearch: true,
-                        take: $scope.pageSize,
-                        skip: $select.page * $scope.pageSize
-                    },
-                    function (data) {
-                        joinOrganizations(data.results);
-                        $select.page++;
-                    }).$promise;
-            };
-
-            function loadCustomerOrganizations() {
-                if (blade.currentEntity.organizations && blade.currentEntity.organizations.length > 0) {
-                    return organizationsResource.getByIds({ ids: blade.currentEntity.organizations }, function (data) {
-                        joinOrganizations(data);
-                    }
-                    ).$promise;
-                }
-                return $q.resolve();
-            }
-
-            function joinOrganizations(organizations) {
-                organizations = _.reject(organizations, x => _.any(blade.organizations, y => y.id === x.id));
-                if (_.any(organizations)) {
-                    blade.organizations = blade.organizations.concat(organizations);
-                }
+            blade.fetchOrganizations = function (criteria) {
+                return organizationsResource.search(criteria);
             }
 
             blade.refresh(false);
