@@ -2,12 +2,12 @@ angular.module('virtoCommerce.customerModule.common')
     .controller('virtoCommerce.customerModule.common.coreAddressDetailController', ['$scope', '$filter', 'platformWebApp.common.countries', 'platformWebApp.dialogService', 'platformWebApp.metaFormsService', 'platformWebApp.bladeNavigationService', function ($scope, $filter, countries, dialogService, metaFormsService, bladeNavigationService) {
         var blade = $scope.blade;
 
-        blade.addressTypes = ['Billing', 'Shipping', 'BillingAndShipping'];
         blade.addressTypesDict = {
-            billing: blade.addressTypes[0],
-            shipping: blade.addressTypes[1],
-            billingAndShipping: blade.addressTypes[2]
+            billing: 'Billing',
+            shipping: 'Shipping',
+            billingAndShipping: 'BillingAndShipping'
         }
+        blade.addressTypes = [blade.addressTypesDict.billing, blade.addressTypesDict.shipping, blade.addressTypesDict.billingAndShipping];
 
         blade.metaFields = blade.metaFields && blade.metaFields.length ? blade.metaFields : metaFormsService.getMetaFields('CustomeraddressDetails');
         if (blade.currentEntity.isNew) {
