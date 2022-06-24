@@ -2,10 +2,16 @@ angular.module('virtoCommerce.customerModule.common')
     .controller('virtoCommerce.customerModule.common.coreAddressDetailController', ['$scope', '$filter', 'platformWebApp.common.countries', 'platformWebApp.dialogService', 'platformWebApp.metaFormsService', 'platformWebApp.bladeNavigationService', function ($scope, $filter, countries, dialogService, metaFormsService, bladeNavigationService) {
         var blade = $scope.blade;
 
-        blade.addressTypes = ['Billing', 'Shipping', 'BillingAndShipping'];
+        blade.addressTypesDict = {
+            billing: 'Billing',
+            shipping: 'Shipping',
+            billingAndShipping: 'BillingAndShipping'
+        }
+        blade.addressTypes = [blade.addressTypesDict.billing, blade.addressTypesDict.shipping, blade.addressTypesDict.billingAndShipping];
+
         blade.metaFields = blade.metaFields && blade.metaFields.length ? blade.metaFields : metaFormsService.getMetaFields('CustomeraddressDetails');
         if (blade.currentEntity.isNew) {
-            blade.currentEntity.addressType = blade.addressTypes[1];
+            blade.currentEntity.addressType = blade.addressTypesDict.shipping;
         }
         blade.origEntity = blade.currentEntity;
         blade.currentEntity = angular.copy(blade.origEntity);
@@ -86,42 +92,35 @@ angular.module('virtoCommerce.customerModule.common')
             {
                 name: "platform.commands.save", icon: 'fas fa-save',
                 executeMethod: function () {
-
                     // Assigning a default address
-                    if (blade.currentEntity.isNew) { // If you added a new address
-                        if (blade.numberOfAddresses(blade.currentEntity.addressType) == 0) { // If he will the only one
-                            blade.currentEntity.isDefault = true;
-                        }
-                        else {
-                            if (blade.currentEntity.isDefault === true) { // If at creation made the default address
-                                blade.searchDefaultAddress(blade.currentEntity.addressType);
-                            }
-                            else {
-                                blade.currentEntity.isDefault = false;
-                            }
+                    // force remove the default flag if the type of the current address has changed
+                    if (!blade.currentEntity.isNew && !angular.equals(blade.currentEntity.addressType, blade.origEntity.addressType)) {
+                        blade.currentEntity.isDefault = false;
+
+                        if (blade.numberOfAddresses(blade.origEntity.addressType) == 2 && blade.origEntity.addressType !== blade.addressTypesDict.billingAndShipping) {
+                            blade.searchSecondAddress(blade.origEntity.addressType, blade.currentEntity.name);
                         }
                     }
-                    else {
-                        if (!angular.equals(blade.currentEntity.addressType, blade.origEntity.addressType)) { // If the type of the current address has changed
-                            blade.currentEntity.isDefault = false;
-                            if (blade.numberOfAddresses(blade.currentEntity.addressType) == 0) { // The current address will be the only one in the group
-                                blade.currentEntity.isDefault = true;
-                            }
-                            if (blade.numberOfAddresses(blade.origEntity.addressType) == 2 && blade.origEntity.addressType !== blade.addressTypes[2]) {
-                                blade.searchSecondAddress(blade.origEntity.addressType, blade.currentEntity.name);
-                            }
-                        }
-                        else {
-                            blade.searchDefaultAddress(blade.currentEntity.addressType);
-                        }
+
+                    // set deafult flag is there's only 1 address of a given type
+                    if (blade.numberOfAddresses(blade.currentEntity.addressType) == 0) {
+                        blade.currentEntity.isDefault = true;
                     }
-                    if (blade.currentEntity.addressType == blade.addressTypes[2]) { // If the current address is from BillingAndShipping
+
+                    // clear other default flags by type if the address marked as default
+                    if (blade.currentEntity.isDefault) {
+                        blade.searchDefaultAddress(blade.currentEntity.addressType);
+                    }
+
+                    // If the current address is BillingAndShipping force remove the default flag
+                    if (blade.currentEntity.addressType == blade.addressTypesDict.billingAndShipping) { 
                         blade.currentEntity.isDefault = false;
                     }
 
                     if (blade.confirmChangesFn) {
                         blade.confirmChangesFn(blade.currentEntity);
                     }
+
                     angular.copy(blade.currentEntity, blade.origEntity);
                     $scope.bladeClose();
                 },
@@ -148,7 +147,7 @@ angular.module('virtoCommerce.customerModule.common')
                     blade.currentEntity.isDefault = true;
                 },
                 canExecuteMethod: function () {
-                    if (blade.currentEntity.addressType == 'BillingAndShipping')
+                    if (blade.currentEntity.addressType === blade.addressTypesDict.billingAndShipping)
                         return false;
                     else
                         return !blade.currentEntity.isDefault;
@@ -186,7 +185,7 @@ angular.module('virtoCommerce.customerModule.common')
                             blade.deleteFn(blade.currentEntity);
                         }
                         $scope.bladeClose();
-                        if (blade.numberOfAddresses(blade.origEntity.addressType) == 1 && blade.currentEntity.addressType !== blade.addressTypes[2]) {
+                        if (blade.numberOfAddresses(blade.origEntity.addressType) == 1 && blade.currentEntity.addressType !== blade.addressTypesDict.billingAndShipping) {
                             blade.searchSecondAddress(blade.origEntity.addressType, blade.currentEntity.name);
                         }
                     }
