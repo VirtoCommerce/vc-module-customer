@@ -19,7 +19,8 @@
           "taxpayerId": "Taxpayer ID",
           "preferred-communication": "Preferred communication channel",
           "preferred-delivery": "Preferred delivery method",
-          "timezone": "Time zone"
+          "timezone": "Time zone",
+          "about": "About"
         },
         "placeholders": {
           "groups": "Select user groups",
@@ -35,7 +36,8 @@
           "taxpayerId": "Please specify a value",
           "organizations": "Please select a company",
           "associated-organizations": "Please select a company",
-          "timezone": "Please select"
+          "timezone": "Please select",
+          "about": "Please, enter the information about contact"
         }
       },
       "employee-detail": {
