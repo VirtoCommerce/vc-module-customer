@@ -37,7 +37,7 @@
           "organizations": "Please select a company",
           "associated-organizations": "Please select a company",
           "timezone": "Please select",
-          "about": "Please specify a value"
+          "about": "Please, enter the information about contact"
         }
       },
       "employee-detail": {
