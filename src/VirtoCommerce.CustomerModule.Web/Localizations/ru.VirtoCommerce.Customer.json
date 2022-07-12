@@ -19,7 +19,8 @@
           "taxpayerId": "Идентификатор налогоплательщика",
           "preferred-communication": "Предпочтительный тип коммуникации",
           "preferred-delivery": "Предпочтительный способ доставки",
-          "timezone": "Часовой пояс"
+          "timezone": "Часовой пояс",
+          "about": "О контакте"
         },
         "placeholders": {
           "groups": "Выбрать пользовательские группы",
@@ -34,7 +35,8 @@
           "preferred-delivery": "Введите значение",
           "taxpayerId": "Введите значение",
           "organizations": "Выбрать организацию",
-          "timezone": "Выбрать"
+          "timezone": "Выбрать",
+          "about": "Пожалуйста, внесите информацию о контакте"
         }
       },
       "employee-detail": {

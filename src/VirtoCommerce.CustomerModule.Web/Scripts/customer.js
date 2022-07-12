@@ -318,7 +318,15 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                             title: "customer.blades.contact-detail.labels.preferred-delivery",
                             placeholder: "customer.blades.contact-detail.placeholders.preferred-delivery",
                             valueType: "ShortText"
-                        }]
+                        },
+                        {
+                            name: 'about',
+                            title: "customer.blades.contact-detail.labels.about",
+                            placeholder: "customer.blades.contact-detail.placeholders.about",
+                            colSpan: 2,
+                            valueType: "LongText"
+                        }
+                        ]
                     }
                 });
                 memberTypesResolverService.registerType({

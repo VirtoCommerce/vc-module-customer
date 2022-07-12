@@ -19,24 +19,26 @@
                 "taxpayerId": "Steuerzahler ID",
                 "preferred-communication": "Bevorzugte Kommunikation",
                 "preferred-delivery": "Bevorzugte Lieferung",
-                "timezone": "Zeitzone"
+                "timezone": "Zeitzone",
+                "about": "Kontaktinformationen"
               },
-                "placeholders": {
-                    "groups": "Benutzergruppen auswählen",
-                    "first-name": "Wert eingeben",
-                    "middle-name": "Wert eingeben",
-                    "last-name": "Wert eingeben",
-                    "full-name": "Wert eingeben",
-                    "birthday": "Wert eingeben",
-                    "salutation": "Wert eingeben",
-                    "defaultLanguage": "Wert eingeben",
-                    "preferred-communication": "Wert eingeben",
-                    "preferred-delivery": "Wert eingeben",
-                    "taxpayerId": "Wert eingeben",
-                    "organizations": "Wählen Sie die Organisation",
-                    "associated-organizations": "Wählen Sie die Organisation",
-                    "timezone": "Wert auswählen"
-                }
+              "placeholders": {
+                "groups": "Benutzergruppen auswählen",
+                "first-name": "Wert eingeben",
+                "middle-name": "Wert eingeben",
+                "last-name": "Wert eingeben",
+                "full-name": "Wert eingeben",
+                "birthday": "Wert eingeben",
+                "salutation": "Wert eingeben",
+                "defaultLanguage": "Wert eingeben",
+                "preferred-communication": "Wert eingeben",
+                "preferred-delivery": "Wert eingeben",
+                "taxpayerId": "Wert eingeben",
+                "organizations": "Wählen Sie die Organisation",
+                "associated-organizations": "Wählen Sie die Organisation",
+                "timezone": "Wert auswählen",
+                "about": "Bitte geben Sie die Kontaktinformationen ein"
+              }
             },
             "employee-detail": {
                 "title-new": "Neuer Mitarbeiter",
