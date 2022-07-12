@@ -32,6 +32,7 @@ namespace VirtoCommerce.CustomerModule.Core.Model
         public string DefaultBillingAddressId { get; set; }
         public string PhotoUrl { get; set; }
         public bool IsAnonymized { get; set; }
+        public string About { get; set; }
 
         public override string ObjectType => typeof(Contact).FullName;
 
