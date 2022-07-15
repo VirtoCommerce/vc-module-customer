@@ -24,8 +24,7 @@ using VirtoCommerce.CustomerModule.Data.Search.Indexing;
 using VirtoCommerce.CustomerModule.Data.Services;
 using VirtoCommerce.CustomerModule.Data.Validation;
 using VirtoCommerce.CustomerModule.Web.Authorization;
-using VirtoCommerce.ImageToolsModule.Core.ThumbnailGeneration;
-using VirtoCommerce.ImageToolsModule.Data.ThumbnailGeneration;
+using VirtoCommerce.ImageTools.ImageAbstractions;
 using VirtoCommerce.NotificationsModule.Core.Services;
 using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
@@ -66,8 +65,8 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddSingleton<CustomerExportImport>();
             serviceCollection.AddTransient<MemberSearchRequestBuilder>();
 
-            serviceCollection.TryAddTransient<IImageService, ImageService>();
-            serviceCollection.TryAddTransient<IImageResizer, ImageResizer>();
+            serviceCollection.TryAddTransient<IImageService, DefaultImageService>();
+            serviceCollection.TryAddTransient<IImageResizer, DefaultImageResizer>();
             serviceCollection.AddTransient<IIconService, IconService>();
             
             serviceCollection.AddSingleton<MemberDocumentChangesProvider>();

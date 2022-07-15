@@ -1,26 +1,21 @@
 using System;
 using System.Threading.Tasks;
 using SixLabors.ImageSharp;
-using VirtoCommerce.AssetsModule.Core.Assets;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
-using VirtoCommerce.ImageToolsModule.Core.Models;
-using VirtoCommerce.ImageToolsModule.Core.ThumbnailGeneration;
-using VirtoCommerce.ImageToolsModule.Data.ThumbnailGeneration;
+using VirtoCommerce.ImageTools.ImageAbstractions;
 
 namespace VirtoCommerce.CustomerModule.Data.Services
 {
     public sealed class IconService : IIconService
     {
-        private readonly IBlobStorageProvider _blobStorageProvider;
         private readonly IImageService _imageService;
         private readonly IImageResizer _imageResizer;
 
         private const int DefaultImageSize = 90;
 
-        public IconService(IBlobStorageProvider blobStorageProvider, IImageService imageService, IImageResizer imageResizer)
+        public IconService(IImageService imageService, IImageResizer imageResizer)
         {
-            _blobStorageProvider = blobStorageProvider;
             _imageService = imageService;
             _imageResizer = imageResizer;
         }
@@ -43,9 +38,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
         private async Task InnerResizeAsync(IconResizeRequest request)
         {
-            var imageService = new ImageService(_blobStorageProvider);
-
-            var image = await imageService.LoadImageAsync(request.Url, out var format);
+            var image = await _imageService.LoadImageAsync(request.Url, out var format);
 
             if (image.Width != image.Height)
             {

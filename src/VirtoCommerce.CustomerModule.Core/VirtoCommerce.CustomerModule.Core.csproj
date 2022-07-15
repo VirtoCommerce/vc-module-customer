@@ -11,7 +11,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
         <PackageReference Include="VirtoCommerce.CoreModule.Core" Version="3.200.0" />
-        <PackageReference Include="VirtoCommerce.ImageToolsModule.Core" Version="3.203.0" />
+        <PackageReference Include="VirtoCommerce.ImageTools.ImageAbstractions" Version="3.204.0-alpha.281-pt-8145" />
         <PackageReference Include="VirtoCommerce.NotificationsModule.Core" Version="3.200.0" />
         <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.200.0" />
     </ItemGroup>
