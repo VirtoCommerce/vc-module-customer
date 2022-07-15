@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Events;
 using VirtoCommerce.CustomerModule.Core.Model;
@@ -23,6 +24,8 @@ using VirtoCommerce.CustomerModule.Data.Search.Indexing;
 using VirtoCommerce.CustomerModule.Data.Services;
 using VirtoCommerce.CustomerModule.Data.Validation;
 using VirtoCommerce.CustomerModule.Web.Authorization;
+using VirtoCommerce.ImageToolsModule.Core.ThumbnailGeneration;
+using VirtoCommerce.ImageToolsModule.Data.ThumbnailGeneration;
 using VirtoCommerce.NotificationsModule.Core.Services;
 using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
@@ -63,6 +66,10 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddSingleton<CustomerExportImport>();
             serviceCollection.AddTransient<MemberSearchRequestBuilder>();
 
+            serviceCollection.TryAddTransient<IImageService, ImageService>();
+            serviceCollection.TryAddTransient<IImageResizer, ImageResizer>();
+            serviceCollection.AddTransient<IIconService, IconService>();
+            
             serviceCollection.AddSingleton<MemberDocumentChangesProvider>();
             serviceCollection.AddSingleton<MemberDocumentBuilder>();
 

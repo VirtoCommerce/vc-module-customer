@@ -1,0 +1,7 @@
+<div class="gridster-cnt" ng-click="openBlade()">
+    <div class="cnt-inner">
+        <i class="fas fa-user fa-2x fa-gray" ng-show="!blade.currentEntity.iconUrl"></i>
+        <img style="height:47px;width:47px;" ng-show="blade.currentEntity.iconUrl" ng-src="{{ blade.currentEntity.iconUrl }}">
+        <div class="list-t">{{ 'customer.widgets.member-icon.title' | translate }}</div>
+    </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="themeSettingsBlade themeSettingsBlade__blade-content">
+    <div class="themeSettingsBlade themeSettingsBlade__blade-inner">
+        <div class="themeSettingsBlade themeSettingsBlade__inner-block">
+            <form name="formScope" class="uploader uploader__form">
+                <fieldset ng-init="setForm(formScope)">
+                    <div class="uploader uploader__form-group">
+                        <label class="uploader uploader__form-label">{{ 'customer.blades.member-icon.labels.choose-icon' | translate }}</label>
+                        <div over-class="bd-blue" uploader="iconUploader" nv-file-over nv-file-drop class="uploader uploader__drag-area">
+                            <input id="IconUploaderInput" ng-show="false" type="file" nv-file-select uploader="iconUploader" />
+                            <div class="uploader uploader__drag-content">
+                                <div class="uploader uploader__icon-container"><i class="fas fa-cloud-upload-alt fa-2x"></i></div>
+                                <div class="uploader uploader__comment">
+                                    {{ 'platform.blades.settings-uploader.drag-drop-comment' | translate }} <br>
+                                    {{ 'platform.blades.settings-uploader.or' | translate }}
+                                    <a href="#" ng-click="browseFiles('IconUploaderInput')">{{ 'platform.blades.settings-uploader.browse-your-files' | translate }}</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="uploader uploader__hint">{{ 'customer.blades.member-icon.labels.choice-description' | translate }}</div>
+                    </div>
+                </fieldset>
+            </form>
+
+            <div class="uploader uploader__pb-container" ng-if="iconUploader.isUploading">
+                <div class="sub-t">{{ 'customer.blades.shared.labels.progress' | translate }}</div>
+                <div class="progress-bar __aqua" ng-style="{'width': iconUploader.progress + '%'}"></div>
+            </div>
+
+            <!-- preview -->
+            <div class="sub-t">{{ 'customer.blades.member-icon.labels.preview' | translate }}</div>
+            <div style="border: 1px solid #eaedf3; padding: 20px 15px 90px 15px;">
+
+                <div style="float: left;">
+                    <img style="width: 90px; height: 90px;" ng-if="blade.currentEntity.iconUrl" ng-src="{{ blade.currentEntity.iconUrl }}" alt="logo">
+                    <i class="table-ico fa fa-gears" ng-if="!blade.currentEntity.iconUrl"></i>
+                </div>
+                <div style="padding-left: 20px; margin: 0" class="form-label">{{ 'customer.blades.member-icon.labels.preview-description' | translate }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

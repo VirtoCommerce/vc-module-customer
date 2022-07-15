@@ -1,0 +1,114 @@
+angular.module("virtoCommerce.customerModule")
+    .controller("virtoCommerce.customerModule.memberIconController", ["$scope", "$http", "FileUploader", "platformWebApp.bladeNavigationService", "platformWebApp.dialogService",
+        ($scope, $http, FileUploader, bladeNavigationService, dialogService) => {
+            var blade = $scope.blade;
+            blade.title = "customer.blades.member-icon.title";
+
+            if (!$scope.iconUploader) {
+                const iconUploader = $scope.iconUploader = new FileUploader({
+                    scope: $scope,
+                    headers: { Accept: "application/json" },
+                    autoUpload: false,
+                    removeAfterUpload: true,
+                    filters: [{
+                        name: "imageFilter",
+                        fn: (item) => {
+                            const approval = /^.*\.(png|jpg|svg|)$/.test(item.name.toLowerCase());
+                            if (!approval) {
+                                const dialog = {
+                                    title: "Filetype error",
+                                    message: "Only PNG, JPG or SVG files are allowed."
+                                }
+                                dialogService.showErrorDialog(dialog);
+                            }
+                            return approval;
+                        }
+                    }]
+                });
+
+                iconUploader.url = "api/assets?folderUrl=member-icons";
+
+                iconUploader.onSuccessItem = (_, uploadedImages) => {
+                    blade.currentEntity.iconUrl = uploadedImages[0].url;
+
+                    angular.copy(blade.currentEntity, blade.originalEntity);
+                    $scope.bladeClose();
+
+                    if ((uploadedImages[0].name.split(".")[1].toLowerCase() !== "svg")) {
+                        $http.post("api/member/icon/resize", { url: blade.currentEntity.iconUrl }, "application/json");
+                    }
+                };
+
+                iconUploader.onErrorItem = (element, response, status, _) => {
+                    bladeNavigationService.setError(element._file.name + " failed: " + (response.message ? response.message : status), blade);
+                };
+            }
+
+            blade.refresh = () => {
+                blade.originalEntity = blade.currentEntity;
+                blade.currentEntity = angular.copy(blade.currentEntity);
+
+                blade.isLoading = false;
+            };
+
+            let formScope;
+            $scope.setForm = (form) => { formScope = form; }
+
+            $scope.browseFiles = (id) => {
+                window.document.querySelector(`#${id}`).click();
+            }
+
+            function isDirty() {
+                return blade.currentEntity.iconUrl !== blade.originalEntity.iconUrl || $scope.iconUploader.queue.length > 0;
+            }
+
+            function canSave() {
+                return isDirty() && formScope && formScope.$valid;
+            }
+
+            blade.saveChanges = () => {
+                if ($scope.iconUploader.queue.length === 0) {
+                    angular.copy(blade.currentEntity, blade.originalEntity);
+                    $scope.bladeClose();
+                    return;
+                }
+
+                var fileName = $scope.iconUploader.queue[0].file.name;
+                var extension = fileName.split(".")[1];
+
+                // Need to change icon URL each time to reload image on the blades,
+                // so that we switch file name postfix on each upload.
+                var nameTale = "";
+                if (blade.currentEntity.iconUrl) {
+                    var oldUrlParts = blade.currentEntity.iconUrl.split("/");
+                    var oldFileName = oldUrlParts[[oldUrlParts.length - 1]];
+
+                    if (!oldFileName.includes("_1")) {
+                        nameTale = "_1";
+                    }
+                }
+
+                fileName = blade.currentEntity.id + nameTale + "." + extension;
+                $scope.iconUploader.queue[0].file.name = fileName;
+
+                $scope.iconUploader.uploadAll();
+            };
+
+            blade.toolbarCommands = [
+                {
+                    name: "platform.commands.save", icon: "fas fa-save",
+                    executeMethod: blade.saveChanges,
+                    canExecuteMethod: canSave
+                },
+                {
+                    name: "platform.commands.set-to-default", icon: "fa fa-undo",
+                    executeMethod: () => {
+                        blade.currentEntity.iconUrl = null;
+                        $scope.iconUploader.queue = [];
+                    },
+                    canExecuteMethod: () => true
+                }
+            ];
+            
+            blade.refresh();
+    }]);
