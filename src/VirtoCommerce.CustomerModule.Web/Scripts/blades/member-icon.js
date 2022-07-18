@@ -8,7 +8,7 @@ angular.module("virtoCommerce.customerModule")
                 const iconUploader = $scope.iconUploader = new FileUploader({
                     scope: $scope,
                     headers: { Accept: "application/json" },
-                    autoUpload: false,
+                    autoUpload: true,
                     removeAfterUpload: true,
                     filters: [{
                         name: "imageFilter",
@@ -31,9 +31,6 @@ angular.module("virtoCommerce.customerModule")
                 iconUploader.onSuccessItem = (_, uploadedImages) => {
                     blade.currentEntity.iconUrl = uploadedImages[0].url;
 
-                    angular.copy(blade.currentEntity, blade.originalEntity);
-                    $scope.bladeClose();
-
                     if ((uploadedImages[0].name.split(".")[1].toLowerCase() !== "svg")) {
                         $http.post("api/member/icon/resize", { url: blade.currentEntity.iconUrl }, "application/json");
                     }
@@ -42,6 +39,26 @@ angular.module("virtoCommerce.customerModule")
                 iconUploader.onErrorItem = (element, response, status, _) => {
                     bladeNavigationService.setError(element._file.name + " failed: " + (response.message ? response.message : status), blade);
                 };
+
+                iconUploader.onBeforeUploadItem = (item) => {
+                    var fileName = item.file.name;
+                    var extension = fileName.split(".")[1];
+
+                    // Need to change icon URL each time to reload image on the blades,
+                    // so that we switch file name postfix on each upload.
+                    var nameTale = "";
+                    if (blade.currentEntity.iconUrl) {
+                        var oldUrlParts = blade.currentEntity.iconUrl.split("/");
+                        var oldFileName = oldUrlParts[[oldUrlParts.length - 1]];
+
+                        if (!oldFileName.includes("_1")) {
+                            nameTale = "_1";
+                        }
+                    }
+
+                    fileName = blade.currentEntity.id + nameTale + "." + extension;
+                    item.file.name = fileName;
+                }
             }
 
             blade.refresh = () => {
@@ -67,31 +84,8 @@ angular.module("virtoCommerce.customerModule")
             }
 
             blade.saveChanges = () => {
-                if ($scope.iconUploader.queue.length === 0) {
-                    angular.copy(blade.currentEntity, blade.originalEntity);
-                    $scope.bladeClose();
-                    return;
-                }
-
-                var fileName = $scope.iconUploader.queue[0].file.name;
-                var extension = fileName.split(".")[1];
-
-                // Need to change icon URL each time to reload image on the blades,
-                // so that we switch file name postfix on each upload.
-                var nameTale = "";
-                if (blade.currentEntity.iconUrl) {
-                    var oldUrlParts = blade.currentEntity.iconUrl.split("/");
-                    var oldFileName = oldUrlParts[[oldUrlParts.length - 1]];
-
-                    if (!oldFileName.includes("_1")) {
-                        nameTale = "_1";
-                    }
-                }
-
-                fileName = blade.currentEntity.id + nameTale + "." + extension;
-                $scope.iconUploader.queue[0].file.name = fileName;
-
-                $scope.iconUploader.uploadAll();
+                angular.copy(blade.currentEntity, blade.originalEntity);
+                $scope.bladeClose();
             };
 
             blade.toolbarCommands = [
@@ -101,14 +95,13 @@ angular.module("virtoCommerce.customerModule")
                     canExecuteMethod: canSave
                 },
                 {
-                    name: "platform.commands.set-to-default", icon: "fa fa-undo",
+                    name: "customer.blades.member-icon.labels.reset", icon: "fa fa-undo",
                     executeMethod: () => {
                         blade.currentEntity.iconUrl = null;
-                        $scope.iconUploader.queue = [];
                     },
-                    canExecuteMethod: () => true
+                    canExecuteMethod: () => blade.currentEntity.iconUrl
                 }
             ];
-            
+
             blade.refresh();
-    }]);
+        }]);
