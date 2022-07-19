@@ -100,6 +100,10 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                     },
                     isVisible: function (blade) { return !blade.isNew; }
                 };
+                var iconWidget = {
+                    controller: 'virtoCommerce.customerModule.memberIconWidgetController',
+                    template: 'Modules/$(VirtoCommerce.Customer)/Scripts/widgets/memberIconWidget.tpl.html'
+                }
                 var indexWidget = {
                     documentType: 'Member',
                     controller: 'virtoCommerce.searchModule.indexWidgetController',
@@ -114,6 +118,7 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                 widgetService.registerWidget(phonesWidget, 'customerDetail2');
                 widgetService.registerWidget(dynamicPropertyWidget, 'customerDetail2');
                 widgetService.registerWidget(indexWidget, 'customerDetail2');
+                widgetService.registerWidget(iconWidget, 'customerDetail2');
 
                 //Register widgets in organization details
                 widgetService.registerWidget(addressesWidget, 'organizationDetail1');
@@ -121,6 +126,7 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                 widgetService.registerWidget(phonesWidget, 'organizationDetail1');
                 widgetService.registerWidget(dynamicPropertyWidget, 'organizationDetail2');
                 widgetService.registerWidget(indexWidget, 'organizationDetail2');
+                widgetService.registerWidget(iconWidget, 'organizationDetail2');
 
                 //Register widgets in employee details
                 widgetService.registerWidget(accountsWidget, 'employeeDetail1');

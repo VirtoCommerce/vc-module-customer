@@ -191,9 +191,20 @@
           "name": "Please give this filter a name"
         }
       },
+      "member-icon": {
+        "title": "Manage icon",
+        "labels": {
+          "choose-icon": "Choose new icon",
+          "choice-description": "Select image with min height of the PNG, JPG or SVG format. It will be cropped down to square format and resized to 90px.",
+          "preview": "Preview",
+          "preview-description": "Current icon",
+          "reset": "Remove icon" 
+        } 
+      },
       "shared": {
         "labels": {
-          "status": "Status"
+          "status": "Status",
+          "progress": "Progress"
         },
         "placeholders": {
           "status": "Please select a value"
@@ -216,6 +227,9 @@
       "customer-accounts-list": {
         "title": "Accounts",
         "blade-subtitle": "Manage customer accounts"
+      },
+      "member-icon": {
+        "title": "Icon"
       }
     },
     "dialogs": {

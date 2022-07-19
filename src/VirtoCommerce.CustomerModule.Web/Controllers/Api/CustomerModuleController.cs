@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,12 +23,17 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         private readonly IAuthorizationService _authorizationService;
         private readonly IMemberService _memberService;
         private readonly IMemberSearchService _memberSearchService;
+        private readonly IIconService _iconService;
 
-        public CustomerModuleController(IAuthorizationService authorizationService, IMemberService memberService, IMemberSearchService memberSearchService)
+        public CustomerModuleController(IAuthorizationService authorizationService,
+            IMemberService memberService,
+            IMemberSearchService memberSearchService,
+            IIconService iconService)
         {
             _authorizationService = authorizationService;
             _memberService = memberService;
             _memberSearchService = memberSearchService;
+            _iconService = iconService;
         }
 
         /// <summary>
@@ -234,6 +240,17 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             {
                 await _memberService.DeleteAsync(idsToDelete.Skip(i).Take(criteria.Take).ToArray());
             }
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        [Route("member/icon/resize")]
+        [Authorize(ModuleConstants.Security.Permissions.Update)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        public ActionResult ResizeIcon([FromBody] IconResizeRequest request)
+        {
+            BackgroundJob.Enqueue(() => _iconService.ResizeIcon(request));
 
             return NoContent();
         }
