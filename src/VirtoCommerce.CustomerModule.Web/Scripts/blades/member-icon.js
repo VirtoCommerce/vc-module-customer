@@ -29,10 +29,13 @@ angular.module("virtoCommerce.customerModule")
                 iconUploader.url = "api/assets?folderUrl=member-icons";
 
                 iconUploader.onSuccessItem = (_, uploadedImages) => {
-                    blade.currentEntity.iconUrl = uploadedImages[0].url;
+                    // Need to change icon URL each time to reload image on the blades,
+                    // so that we add random postfix to the URL.
+                    var postfix = Math.random().toString(36).slice(2, 7);
+                    blade.tempUrl = uploadedImages[0].url + "?" + postfix;
 
                     if ((uploadedImages[0].name.split(".")[1].toLowerCase() !== "svg")) {
-                        $http.post("api/member/icon/resize", { url: blade.currentEntity.iconUrl }, "application/json");
+                        $http.post("api/member/icon/resize", { url:uploadedImages[0].url }, "application/json");
                     }
                 };
 
@@ -44,8 +47,8 @@ angular.module("virtoCommerce.customerModule")
                     var fileName = item.file.name;
                     var extension = fileName.split(".")[1];
 
-                    // Need to change icon URL each time to reload image on the blades,
-                    // so that we switch file name postfix on each upload.
+                    // Due not to overwrite icon just on upload we have two files for each contact
+                    // and change it on saving.
                     var nameTale = "";
                     if (blade.currentEntity.iconUrl) {
                         var oldUrlParts = blade.currentEntity.iconUrl.split("/");
@@ -76,7 +79,7 @@ angular.module("virtoCommerce.customerModule")
             }
 
             function isDirty() {
-                return blade.currentEntity.iconUrl !== blade.originalEntity.iconUrl || $scope.iconUploader.queue.length > 0;
+                return blade.currentEntity.iconUrl !== blade.originalEntity.iconUrl || blade.tempUrl !== blade.currentEntity.iconUrl;
             }
 
             function canSave() {
@@ -84,6 +87,7 @@ angular.module("virtoCommerce.customerModule")
             }
 
             blade.saveChanges = () => {
+                blade.currentEntity.iconUrl = blade.tempUrl;
                 angular.copy(blade.currentEntity, blade.originalEntity);
                 $scope.bladeClose();
             };
@@ -98,8 +102,9 @@ angular.module("virtoCommerce.customerModule")
                     name: "customer.blades.member-icon.labels.reset", icon: "fa fa-undo",
                     executeMethod: () => {
                         blade.currentEntity.iconUrl = null;
+                        blade.tempUrl = null;
                     },
-                    canExecuteMethod: () => blade.currentEntity.iconUrl
+                    canExecuteMethod: () => blade.currentEntity.iconUrl || blade.tempUrl
                 }
             ];
 
