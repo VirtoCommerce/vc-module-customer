@@ -26,6 +26,7 @@ namespace VirtoCommerce.CustomerModule.Core.Model
         public IList<string> Emails { get; set; }
         public IList<Note> Notes { get; set; }
         public IList<string> Groups { get; set; }
+        public string IconUrl { get; set; }
 
         #region IHasDynamicProperties Members
 

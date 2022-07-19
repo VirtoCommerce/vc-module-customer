@@ -45,10 +45,14 @@
         <i class="fa fa-ellipsis-v"></i>
     </div>
 </script>
+
 <script type="text/ng-template" id="member-list-icon.cell.html">
     <div class="ui-grid-cell-contents">
         <div class="product-img" ng-attr-title="{{COL_FIELD}}">
-            <i class="table-ico" ng-class="row.entity._memberTypeIcon ? row.entity._memberTypeIcon : 'fa-user'"></i>
+            <i class="table-ico" ng-if="!row.entity.iconUrl" ng-class="row.entity._memberTypeIcon ? row.entity._memberTypeIcon : 'fa-user'"></i>
+            <i class="table-ico" ng-if="row.entity.iconUrl">
+                <img class="list-icon" ng-src="{{ row.entity.iconUrl }}">
+            </i>
         </div>
     </div>
 </script>

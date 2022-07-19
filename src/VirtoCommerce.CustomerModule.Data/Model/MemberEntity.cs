@@ -23,6 +23,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(64)]
         public string Status { get; set; }
 
+        [StringLength(1024)]
+        public string IconUrl { get; set; }
+
         #region NavigationProperties
 
         public virtual ObservableCollection<NoteEntity> Notes { get; set; } = new NullCollection<NoteEntity>();
@@ -57,6 +60,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             member.Name = Name;
             member.OuterId = OuterId;
             member.Status = Status;
+            member.IconUrl = IconUrl;
 
             member.Addresses = Addresses.OrderBy(x => x.Id).Select(x => x.ToModel(AbstractTypeFactory<Address>.TryCreateInstance())).ToList();
             member.Emails = Emails.OrderBy(x => x.Id).Select(x => x.Address).ToList();
@@ -94,6 +98,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             Name = member.Name;
             OuterId = member.OuterId;
             Status = member.Status;
+            IconUrl = member.IconUrl;
 
             if (member.Phones != null)
             {
@@ -169,6 +174,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             target.MemberType = MemberType;
             target.OuterId = OuterId;
             target.Status = Status;
+            target.IconUrl = IconUrl;
 
             if (!Phones.IsNullCollection())
             {
