@@ -1,9 +1,7 @@
 angular.module('virtoCommerce.customerModule.common', [])
     .run(['platformWebApp.metaFormsService', function (metaFormsService) {
-        metaFormsService.registerMetaFields('CustomeraddressDetails', [{
-            name: 'description',
-            title: 'core.blades.address-detail.labels.description',
-            valueType: 'ShortText',
+        metaFormsService.registerMetaFields('CustomeraddressDetails', [ {
+            templateUrl: 'discription.html',
             priority: 0
         }, {
             templateUrl: 'addressTypeSelector.html',

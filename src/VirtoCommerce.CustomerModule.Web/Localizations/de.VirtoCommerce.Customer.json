@@ -20,7 +20,8 @@
                 "preferred-communication": "Bevorzugte Kommunikation",
                 "preferred-delivery": "Bevorzugte Lieferung",
                 "timezone": "Zeitzone",
-                "about": "Kontaktinformationen"
+                "about": "Kontaktinformationen",
+                "description": "Bezeichnung"
               },
               "placeholders": {
                 "groups": "Benutzergruppen auswählen",
@@ -37,7 +38,8 @@
                 "organizations": "Wählen Sie die Organisation",
                 "associated-organizations": "Wählen Sie die Organisation",
                 "timezone": "Wert auswählen",
-                "about": "Bitte geben Sie die Kontaktinformationen ein"
+                "about": "Bitte geben Sie die Kontaktinformationen ein",
+                "description": "Bitte geben Sie eine Beschreibung der Adresse ein"
               }
             },
             "employee-detail": {
