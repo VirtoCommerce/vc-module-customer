@@ -33,11 +33,17 @@
 <script id="countryRegionSelector.html" type="text/ng-template">
     <label class="form-label">{{ 'core.blades.address-detail.labels.region' | translate }}</label>
     <div class="form-input">
-        <ui-select ng-model="blade.currentEntity.regionName" required>
+        <ui-select ng-model="blade.currentEntity.regionName">
             <ui-select-match placeholder="{{ 'core.blades.address-detail.placeholders.region' | translate }}">{{$select.selected.displayName}}</ui-select-match>
             <ui-select-choices repeat="x.name as x in blade.getRegions($select.search) | filter: $select.search track by $index">
                 <span ng-bind-html="x.displayName | highlight: $select.search"></span>
             </ui-select-choices>
         </ui-select>
+    </div>
+</script>
+<script id="discription.html" type="text/ng-template">
+    <label class="form-label">{{ 'customer.blades.contact-detail.labels.description' | translate }}</label>
+    <div class="form-input">
+        <textarea maxlength="128" ng-model="blade.currentEntity.description" placeholder="{{'customer.blades.contact-detail.placeholders.description' | translate}}"></textarea>
     </div>
 </script>

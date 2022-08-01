@@ -20,7 +20,8 @@
           "preferred-communication": "Preferred communication channel",
           "preferred-delivery": "Preferred delivery method",
           "timezone": "Time zone",
-          "about": "About"
+          "about": "About",
+          "description": "Description"
         },
         "placeholders": {
           "groups": "Select user groups",
@@ -37,7 +38,8 @@
           "organizations": "Please select a company",
           "associated-organizations": "Please select a company",
           "timezone": "Please select",
-          "about": "Please, enter the information about contact"
+          "about": "Please, enter the information about contact",
+          "description": "Please, enter a description of the address"
         }
       },
       "employee-detail": {
