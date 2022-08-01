@@ -41,3 +41,9 @@
         </ui-select>
     </div>
 </script>
+<script id="discription.html" type="text/ng-template">
+    <label class="form-label">{{ 'customer.blades.contact-detail.labels.description' | translate }}</label>
+    <div class="form-input">
+        <textarea maxlength="128" ng-model="blade.currentEntity.description" placeholder="{{'customer.blades.contact-detail.placeholders.description' | translate}}"></textarea>
+    </div>
+</script>
