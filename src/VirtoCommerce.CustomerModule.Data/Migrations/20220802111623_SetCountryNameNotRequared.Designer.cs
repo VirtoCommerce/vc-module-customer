@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VirtoCommerce.CustomerModule.Data.Repositories;
 
@@ -11,9 +12,10 @@ using VirtoCommerce.CustomerModule.Data.Repositories;
 namespace VirtoCommerce.CustomerModule.Data.Migrations
 {
     [DbContext(typeof(CustomerDbContext))]
-    partial class CustomerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220802111623_SetCountryNameNotRequared")]
+    partial class SetCountryNameNotRequared
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,6 +55,10 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
                     b.Property<string>("DaytimePhoneNumber")
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -266,6 +272,10 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("IconUrl")
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
 
                     b.Property<string>("MemberType")
                         .HasMaxLength(64)
@@ -509,6 +519,10 @@ namespace VirtoCommerce.CustomerModule.Data.Migrations
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.ContactEntity", b =>
                 {
                     b.HasBaseType("VirtoCommerce.CustomerModule.Data.Model.MemberEntity");
+
+                    b.Property<string>("About")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("About");
 
                     b.Property<DateTime?>("BirthDate")
                         .ValueGeneratedOnUpdateSometimes()

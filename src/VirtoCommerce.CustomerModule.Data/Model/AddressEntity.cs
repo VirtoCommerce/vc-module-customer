@@ -35,7 +35,6 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(128)]
         public string StateProvince { get; set; }
 
-        [Required]
         [StringLength(128)]
         public string CountryName { get; set; }
 
