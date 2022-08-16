@@ -13,6 +13,7 @@
         <PackageReference Include="VirtoCommerce.CoreModule.Core" Version="3.203.0" />
         <PackageReference Include="VirtoCommerce.ImageTools.ImageAbstractions" Version="3.205.0" />
         <PackageReference Include="VirtoCommerce.NotificationsModule.Core" Version="3.200.0" />
-        <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.200.0" />
+        <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.201.0" />
+        <PackageReference Include="VirtoCommerce.Platform.Security" Version="3.200.0" />
     </ItemGroup>
 </Project>
