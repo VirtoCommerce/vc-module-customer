@@ -1,0 +1,11 @@
+# v1.0.0-fix
+name: Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    uses: VirtoCommerce/.github/.github/workflows/release.yml@main
+    secrets:
+      envPAT: ${{ secrets.REPO_TOKEN }}

@@ -1,0 +1,37 @@
+# v3.200.13-fix
+name: Publish nuget
+
+on:
+  workflow_dispatch:
+    inputs:
+      publishAlpha:
+        description: 'Publish nuget as alpha version.'
+        required: true
+        default: true
+        type: boolean
+
+jobs:
+  test:
+    uses: VirtoCommerce/.github/.github/workflows/test-and-sonar.yml@main
+    secrets:
+      sonarToken: ${{ secrets.SONAR_TOKEN }}
+
+  build:
+    uses: VirtoCommerce/.github/.github/workflows/build.yml@main
+    with:
+      uploadPackage: 'true'
+      uploadDocker: 'false'
+      forceVersionSuffix: ${{ github.event.inputs.publishAlpha }}
+    secrets:
+      envPAT: ${{ secrets.REPO_TOKEN }}
+
+  publish-nuget:
+    needs:
+      [build, test]
+    uses: VirtoCommerce/.github/.github/workflows/publish-github.yml@main
+    with:
+      fullKey: ${{ needs.build.outputs.packageFullKey }}
+      forceGithub: false
+    secrets:
+      envPAT: ${{ secrets.GITHUB_TOKEN }}
+      nugetKey: ${{ secrets.NUGET_KEY }}
