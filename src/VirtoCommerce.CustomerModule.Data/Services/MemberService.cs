@@ -29,18 +29,21 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         private readonly IPlatformMemoryCache _platformMemoryCache;
         private readonly IUserSearchService _userSearchService;
         private readonly AbstractValidator<Member> _memberValidator;
+        private readonly ICountriesService _countriesService;
 
         public MemberService(
             Func<IMemberRepository> repositoryFactory,
             IUserSearchService userSearchService,
             IEventPublisher eventPublisher,
             IPlatformMemoryCache platformMemoryCache,
-            AbstractValidator<Member> memberValidator)
+            AbstractValidator<Member> memberValidator,
+            ICountriesService countriesService)
         {
             _repositoryFactory = repositoryFactory;
             _eventPublisher = eventPublisher;
             _platformMemoryCache = platformMemoryCache;
             _memberValidator = memberValidator;
+            _countriesService = countriesService;
             _userSearchService = userSearchService;
         }
 
@@ -146,6 +149,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             }
 
             FillContactFullName(members);
+            await FillAddressNames(members);
 
             var pkMap = new PrimaryKeyResolvingMap();
             var changedEntries = new List<GenericChangedEntry<Member>>();
@@ -158,10 +162,10 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                 {
                     var memberEntityType = AbstractTypeFactory<Member>.AllTypeInfos.Where(t => t.MappedType != null && t.IsAssignableTo(member.MemberType)).Select(t => t.MappedType).FirstOrDefault();
                     ArgumentNullException.ThrowIfNull(memberEntityType);
-                    
+
                     var dataSourceMember = AbstractTypeFactory<MemberEntity>.TryCreateInstance(memberEntityType.Name);
                     ArgumentNullException.ThrowIfNull(dataSourceMember);
-                        
+
                     dataSourceMember.FromModel(member, pkMap);
 
                     var dataTargetMember = existingMemberEntities.FirstOrDefault(m => m.Id == member.Id);
@@ -237,6 +241,26 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                 if (string.IsNullOrWhiteSpace(member.FullName))
                 {
                     member.FullName = $"{member.FirstName} {member.LastName}".Trim();
+                }
+            }
+        }
+
+        protected virtual async Task FillAddressNames(Member[] members)
+        {
+            foreach (var member in members.Where(x => !x.Addresses.IsNullOrEmpty()))
+            {
+                foreach (var address in member.Addresses)
+                {
+                    if (string.IsNullOrEmpty(address.CountryName))
+                    {
+                        address.CountryName = _countriesService.GetByCode(address.CountryCode).Name;
+                    }
+
+                    if (string.IsNullOrEmpty(address.RegionName))
+                    {
+                        var regions = await _countriesService.GetCountryRegionsAsync(address.CountryCode);
+                        address.RegionName = regions.FirstOrDefault(x => x.Id == address.RegionId)?.Name;
+                    }
                 }
             }
         }
