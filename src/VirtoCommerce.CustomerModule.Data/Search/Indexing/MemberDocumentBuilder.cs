@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
+using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.SearchModule.Core.Extenstions;
@@ -145,6 +146,12 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             document.AddFilterableAndSearchableValues("Login", contact.SecurityAccounts.Select(sa => sa.UserName).ToList());
             document.AddFilterableValue("IsAnonymized", contact.IsAnonymized, IndexDocumentFieldValueType.Boolean);
             document.AddFilterableAndSearchableValue("About", contact.About);
+
+            document.AddFilterableValue("Roles", contact
+                .SecurityAccounts
+                .SelectMany(x => x.Roles)
+                .Select(x => new RoleEntity { Id = x.Id, Name = x.Name })
+                .ToArray(), IndexDocumentFieldValueType.Complex);
         }
 
         protected virtual void IndexEmployee(IndexDocument document, Employee employee)
