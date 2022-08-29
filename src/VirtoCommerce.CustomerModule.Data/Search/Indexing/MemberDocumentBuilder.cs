@@ -149,8 +149,12 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             document.AddFilterableValues("Role", contact
                 .SecurityAccounts
                 .SelectMany(x => x.Roles)
-                .Select(x => new[] { x.Id, x.NormalizedName })
-                .SelectMany(x => x)
+                .Select(x => x.NormalizedName)
+                .ToList());
+            document.AddFilterableValues("RoleId", contact
+                .SecurityAccounts
+                .SelectMany(x => x.Roles)
+                .Select(x => x.Id)
                 .ToList());
         }
 
