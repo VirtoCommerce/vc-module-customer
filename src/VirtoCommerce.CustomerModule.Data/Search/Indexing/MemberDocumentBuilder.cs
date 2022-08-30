@@ -145,6 +145,17 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             document.AddFilterableAndSearchableValues("Login", contact.SecurityAccounts.Select(sa => sa.UserName).ToList());
             document.AddFilterableValue("IsAnonymized", contact.IsAnonymized, IndexDocumentFieldValueType.Boolean);
             document.AddFilterableAndSearchableValue("About", contact.About);
+
+            document.AddFilterableValues("Role", contact
+                .SecurityAccounts
+                .SelectMany(x => x.Roles)
+                .Select(x => x.NormalizedName)
+                .ToList());
+            document.AddFilterableValues("RoleId", contact
+                .SecurityAccounts
+                .SelectMany(x => x.Roles)
+                .Select(x => x.Id)
+                .ToList());
         }
 
         protected virtual void IndexEmployee(IndexDocument document, Employee employee)
