@@ -93,6 +93,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                     members.update(blade.currentEntity,
                         function () { blade.refresh(true); });
                 }
+                bladeNavigationService.closeChildrenBlades(blade);
             };
 
             $scope.setForm = function (form) {
