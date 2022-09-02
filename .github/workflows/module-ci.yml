@@ -1,4 +1,4 @@
-# v1.1.12
+# v3.200.15
 name: Module CI
 
 on:
@@ -27,8 +27,10 @@ on:
     
 jobs:
   ci:
-    if: ${{ github.actor != 'dependabot[bot]' && (github.event.pull_request.head.repo.full_name == github.repository || github.event.pull_request.head.repo.full_name == '') }}  # Check that PR not from forked repo and not from Dependabot
-    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' && 
+        (github.event.pull_request.head.repo.full_name == github.repository || 
+        github.event.pull_request.head.repo.full_name == '') }}  # Check that PR not from forked repo and not from Dependabot
+    runs-on: ubuntu-20.04
     env:
       CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
       CLIENT_ID: ${{secrets.CLIENT_ID}}
@@ -44,6 +46,7 @@ jobs:
     outputs:
       artifactUrl: ${{ steps.artifactUrl.outputs.download_url }}
       jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
+      moduleId: ${{ steps.artifact_ver.outputs.moduleId }}
 
     steps:
 
@@ -52,7 +55,7 @@ jobs:
         run: |
           echo "RELEASE_STATUS=true" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -206,13 +209,15 @@ jobs:
   deploy:
     if: ${{ (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master') && github.event_name == 'push' }}
     needs: ci
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
       CLIENT_ID: ${{secrets.CLIENT_ID}}
       CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
       DEPLOYMENT_ENV: 'dev'
+      SLEEP_TIME: '5m'
+      ARGO_SERVER: 'argo.govirto.com'
 
     steps: 
       - name: Set DEPLOYMENT_ENV variable
@@ -246,20 +251,19 @@ jobs:
           forceCommit: 'true'
           cmPath: ${{ steps.deployConfig.outputs.cmPath }}
 
+      - name: Sleep for ${{ env.SLEEP_TIME }}
+        run: sleep ${{ env.SLEEP_TIME }}
+        shell: bash
+
       - name: Wait for environment is up
-        shell: pwsh
-        timeout-minutes: 15
-        run: | 
-          do {
-            Start-Sleep -s 15
-            $statusBage = (Invoke-WebRequest -Uri "https://argo.govirto.com/api/badge?name=${{ steps.deployConfig.outputs.deployAppName }}").Content
-            
-            $syncedAndHealthy = $statusBage.Contains('>Healthy<') -and $statusBage.Contains('>Synced<')
-            if (-not $syncedAndHealthy) {
-              Write-Host "Sync pending..."
-            }
-          }
-          while (-not $syncedAndHealthy)
+        uses: VirtoCommerce/vc-github-actions/vc-argocd-cli@master
+        timeout-minutes: 10
+        id: argocd-cli
+        with:
+          server: ${{env.ARGO_SERVER}}
+          username: ${{ secrets.ARGOCD_LOGIN }}
+          password: ${{ secrets.ARGOCD_PASSWORD }}
+          command: app wait ${{ steps.deployConfig.outputs.deployAppName }}
 
       - name: DEPLOY_STATE::successful
         if: success()
@@ -304,3 +308,19 @@ jobs:
           environment-id: ${{ steps.deployConfig.outputs.environmentId }}
           environment-display-name: ${{ steps.deployConfig.outputs.environmentName }}
           environment-type: ${{ steps.deployConfig.outputs.environmentType }}
+
+  module-katalon-tests:
+    if: ${{ github.event_name == 'pull_request' }}
+    needs: 'ci'
+    uses: VirtoCommerce/.github/.github/workflows/e2e.yml@main
+    with:
+      katalonRepo: 'VirtoCommerce/vc-quality-gate-katalon'
+      katalonRepoBranch: 'dev'
+      testSuite: 'Test Suites/Modules/Platform_collection'
+      installModules: 'true'
+      installCustomModule: 'true'
+      customModuleId:  ${{ needs.ci.outputs.moduleId }}
+      customModuleUrl:  ${{ needs.ci.outputs.artifactUrl }}
+    secrets:
+      envPAT: ${{ secrets.REPO_TOKEN }}
+      katalonApiKey: ${{ secrets.KATALON_API_KEY }}
