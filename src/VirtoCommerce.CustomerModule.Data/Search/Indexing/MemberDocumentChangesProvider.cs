@@ -96,13 +96,23 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                     new IndexDocumentChange
                     {
                         DocumentId = o.ObjectId,
-                        ChangeType = o.OperationType == EntryState.Deleted ? IndexDocumentChangeType.Deleted : IndexDocumentChangeType.Modified,
+                        ChangeType = ConvertEntryStateToDocumentChangeType(o.OperationType),
                         ChangeDate = o.ModifiedDate ?? o.CreatedDate,
                     }
                 ).ToArray();
             }
 
             return result;
+        }
+
+        private IndexDocumentChangeType ConvertEntryStateToDocumentChangeType(EntryState entryState)
+        {
+            return entryState switch
+            {
+                EntryState.Deleted => IndexDocumentChangeType.Deleted,
+                EntryState.Added => IndexDocumentChangeType.Created,
+                _ => IndexDocumentChangeType.Modified,
+            };
         }
     }
 }
