@@ -105,12 +105,12 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             return result;
         }
 
-        private IndexDocumentChangeType ConvertEntryStateToDocumentChangeType(EntryState entryState)
+        private static IndexDocumentChangeType ConvertEntryStateToDocumentChangeType(EntryState entryState)
         {
             return entryState switch
             {
-                EntryState.Deleted => IndexDocumentChangeType.Deleted,
                 EntryState.Added => IndexDocumentChangeType.Created,
+                EntryState.Deleted => IndexDocumentChangeType.Deleted,
                 _ => IndexDocumentChangeType.Modified,
             };
         }
