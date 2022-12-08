@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -6,12 +7,14 @@ using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Model.Search;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Web.Authorization;
 using VirtoCommerce.Platform.Core.Common;
+using Address = VirtoCommerce.CustomerModule.Core.Model.Address;
 
 namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
 {
@@ -131,6 +134,12 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             {
                 return Unauthorized();
             }
+
+            if (HasDefaultBillingAndShippingAddress(member, out var actionResult))
+            {
+                return actionResult;
+            }
+
             await _memberService.SaveChangesAsync(new[] { member });
             var retVal = await _memberService.GetByIdAsync(member.Id, null, member.MemberType);
 
@@ -171,6 +180,12 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             {
                 return Unauthorized();
             }
+
+            if (HasDefaultBillingAndShippingAddress(member, out var actionResult))
+            {
+                return actionResult;
+            }
+
             await _memberService.SaveChangesAsync(new[] { member });
             return NoContent();
         }
@@ -675,6 +690,20 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             return await GetOrganizationsByIds(organizationsIds.ToArray());
         }
         #endregion
+
+
+        private bool HasDefaultBillingAndShippingAddress(Member member, out ActionResult actionResult)
+        {
+            actionResult = null;
+            var hasDefaultBillingAndShippingAddress = member?.Addresses?.Any(a => a.IsDefault && a.AddressType == AddressType.BillingAndShipping) ?? false;
+
+            if (hasDefaultBillingAndShippingAddress)
+            {
+                actionResult = BadRequest("BillingAndShipping address cannot be set as default");
+            }
+
+            return hasDefaultBillingAndShippingAddress;
+        }
 
         private async Task<AuthorizationResult> AuthorizeAsync(object resource, string permission)
         {
