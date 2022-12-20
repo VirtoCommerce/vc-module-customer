@@ -88,7 +88,7 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.TryAddTransient<IImageService, DefaultImageService>();
             serviceCollection.TryAddTransient<IImageResizer, DefaultImageResizer>();
             serviceCollection.AddTransient<IIconService, IconService>();
-            
+
             serviceCollection.AddSingleton<MemberDocumentChangesProvider>();
             serviceCollection.AddSingleton<MemberDocumentBuilder>();
 
@@ -172,7 +172,6 @@ namespace VirtoCommerce.CustomerModule.Web
                 {
                     dbContext.Database.MigrateIfNotApplied(MigrationName.GetUpdateV2MigrationName(ModuleInfo.Id));
                 }
-                dbContext.Database.EnsureCreated();
                 dbContext.Database.Migrate();
             }
 
