@@ -67,6 +67,11 @@ namespace VirtoCommerce.CustomerModule.Core.Model.Search
         /// </summary>
         public bool DeepSearch { get; set; }
 
-        
+        /// <summary>
+        /// Search members by outerIds
+        /// </summary>
+        public string[] OuterIds { get; set; }
+
+
     }
 }

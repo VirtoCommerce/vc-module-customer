@@ -140,7 +140,11 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             {
                 query = query.Where(m => m.Name.Contains(criteria.Keyword) || m.Emails.Any(e => e.Address.Contains(criteria.Keyword)));               
             }
-          
+
+            if (!criteria.OuterIds.IsNullOrEmpty())
+            {
+                query = query.Where(m => criteria.OuterIds.Contains(m.OuterId));
+            }
             return query;
         }
 
