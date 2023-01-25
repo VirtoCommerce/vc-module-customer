@@ -45,6 +45,8 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             var document = new IndexDocument(member.Id);
 
             document.AddFilterableValue("MemberType", member.MemberType, IndexDocumentFieldValueType.String);
+            document.AddFilterableValue("OuterId", member.OuterId, IndexDocumentFieldValueType.String);
+
             document.AddFilterableAndSearchableValue("Name", member.Name);
             document.AddFilterableAndSearchableValues("Emails", member.Emails);
             document.AddFilterableAndSearchableValues("Phones", member.Phones);
