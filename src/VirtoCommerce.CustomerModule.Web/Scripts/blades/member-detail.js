@@ -128,6 +128,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
             blade.headIcon = blade.memberTypeDefinition.icon;
 
             blade.fetchOrganizations = function (criteria) {
+                criteria.deepSearch = true;
                 return organizationsResource.search(criteria);
             }
 
