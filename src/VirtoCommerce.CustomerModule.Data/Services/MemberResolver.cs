@@ -10,13 +10,14 @@ namespace VirtoCommerce.CustomerModule.Data.Services
     public class MemberResolver : IMemberResolver
     {
         private readonly IMemberService _memberService;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly Func<UserManager<ApplicationUser>> _userManagerFactory;
 
-        public MemberResolver(IMemberService memberService, Func<UserManager<ApplicationUser>> userManager)
+        public MemberResolver(IMemberService memberService, Func<UserManager<ApplicationUser>> userManagerFactory)
         {
             _memberService = memberService;
-            _userManager = userManager();
+            _userManagerFactory = userManagerFactory;
         }
+
         public async Task<Member> ResolveMemberByIdAsync(string userId)
         {
             if (string.IsNullOrEmpty(userId))
@@ -29,9 +30,10 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
             if (member == null)
             {
-                var user = await _userManager.FindByIdAsync(userId);
+                using var userManager = _userManagerFactory();
+                var user = await userManager.FindByIdAsync(userId);
 
-                if (user != null && user.MemberId != null)
+                if (!string.IsNullOrEmpty(user?.MemberId))
                 {
                     member = await _memberService.GetByIdAsync(user.MemberId);
                 }
