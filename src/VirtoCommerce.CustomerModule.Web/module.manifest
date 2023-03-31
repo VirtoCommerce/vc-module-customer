@@ -4,7 +4,7 @@
   <version>3.224.0</version>
   <version-tag />
   <platformVersion>3.230.0</platformVersion>
-  <title>Customer management module</title>
+  <title>Companies and Contacts</title>
   <description>Managing customers contacts and organizations</description>
   <authors>
     <author>Artem Dudarev</author>
