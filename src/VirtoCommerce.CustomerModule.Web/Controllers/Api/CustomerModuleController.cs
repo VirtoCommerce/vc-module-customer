@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
@@ -55,7 +53,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             };
             if (!(await AuthorizeAsync(searchCriteria, ModuleConstants.Security.Permissions.Access)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
             var result = await _memberSearchService.SearchMembersAsync(searchCriteria);
 
@@ -73,7 +71,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         {
             if (!(await AuthorizeAsync(criteria, ModuleConstants.Security.Permissions.Access)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
             var result = await _memberSearchService.SearchMembersAsync(criteria);
             return Ok(result);
@@ -87,13 +85,13 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="memberType">member type</param>
         [HttpGet]
         [Route("members/{id}")]
-        public async Task<ActionResult<Member>> GetMemberById(string id, [FromQuery] string responseGroup = null, [FromQuery]  string memberType = null)
+        public async Task<ActionResult<Member>> GetMemberById(string id, [FromQuery] string responseGroup = null, [FromQuery] string memberType = null)
         {
             //pass member type name for better perfomance
             var retVal = await _memberService.GetByIdAsync(id, responseGroup, memberType);
             if (!(await AuthorizeAsync(retVal, ModuleConstants.Security.Permissions.Read)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
             if (retVal != null)
             {
@@ -105,13 +103,13 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
 
         [HttpGet]
         [Route("members")]
-        public async Task<ActionResult<Member[]>> GetMembersByIds([FromQuery] string[] ids, [FromQuery]  string responseGroup = null, [FromQuery]  string[] memberTypes = null)
+        public async Task<ActionResult<Member[]>> GetMembersByIds([FromQuery] string[] ids, [FromQuery] string responseGroup = null, [FromQuery] string[] memberTypes = null)
         {
             //pass member types name for better performance
             var retVal = await _memberService.GetByIdsAsync(ids, responseGroup, memberTypes);
             if (!(await AuthorizeAsync(retVal, ModuleConstants.Security.Permissions.Read)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
             if (retVal != null)
             {
@@ -132,7 +130,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         {
             if (!(await AuthorizeAsync(member, ModuleConstants.Security.Permissions.Create)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
 
             if (HasDefaultBillingAndShippingAddress(member, out var actionResult))
@@ -158,7 +156,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         {
             if (!(await AuthorizeAsync(members, ModuleConstants.Security.Permissions.Create)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
             await _memberService.SaveChangesAsync(members);
             var retVal = await _memberService.GetByIdsAsync(members.Select(m => m.Id).ToArray(), null, members.Select(m => m.MemberType).Distinct().ToArray());
@@ -178,7 +176,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         {
             if (!(await AuthorizeAsync(member, ModuleConstants.Security.Permissions.Update)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
 
             if (HasDefaultBillingAndShippingAddress(member, out var actionResult))
@@ -201,7 +199,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         {
             if (!(await AuthorizeAsync(members, ModuleConstants.Security.Permissions.Update)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
             await _memberService.SaveChangesAsync(members);
             return NoContent();
@@ -233,7 +231,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> BulkDeleteMembersBySearchCriteria([FromBody] MembersSearchCriteria criteria)
         {
-            bool hasSearchCriteriaMembers;            
+            bool hasSearchCriteriaMembers;
             var idsToDelete = new List<string>();
             do
             {
@@ -281,7 +279,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         {
             if (!(await AuthorizeAsync(contact, ModuleConstants.Security.Permissions.Create)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
             await _memberService.SaveChangesAsync(new[] { contact });
             return Ok(contact);
@@ -296,7 +294,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         {
             if (!(await AuthorizeAsync(contacts, ModuleConstants.Security.Permissions.Create)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
             await _memberService.SaveChangesAsync(contacts);
             return Ok(contacts);
@@ -312,7 +310,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         {
             if (!(await AuthorizeAsync(contact, ModuleConstants.Security.Permissions.Update)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
             await _memberService.SaveChangesAsync(new[] { contact });
             return NoContent(); // TODO: write here return Ok(contact) when updating storefront AutoRest proxies to VC v3
@@ -328,7 +326,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         {
             if (!(await AuthorizeAsync(contacts, ModuleConstants.Security.Permissions.Update)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
             await _memberService.SaveChangesAsync(contacts);
             return NoContent(); // TODO: write here return Ok(contacts) when updating storefront AutoRest proxies to VC v3            
@@ -343,7 +341,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         {
             if (!(await AuthorizeAsync(organization, ModuleConstants.Security.Permissions.Create)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
             await _memberService.SaveChangesAsync(new[] { organization });
             return Ok(organization);
@@ -359,7 +357,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         {
             if (!(await AuthorizeAsync(organizations, ModuleConstants.Security.Permissions.Create)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
 
             await _memberService.SaveChangesAsync(organizations);
@@ -372,11 +370,11 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpPut]
         [Route("organizations")]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
-        public async Task<ActionResult<Organization>> UpdateOrganization([FromBody]Organization organization)
+        public async Task<ActionResult<Organization>> UpdateOrganization([FromBody] Organization organization)
         {
             if (!(await AuthorizeAsync(organization, ModuleConstants.Security.Permissions.Update)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
             await _memberService.SaveChangesAsync(new[] { organization });
             return NoContent(); // TODO: write here return Ok(organization) when updating storefront AutoRest proxies to VC v3
@@ -392,7 +390,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         {
             if (!(await AuthorizeAsync(organizations, ModuleConstants.Security.Permissions.Update)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
             await _memberService.SaveChangesAsync(organizations);
             return NoContent(); // TODO: write here return Ok(organizations) when updating storefront AutoRest proxies to VC v3            
@@ -437,7 +435,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             var result = await _memberService.GetByIdAsync(id, null, typeof(Organization).Name);
             if (!(await AuthorizeAsync(result, ModuleConstants.Security.Permissions.Read)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
             return Ok(result);
         }
@@ -453,7 +451,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             var result = await _memberService.GetByIdsAsync(ids, null, new[] { typeof(Organization).Name });
             if (!(await AuthorizeAsync(result, ModuleConstants.Security.Permissions.Read)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
             return Ok(result);
         }
@@ -477,7 +475,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
 
             if (!(await AuthorizeAsync(criteria, ModuleConstants.Security.Permissions.Read)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
 
             var searchResult = await _memberSearchService.SearchMembersAsync(criteria);
@@ -502,7 +500,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             var result = await _memberService.GetByIdAsync(id, null, typeof(Contact).Name);
             if (!(await AuthorizeAsync(result, ModuleConstants.Security.Permissions.Read)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
             return Ok(result);
         }
@@ -514,12 +512,12 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="ids">contact IDs</param>
         [HttpGet]
         [Route("contacts")]
-        public async Task<ActionResult<Contact[]>> GetContactsByIds([FromQuery]string[] ids)
+        public async Task<ActionResult<Contact[]>> GetContactsByIds([FromQuery] string[] ids)
         {
             var result = await _memberService.GetByIdsAsync(ids, null, new[] { typeof(Contact).Name });
             if (!(await AuthorizeAsync(result, ModuleConstants.Security.Permissions.Read)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
             return Ok(result);
         }
@@ -543,7 +541,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
 
             if (!(await AuthorizeAsync(criteria, ModuleConstants.Security.Permissions.Read)).Succeeded)
             {
-                return Unauthorized();
+                return Forbid();
             }
 
             var searchResult = await _memberSearchService.SearchMembersAsync(criteria);
@@ -577,7 +575,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpGet]
         [Route("vendors")]
         [Authorize(ModuleConstants.Security.Permissions.Read)]
-        public async Task<ActionResult<Vendor[]>> GetVendorsByIds([FromQuery]string[] ids)
+        public async Task<ActionResult<Vendor[]>> GetVendorsByIds([FromQuery] string[] ids)
         {
             var result = await _memberService.GetByIdsAsync(ids, null, new[] { typeof(Vendor).Name });
             return Ok(result);
@@ -591,7 +589,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpPost]
         [Route("vendors/search")]
         [Authorize(ModuleConstants.Security.Permissions.Read)]
-        public async Task<ActionResult<VendorSearchResult>> SearchVendors([FromBody]MembersSearchCriteria criteria)
+        public async Task<ActionResult<VendorSearchResult>> SearchVendors([FromBody] MembersSearchCriteria criteria)
         {
             if (criteria == null)
             {
@@ -619,7 +617,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             {
                 if (!(await AuthorizeAsync(member, ModuleConstants.Security.Permissions.Update)).Succeeded)
                 {
-                    return Unauthorized();
+                    return Forbid();
                 }
                 member.Addresses = addresses.ToList();
                 await _memberService.SaveChangesAsync(new[] { member });
