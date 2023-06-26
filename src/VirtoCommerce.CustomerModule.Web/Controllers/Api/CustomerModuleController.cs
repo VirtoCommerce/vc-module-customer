@@ -329,7 +329,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                 return Forbid();
             }
             await _memberService.SaveChangesAsync(contacts);
-            return NoContent(); // TODO: write here return Ok(contacts) when updating storefront AutoRest proxies to VC v3            
+            return NoContent(); // TODO: write here return Ok(contacts) when updating storefront AutoRest proxies to VC v3
         }
 
         /// <summary>
@@ -361,7 +361,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             }
 
             await _memberService.SaveChangesAsync(organizations);
-            return NoContent(); // TODO: write here return Ok(organizations) when updating storefront AutoRest proxies to VC v3            
+            return NoContent(); // TODO: write here return Ok(organizations) when updating storefront AutoRest proxies to VC v3
         }
 
         /// <summary>
@@ -393,7 +393,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                 return Forbid();
             }
             await _memberService.SaveChangesAsync(organizations);
-            return NoContent(); // TODO: write here return Ok(organizations) when updating storefront AutoRest proxies to VC v3            
+            return NoContent(); // TODO: write here return Ok(organizations) when updating storefront AutoRest proxies to VC v3
         }
 
         /// <summary>
@@ -441,7 +441,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
-        /// Get plenty organizations 
+        /// Get plenty organizations
         /// </summary>
         /// <param name="ids">Organization ids</param>
         [HttpGet]
@@ -507,7 +507,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
 
 
         /// <summary>
-        /// Get plenty contacts 
+        /// Get plenty contacts
         /// </summary>
         /// <param name="ids">contact IDs</param>
         [HttpGet]
@@ -569,7 +569,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
-        /// Get plenty vendors 
+        /// Get plenty vendors
         /// </summary>
         /// <param name="ids">Vendors IDs</param>
         [HttpGet]
@@ -650,7 +650,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
-        /// Get plenty employees 
+        /// Get plenty employees
         /// </summary>
         /// <param name="ids">contact IDs</param>
         [HttpGet]
@@ -668,7 +668,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// <param name="id">member Id</param>
         [HttpGet]
         [Route("members/{id}/organizations")]
-        public async Task<ActionResult<Organization[]>> GetMemberOrganizations([FromQuery] string id)
+        public async Task<ActionResult<Organization[]>> GetMemberOrganizations(string id)
         {
             var members = await _memberService.GetByIdsAsync(new[] { id }, null, new[] { typeof(Employee).Name, typeof(Contact).Name });
             var member = members.FirstOrDefault();
