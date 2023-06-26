@@ -28,6 +28,8 @@ jobs:
 
   get-metadata:
     runs-on: ubuntu-20.04
+    env:
+      GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
     outputs:
       changelog: ${{ steps.changelog.outputs.changelog }}
     steps:
