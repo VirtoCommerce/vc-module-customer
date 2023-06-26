@@ -16,6 +16,7 @@ using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Security.Search;
 using VirtoCommerce.Platform.Data.Infrastructure;
+using VirtoCommerce.Platform.Security.Caching;
 
 namespace VirtoCommerce.CustomerModule.Data.Services
 {
@@ -123,6 +124,11 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                 foreach (var hasAccountMember in hasSecurityAccountMembers)
                 {
                     hasAccountMember.SecurityAccounts = usersSearchResult.Results.Where(x => x.MemberId.EqualsInvariant(hasAccountMember.Id)).ToList();
+
+                    if (hasAccountMember.SecurityAccounts.Any())
+                    {
+                        hasAccountMember.SecurityAccounts.ToList().ForEach(x => cacheEntry.AddExpirationToken(SecurityCacheRegion.CreateChangeTokenForUser(x)));
+                    }
                 }
 
                 #endregion Load member security accounts by separate request
@@ -182,7 +188,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
                         if (!dataTargetMember.GetType().IsInstanceOfType(dataSourceMember))
                         {
-                            throw new OperationCanceledException($"Unable to update an member with type { dataTargetMember.MemberType } by an member with type { dataSourceMember.MemberType } because they aren't in the inheritance hierarchy");
+                            throw new OperationCanceledException($"Unable to update an member with type {dataTargetMember.MemberType} by an member with type {dataSourceMember.MemberType} because they aren't in the inheritance hierarchy");
                         }
                         changedEntries.Add(new GenericChangedEntry<Member>(member, dataTargetMember.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(member.MemberType)), EntryState.Modified));
                         dataSourceMember.Patch(dataTargetMember);
