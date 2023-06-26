@@ -13,7 +13,9 @@ using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.Repositories;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Data.Infrastructure;
+using VirtoCommerce.Platform.Security.Caching;
 
 namespace VirtoCommerce.CustomerModule.Data.Services
 {
@@ -94,6 +96,12 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                             needExecuteCount = true;
                         }
                         result.Results = (await _memberService.GetByIdsAsync(ids.ToArray(), criteria.ResponseGroup)).OrderBy(x => ids.IndexOf(x.Id)).ToList();
+
+                        result.Results
+                              .OfType<IHasSecurityAccounts>()
+                              .SelectMany(x => x.SecurityAccounts)
+                              .ToList()
+                              .ForEach(x => cacheEntry.AddExpirationToken(SecurityCacheRegion.CreateChangeTokenForUser(x)));
                     }
 
                     if (needExecuteCount)
@@ -138,7 +146,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
             if (!string.IsNullOrEmpty(criteria.Keyword))
             {
-                query = query.Where(m => m.Name.Contains(criteria.Keyword) || m.Emails.Any(e => e.Address.Contains(criteria.Keyword)));               
+                query = query.Where(m => m.Name.Contains(criteria.Keyword) || m.Emails.Any(e => e.Address.Contains(criteria.Keyword)));
             }
 
             if (!criteria.OuterIds.IsNullOrEmpty())
@@ -160,6 +168,6 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             }
             return sortInfos;
         }
-      
+
     }
 }
