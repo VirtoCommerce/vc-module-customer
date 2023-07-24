@@ -99,6 +99,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
                         result.Results
                               .OfType<IHasSecurityAccounts>()
+                              .Where(x => x.SecurityAccounts != null)
                               .SelectMany(x => x.SecurityAccounts)
                               .ToList()
                               .ForEach(x => cacheEntry.AddExpirationToken(SecurityCacheRegion.CreateChangeTokenForUser(x)));
