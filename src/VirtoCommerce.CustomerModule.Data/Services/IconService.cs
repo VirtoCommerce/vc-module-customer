@@ -3,7 +3,8 @@ using System.Threading.Tasks;
 using SixLabors.ImageSharp;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
-using VirtoCommerce.ImageTools.ImageAbstractions;
+using VirtoCommerce.ImageToolsModule.Core.Models;
+using VirtoCommerce.ImageToolsModule.Core.Services;
 
 namespace VirtoCommerce.CustomerModule.Data.Services
 {
@@ -12,7 +13,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         private readonly IImageService _imageService;
         private readonly IImageResizer _imageResizer;
 
-        private const int DefaultImageSize = 90;
+        private const int _defaultImageSize = 90;
 
         public IconService(IImageService imageService, IImageResizer imageResizer)
         {
@@ -29,8 +30,8 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
             if (request.Width == null || request.Height == null)
             {
-                request.Width = DefaultImageSize;
-                request.Height = DefaultImageSize;
+                request.Width = _defaultImageSize;
+                request.Height = _defaultImageSize;
             }
 
             return InnerResizeAsync(request);

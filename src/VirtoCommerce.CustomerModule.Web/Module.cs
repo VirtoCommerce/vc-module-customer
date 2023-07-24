@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Events;
 using VirtoCommerce.CustomerModule.Core.Model;
@@ -27,7 +25,6 @@ using VirtoCommerce.CustomerModule.Data.Services;
 using VirtoCommerce.CustomerModule.Data.SqlServer;
 using VirtoCommerce.CustomerModule.Data.Validation;
 using VirtoCommerce.CustomerModule.Web.Authorization;
-using VirtoCommerce.ImageTools.ImageAbstractions;
 using VirtoCommerce.NotificationsModule.Core.Services;
 using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
@@ -47,14 +44,15 @@ namespace VirtoCommerce.CustomerModule.Web
 {
     public class Module : IModule, IExportSupport, IImportSupport, IHasConfiguration
     {
-        public ManifestModuleInfo ModuleInfo { get; set; }
         private IApplicationBuilder _appBuilder;
+
+        public ManifestModuleInfo ModuleInfo { get; set; }
         public IConfiguration Configuration { get; set; }
 
 
         public void Initialize(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddDbContext<CustomerDbContext>((provider, options) =>
+            serviceCollection.AddDbContext<CustomerDbContext>(options =>
             {
                 var databaseProvider = Configuration.GetValue("DatabaseProvider", "SqlServer");
                 var connectionString = Configuration.GetConnectionString(ModuleInfo.Id) ?? Configuration.GetConnectionString("VirtoCommerce");
@@ -85,8 +83,6 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddSingleton<CustomerExportImport>();
             serviceCollection.AddTransient<MemberSearchRequestBuilder>();
 
-            serviceCollection.TryAddTransient<IImageService, DefaultImageService>();
-            serviceCollection.TryAddTransient<IImageResizer, DefaultImageResizer>();
             serviceCollection.AddTransient<IIconService, IconService>();
 
             serviceCollection.AddSingleton<MemberDocumentChangesProvider>();
@@ -134,13 +130,12 @@ namespace VirtoCommerce.CustomerModule.Web
             dynamicPropertyRegistrar.RegisterType<Vendor>();
             dynamicPropertyRegistrar.RegisterType<Employee>();
 
-            var permissionsProvider = appBuilder.ApplicationServices.GetRequiredService<IPermissionsRegistrar>();
-            permissionsProvider.RegisterPermissions(ModuleConstants.Security.Permissions.AllPermissions.Select(x =>
-                new Permission() { GroupName = "Customer", Name = x }).ToArray());
+            var permissionsRegistrar = appBuilder.ApplicationServices.GetRequiredService<IPermissionsRegistrar>();
+            permissionsRegistrar.RegisterPermissions(ModuleInfo.Id, "Customer", ModuleConstants.Security.Permissions.AllPermissions);
 
             AbstractTypeFactory<PermissionScope>.RegisterType<AssociatedOrganizationsOnlyScope>();
 
-            permissionsProvider.WithAvailabeScopesForPermissions(new[] {
+            permissionsRegistrar.WithAvailabeScopesForPermissions(new[] {
                 ModuleConstants.Security.Permissions.Create,
                 ModuleConstants.Security.Permissions.Access,
                 ModuleConstants.Security.Permissions.Read,
@@ -150,13 +145,13 @@ namespace VirtoCommerce.CustomerModule.Web
             PolymorphJsonConverter.RegisterTypeForDiscriminator(typeof(Member), nameof(Member.MemberType));
 
             var inProcessBus = appBuilder.ApplicationServices.GetService<IHandlerRegistrar>();
-            inProcessBus.RegisterHandler<MemberChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<LogChangesEventHandler>().Handle(message));
-            inProcessBus.RegisterHandler<UserChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<SecurtityAccountChangesEventHandler>().Handle(message));
+            inProcessBus.RegisterHandler<MemberChangedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<LogChangesEventHandler>().Handle(message));
+            inProcessBus.RegisterHandler<UserChangedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<SecurtityAccountChangesEventHandler>().Handle(message));
 
             var settingsManager = appBuilder.ApplicationServices.GetService<ISettingsManager>();
-            if (settingsManager.GetValue(ModuleConstants.Settings.General.EventBasedIndexation.Name, false))
+            if (settingsManager.GetValue<bool>(ModuleConstants.Settings.General.EventBasedIndexation))
             {
-                inProcessBus.RegisterHandler<MemberChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<IndexMemberChangedEventHandler>().Handle(message));
+                inProcessBus.RegisterHandler<MemberChangedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<IndexMemberChangedEventHandler>().Handle(message));
             }
 
             var searchRequestBuilderRegistrar = appBuilder.ApplicationServices.GetService<ISearchRequestBuilderRegistrar>();
@@ -181,6 +176,7 @@ namespace VirtoCommerce.CustomerModule.Web
 
         public void Uninstall()
         {
+            // Nothing to do here
         }
 
         public async Task ExportAsync(Stream outStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback,
