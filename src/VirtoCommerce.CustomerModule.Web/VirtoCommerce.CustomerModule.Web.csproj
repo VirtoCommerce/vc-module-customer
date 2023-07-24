@@ -6,9 +6,6 @@
     <IsPackable>False</IsPackable>
     <OutputType>Library</OutputType>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;1705;1591</NoWarn>
-  </PropertyGroup>
   <ItemGroup>
     <Compile Remove="dist\**" />
     <Compile Remove="node_modules\**" />
@@ -16,11 +13,6 @@
     <EmbeddedResource Remove="node_modules\**" />
     <None Remove="dist\**" />
     <None Remove="node_modules\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.201.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Security" Version="3.200.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.CustomerModule.Core\VirtoCommerce.CustomerModule.Core.csproj" />

@@ -19,7 +19,6 @@ namespace VirtoCommerce.CustomerModule.Tests
     {
         [Theory]
         [MemberData(nameof(LogsData))]
-        [CLSCompliant(false)]
         public async Task LogChangesMemberChangedEventHandler_SavesChanges(
             Contact oldMember, Contact newMember, IReadOnlyCollection<string> expectedLogs)
         {

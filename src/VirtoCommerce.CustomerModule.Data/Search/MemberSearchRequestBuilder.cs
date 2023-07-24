@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VirtoCommerce.CustomerModule.Core.Model.Search;
 using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.SearchModule.Core.Extenstions;
+using VirtoCommerce.SearchModule.Core.Extensions;
 using VirtoCommerce.SearchModule.Core.Model;
 using VirtoCommerce.SearchModule.Core.Services;
 
@@ -33,7 +33,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search
                 request = new SearchRequest
                 {
                     SearchKeywords = categorySearchCriteria.Keyword,
-                    SearchFields = new[] { IndexDocumentExtensions.SearchableFieldName },
+                    SearchFields = new[] { IndexDocumentExtensions.ContentFieldName },
                     Filter = filters.And(),
                     Sorting = GetSorting(categorySearchCriteria),
                     Skip = criteria.Skip,

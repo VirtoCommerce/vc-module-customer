@@ -5,7 +5,7 @@ using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
-using VirtoCommerce.SearchModule.Core.Extenstions;
+using VirtoCommerce.SearchModule.Core.Extensions;
 using VirtoCommerce.SearchModule.Core.Model;
 using VirtoCommerce.SearchModule.Core.Services;
 
@@ -44,17 +44,17 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
         {
             var document = new IndexDocument(member.Id);
 
-            document.AddFilterableValue("MemberType", member.MemberType, IndexDocumentFieldValueType.String);
-            document.AddFilterableValue("OuterId", member.OuterId, IndexDocumentFieldValueType.String);
+            document.AddFilterableString("MemberType", member.MemberType);
+            document.AddFilterableString("OuterId", member.OuterId);
 
-            document.AddFilterableAndSearchableValue("Name", member.Name);
-            document.AddFilterableAndSearchableValues("Emails", member.Emails);
-            document.AddFilterableAndSearchableValues("Phones", member.Phones);
-            document.AddFilterableAndSearchableValue("Status", member.Status);
-            document.AddFilterableValues("Groups", member.Groups);
+            document.AddFilterableStringAndContentString("Name", member.Name);
+            document.AddFilterableCollectionAndContentString("Emails", member.Emails);
+            document.AddFilterableCollectionAndContentString("Phones", member.Phones);
+            document.AddFilterableStringAndContentString("Status", member.Status);
+            document.AddFilterableCollection("Groups", member.Groups);
 
-            document.AddFilterableValue("CreatedDate", member.CreatedDate, IndexDocumentFieldValueType.DateTime);
-            document.AddFilterableValue("ModifiedDate", member.ModifiedDate ?? member.CreatedDate, IndexDocumentFieldValueType.DateTime);
+            document.AddFilterableDateTime("CreatedDate", member.CreatedDate);
+            document.AddFilterableDateTime("ModifiedDate", member.ModifiedDate ?? member.CreatedDate);
 
             if (member.Addresses?.Any() == true)
             {
@@ -101,59 +101,59 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 
         protected virtual void IndexAddress(IndexDocument document, Address address)
         {
-            document.AddSearchableValue(address.AddressType.ToString());
-            document.AddSearchableValue(address.Name);
-            document.AddSearchableValue(address.Organization);
-            document.AddSearchableValue(address.CountryCode);
-            document.AddSearchableValue(address.CountryName);
-            document.AddSearchableValue(address.City);
-            document.AddSearchableValue(address.PostalCode);
-            document.AddSearchableValue(address.Zip);
-            document.AddSearchableValue(address.Line1);
-            document.AddSearchableValue(address.Line2);
-            document.AddSearchableValue(address.RegionId);
-            document.AddSearchableValue(address.RegionName);
-            document.AddSearchableValue(address.FirstName);
-            document.AddSearchableValue(address.MiddleName);
-            document.AddSearchableValue(address.LastName);
-            document.AddSearchableValue(address.Phone);
-            document.AddSearchableValue(address.Email);
-            document.AddSearchableValue(address.OuterId);
+            document.AddContentString(address.AddressType.ToString());
+            document.AddContentString(address.Name);
+            document.AddContentString(address.Organization);
+            document.AddContentString(address.CountryCode);
+            document.AddContentString(address.CountryName);
+            document.AddContentString(address.City);
+            document.AddContentString(address.PostalCode);
+            document.AddContentString(address.Zip);
+            document.AddContentString(address.Line1);
+            document.AddContentString(address.Line2);
+            document.AddContentString(address.RegionId);
+            document.AddContentString(address.RegionName);
+            document.AddContentString(address.FirstName);
+            document.AddContentString(address.MiddleName);
+            document.AddContentString(address.LastName);
+            document.AddContentString(address.Phone);
+            document.AddContentString(address.Email);
+            document.AddContentString(address.OuterId);
         }
 
         protected virtual void IndexNote(IndexDocument document, Note note)
         {
-            document.AddSearchableValue(note.Title);
-            document.AddSearchableValue(note.Body);
+            document.AddContentString(note.Title);
+            document.AddContentString(note.Body);
         }
 
         protected virtual void IndexContact(IndexDocument document, Contact contact)
         {
-            document.AddFilterableAndSearchableValue("Salutation", contact.Salutation);
-            document.AddFilterableAndSearchableValue("FullName", contact.FullName);
-            document.AddFilterableAndSearchableValue("FirstName", contact.FirstName);
-            document.AddFilterableAndSearchableValue("MiddleName", contact.MiddleName);
-            document.AddFilterableAndSearchableValue("LastName", contact.LastName);
-            document.AddFilterableValue("BirthDate", contact.BirthDate, IndexDocumentFieldValueType.DateTime);
-            document.AddFilterableValue("DefaultLanguage", contact.DefaultLanguage, IndexDocumentFieldValueType.String);
-            document.AddFilterableValue("TimeZone", contact.TimeZone, IndexDocumentFieldValueType.String);
+            document.AddFilterableStringAndContentString("Salutation", contact.Salutation);
+            document.AddFilterableStringAndContentString("FullName", contact.FullName);
+            document.AddFilterableStringAndContentString("FirstName", contact.FirstName);
+            document.AddFilterableStringAndContentString("MiddleName", contact.MiddleName);
+            document.AddFilterableStringAndContentString("LastName", contact.LastName);
+            document.AddFilterableDateTime("BirthDate", contact.BirthDate);
+            document.AddFilterableString("DefaultLanguage", contact.DefaultLanguage);
+            document.AddFilterableString("TimeZone", contact.TimeZone);
             AddParentOrganizations(document, contact.Organizations);
             AddAssociatedOrganizations(document, contact.AssociatedOrganizations);
 
-            document.AddFilterableValue("TaxpayerId", contact.TaxPayerId, IndexDocumentFieldValueType.String);
-            document.AddFilterableValue("PreferredDelivery", contact.PreferredDelivery, IndexDocumentFieldValueType.String);
-            document.AddFilterableValue("PreferredCommunication", contact.PreferredCommunication, IndexDocumentFieldValueType.String);
+            document.AddFilterableString("TaxpayerId", contact.TaxPayerId);
+            document.AddFilterableString("PreferredDelivery", contact.PreferredDelivery);
+            document.AddFilterableString("PreferredCommunication", contact.PreferredCommunication);
 
-            document.AddFilterableAndSearchableValues("Login", contact.SecurityAccounts.Select(sa => sa.UserName).ToList());
-            document.AddFilterableValue("IsAnonymized", contact.IsAnonymized, IndexDocumentFieldValueType.Boolean);
-            document.AddFilterableAndSearchableValue("About", contact.About);
+            document.AddFilterableCollectionAndContentString("Login", contact.SecurityAccounts.Select(sa => sa.UserName).ToList());
+            document.AddFilterableBoolean("IsAnonymized", contact.IsAnonymized);
+            document.AddFilterableStringAndContentString("About", contact.About);
 
-            document.AddFilterableValues("Role", contact
+            document.AddFilterableCollection("Role", contact
                 .SecurityAccounts
                 .SelectMany(x => x.Roles)
                 .Select(x => x.NormalizedName)
                 .ToList());
-            document.AddFilterableValues("RoleId", contact
+            document.AddFilterableCollection("RoleId", contact
                 .SecurityAccounts
                 .SelectMany(x => x.Roles)
                 .Select(x => x.Id)
@@ -162,46 +162,46 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 
         protected virtual void IndexEmployee(IndexDocument document, Employee employee)
         {
-            document.AddFilterableAndSearchableValue("Salutation", employee.Salutation);
-            document.AddFilterableAndSearchableValue("FullName", employee.FullName);
-            document.AddFilterableAndSearchableValue("FirstName", employee.FirstName);
-            document.AddFilterableAndSearchableValue("MiddleName", employee.MiddleName);
-            document.AddFilterableAndSearchableValue("LastName", employee.LastName);
-            document.AddFilterableValue("BirthDate", employee.BirthDate, IndexDocumentFieldValueType.DateTime);
+            document.AddFilterableStringAndContentString("Salutation", employee.Salutation);
+            document.AddFilterableStringAndContentString("FullName", employee.FullName);
+            document.AddFilterableStringAndContentString("FirstName", employee.FirstName);
+            document.AddFilterableStringAndContentString("MiddleName", employee.MiddleName);
+            document.AddFilterableStringAndContentString("LastName", employee.LastName);
+            document.AddFilterableDateTime("BirthDate", employee.BirthDate);
             AddParentOrganizations(document, employee.Organizations);
 
-            document.AddFilterableValue("EmployeeType", employee.EmployeeType, IndexDocumentFieldValueType.String);
-            document.AddFilterableValue("IsActive", employee.IsActive, IndexDocumentFieldValueType.Boolean);
+            document.AddFilterableString("EmployeeType", employee.EmployeeType);
+            document.AddFilterableBoolean("IsActive", employee.IsActive);
         }
 
         protected virtual void IndexOrganization(IndexDocument document, Organization organization)
         {
-            document.AddSearchableValue(organization.Description);
-            document.AddFilterableValue("BusinessCategory", organization.BusinessCategory, IndexDocumentFieldValueType.String);
-            document.AddFilterableValue("OwnerId", organization.OwnerId, IndexDocumentFieldValueType.String);
+            document.AddContentString(organization.Description);
+            document.AddFilterableString("BusinessCategory", organization.BusinessCategory);
+            document.AddFilterableString("OwnerId", organization.OwnerId);
             AddParentOrganizations(document, new[] { organization.ParentId });
         }
 
         protected virtual void IndexVendor(IndexDocument document, Vendor vendor)
         {
-            document.AddSearchableValue(vendor.Description);
-            document.AddFilterableValue("GroupName", vendor.GroupName, IndexDocumentFieldValueType.String);
+            document.AddContentString(vendor.Description);
+            document.AddFilterableString("GroupName", vendor.GroupName);
         }
 
         protected virtual void AddParentOrganizations(IndexDocument document, ICollection<string> values)
         {
             var nonEmptyValues = values?.Where(v => !string.IsNullOrEmpty(v)).ToArray();
 
-            document.AddFilterableValues("ParentOrganizations", nonEmptyValues);
-            document.AddFilterableValue("HasParentOrganizations", nonEmptyValues?.Any() ?? false, IndexDocumentFieldValueType.Boolean);
+            document.AddFilterableCollection("ParentOrganizations", nonEmptyValues);
+            document.AddFilterableBoolean("HasParentOrganizations", nonEmptyValues?.Any() ?? false);
         }
 
         protected virtual void AddAssociatedOrganizations(IndexDocument document, ICollection<string> values)
         {
             var nonEmptyValues = values?.Where(v => !string.IsNullOrEmpty(v)).ToArray();
 
-            document.AddFilterableValues("AssociatedOrganizations", nonEmptyValues);
-            document.AddFilterableValue("HasAssociatedOrganizations", nonEmptyValues?.Any() ?? false, IndexDocumentFieldValueType.Boolean);
+            document.AddFilterableCollection("AssociatedOrganizations", nonEmptyValues);
+            document.AddFilterableBoolean("HasAssociatedOrganizations", nonEmptyValues?.Any() ?? false);
         }
 
         protected virtual async Task IndexDynamicProperties(Member member, IndexDocument document)
@@ -262,12 +262,11 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             // replace empty value for Boolean property with default 'False'
             if (property.ValueType == DynamicPropertyValueType.Boolean && values.IsNullOrEmpty())
             {
-                document.Add(new IndexDocumentField(propertyName, false)
+                document.Add(new IndexDocumentField(propertyName, false, IndexDocumentFieldValueType.Boolean)
                 {
                     IsRetrievable = true,
                     IsFilterable = true,
                     IsCollection = isCollection,
-                    ValueType = property.ValueType.ToIndexedDocumentFieldValueType()
                 });
 
                 return;
@@ -275,12 +274,13 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 
             if (!values.IsNullOrEmpty())
             {
-                document.Add(new IndexDocumentField(propertyName, values)
+                var valueType = property.ValueType.ToIndexedDocumentFieldValueType();
+
+                document.Add(new IndexDocumentField(propertyName, values, valueType)
                 {
                     IsRetrievable = true,
                     IsFilterable = true,
                     IsCollection = isCollection,
-                    ValueType = property.ValueType.ToIndexedDocumentFieldValueType()
                 });
             }
         }
