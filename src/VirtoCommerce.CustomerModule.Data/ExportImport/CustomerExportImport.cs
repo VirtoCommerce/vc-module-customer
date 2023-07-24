@@ -32,18 +32,6 @@ namespace VirtoCommerce.CustomerModule.Data.ExportImport
             _serializer = jsonSerializer;
         }
 
-
-        private async Task<int> GetBatchSize()
-        {
-            if (_batchSize == null)
-            {
-                _batchSize = await _settingsManager.GetValueAsync(ModuleConstants.Settings.General.ExportImportPageSize.Name, 50);
-            }
-
-            return (int)_batchSize;
-        }
-
-
         public async Task ExportAsync(Stream outStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback, ICancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -55,20 +43,20 @@ namespace VirtoCommerce.CustomerModule.Data.ExportImport
             using (var sw = new StreamWriter(outStream, Encoding.UTF8))
             using (var writer = new JsonTextWriter(sw))
             {
-                writer.WriteStartObject();
+                await writer.WriteStartObjectAsync();
 
                 progressInfo.Description = "Members exporting...";
                 progressCallback(progressInfo);
 
                 var members = await _memberSearchService.SearchMembersAsync(new MembersSearchCriteria { Take = 0, DeepSearch = true });
                 var memberCount = members.TotalCount;
-                writer.WritePropertyName("MembersTotalCount");
-                writer.WriteValue(memberCount);
+                await writer.WritePropertyNameAsync("MembersTotalCount");
+                await writer.WriteValueAsync(memberCount);
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                writer.WritePropertyName("Members");
-                writer.WriteStartArray();
+                await writer.WritePropertyNameAsync("Members");
+                await writer.WriteStartArrayAsync();
 
                 for (var i = 0; i < memberCount; i += batchSize)
                 {
@@ -77,19 +65,18 @@ namespace VirtoCommerce.CustomerModule.Data.ExportImport
                     {
                         _serializer.Serialize(writer, member);
                     }
-                    writer.Flush();
-                    progressInfo.Description = $"{ Math.Min(memberCount, i + batchSize) } of { memberCount } members exported";
+                    await writer.FlushAsync();
+                    progressInfo.Description = $"{Math.Min(memberCount, i + batchSize)} of {memberCount} members exported";
                     progressCallback(progressInfo);
                 }
-                writer.WriteEndArray();
+                await writer.WriteEndArrayAsync();
 
-                writer.WriteEndObject();
-                writer.Flush();
+                await writer.WriteEndObjectAsync();
+                await writer.FlushAsync();
             }
         }
 
-        public async Task ImportAsync(Stream inputStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback,
-            ICancellationToken cancellationToken)
+        public async Task ImportAsync(Stream inputStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback, ICancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var progressInfo = new ExportImportProgressInfo();
@@ -100,21 +87,23 @@ namespace VirtoCommerce.CustomerModule.Data.ExportImport
             using (var streamReader = new StreamReader(inputStream))
             using (var reader = new JsonTextReader(streamReader))
             {
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     if (reader.TokenType == JsonToken.PropertyName)
                     {
-                        if (reader.Value.ToString().EqualsInvariant("MembersTotalCount"))
+                        var readerValueString = reader.Value?.ToString();
+
+                        if (readerValueString.EqualsInvariant("MembersTotalCount"))
                         {
-                            membersTotalCount = reader.ReadAsInt32() ?? 0;
+                            membersTotalCount = await reader.ReadAsInt32Async() ?? 0;
                         }
-                        else if (reader.Value.ToString().EqualsInvariant("Members"))
+                        else if (readerValueString.EqualsInvariant("Members"))
                         {
                             cancellationToken.ThrowIfCancellationRequested();
-                            reader.Read();
+                            await reader.ReadAsync();
                             if (reader.TokenType == JsonToken.StartArray)
                             {
-                                reader.Read();
+                                await reader.ReadAsync();
 
                                 var members = new List<Member>();
                                 var membersCount = 0;
@@ -125,29 +114,25 @@ namespace VirtoCommerce.CustomerModule.Data.ExportImport
                                     members.Add(member);
                                     membersCount++;
 
-                                    reader.Read();
+                                    await reader.ReadAsync();
                                 }
 
                                 cancellationToken.ThrowIfCancellationRequested();
                                 //Need to import by topological sort order, because Organizations have a graph structure and here references integrity must be preserved 
-                                var organizations = members.OfType<Organization>();
+                                var organizations = members.OfType<Organization>().ToList();
                                 var nodes = new HashSet<string>(organizations.Select(x => x.Id));
                                 var edges = new HashSet<Tuple<string, string>>(organizations.Where(x => !string.IsNullOrEmpty(x.ParentId) && x.Id != x.ParentId).Select(x => new Tuple<string, string>(x.Id, x.ParentId)));
-                                var orgsTopologicalSortedList = TopologicalSort.Sort(nodes, edges);
-                                members = members.OrderByDescending(x => orgsTopologicalSortedList.IndexOf(x.Id)).ToList();
+                                var topologicalSortedList = TopologicalSort.Sort(nodes, edges);
+                                members = members.OrderByDescending(x => topologicalSortedList.IndexOf(x.Id)).ToList();
 
                                 for (var i = 0; i < membersCount; i += batchSize)
                                 {
                                     await _memberService.SaveChangesAsync(members.Skip(i).Take(batchSize).ToArray());
 
-                                    if (membersTotalCount > 0)
-                                    {
-                                        progressInfo.Description = $"{ i } of { membersTotalCount } members imported";
-                                    }
-                                    else
-                                    {
-                                        progressInfo.Description = $"{ i } members imported";
-                                    }
+                                    progressInfo.Description = membersTotalCount > 0
+                                        ? $"{i} of {membersTotalCount} members imported"
+                                        : $"{i} members imported";
+
                                     progressCallback(progressInfo);
                                 }
                             }
@@ -155,6 +140,14 @@ namespace VirtoCommerce.CustomerModule.Data.ExportImport
                     }
                 }
             }
+        }
+
+
+        private async Task<int> GetBatchSize()
+        {
+            _batchSize ??= await _settingsManager.GetValueAsync<int>(ModuleConstants.Settings.General.ExportImportPageSize);
+
+            return (int)_batchSize;
         }
     }
 }
