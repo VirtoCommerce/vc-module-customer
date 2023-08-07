@@ -24,18 +24,18 @@ namespace VirtoCommerce.CustomerModule.Data.Search
         {
             SearchRequest request = null;
 
-            var categorySearchCriteria = criteria as MembersSearchCriteria;
-            if (categorySearchCriteria != null)
+            var membersSearchCriteria = (criteria as MembersSearchCriteria)?.CloneTyped();
+            if (membersSearchCriteria != null)
             {
                 // Getting filters modifies search phrase
-                var filters = GetFilters(categorySearchCriteria);
+                var filters = GetFilters(membersSearchCriteria);
 
                 request = new SearchRequest
                 {
-                    SearchKeywords = categorySearchCriteria.Keyword,
+                    SearchKeywords = membersSearchCriteria.Keyword,
                     SearchFields = new[] { IndexDocumentExtensions.ContentFieldName },
                     Filter = filters.And(),
-                    Sorting = GetSorting(categorySearchCriteria),
+                    Sorting = GetSorting(membersSearchCriteria),
                     Skip = criteria.Skip,
                     Take = criteria.Take,
                 };
