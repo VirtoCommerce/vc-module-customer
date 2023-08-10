@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,54 +26,35 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
         public Task Handle(MemberChangedEvent message)
         {
-            return InnerHandle(message);
+            var indexEntries = message.ChangedEntries
+                .Select(x => new IndexEntry { Id = x.OldEntry.Id, EntryState = x.EntryState, Type = KnownDocumentTypes.Member })
+                .ToArray();
+
+            return InnerHandle(indexEntries);
         }
 
         public Task Handle(UserChangedEvent message)
         {
-            return InnerHandle(message);
+            var indexEntries = message.ChangedEntries
+                .Where(x => !string.IsNullOrEmpty(x.OldEntry.MemberId))
+                .Select(x => new IndexEntry { Id = x.OldEntry.MemberId, EntryState = x.EntryState, Type = KnownDocumentTypes.Member })
+                .ToArray();
+
+            return InnerHandle(indexEntries);
         }
 
         public Task Handle(UserRoleAddedEvent message)
         {
-            return InnerHandle(message);
+            return !string.IsNullOrEmpty(message.User.MemberId) ? InnerHandle(GetIndexEntry(message.User.MemberId)) : Task.CompletedTask;
         }
 
         public Task Handle(UserRoleRemovedEvent message)
         {
-            return InnerHandle(message);
+            return !string.IsNullOrEmpty(message.User.MemberId) ? InnerHandle(GetIndexEntry(message.User.MemberId)) : Task.CompletedTask;
         }
 
-        protected virtual Task InnerHandle(DomainEvent message)
+        protected virtual Task InnerHandle(params IndexEntry[] indexEntries)
         {
-            if (message == null)
-            {
-                throw new ArgumentNullException(nameof(message));
-            }
-
-            var indexEntries = new List<IndexEntry>();
-
-            switch (message)
-            {
-                case MemberChangedEvent memberChangedEvent:
-                    indexEntries = memberChangedEvent.ChangedEntries
-                        .Select(x => new IndexEntry { Id = x.OldEntry.Id, EntryState = x.EntryState, Type = KnownDocumentTypes.Member })
-                        .ToList();
-                    break;
-                case UserChangedEvent userChangedEvent:
-                    indexEntries = userChangedEvent.ChangedEntries
-                        .Where(x => !string.IsNullOrEmpty(x.OldEntry.MemberId))
-                        .Select(x => new IndexEntry { Id = x.OldEntry.MemberId, EntryState = x.EntryState, Type = KnownDocumentTypes.Member })
-                        .ToList();
-                    break;
-                case UserRoleAddedEvent userRoleAddedEvent when !string.IsNullOrEmpty(userRoleAddedEvent.User.MemberId):
-                    indexEntries.Add(GetIndexEntry(userRoleAddedEvent.User.MemberId));
-                    break;
-                case UserRoleRemovedEvent userRoleRemovedEvent when !string.IsNullOrEmpty(userRoleRemovedEvent.User.MemberId):
-                    indexEntries.Add(GetIndexEntry(userRoleRemovedEvent.User.MemberId));
-                    break;
-            }
-
             _indexingJobService.EnqueueIndexAndDeleteDocuments(indexEntries, JobPriority.Normal,
                 _configurations.GetDocumentBuilders(KnownDocumentTypes.Member, typeof(MemberDocumentChangesProvider)).ToList());
 
