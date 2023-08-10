@@ -33,26 +33,23 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                 .Select(x => GetOperationLog(x.OldEntry.MemberId))
                 .ToArray();
 
-            return InnerUserEventHandle(operationLogs);
+            return InnerHandle(operationLogs);
         }
 
         public virtual Task Handle(UserRoleAddedEvent message)
         {
-            return !string.IsNullOrEmpty(message.User.MemberId) ? InnerUserEventHandle(GetOperationLog(message.User.MemberId)) : Task.CompletedTask;
+            return !string.IsNullOrEmpty(message.User.MemberId)
+                ? InnerHandle(GetOperationLog(message.User.MemberId))
+                : Task.CompletedTask;
         }
 
         public virtual Task Handle(UserRoleRemovedEvent message)
         {
-            return !string.IsNullOrEmpty(message.User.MemberId) ? InnerUserEventHandle(GetOperationLog(message.User.MemberId)) : Task.CompletedTask;
+            return !string.IsNullOrEmpty(message.User.MemberId)
+                ? InnerHandle(GetOperationLog(message.User.MemberId))
+                : Task.CompletedTask;
         }
 
-        [DisableConcurrentExecution(10)]
-        // "DisableConcurrentExecutionAttribute" prevents to start simultaneous job payloads.
-        // Should have short timeout, because this attribute implemented by following manner: newly started job falls into "processing" state immediately.
-        // Then it tries to receive job lock during timeout. If the lock received, the job starts payload.
-        // When the job is awaiting desired timeout for lock release, it stucks in "processing" anyway. (Therefore, you should not to set long timeouts (like 24*60*60), this will cause a lot of stucked jobs and performance degradation.)
-        // Then, if timeout is over and the lock NOT acquired, the job falls into "scheduled" state (this is default fail-retry scenario).
-        // Failed job goes to "Failed" state (by default) after retries exhausted.
         public void LogEntityChangesInBackground(IList<OperationLog> operationLogs)
         {
             _changeLogService.SaveChangesAsync(operationLogs.ToArray()).GetAwaiter().GetResult();
@@ -67,21 +64,20 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
             BackgroundJob.Enqueue(() => LogEntityChangesInBackground(logOperations));
         }
 
-        protected virtual Task InnerUserEventHandle(params OperationLog[] operationLogs)
+        protected virtual Task InnerHandle(params OperationLog[] operationLogs)
         {
             BackgroundJob.Enqueue(() => LogEntityChangesInBackground(operationLogs));
 
             return Task.CompletedTask;
         }
 
-        protected virtual OperationLog GetOperationLog(string objectId)
+        protected virtual OperationLog GetOperationLog(string memberId)
         {
-            var result = new OperationLog
-            {
-                ObjectId = objectId,
-                ObjectType = nameof(Member),
-                OperationType = EntryState.Modified,
-            };
+            var result = AbstractTypeFactory<OperationLog>.TryCreateInstance();
+
+            result.ObjectId = memberId;
+            result.ObjectType = nameof(Member);
+            result.OperationType = EntryState.Modified;
 
             return result;
         }

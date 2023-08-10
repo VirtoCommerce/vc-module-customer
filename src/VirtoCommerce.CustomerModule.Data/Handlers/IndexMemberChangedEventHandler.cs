@@ -27,7 +27,7 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
         public Task Handle(MemberChangedEvent message)
         {
             var indexEntries = message.ChangedEntries
-                .Select(x => new IndexEntry { Id = x.OldEntry.Id, EntryState = x.EntryState, Type = KnownDocumentTypes.Member })
+                .Select(x => GetIndexEntry(x.OldEntry.Id, x.EntryState))
                 .ToArray();
 
             return InnerHandle(indexEntries);
@@ -37,7 +37,7 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
         {
             var indexEntries = message.ChangedEntries
                 .Where(x => !string.IsNullOrEmpty(x.OldEntry.MemberId))
-                .Select(x => new IndexEntry { Id = x.OldEntry.MemberId, EntryState = x.EntryState, Type = KnownDocumentTypes.Member })
+                .Select(x => GetIndexEntry(x.OldEntry.MemberId, x.EntryState))
                 .ToArray();
 
             return InnerHandle(indexEntries);
@@ -45,12 +45,16 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
         public Task Handle(UserRoleAddedEvent message)
         {
-            return !string.IsNullOrEmpty(message.User.MemberId) ? InnerHandle(GetIndexEntry(message.User.MemberId)) : Task.CompletedTask;
+            return !string.IsNullOrEmpty(message.User.MemberId)
+                ? InnerHandle(GetIndexEntry(message.User.MemberId))
+                : Task.CompletedTask;
         }
 
         public Task Handle(UserRoleRemovedEvent message)
         {
-            return !string.IsNullOrEmpty(message.User.MemberId) ? InnerHandle(GetIndexEntry(message.User.MemberId)) : Task.CompletedTask;
+            return !string.IsNullOrEmpty(message.User.MemberId)
+                ? InnerHandle(GetIndexEntry(message.User.MemberId))
+                : Task.CompletedTask;
         }
 
         protected virtual Task InnerHandle(params IndexEntry[] indexEntries)
@@ -61,14 +65,13 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
             return Task.CompletedTask;
         }
 
-        protected virtual IndexEntry GetIndexEntry(string objectId)
+        protected virtual IndexEntry GetIndexEntry(string memberId, EntryState entryState = EntryState.Modified)
         {
-            var result = new IndexEntry
-            {
-                Id = objectId,
-                EntryState = EntryState.Modified,
-                Type = KnownDocumentTypes.Member,
-            };
+            var result = AbstractTypeFactory<IndexEntry>.TryCreateInstance();
+
+            result.Id = memberId;
+            result.EntryState = entryState;
+            result.Type = KnownDocumentTypes.Member;
 
             return result;
         }
