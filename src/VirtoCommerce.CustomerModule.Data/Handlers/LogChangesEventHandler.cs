@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,7 +23,9 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
         public virtual Task Handle(MemberChangedEvent @event)
         {
+#pragma warning disable VC0005 // Type or member is obsolete
             InnerHandle(@event);
+#pragma warning restore VC0005 // Type or member is obsolete
             return Task.CompletedTask;
         }
 
@@ -33,21 +36,29 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                 .Select(x => GetOperationLog(x.OldEntry.MemberId))
                 .ToArray();
 
-            return InnerHandle(operationLogs);
+            InnerHandle(operationLogs);
+
+            return Task.CompletedTask;
         }
 
         public virtual Task Handle(UserRoleAddedEvent message)
         {
-            return !string.IsNullOrEmpty(message.User.MemberId)
-                ? InnerHandle(GetOperationLog(message.User.MemberId))
-                : Task.CompletedTask;
+            if (!string.IsNullOrEmpty(message.User.MemberId))
+            {
+                InnerHandle(GetOperationLog(message.User.MemberId));
+            }
+
+            return Task.CompletedTask;
         }
 
         public virtual Task Handle(UserRoleRemovedEvent message)
         {
-            return !string.IsNullOrEmpty(message.User.MemberId)
-                ? InnerHandle(GetOperationLog(message.User.MemberId))
-                : Task.CompletedTask;
+            if (!string.IsNullOrEmpty(message.User.MemberId))
+            {
+                InnerHandle(GetOperationLog(message.User.MemberId));
+            }
+
+            return Task.CompletedTask;
         }
 
         public void LogEntityChangesInBackground(IList<OperationLog> operationLogs)
@@ -56,19 +67,18 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
         }
 
 
+        [Obsolete("Use InnerHandle(params OperationLog[] operationLogs) instead", DiagnosticId = "VC0005", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions/")]
         protected virtual void InnerHandle<T>(GenericChangedEntryEvent<T> @event) where T : IEntity
         {
             // ObjectType has to be 'Member' as MemberDocumentChangesProvider uses it to get all changed members in 1 request.
             var logOperations = @event.ChangedEntries.Select(x => AbstractTypeFactory<OperationLog>.TryCreateInstance().FromChangedEntry(x, nameof(Member))).ToArray();
             //Background task is used here for performance reasons
-            BackgroundJob.Enqueue(() => LogEntityChangesInBackground(logOperations));
+            InnerHandle(logOperations);
         }
 
-        protected virtual Task InnerHandle(params OperationLog[] operationLogs)
+        protected virtual void InnerHandle(params OperationLog[] operationLogs)
         {
             BackgroundJob.Enqueue(() => LogEntityChangesInBackground(operationLogs));
-
-            return Task.CompletedTask;
         }
 
         protected virtual OperationLog GetOperationLog(string memberId)
