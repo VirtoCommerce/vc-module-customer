@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
@@ -61,9 +60,9 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
             return Task.CompletedTask;
         }
 
-        public async Task LogEntityChangesInBackground(IList<OperationLog> operationLogs)
+        public async Task LogEntityChangesInBackground(OperationLog[] operationLogs)
         {
-            await _changeLogService.SaveChangesAsync(operationLogs.ToArray());
+            await _changeLogService.SaveChangesAsync(operationLogs);
         }
 
 
