@@ -63,8 +63,8 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             schema.AddFilterableCollection("RoleId");
 
             // Employee
-            schema.AddFilterableStringAndContentString("Salutation");
             // Added in Contact Schema
+            //schema.AddFilterableStringAndContentString("Salutation");
             //schema.AddFilterableStringAndContentString("FullName");
             //schema.AddFilterableStringAndContentString("FirstName");
             //schema.AddFilterableStringAndContentString("MiddleName");
@@ -88,13 +88,13 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 
             // AssociatedOrganizations Schema
             schema.AddFilterableCollection("AssociatedOrganizations");
-            schema.AddFilterableCollection("HasAssociatedOrganizations");
+            schema.AddFilterableBoolean("HasAssociatedOrganizations");
 
             return AddDynamicPropertiesSchemaAsync(schema,
-                "VirtoCommerce.CustomerModule.Core.Model.Contact",
-                "VirtoCommerce.CustomerModule.Core.Model.Employee",
-                "VirtoCommerce.CustomerModule.Core.Model.Organization",
-                "VirtoCommerce.CustomerModule.Core.Model.Vendor");
+                typeof(Contact).FullName,
+                typeof(Employee).FullName,
+                typeof(Organization).FullName,
+                typeof(Vendor).FullName);
         }
 
         public virtual async Task<IList<IndexDocument>> GetDocumentsAsync(IList<string> documentIds)
@@ -110,35 +110,30 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             return result;
         }
 
-        protected virtual async Task AddDynamicPropertiesSchemaAsync(IndexDocument schema, params string[] memberTypes)
+        protected virtual async Task AddDynamicPropertiesSchemaAsync(IndexDocument schema, params string[] objectTypes)
         {
-            var criteria = AbstractTypeFactory<DynamicPropertySearchCriteria>.TryCreateInstance();
-            criteria.ObjectTypes = memberTypes;
-            criteria.Take = int.MaxValue;
+            var properties = await GetAllDynamicProperties(objectTypes);
 
-            var searchResult = await _dynamicPropertySearchService.SearchDynamicPropertiesAsync(criteria);
-            var typeDynamicProperties = searchResult.Results;
-
-            if (typeDynamicProperties.IsNullOrEmpty())
-            {
-                return;
-            }
-
-            foreach (var property in typeDynamicProperties)
+            foreach (var property in properties)
             {
                 var valueType = property.ValueType.ToIndexedDocumentFieldValueType();
-                var isCollection = property.IsDictionary || property.IsArray;
+                var defaultValue = GetDefaultValue(property.ValueType);
 
-                schema.Add(new IndexDocumentField(property.Name, GetDefaultValue(property.ValueType), valueType)
+                if (valueType == IndexDocumentFieldValueType.Undefined || defaultValue is null)
+                {
+                    continue;
+                }
+
+                schema.Add(new IndexDocumentField(property.Name, defaultValue, valueType)
                 {
                     IsRetrievable = true,
                     IsFilterable = true,
-                    IsCollection = isCollection,
+                    IsCollection = property.IsDictionary || property.IsArray,
                 });
             }
         }
 
-        private object GetDefaultValue(DynamicPropertyValueType type)
+        private static object GetDefaultValue(DynamicPropertyValueType type)
         {
             return type switch
             {
@@ -326,19 +321,9 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 
         protected virtual async Task IndexDynamicProperties(Member member, IndexDocument document)
         {
-            var criteria = AbstractTypeFactory<DynamicPropertySearchCriteria>.TryCreateInstance();
-            criteria.ObjectTypes = new[] { member.ObjectType };
-            criteria.Take = int.MaxValue;
+            var properties = await GetAllDynamicProperties(member.ObjectType);
 
-            var searchResult = await _dynamicPropertySearchService.SearchDynamicPropertiesAsync(criteria);
-            var typeDynamicProperties = searchResult.Results;
-
-            if (typeDynamicProperties.IsNullOrEmpty())
-            {
-                return;
-            }
-
-            foreach (var property in typeDynamicProperties)
+            foreach (var property in properties)
             {
                 // PT-1668: add check for deleted properties
                 var memberPropertyValue = member.DynamicProperties?.FirstOrDefault(x => x.Id == property.Id) ??
@@ -348,11 +333,27 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             }
         }
 
+        protected virtual async Task<IList<DynamicProperty>> GetAllDynamicProperties(params string[] objectTypes)
+        {
+            var criteria = AbstractTypeFactory<DynamicPropertySearchCriteria>.TryCreateInstance();
+            criteria.ObjectTypes = objectTypes;
+            criteria.Take = int.MaxValue;
+
+            var searchResult = await _dynamicPropertySearchService.SearchDynamicPropertiesAsync(criteria);
+
+            return searchResult.Results;
+        }
+
         protected virtual void IndexDynamicProperty(IndexDocument document, DynamicProperty property, DynamicObjectProperty objectProperty)
         {
             var propertyName = property.Name?.ToLowerInvariant();
-
             if (string.IsNullOrEmpty(propertyName))
+            {
+                return;
+            }
+
+            var valueType = property.ValueType.ToIndexedDocumentFieldValueType();
+            if (valueType == IndexDocumentFieldValueType.Undefined)
             {
                 return;
             }
@@ -394,8 +395,6 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 
             if (!values.IsNullOrEmpty())
             {
-                var valueType = property.ValueType.ToIndexedDocumentFieldValueType();
-
                 document.Add(new IndexDocumentField(propertyName, values, valueType)
                 {
                     IsRetrievable = true,
@@ -405,7 +404,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             }
         }
 
-        private bool HasValuesOfType(DynamicObjectProperty objectProperty, DynamicPropertyValueType valueType)
+        private static bool HasValuesOfType(DynamicObjectProperty objectProperty, DynamicPropertyValueType valueType)
         {
             return objectProperty.Values?.Any(x => x.ValueType == valueType) ??
                 objectProperty.ValueType == valueType;
