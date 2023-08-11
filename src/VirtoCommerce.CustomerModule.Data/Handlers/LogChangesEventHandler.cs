@@ -61,9 +61,9 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
             return Task.CompletedTask;
         }
 
-        public void LogEntityChangesInBackground(IList<OperationLog> operationLogs)
+        public async Task LogEntityChangesInBackground(IList<OperationLog> operationLogs)
         {
-            _changeLogService.SaveChangesAsync(operationLogs.ToArray()).GetAwaiter().GetResult();
+            await _changeLogService.SaveChangesAsync(operationLogs.ToArray());
         }
 
 
