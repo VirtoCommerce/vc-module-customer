@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,10 +9,11 @@ using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.SearchModule.Core.Extensions;
 using VirtoCommerce.SearchModule.Core.Model;
 using VirtoCommerce.SearchModule.Core.Services;
+using static VirtoCommerce.SearchModule.Core.Extensions.IndexDocumentExtensions;
 
 namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 {
-    public class MemberDocumentBuilder : IIndexDocumentBuilder
+    public class MemberDocumentBuilder : IIndexSchemaBuilder, IIndexDocumentBuilder
     {
         private readonly IMemberService _memberService;
         private readonly IDynamicPropertySearchService _dynamicPropertySearchService;
@@ -20,6 +22,79 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
         {
             _memberService = memberService;
             _dynamicPropertySearchService = dynamicPropertySearchService;
+        }
+
+        public Task BuildSchemaAsync(IndexDocument schema)
+        {
+            // Base Schema
+            schema.AddFilterableString("MemberType");
+            schema.AddFilterableString("OuterId");
+
+            schema.AddFilterableStringAndContentString("Name");
+            schema.AddFilterableStringAndContentString("Status");
+
+            schema.AddFilterableCollectionAndContentString("Emails");
+            schema.AddFilterableCollectionAndContentString("Phones");
+
+            schema.AddFilterableCollection("Groups");
+
+            schema.AddFilterableDateTime("CreatedDate");
+            schema.AddFilterableDateTime("ModifiedDate");
+
+            // Contact Schema
+            schema.AddFilterableStringAndContentString("Salutation");
+            schema.AddFilterableStringAndContentString("FullName");
+            schema.AddFilterableStringAndContentString("FirstName");
+            schema.AddFilterableStringAndContentString("MiddleName");
+            schema.AddFilterableStringAndContentString("LastName");
+            schema.AddFilterableDateTime("BirthDate");
+            schema.AddFilterableString("DefaultLanguage");
+            schema.AddFilterableString("TimeZone");
+
+            schema.AddFilterableString("TaxpayerId");
+            schema.AddFilterableString("PreferredDelivery");
+            schema.AddFilterableString("PreferredCommunication");
+
+            schema.AddFilterableCollectionAndContentString("Login");
+            schema.AddFilterableBoolean("IsAnonymized");
+            schema.AddFilterableStringAndContentString("About");
+
+            schema.AddFilterableCollection("Role");
+            schema.AddFilterableCollection("RoleId");
+
+            // Employee
+            schema.AddFilterableStringAndContentString("Salutation");
+            // Added in Contact Schema
+            //schema.AddFilterableStringAndContentString("FullName");
+            //schema.AddFilterableStringAndContentString("FirstName");
+            //schema.AddFilterableStringAndContentString("MiddleName");
+            //schema.AddFilterableStringAndContentString("LastName");
+            //schema.AddFilterableDateTime("BirthDate");
+
+            schema.AddFilterableString("EmployeeType");
+            schema.AddFilterableBoolean("IsActive");
+
+            // Organization Schema
+            schema.AddFilterableString("BusinessCategory");
+            schema.AddFilterableString("OwnerId");
+
+            // Vendor Schema
+            schema.AddFilterableString("GroupName");
+
+            // Relations Schema
+            // ParentOrganizations Schema
+            schema.AddFilterableCollection("ParentOrganizations");
+            schema.AddFilterableBoolean("HasParentOrganizations");
+
+            // AssociatedOrganizations Schema
+            schema.AddFilterableCollection("AssociatedOrganizations");
+            schema.AddFilterableCollection("HasAssociatedOrganizations");
+
+            return AddDynamicPropertiesSchemaAsync(schema,
+                "VirtoCommerce.CustomerModule.Core.Model.Contact",
+                "VirtoCommerce.CustomerModule.Core.Model.Employee",
+                "VirtoCommerce.CustomerModule.Core.Model.Organization",
+                "VirtoCommerce.CustomerModule.Core.Model.Vendor");
         }
 
         public virtual async Task<IList<IndexDocument>> GetDocumentsAsync(IList<string> documentIds)
@@ -33,6 +108,51 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             }
 
             return result;
+        }
+
+        protected virtual async Task AddDynamicPropertiesSchemaAsync(IndexDocument schema, params string[] memberTypes)
+        {
+            var criteria = AbstractTypeFactory<DynamicPropertySearchCriteria>.TryCreateInstance();
+            criteria.ObjectTypes = memberTypes;
+            criteria.Take = int.MaxValue;
+
+            var searchResult = await _dynamicPropertySearchService.SearchDynamicPropertiesAsync(criteria);
+            var typeDynamicProperties = searchResult.Results;
+
+            if (typeDynamicProperties.IsNullOrEmpty())
+            {
+                return;
+            }
+
+            foreach (var property in typeDynamicProperties)
+            {
+                var valueType = property.ValueType.ToIndexedDocumentFieldValueType();
+                var isCollection = property.IsDictionary || property.IsArray;
+
+                schema.Add(new IndexDocumentField(property.Name, GetDefaultValue(property.ValueType), valueType)
+                {
+                    IsRetrievable = true,
+                    IsFilterable = true,
+                    IsCollection = isCollection,
+                });
+            }
+        }
+
+        private object GetDefaultValue(DynamicPropertyValueType type)
+        {
+            return type switch
+            {
+                DynamicPropertyValueType.ShortText => SchemaStringValue,
+                DynamicPropertyValueType.Html => SchemaStringValue,
+                DynamicPropertyValueType.LongText => SchemaStringValue,
+                DynamicPropertyValueType.Image => SchemaStringValue,
+                DynamicPropertyValueType.Integer => default(int),
+                DynamicPropertyValueType.Decimal => default(decimal),
+                DynamicPropertyValueType.DateTime => default(DateTime),
+                DynamicPropertyValueType.Boolean => default(bool),
+                DynamicPropertyValueType.Undefined => null,
+                _ => null
+            };
         }
 
         protected virtual Task<Member[]> GetMembers(IList<string> documentIds)
