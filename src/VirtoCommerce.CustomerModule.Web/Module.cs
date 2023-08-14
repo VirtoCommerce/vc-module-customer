@@ -146,12 +146,18 @@ namespace VirtoCommerce.CustomerModule.Web
 
             var inProcessBus = appBuilder.ApplicationServices.GetService<IHandlerRegistrar>();
             inProcessBus.RegisterHandler<MemberChangedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<LogChangesEventHandler>().Handle(message));
+            inProcessBus.RegisterHandler<UserChangedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<LogChangesEventHandler>().Handle(message));
+            inProcessBus.RegisterHandler<UserRoleAddedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<LogChangesEventHandler>().Handle(message));
+            inProcessBus.RegisterHandler<UserRoleRemovedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<LogChangesEventHandler>().Handle(message));
             inProcessBus.RegisterHandler<UserChangedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<SecurtityAccountChangesEventHandler>().Handle(message));
 
             var settingsManager = appBuilder.ApplicationServices.GetService<ISettingsManager>();
             if (settingsManager.GetValue<bool>(ModuleConstants.Settings.General.EventBasedIndexation))
             {
                 inProcessBus.RegisterHandler<MemberChangedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<IndexMemberChangedEventHandler>().Handle(message));
+                inProcessBus.RegisterHandler<UserChangedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<IndexMemberChangedEventHandler>().Handle(message));
+                inProcessBus.RegisterHandler<UserRoleAddedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<IndexMemberChangedEventHandler>().Handle(message));
+                inProcessBus.RegisterHandler<UserRoleRemovedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<IndexMemberChangedEventHandler>().Handle(message));
             }
 
             var searchRequestBuilderRegistrar = appBuilder.ApplicationServices.GetService<ISearchRequestBuilderRegistrar>();
