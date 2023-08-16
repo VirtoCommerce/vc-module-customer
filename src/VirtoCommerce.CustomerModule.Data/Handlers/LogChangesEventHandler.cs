@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
@@ -6,10 +7,11 @@ using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.Platform.Core.ChangeLog;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
+using VirtoCommerce.Platform.Core.Security.Events;
 
 namespace VirtoCommerce.CustomerModule.Data.Handlers
 {
-    public class LogChangesEventHandler : IEventHandler<MemberChangedEvent>
+    public class LogChangesEventHandler : IEventHandler<MemberChangedEvent>, IEventHandler<UserChangedEvent>, IEventHandler<UserRoleAddedEvent>, IEventHandler<UserRoleRemovedEvent>
     {
         private readonly IChangeLogService _changeLogService;
 
@@ -20,28 +22,73 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
         public virtual Task Handle(MemberChangedEvent @event)
         {
+#pragma warning disable VC0005 // Type or member is obsolete
             InnerHandle(@event);
+#pragma warning restore VC0005 // Type or member is obsolete
             return Task.CompletedTask;
         }
 
+        public virtual Task Handle(UserChangedEvent message)
+        {
+            var operationLogs = message.ChangedEntries
+                .Where(x => !string.IsNullOrEmpty(x.OldEntry.MemberId))
+                .Select(x => GetOperationLog(x.OldEntry.MemberId))
+                .ToArray();
+
+            InnerHandle(operationLogs);
+
+            return Task.CompletedTask;
+        }
+
+        public virtual Task Handle(UserRoleAddedEvent message)
+        {
+            if (!string.IsNullOrEmpty(message.User.MemberId))
+            {
+                InnerHandle(GetOperationLog(message.User.MemberId));
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public virtual Task Handle(UserRoleRemovedEvent message)
+        {
+            if (!string.IsNullOrEmpty(message.User.MemberId))
+            {
+                InnerHandle(GetOperationLog(message.User.MemberId));
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public async Task LogEntityChangesInBackground(OperationLog[] operationLogs)
+        {
+            await _changeLogService.SaveChangesAsync(operationLogs);
+        }
+
+
+        [Obsolete("Use InnerHandle(params OperationLog[] operationLogs) instead", DiagnosticId = "VC0005", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions/")]
         protected virtual void InnerHandle<T>(GenericChangedEntryEvent<T> @event) where T : IEntity
         {
             // ObjectType has to be 'Member' as MemberDocumentChangesProvider uses it to get all changed members in 1 request.
             var logOperations = @event.ChangedEntries.Select(x => AbstractTypeFactory<OperationLog>.TryCreateInstance().FromChangedEntry(x, nameof(Member))).ToArray();
             //Background task is used here for performance reasons
-            BackgroundJob.Enqueue(() => LogEntityChangesInBackground(logOperations));
+            InnerHandle(logOperations);
         }
 
-        [DisableConcurrentExecution(10)]
-        // "DisableConcurrentExecutionAttribute" prevents to start simultaneous job payloads.
-        // Should have short timeout, because this attribute implemented by following manner: newly started job falls into "processing" state immediately.
-        // Then it tries to receive job lock during timeout. If the lock received, the job starts payload.
-        // When the job is awaiting desired timeout for lock release, it stucks in "processing" anyway. (Therefore, you should not to set long timeouts (like 24*60*60), this will cause a lot of stucked jobs and performance degradation.)
-        // Then, if timeout is over and the lock NOT acquired, the job falls into "scheduled" state (this is default fail-retry scenario).
-        // Failed job goes to "Failed" state (by default) after retries exhausted.
-        public void LogEntityChangesInBackground(OperationLog[] operationLogs)
+        protected virtual void InnerHandle(params OperationLog[] operationLogs)
         {
-            _changeLogService.SaveChangesAsync(operationLogs).GetAwaiter().GetResult();
+            BackgroundJob.Enqueue(() => LogEntityChangesInBackground(operationLogs));
+        }
+
+        protected virtual OperationLog GetOperationLog(string memberId)
+        {
+            var result = AbstractTypeFactory<OperationLog>.TryCreateInstance();
+
+            result.ObjectId = memberId;
+            result.ObjectType = nameof(Member);
+            result.OperationType = EntryState.Modified;
+
+            return result;
         }
     }
 }
