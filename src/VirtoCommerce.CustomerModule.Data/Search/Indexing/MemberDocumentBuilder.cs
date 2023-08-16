@@ -25,7 +25,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 
         public Task BuildSchemaAsync(IndexDocument schema)
         {
-            // Base Schema
+            // Common fields
             schema.AddFilterableString("MemberType");
             schema.AddFilterableString("OuterId");
 
@@ -40,7 +40,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             schema.AddFilterableDateTime("CreatedDate");
             schema.AddFilterableDateTime("ModifiedDate");
 
-            // Contact Schema
+            // Contact
             schema.AddFilterableStringAndContentString("Salutation");
             schema.AddFilterableStringAndContentString("FullName");
             schema.AddFilterableStringAndContentString("FirstName");
@@ -62,30 +62,21 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             schema.AddFilterableCollection("RoleId");
 
             // Employee
-            // Added in Contact Schema
-            //schema.AddFilterableStringAndContentString("Salutation");
-            //schema.AddFilterableStringAndContentString("FullName");
-            //schema.AddFilterableStringAndContentString("FirstName");
-            //schema.AddFilterableStringAndContentString("MiddleName");
-            //schema.AddFilterableStringAndContentString("LastName");
-            //schema.AddFilterableDateTime("BirthDate");
-
             schema.AddFilterableString("EmployeeType");
             schema.AddFilterableBoolean("IsActive");
 
-            // Organization Schema
+            // Organization
             schema.AddFilterableString("BusinessCategory");
             schema.AddFilterableString("OwnerId");
 
-            // Vendor Schema
+            // Vendor
             schema.AddFilterableString("GroupName");
 
-            // Relations Schema
-            // ParentOrganizations Schema
+            // Parent organizations
             schema.AddFilterableCollection("ParentOrganizations");
             schema.AddFilterableBoolean("HasParentOrganizations");
 
-            // AssociatedOrganizations Schema
+            // Associated organizations
             schema.AddFilterableCollection("AssociatedOrganizations");
             schema.AddFilterableBoolean("HasAssociatedOrganizations");
 
