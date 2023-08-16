@@ -9,7 +9,6 @@ using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.SearchModule.Core.Extensions;
 using VirtoCommerce.SearchModule.Core.Model;
 using VirtoCommerce.SearchModule.Core.Services;
-using static VirtoCommerce.SearchModule.Core.Extensions.IndexDocumentExtensions;
 
 namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 {
@@ -90,7 +89,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             schema.AddFilterableCollection("AssociatedOrganizations");
             schema.AddFilterableBoolean("HasAssociatedOrganizations");
 
-            return AddDynamicPropertiesSchemaAsync(schema,
+            return schema.AddDynamicProperties(_dynamicPropertySearchService,
                 typeof(Contact).FullName,
                 typeof(Employee).FullName,
                 typeof(Organization).FullName,
@@ -108,46 +107,6 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             }
 
             return result;
-        }
-
-        protected virtual async Task AddDynamicPropertiesSchemaAsync(IndexDocument schema, params string[] objectTypes)
-        {
-            var properties = await GetAllDynamicProperties(objectTypes);
-
-            foreach (var property in properties)
-            {
-                var valueType = property.ValueType.ToIndexedDocumentFieldValueType();
-                var defaultValue = GetDefaultValue(property.ValueType);
-
-                if (valueType == IndexDocumentFieldValueType.Undefined || defaultValue is null)
-                {
-                    continue;
-                }
-
-                schema.Add(new IndexDocumentField(property.Name, defaultValue, valueType)
-                {
-                    IsRetrievable = true,
-                    IsFilterable = true,
-                    IsCollection = property.IsDictionary || property.IsArray,
-                });
-            }
-        }
-
-        private static object GetDefaultValue(DynamicPropertyValueType type)
-        {
-            return type switch
-            {
-                DynamicPropertyValueType.ShortText => SchemaStringValue,
-                DynamicPropertyValueType.Html => SchemaStringValue,
-                DynamicPropertyValueType.LongText => SchemaStringValue,
-                DynamicPropertyValueType.Image => SchemaStringValue,
-                DynamicPropertyValueType.Integer => default(int),
-                DynamicPropertyValueType.Decimal => default(decimal),
-                DynamicPropertyValueType.DateTime => default(DateTime),
-                DynamicPropertyValueType.Boolean => default(bool),
-                DynamicPropertyValueType.Undefined => null,
-                _ => null
-            };
         }
 
         protected virtual Task<Member[]> GetMembers(IList<string> documentIds)
@@ -209,7 +168,9 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                 IndexVendor(document, vendor);
             }
 
+#pragma warning disable VC0005 // Type or member is obsolete
             await IndexDynamicProperties(member, document);
+#pragma warning restore VC0005 // Type or member is obsolete
 
             return document;
         }
@@ -319,95 +280,24 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             document.AddFilterableBoolean("HasAssociatedOrganizations", nonEmptyValues?.Any() ?? false);
         }
 
+        [Obsolete("Use IndexDocument.AddDynamicProperties() extension method", DiagnosticId = "VC0005", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions/")]
         protected virtual async Task IndexDynamicProperties(Member member, IndexDocument document)
         {
-            var properties = await GetAllDynamicProperties(member.ObjectType);
+            var properties = await _dynamicPropertySearchService.GetAllDynamicProperties(member.ObjectType);
 
             foreach (var property in properties)
             {
-                // PT-1668: add check for deleted properties
-                var memberPropertyValue = member.DynamicProperties?.FirstOrDefault(x => x.Id == property.Id) ??
-                     member.DynamicProperties?.FirstOrDefault(x => x.Name.EqualsInvariant(property.Name) && HasValuesOfType(x, property.ValueType));
+                var objectProperty = member.DynamicProperties?.FirstOrDefault(x => x.Id == property.Id) ??
+                    member.DynamicProperties?.FirstOrDefault(x => x.Name.EqualsInvariant(property.Name) && x.HasValuesOfType(property.ValueType));
 
-                IndexDynamicProperty(document, property, memberPropertyValue);
+                IndexDynamicProperty(document, property, objectProperty);
             }
         }
 
-        protected virtual async Task<IList<DynamicProperty>> GetAllDynamicProperties(params string[] objectTypes)
-        {
-            var criteria = AbstractTypeFactory<DynamicPropertySearchCriteria>.TryCreateInstance();
-            criteria.ObjectTypes = objectTypes;
-            criteria.Take = int.MaxValue;
-
-            var searchResult = await _dynamicPropertySearchService.SearchDynamicPropertiesAsync(criteria);
-
-            return searchResult.Results;
-        }
-
+        [Obsolete("Use IndexDocument.AddDynamicProperty() extension method", DiagnosticId = "VC0005", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions/")]
         protected virtual void IndexDynamicProperty(IndexDocument document, DynamicProperty property, DynamicObjectProperty objectProperty)
         {
-            var propertyName = property.Name?.ToLowerInvariant();
-            if (string.IsNullOrEmpty(propertyName))
-            {
-                return;
-            }
-
-            var valueType = property.ValueType.ToIndexedDocumentFieldValueType();
-            if (valueType == IndexDocumentFieldValueType.Undefined)
-            {
-                return;
-            }
-
-            IList<object> values = null;
-            var isCollection = property.IsDictionary || property.IsArray;
-
-            if (objectProperty != null)
-            {
-                if (!objectProperty.IsDictionary)
-                {
-                    values = objectProperty.Values.Where(x => x.Value != null)
-                        .Select(x => x.Value)
-                        .ToList();
-                }
-                else
-                {
-                    //add all locales in dictionary to searchIndex
-                    values = objectProperty.Values.Select(x => x.Value)
-                                            .Cast<DynamicPropertyDictionaryItem>()
-                                            .Where(x => !string.IsNullOrEmpty(x.Name))
-                                            .Select(x => x.Name)
-                                            .ToList<object>();
-                }
-            }
-
-            // replace empty value for Boolean property with default 'False'
-            if (property.ValueType == DynamicPropertyValueType.Boolean && values.IsNullOrEmpty())
-            {
-                document.Add(new IndexDocumentField(propertyName, false, IndexDocumentFieldValueType.Boolean)
-                {
-                    IsRetrievable = true,
-                    IsFilterable = true,
-                    IsCollection = isCollection,
-                });
-
-                return;
-            }
-
-            if (!values.IsNullOrEmpty())
-            {
-                document.Add(new IndexDocumentField(propertyName, values, valueType)
-                {
-                    IsRetrievable = true,
-                    IsFilterable = true,
-                    IsCollection = isCollection,
-                });
-            }
-        }
-
-        private static bool HasValuesOfType(DynamicObjectProperty objectProperty, DynamicPropertyValueType valueType)
-        {
-            return objectProperty.Values?.Any(x => x.ValueType == valueType) ??
-                objectProperty.ValueType == valueType;
+            document.AddDynamicProperty(property, objectProperty);
         }
     }
 }
