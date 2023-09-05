@@ -13,9 +13,10 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
     <PackageReference Include="VirtoCommerce.CoreModule.Core" Version="3.400.0" />
     <PackageReference Include="VirtoCommerce.ImageToolsModule.Core" Version="3.401.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.400.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Hangfire" Version="3.400.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Security" Version="3.400.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.413.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Data" Version="3.413.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Hangfire" Version="3.413.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Security" Version="3.413.0" />
     <PackageReference Include="VirtoCommerce.SearchModule.Core" Version="3.402.0" />
     <PackageReference Include="VirtoCommerce.StoreModule.Core" Version="3.400.0" />
   </ItemGroup>
