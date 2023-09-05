@@ -5,6 +5,7 @@ using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
+using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.SearchModule.Core.Extenstions;
 using VirtoCommerce.SearchModule.Core.Model;
 using VirtoCommerce.SearchModule.Core.Services;
@@ -150,12 +151,12 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 
             document.AddFilterableValues("Role", contact
                 .SecurityAccounts
-                .SelectMany(x => x.Roles)
+                .SelectMany(x => x.Roles ?? Enumerable.Empty<Role>())
                 .Select(x => x.NormalizedName)
                 .ToList());
             document.AddFilterableValues("RoleId", contact
                 .SecurityAccounts
-                .SelectMany(x => x.Roles)
+                .SelectMany(x => x.Roles ?? Enumerable.Empty<Role>())
                 .Select(x => x.Id)
                 .ToList());
         }
