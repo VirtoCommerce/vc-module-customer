@@ -50,7 +50,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         public virtual Member ToModel(Member member)
         {
             if (member == null)
+            {
                 throw new ArgumentNullException(nameof(member));
+            }
 
             member.Id = Id;
             member.CreatedBy = CreatedBy;
@@ -86,7 +88,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         public virtual MemberEntity FromModel(Member member, PrimaryKeyResolvingMap pkMap)
         {
             if (member == null)
+            {
                 throw new ArgumentNullException(nameof(member));
+            }
 
             pkMap.AddPair(member, this);
 
