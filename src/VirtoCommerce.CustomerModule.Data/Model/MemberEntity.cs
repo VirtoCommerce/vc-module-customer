@@ -49,7 +49,8 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         public virtual Member ToModel(Member member)
         {
-            if (member == null) throw new ArgumentNullException(nameof(member));
+            if (member == null)
+                throw new ArgumentNullException(nameof(member));
 
             member.Id = Id;
             member.CreatedBy = CreatedBy;
@@ -178,37 +179,32 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
             if (!Phones.IsNullCollection())
             {
-                var phoneComparer = AnonymousComparer.Create((PhoneEntity x) => x.Number);
-                Phones.Patch(target.Phones, phoneComparer, (sourcePhone, targetPhone) => targetPhone.Number = sourcePhone.Number);
+                PatchPhones(target);
             }
 
             if (!Emails.IsNullCollection())
             {
-                var addressComparer = AnonymousComparer.Create((EmailEntity x) => x.Address);
-                Emails.Patch(target.Emails, addressComparer, (sourceEmail, targetEmail) => targetEmail.Address = sourceEmail.Address);
+                PatchEmails(target);
             }
 
             if (!Groups.IsNullCollection())
             {
-                var groupComparer = AnonymousComparer.Create((MemberGroupEntity x) => x.Group);
-                Groups.Patch(target.Groups, groupComparer, (sourceGroup, targetGroup) => targetGroup.Group = sourceGroup.Group);
+                PatchGroups(target);
+            }
+
+            if (!Notes.IsNullCollection())
+            {
+                PatchNotes(target);
+            }
+
+            if (!MemberRelations.IsNullCollection())
+            {
+                PatchMemberRelations(target);
             }
 
             if (!Addresses.IsNullCollection())
             {
                 Addresses.Patch(target.Addresses, (sourceAddress, targetAddress) => sourceAddress.Patch(targetAddress));
-            }
-
-            if (!Notes.IsNullCollection())
-            {
-                var noteComparer = AnonymousComparer.Create((NoteEntity x) => x.Id ?? x.Body);
-                Notes.Patch(target.Notes, noteComparer, (sourceNote, targetNote) => sourceNote.Patch(targetNote));
-            }
-
-            if (!MemberRelations.IsNullCollection())
-            {
-                var relationComparer = AnonymousComparer.Create((MemberRelationEntity x) => x.AncestorId);
-                MemberRelations.Patch(target.MemberRelations, relationComparer, (sourceRel, targetRel) => { /*Nothing todo*/ });
             }
 
             if (!SeoInfos.IsNullCollection())
@@ -220,6 +216,36 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             {
                 DynamicPropertyObjectValues.Patch(target.DynamicPropertyObjectValues, (sourceDynamicPropertyObjectValues, targetDynamicPropertyObjectValues) => sourceDynamicPropertyObjectValues.Patch(targetDynamicPropertyObjectValues));
             }
+        }
+
+        public virtual void PatchPhones(MemberEntity target)
+        {
+            var phoneComparer = AnonymousComparer.Create((PhoneEntity x) => x.Number);
+            Phones.Patch(target.Phones, phoneComparer, (sourcePhone, targetPhone) => targetPhone.Number = sourcePhone.Number);
+        }
+
+        public virtual void PatchEmails(MemberEntity target)
+        {
+            var addressComparer = AnonymousComparer.Create((EmailEntity x) => x.Address);
+            Emails.Patch(target.Emails, addressComparer, (sourceEmail, targetEmail) => targetEmail.Address = sourceEmail.Address);
+        }
+
+        public virtual void PatchGroups(MemberEntity target)
+        {
+            var groupComparer = AnonymousComparer.Create((MemberGroupEntity x) => x.Group);
+            Groups.Patch(target.Groups, groupComparer, (sourceGroup, targetGroup) => targetGroup.Group = sourceGroup.Group);
+        }
+
+        public virtual void PatchNotes(MemberEntity target)
+        {
+            var noteComparer = AnonymousComparer.Create((NoteEntity x) => x.Id ?? x.Body);
+            Notes.Patch(target.Notes, noteComparer, (sourceNote, targetNote) => sourceNote.Patch(targetNote));
+        }
+
+        public virtual void PatchMemberRelations(MemberEntity target)
+        {
+            var relationComparer = AnonymousComparer.Create((MemberRelationEntity x) => x.AncestorId);
+            MemberRelations.Patch(target.MemberRelations, relationComparer, (sourceRel, targetRel) => { /*Nothing todo*/ });
         }
     }
 }
