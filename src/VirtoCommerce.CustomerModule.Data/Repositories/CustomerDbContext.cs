@@ -1,12 +1,12 @@
 using System.Reflection;
-using EntityFrameworkCore.Triggers;
 using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Data.Model;
+using VirtoCommerce.Platform.Data.Infrastructure;
 
 namespace VirtoCommerce.CustomerModule.Data.Repositories
 {
-    public class CustomerDbContext : DbContextWithTriggers
+    public class CustomerDbContext : DbContextBase
     {
         public CustomerDbContext(DbContextOptions<CustomerDbContext> options)
             : base(options)
