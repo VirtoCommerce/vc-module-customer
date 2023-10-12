@@ -28,13 +28,11 @@
 
             <!-- preview -->
             <div class="sub-t">{{ 'customer.blades.member-icon.labels.preview' | translate }}</div>
-            <div style="border: 1px solid #eaedf3; padding: 20px 15px 90px 15px;">
-
-                <div style="float: left;">
-                    <img style="width: 90px; height: 90px;" ng-if="blade.tempUrl || blade.currentEntity.iconUrl" ng-src="{{ blade.tempUrl || blade.currentEntity.iconUrl }}" alt="icon">
+            <div style="border: 1px solid #eaedf3; padding: 10px 10px 10px 10px;">
+                <div>
+                    <img style="max-height: 90px;" ng-if="blade.tempUrl || blade.currentEntity.iconUrl" fallback-src="{{ blade.tempUrl || blade.currentEntity.iconUrl }}" ng-src="{{ blade.tempUrl || blade.currentEntity.iconUrl }}" alt="icon">
                     <i class="table-ico fa fa-gears" ng-if="!blade.tempUrl && !blade.currentEntity.iconUrl"></i>
                 </div>
-                <div style="padding-left: 20px; margin: 0" class="form-label">{{ 'customer.blades.member-icon.labels.preview-description' | translate }}</div>
             </div>
         </div>
     </div>

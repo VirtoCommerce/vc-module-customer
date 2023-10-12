@@ -197,7 +197,7 @@
         "title": "Manage icon",
         "labels": {
           "choose-icon": "Choose new icon",
-          "choice-description": "Select image with min height of the PNG, JPG or SVG format. It will be cropped down to square format and resized to 90px.",
+          "choice-description": "Select image with the PNG, JPG or SVG format.",
           "preview": "Preview",
           "preview-description": "Current icon",
           "reset": "Remove icon" 

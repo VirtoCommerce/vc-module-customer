@@ -31,12 +31,7 @@ angular.module("virtoCommerce.customerModule")
                 iconUploader.onSuccessItem = (_, uploadedImages) => {
                     // Need to change icon URL each time to reload image on the blades,
                     // so that we add random postfix to the URL.
-                    var postfix = Math.random().toString(36).slice(2, 7);
-                    blade.tempUrl = uploadedImages[0].url + "?" + postfix;
-
-                    if ((uploadedImages[0].name.split(".")[1].toLowerCase() !== "svg")) {
-                        $http.post("api/member/icon/resize", { url:uploadedImages[0].url }, "application/json");
-                    }
+                    blade.tempUrl = uploadedImages[0].url;
                 };
 
                 iconUploader.onErrorItem = (element, response, status, _) => {
@@ -54,8 +49,8 @@ angular.module("virtoCommerce.customerModule")
                         var oldUrlParts = blade.currentEntity.iconUrl.split("/");
                         var oldFileName = oldUrlParts[[oldUrlParts.length - 1]];
 
-                        if (!oldFileName.includes("_1")) {
-                            nameTale = "_1";
+                        if (!oldFileName.includes("-1")) {
+                            nameTale = "-1";
                         }
                     }
 

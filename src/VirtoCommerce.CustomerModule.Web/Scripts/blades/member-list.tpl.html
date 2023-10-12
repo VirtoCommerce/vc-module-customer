@@ -51,7 +51,7 @@
         <div class="product-img" ng-attr-title="{{COL_FIELD}}">
             <i class="table-ico" ng-if="!row.entity.iconUrl" ng-class="row.entity._memberTypeIcon ? row.entity._memberTypeIcon : 'fa-user'"></i>
             <i class="table-ico" ng-if="row.entity.iconUrl">
-                <img class="list-icon" ng-src="{{ row.entity.iconUrl }}">
+                <img class="list-icon" fallback-src="{{ row.entity.iconUrl}}" ng-src="{{ row.entity.iconUrl | thumbnail: '_64x64' }}">
             </i>
         </div>
     </div>

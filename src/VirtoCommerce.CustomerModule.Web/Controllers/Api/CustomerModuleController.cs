@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,17 +23,14 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         private readonly IAuthorizationService _authorizationService;
         private readonly IMemberService _memberService;
         private readonly IMemberSearchService _memberSearchService;
-        private readonly IIconService _iconService;
 
         public CustomerModuleController(IAuthorizationService authorizationService,
             IMemberService memberService,
-            IMemberSearchService memberSearchService,
-            IIconService iconService)
+            IMemberSearchService memberSearchService)
         {
             _authorizationService = authorizationService;
             _memberService = memberService;
             _memberSearchService = memberSearchService;
-            _iconService = iconService;
         }
 
         /// <summary>
@@ -257,17 +253,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             return NoContent();
         }
 
-        [HttpPost]
-        [Route("member/icon/resize")]
-        [Authorize(ModuleConstants.Security.Permissions.Update)]
-        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
-        public ActionResult ResizeIcon([FromBody] IconResizeRequest request)
-        {
-            BackgroundJob.Enqueue(() => _iconService.ResizeIcon(request));
-
-            return NoContent();
-        }
-
         #region Special members for storefront C# API client  (because it not support polymorph types)
 
         /// <summary>
@@ -313,7 +298,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                 return Forbid();
             }
             await _memberService.SaveChangesAsync(new[] { contact });
-            return NoContent(); // TODO: write here return Ok(contact) when updating storefront AutoRest proxies to VC v3
+            return NoContent();
         }
 
         /// <summary>
@@ -329,7 +314,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                 return Forbid();
             }
             await _memberService.SaveChangesAsync(contacts);
-            return NoContent(); // TODO: write here return Ok(contacts) when updating storefront AutoRest proxies to VC v3
+            return NoContent();
         }
 
         /// <summary>
@@ -361,7 +346,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             }
 
             await _memberService.SaveChangesAsync(organizations);
-            return NoContent(); // TODO: write here return Ok(organizations) when updating storefront AutoRest proxies to VC v3
+            return NoContent();
         }
 
         /// <summary>
@@ -377,7 +362,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                 return Forbid();
             }
             await _memberService.SaveChangesAsync(new[] { organization });
-            return NoContent(); // TODO: write here return Ok(organization) when updating storefront AutoRest proxies to VC v3
+            return NoContent();
         }
 
         /// <summary>
@@ -393,7 +378,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                 return Forbid();
             }
             await _memberService.SaveChangesAsync(organizations);
-            return NoContent(); // TODO: write here return Ok(organizations) when updating storefront AutoRest proxies to VC v3
+            return NoContent();
         }
 
         /// <summary>
@@ -703,9 +688,9 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             return hasDefaultBillingAndShippingAddress;
         }
 
-        private async Task<AuthorizationResult> AuthorizeAsync(object resource, string permission)
+        private Task<AuthorizationResult> AuthorizeAsync(object resource, string permission)
         {
-            return await _authorizationService.AuthorizeAsync(User, resource, new CustomerAuthorizationRequirement(permission));
+            return _authorizationService.AuthorizeAsync(User, resource, new CustomerAuthorizationRequirement(permission));
         }
     }
 }
