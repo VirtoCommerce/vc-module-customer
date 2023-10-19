@@ -232,6 +232,9 @@
       },
       "member-icon": {
         "title": "Icon"
+      },
+      "organization-assets": {
+        "title": "Assets"
       }
     },
     "dialogs": {
