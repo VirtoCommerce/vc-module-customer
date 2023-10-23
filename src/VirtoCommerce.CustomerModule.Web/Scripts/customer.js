@@ -111,6 +111,12 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                     isVisible: function (blade) { return !blade.isNew; }
                 };
 
+                var assetsWidget = {
+                    controller: 'virtoCommerce.customerModule.organizationAssetsWidgetController',
+                    template: 'Modules/$(VirtoCommerce.Customer)/Scripts/widgets/organizationAssetsWidget.tpl.html',
+                    isVisible: function (blade) { return !blade.isNew; }
+                };
+
                 //Register widgets in customer details
                 widgetService.registerWidget(accountsWidget, 'customerDetail1');
                 widgetService.registerWidget(addressesWidget, 'customerDetail1');
@@ -127,6 +133,7 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                 widgetService.registerWidget(dynamicPropertyWidget, 'organizationDetail2');
                 widgetService.registerWidget(indexWidget, 'organizationDetail2');
                 widgetService.registerWidget(iconWidget, 'organizationDetail2');
+                widgetService.registerWidget(assetsWidget, 'organizationDetail2');
 
                 //Register widgets in employee details
                 widgetService.registerWidget(accountsWidget, 'employeeDetail1');
