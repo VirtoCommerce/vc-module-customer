@@ -43,7 +43,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             //{
             //    foreach (var memberType in memberTypes)
             //    {
-            //        //Use special dynamically constructed inner generic method for each passed member type 
+            //        //Use special dynamically constructed inner generic method for each passed member type
             //        //for better query performance
             //        var gm = _genericGetMembersMethodInfo.MakeGenericMethod(Type.GetType(memberType));
             //        var members = gm.Invoke(this, new object[] { ids, responseGroup }) as MemberEntity[];
@@ -54,7 +54,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             //            break;
             //        }
             //    }
-            //}         
+            //}
             //else
             {
                 var members = await InnerGetMembersByIds<MemberEntity>(ids, responseGroup);
@@ -72,8 +72,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
         public virtual async Task<T[]> InnerGetMembersByIds<T>(string[] ids, string responseGroup = null) where T : MemberEntity
         {
-            //Use OfType() clause very much accelerates the query performance when used TPT inheritance
-            var query = Members.OfType<T>().Where(x => ids.Contains(x.Id));
+            var query = GetMembersQuery<T>(ids, responseGroup);
 
             var result = await query.ToArrayAsync();
             ids = result.Select(x => x.Id).ToArray();
@@ -140,6 +139,15 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             }
 
             return Task.CompletedTask;
+        }
+
+        protected virtual IQueryable<T> GetMembersQuery<T>(string[] ids, string responseGroup = null)
+            where T : MemberEntity
+        {
+            //Use OfType() clause very much accelerates the query performance when used TPT inheritance
+            var query = Members.OfType<T>().Where(x => ids.Contains(x.Id));
+
+            return query;
         }
     }
 }
