@@ -2,14 +2,14 @@
 <module>
     <id>VirtoCommerce.CustomerSample</id>
     <version>3.0.0</version>
-    <platformVersion>3.0.0</platformVersion>
+    <platformVersion>3.400.0</platformVersion>
     <dependencies>
-        <dependency id="VirtoCommerce.Core" version="3.0.0" />
-        <dependency id="VirtoCommerce.Search" version="3.0.0" />
-        <dependency id="VirtoCommerce.Customer" version="3.0.0" />
+        <dependency id="VirtoCommerce.Core" version="3.400.0" />
+        <dependency id="VirtoCommerce.Search" version="3.402.0" />
+        <dependency id="VirtoCommerce.Customer" version="3.404.0" />
     </dependencies>
 
-    <title>Member extension sample module</title>
+    <title>Companies and Contacts Extension Sample</title>
     <description>Demo</description>
     <authors>
         <author>Virto Commerce</author>
@@ -19,7 +19,7 @@
     </owners>
     <projectUrl>https://virtocommerce.com/apps/extensions/virto-customer-module</projectUrl>
     <releaseNotes>First version.</releaseNotes>
-    <copyright>Copyright © 2011-2021 Virto Commerce. All rights reserved</copyright>
+    <copyright>Copyright © 2011-2023 Virto Commerce. All rights reserved</copyright>
     <tags>customer</tags>
 
     <assemblyFile>VirtoCommerce.CustomerSampleModule.Web.dll</assemblyFile>
