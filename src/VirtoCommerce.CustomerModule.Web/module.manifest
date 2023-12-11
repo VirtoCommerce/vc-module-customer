@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <id>VirtoCommerce.Customer</id>
-  <version>3.411.0</version>
+  <version>3.800.0</version>
   <version-tag />
-  <platformVersion>3.413.0</platformVersion>
+  <platformVersion>3.800.0-alpha.12831-net8</platformVersion>
   <dependencies>
     <dependency id="VirtoCommerce.Core" version="3.400.0" />
     <dependency id="VirtoCommerce.Notifications" version="3.400.0" />
@@ -14,7 +14,7 @@
   <description>Managing customers contacts and organizations</description>
   <authors>
     <author>Artem Dudarev</author>
-    <author>Egidijus Mažeika</author>
+    <author>Egidijus MaÅ¾eika</author>
   </authors>
   <owners>
     <owner>Virto Commerce</owner>
@@ -23,7 +23,7 @@
   <iconUrl>Modules/$(VirtoCommerce.Customer)/Content/logo.png</iconUrl>
   <requireLicenseAcceptance>false</requireLicenseAcceptance>
   <releaseNotes>First version.</releaseNotes>
-  <copyright>Copyright © 2011-2023 Virto Commerce. All rights reserved</copyright>
+  <copyright>Copyright © 2011-2024 Virto Commerce. All rights reserved</copyright>
   <tags>customer</tags>
   <assemblyFile>VirtoCommerce.CustomerModule.Web.dll</assemblyFile>
   <moduleType>VirtoCommerce.CustomerModule.Web.Module, VirtoCommerce.CustomerModule.Web</moduleType>
