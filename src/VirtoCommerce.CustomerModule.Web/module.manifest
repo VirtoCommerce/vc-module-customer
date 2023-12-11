@@ -5,10 +5,10 @@
   <version-tag />
   <platformVersion>3.800.0-alpha.12831-net8</platformVersion>
   <dependencies>
-    <dependency id="VirtoCommerce.Core" version="3.400.0" />
-    <dependency id="VirtoCommerce.Notifications" version="3.400.0" />
-    <dependency id="VirtoCommerce.Search" version="3.402.0" />
-    <dependency id="VirtoCommerce.Store" version="3.400.0" />
+    <dependency id="VirtoCommerce.Core" version="3.800.0" />
+    <dependency id="VirtoCommerce.Notifications" version="3.800.0" />
+    <dependency id="VirtoCommerce.Search" version="3.800.0" />
+    <dependency id="VirtoCommerce.Store" version="3.800.0" />
   </dependencies>
   <title>Companies and Contacts</title>
   <description>Managing customers contacts and organizations</description>
