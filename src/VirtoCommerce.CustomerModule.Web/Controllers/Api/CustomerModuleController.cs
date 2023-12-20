@@ -71,7 +71,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [Route("members/search")]
         public async Task<ActionResult<MemberSearchResult>> SearchMember([FromBody] MembersSearchCriteria criteria)
         {
-            if (!(await AuthorizeAsync(criteria, ModuleConstants.Security.Permissions.Access)).Succeeded)
+            if (!(await AuthorizeAsync(criteria, ModuleConstants.Security.Permissions.Read)).Succeeded)
             {
                 return Unauthorized();
             }
