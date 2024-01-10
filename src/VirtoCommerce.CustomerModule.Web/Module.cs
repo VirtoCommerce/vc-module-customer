@@ -22,6 +22,7 @@ using VirtoCommerce.CustomerModule.Data.Repositories;
 using VirtoCommerce.CustomerModule.Data.Search;
 using VirtoCommerce.CustomerModule.Data.Search.Indexing;
 using VirtoCommerce.CustomerModule.Data.Services;
+using VirtoCommerce.CustomerModule.Data.Services.Security;
 using VirtoCommerce.CustomerModule.Data.SqlServer;
 using VirtoCommerce.CustomerModule.Data.Validation;
 using VirtoCommerce.CustomerModule.Web.Authorization;
@@ -36,6 +37,7 @@ using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Security.Events;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Extensions;
+using VirtoCommerce.Platform.Security.Services;
 using VirtoCommerce.SearchModule.Core.Model;
 using VirtoCommerce.SearchModule.Core.Services;
 using VirtoCommerce.StoreModule.Core.Model;
@@ -103,6 +105,8 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<IAuthorizationHandler, CustomerAuthorizationHandler>();
 
             serviceCollection.AddTransient<AbstractValidator<Member>, MemberValidator>();
+
+            serviceCollection.AddTransient<IUserSignInValidator, CustomerLockedOutValidator>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)

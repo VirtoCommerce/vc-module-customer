@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <noWarn>1591</noWarn>
@@ -12,12 +12,12 @@
     <PackageReference Include="FluentValidation" Version="10.3.4" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
     <PackageReference Include="VirtoCommerce.CoreModule.Core" Version="3.400.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.413.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Data" Version="3.413.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Hangfire" Version="3.413.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Security" Version="3.413.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.453.0-alpha.12825-vcst-114" />
+    <PackageReference Include="VirtoCommerce.Platform.Data" Version="3.453.0-alpha.12825-vcst-114" />
+    <PackageReference Include="VirtoCommerce.Platform.Hangfire" Version="3.453.0-alpha.12825-vcst-114" />
+    <PackageReference Include="VirtoCommerce.Platform.Security" Version="3.453.0-alpha.12825-vcst-114" />
     <PackageReference Include="VirtoCommerce.SearchModule.Core" Version="3.402.0" />
-    <PackageReference Include="VirtoCommerce.StoreModule.Core" Version="3.400.0" />
+    <PackageReference Include="VirtoCommerce.StoreModule.Core" Version="3.403.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.CustomerModule.Core\VirtoCommerce.CustomerModule.Core.csproj" />
