@@ -52,6 +52,27 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
                 .HasForeignKey(m => m.MemberId).OnDelete(DeleteBehavior.Cascade).IsRequired();
             #endregion
 
+            #region Favorite Address
+            modelBuilder.Entity<FavoriteAddressEntity>().ToTable("FavoriteAddress").HasKey(x => x.Id);
+            modelBuilder.Entity<FavoriteAddressEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<FavoriteAddressEntity>()
+                .HasIndex(x => x.UserId)
+                .IsUnique(false)
+                .HasDatabaseName("IX_FavoriteAddress_UserId");
+
+            modelBuilder.Entity<FavoriteAddressEntity>()
+                .HasIndex(x => new { x.UserId, x.AddressId })
+                .IsUnique()
+                .HasDatabaseName("IX_FavoriteAddress_UserId_AddressId");
+
+            modelBuilder.Entity<FavoriteAddressEntity>()
+                .HasOne(x => x.Address)
+                .WithMany()
+                .HasForeignKey(x => x.AddressId).OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+            #endregion
+
             #region Email
             modelBuilder.Entity<EmailEntity>().HasKey(x => x.Id);
             modelBuilder.Entity<EmailEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
