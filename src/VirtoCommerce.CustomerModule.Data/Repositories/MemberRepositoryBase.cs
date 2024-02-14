@@ -20,6 +20,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
 
         public IQueryable<AddressEntity> Addresses => DbContext.Set<AddressEntity>();
+        public IQueryable<FavoriteAddressEntity> FavoriteAddresses => DbContext.Set<FavoriteAddressEntity>();
         public IQueryable<EmailEntity> Emails => DbContext.Set<EmailEntity>();
         public IQueryable<MemberGroupEntity> Groups => DbContext.Set<MemberGroupEntity>();
         public IQueryable<NoteEntity> Notes => DbContext.Set<NoteEntity>();

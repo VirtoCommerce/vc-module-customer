@@ -17,7 +17,7 @@ namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -173,6 +173,36 @@ namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
                     b.ToTable("Email", (string)null);
                 });
 
+            modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.FavoriteAddressEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("AddressId")
+                        .IsRequired()
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_FavoriteAddress_UserId");
+
+                    b.HasIndex("UserId", "AddressId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_FavoriteAddress_UserId_AddressId");
+
+                    b.ToTable("FavoriteAddress", (string)null);
+                });
+
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.MemberDynamicPropertyObjectValueEntity", b =>
                 {
                     b.Property<string>("Id")
@@ -194,7 +224,7 @@ namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<decimal?>("DecimalValue")
-                        .HasColumnType("numeric(18,5)");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<string>("DictionaryItemId")
                         .HasMaxLength(128)
@@ -309,6 +339,8 @@ namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
                     b.ToTable("Member", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("MemberEntity");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.MemberGroupEntity", b =>
@@ -726,6 +758,17 @@ namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
                         .IsRequired();
 
                     b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.FavoriteAddressEntity", b =>
+                {
+                    b.HasOne("VirtoCommerce.CustomerModule.Data.Model.AddressEntity", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
                 });
 
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.MemberDynamicPropertyObjectValueEntity", b =>

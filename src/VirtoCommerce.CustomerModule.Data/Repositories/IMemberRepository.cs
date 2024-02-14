@@ -9,6 +9,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
     {
         IQueryable<MemberEntity> Members { get; }
         IQueryable<AddressEntity> Addresses { get; }
+        IQueryable<FavoriteAddressEntity> FavoriteAddresses { get; }
         IQueryable<EmailEntity> Emails { get; }
         IQueryable<NoteEntity> Notes { get; }
         IQueryable<PhoneEntity> Phones { get; }
