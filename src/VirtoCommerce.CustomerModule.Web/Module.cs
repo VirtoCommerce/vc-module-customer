@@ -82,6 +82,7 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<IMemberResolver, MemberResolver>();
             serviceCollection.AddSingleton<CustomerExportImport>();
             serviceCollection.AddTransient<MemberSearchRequestBuilder>();
+            serviceCollection.AddSingleton<IFavoriteAddressService, FavoriteAddressService>();
 
             serviceCollection.AddSingleton<MemberDocumentChangesProvider>();
             serviceCollection.AddSingleton<MemberDocumentBuilder>();
