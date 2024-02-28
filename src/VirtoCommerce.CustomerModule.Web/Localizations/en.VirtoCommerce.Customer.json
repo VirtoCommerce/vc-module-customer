@@ -152,7 +152,7 @@
           "filter-organization": "Companies"
         },
         "placeholders": {
-          "select-filter": "Please select a filter"
+          "select-filter": "Select filter"
         }
       },
       "member-phones-list": {
