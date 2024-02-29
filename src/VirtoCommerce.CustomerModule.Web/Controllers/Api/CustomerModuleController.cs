@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.CustomerModule.Core;
@@ -11,6 +12,7 @@ using VirtoCommerce.CustomerModule.Core.Model.Search;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Web.Authorization;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Security;
 using Address = VirtoCommerce.CustomerModule.Core.Model.Address;
 
 namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
@@ -23,14 +25,20 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         private readonly IAuthorizationService _authorizationService;
         private readonly IMemberService _memberService;
         private readonly IMemberSearchService _memberSearchService;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+
+
+        private UserManager<ApplicationUser> UserManager => _signInManager.UserManager;
 
         public CustomerModuleController(IAuthorizationService authorizationService,
             IMemberService memberService,
-            IMemberSearchService memberSearchService)
+            IMemberSearchService memberSearchService,
+            SignInManager<ApplicationUser> signInManager)
         {
             _authorizationService = authorizationService;
             _memberService = memberService;
             _memberSearchService = memberSearchService;
+            _signInManager = signInManager;
         }
 
         /// <summary>
@@ -85,6 +93,31 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         {
             //pass member type name for better perfomance
             var retVal = await _memberService.GetByIdAsync(id, responseGroup, memberType);
+            if (!(await AuthorizeAsync(retVal, ModuleConstants.Security.Permissions.Read)).Succeeded)
+            {
+                return Forbid();
+            }
+            if (retVal != null)
+            {
+                // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
+                return Ok((dynamic)retVal);
+            }
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("members/user/{userId}")]
+        public async Task<ActionResult<Member>> GetMemberByUserId(string userId, [FromQuery] string responseGroup = null, [FromQuery] string memberType = null)
+        {
+            var user = await UserManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            //pass member type name for better perfomance
+            var retVal = await _memberService.GetByIdAsync(user.MemberId, responseGroup, memberType);
             if (!(await AuthorizeAsync(retVal, ModuleConstants.Security.Permissions.Read)).Succeeded)
             {
                 return Forbid();
