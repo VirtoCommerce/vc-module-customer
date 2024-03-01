@@ -4,7 +4,7 @@ angular.module('virtoCommerce.customerModule')
         search: { method: 'POST', url: 'api/members/search' },
         update: { method: 'PUT' },
         delete: { method: 'POST', url: 'api/members/delete' },
-        getByUserId: { method: 'GET', url: 'api/members/user/:userId' }
+        getByUserId: { method: 'GET', url: 'api/members/accounts/:userId' }
     });
 }])
 .factory('virtoCommerce.customerModule.organizations', ['$resource', function ($resource) {

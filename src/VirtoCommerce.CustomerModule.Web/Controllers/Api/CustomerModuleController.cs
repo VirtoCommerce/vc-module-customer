@@ -106,7 +106,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         [HttpGet]
-        [Route("members/user/{userId}")]
+        [Route("members/accounts/{userId}")]
         public async Task<ActionResult<Member>> GetMemberByUserId(string userId, [FromQuery] string responseGroup = null, [FromQuery] string memberType = null)
         {
             var user = await UserManager.FindByIdAsync(userId);
