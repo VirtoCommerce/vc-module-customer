@@ -32,6 +32,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(64)]
         public string CountryCode { get; set; }
 
+        [Obsolete("Not being called. Use either `RegionId` or `RegionName` property.", DiagnosticId = "VC0008", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions/")]
         [StringLength(128)]
         public string StateProvince { get; set; }
 
@@ -85,7 +86,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         public override string ToString()
         {
-            return $"{FirstName} {LastName}, {Line1} {Line2}, {City}, {StateProvince} {PostalCode} {CountryName}";
+            return $"{FirstName} {LastName}, {Line1} {Line2}, {City}, {RegionName} {PostalCode} {CountryName}";
         }
 
         #endregion
@@ -152,7 +153,6 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             target.PostalCode = PostalCode;
             target.RegionId = RegionId;
             target.RegionName = RegionName;
-            target.StateProvince = StateProvince;
             target.Type = Type;
             target.City = City;
             target.Name = Name;
