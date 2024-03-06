@@ -69,9 +69,9 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
 
                 // create required WIDGETS
                 var accountsWidget = {
-                    isVisible: function (blade) { return !blade.isNew; },
                     controller: 'virtoCommerce.customerModule.customerAccountsWidgetController',
-                    template: 'Modules/$(VirtoCommerce.Customer)/Scripts/widgets/customerAccountsWidget.tpl.html'
+                    template: 'Modules/$(VirtoCommerce.Customer)/Scripts/widgets/customerAccountsWidget.tpl.html',
+                    isVisible: function (blade) { return !blade.isNew && authService.checkPermission('platform:security:read'); }
                 };
                 var addressesWidget = {
                     controller: 'virtoCommerce.customerModule.memberAddressesWidgetController',
@@ -102,7 +102,11 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                 };
                 var iconWidget = {
                     controller: 'virtoCommerce.customerModule.memberIconWidgetController',
-                    template: 'Modules/$(VirtoCommerce.Customer)/Scripts/widgets/memberIconWidget.tpl.html'
+                    template: 'Modules/$(VirtoCommerce.Customer)/Scripts/widgets/memberIconWidget.tpl.html',
+                    isVisible: function (blade) {
+                        return authService.checkPermission('customer:create') ||
+                            authService.checkPermission('customer:update');
+                    }
                 }
                 var indexWidget = {
                     documentType: 'Member',
