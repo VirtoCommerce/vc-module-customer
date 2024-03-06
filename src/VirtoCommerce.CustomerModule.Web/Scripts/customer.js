@@ -102,7 +102,11 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                 };
                 var iconWidget = {
                     controller: 'virtoCommerce.customerModule.memberIconWidgetController',
-                    template: 'Modules/$(VirtoCommerce.Customer)/Scripts/widgets/memberIconWidget.tpl.html'
+                    template: 'Modules/$(VirtoCommerce.Customer)/Scripts/widgets/memberIconWidget.tpl.html',
+                    isVisible: function (blade) {
+                        return authService.checkPermission('customer:create') ||
+                            authService.checkPermission('customer:update');
+                    }
                 }
                 var indexWidget = {
                     documentType: 'Member',
