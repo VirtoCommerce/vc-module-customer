@@ -139,7 +139,12 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
         public virtual async Task<Member> GetByIdAsync(string memberId, string responseGroup = null, string memberType = null)
         {
-            var members = await GetByIdsAsync(new[] { memberId }, responseGroup, !string.IsNullOrEmpty(memberType) ? new[] { memberType } : null);
+            if (string.IsNullOrEmpty(memberId))
+            {
+                return null;
+            }
+
+            var members = await GetByIdsAsync([memberId], responseGroup, !string.IsNullOrEmpty(memberType) ? [memberType] : null);
             return members.FirstOrDefault();
         }
 
