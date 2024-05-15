@@ -26,9 +26,9 @@ using VirtoCommerce.CustomerModule.Data.SqlServer;
 using VirtoCommerce.CustomerModule.Data.Validation;
 using VirtoCommerce.CustomerModule.Web.Authorization;
 using VirtoCommerce.NotificationsModule.Core.Services;
-using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
+using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.JsonConverters;
 using VirtoCommerce.Platform.Core.Modularity;
@@ -143,20 +143,19 @@ namespace VirtoCommerce.CustomerModule.Web
 
             PolymorphJsonConverter.RegisterTypeForDiscriminator(typeof(Member), nameof(Member.MemberType));
 
-            var inProcessBus = appBuilder.ApplicationServices.GetService<IHandlerRegistrar>();
-            inProcessBus.RegisterHandler<MemberChangedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<LogChangesEventHandler>().Handle(message));
-            inProcessBus.RegisterHandler<UserChangedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<LogChangesEventHandler>().Handle(message));
-            inProcessBus.RegisterHandler<UserRoleAddedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<LogChangesEventHandler>().Handle(message));
-            inProcessBus.RegisterHandler<UserRoleRemovedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<LogChangesEventHandler>().Handle(message));
-            inProcessBus.RegisterHandler<UserChangedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<SecurtityAccountChangesEventHandler>().Handle(message));
+            appBuilder.RegisterEventHandler<MemberChangedEvent, LogChangesEventHandler>();
+            appBuilder.RegisterEventHandler<UserChangedEvent, LogChangesEventHandler>();
+            appBuilder.RegisterEventHandler<UserRoleAddedEvent, LogChangesEventHandler>();
+            appBuilder.RegisterEventHandler<UserRoleRemovedEvent, LogChangesEventHandler>();
+            appBuilder.RegisterEventHandler<UserChangedEvent, SecurtityAccountChangesEventHandler>();
 
             var settingsManager = appBuilder.ApplicationServices.GetService<ISettingsManager>();
             if (settingsManager.GetValue<bool>(ModuleConstants.Settings.General.EventBasedIndexation))
             {
-                inProcessBus.RegisterHandler<MemberChangedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<IndexMemberChangedEventHandler>().Handle(message));
-                inProcessBus.RegisterHandler<UserChangedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<IndexMemberChangedEventHandler>().Handle(message));
-                inProcessBus.RegisterHandler<UserRoleAddedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<IndexMemberChangedEventHandler>().Handle(message));
-                inProcessBus.RegisterHandler<UserRoleRemovedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<IndexMemberChangedEventHandler>().Handle(message));
+                appBuilder.RegisterEventHandler<MemberChangedEvent, IndexMemberChangedEventHandler>();
+                appBuilder.RegisterEventHandler<UserChangedEvent, IndexMemberChangedEventHandler>();
+                appBuilder.RegisterEventHandler<UserRoleAddedEvent, IndexMemberChangedEventHandler>();
+                appBuilder.RegisterEventHandler<UserRoleRemovedEvent, IndexMemberChangedEventHandler>();
             }
 
             var searchRequestBuilderRegistrar = appBuilder.ApplicationServices.GetService<ISearchRequestBuilderRegistrar>();
