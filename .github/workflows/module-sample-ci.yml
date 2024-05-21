@@ -171,7 +171,8 @@ jobs:
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
   deploy:
-    if: ${{ github.ref == 'refs/heads/dev' && github.event_name != 'workflow_dispatch' }}
+    if: false
+    #if: ${{ github.ref == 'refs/heads/dev' && github.event_name != 'workflow_dispatch' }}
     needs: ci
     runs-on: ubuntu-latest
     strategy:
