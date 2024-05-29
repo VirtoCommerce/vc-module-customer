@@ -313,12 +313,15 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                             templateUrl: "timeZone.html"
                         },
                         {
-                            name: 'defaultLanguage',
                             title: "customer.blades.contact-detail.labels.defaultLanguage",
-                            placeholder: "customer.blades.contact-detail.placeholders.defaultLanguage",
-                            valueType: "ShortText"
+                            templateUrl: "language.html"
                         },
                         {
+                            title: "customer.blades.contact-detail.labels.currency",
+                            templateUrl: "currencyCode.html"
+                        },
+                        {
+                            colSpan: 2,
                             name: 'taxPayerId',
                             title: "customer.blades.contact-detail.labels.taxpayerId",
                             placeholder: "customer.blades.contact-detail.placeholders.preferred-delivery",
@@ -342,8 +345,7 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                             placeholder: "customer.blades.contact-detail.placeholders.about",
                             colSpan: 2,
                             valueType: "LongText"
-                        }
-                        ]
+                        }]
                     }
                 });
                 memberTypesResolverService.registerType({

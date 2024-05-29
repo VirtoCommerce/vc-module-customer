@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VirtoCommerce.CustomerModule.Data.Repositories;
 
@@ -16,8 +17,10 @@ namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.AddressEntity", b =>
                 {
@@ -555,6 +558,10 @@ namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
                         .ValueGeneratedOnUpdateSometimes()
                         .HasColumnType("datetime(6)")
                         .HasColumnName("BirthDate");
+
+                    b.Property<string>("CurrencyCode")
+                        .HasMaxLength(32)
+                        .HasColumnType("varchar(32)");
 
                     b.Property<string>("DefaultBillingAddressId")
                         .HasMaxLength(128)

@@ -17,7 +17,7 @@ namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -558,6 +558,10 @@ namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
                         .ValueGeneratedOnUpdateSometimes()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("BirthDate");
+
+                    b.Property<string>("CurrencyCode")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<string>("DefaultBillingAddressId")
                         .HasMaxLength(128)
