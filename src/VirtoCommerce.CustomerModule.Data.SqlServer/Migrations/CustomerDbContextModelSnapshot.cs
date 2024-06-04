@@ -106,8 +106,8 @@ namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
                         .HasColumnType("nvarchar(2048)");
 
                     b.Property<string>("Organization")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
 
                     b.Property<string>("OuterId")
                         .HasMaxLength(128)
