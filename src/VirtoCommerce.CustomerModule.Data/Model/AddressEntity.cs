@@ -64,7 +64,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(256)]
         public string Email { get; set; }
 
-        [StringLength(128)]
+        [StringLength(512)]
         public string Organization { get; set; }
 
         [StringLength(128)]
