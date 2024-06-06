@@ -1,6 +1,6 @@
 angular.module('virtoCommerce.customerModule').controller('virtoCommerce.customerModule.customerDetailController',
-    ['$scope', 'platformWebApp.common.timeZones', 'platformWebApp.settings', 'platformWebApp.bladeNavigationService',
-        function ($scope, timeZones, settings, bladeNavigationService) {
+    ['$scope', 'platformWebApp.common.timeZones', 'platformWebApp.settings', 'platformWebApp.bladeNavigationService', 'virtoCommerce.coreModule.currency.currencyUtils',
+        function ($scope, timeZones, settings, bladeNavigationService, currencyUtils) {
             var blade = $scope.blade;
 
             if (blade.isNew) {
@@ -31,6 +31,8 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
 
             blade.timeZones = timeZones.query();
             blade.groups = settings.getValues({ id: 'Customer.MemberGroups' });
+            blade.languages = settings.getValues({ id: 'VirtoCommerce.Core.General.Languages' });
+            blade.currencies = currencyUtils.getCurrencies();
 
             blade.openGroupsDictionarySettingManagement = function () {
                 var newBlade = {

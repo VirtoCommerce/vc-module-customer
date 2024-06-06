@@ -559,6 +559,10 @@ namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("BirthDate");
 
+                    b.Property<string>("CurrencyCode")
+                        .HasMaxLength(32)
+                        .HasColumnType("varchar(32)");
+
                     b.Property<string>("DefaultBillingAddressId")
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
