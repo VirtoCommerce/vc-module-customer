@@ -21,6 +21,7 @@ namespace VirtoCommerce.CustomerModule.Core.Model
 
         public DateTime? BirthDate { get; set; }
         public string DefaultLanguage { get; set; }
+        public string CurrencyCode { get; set; }
         public string TimeZone { get; set; }
         public IList<string> Organizations { get; set; }
         public IList<string> AssociatedOrganizations { get; set; }

@@ -35,6 +35,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(32)]
         public string DefaultLanguage { get; set; }
 
+        [StringLength(32)]
+        public string CurrencyCode { get; set; }
+
         public DateTime? BirthDate { get; set; }
 
         [StringLength(64)]
@@ -75,6 +78,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 contact.LastName = LastName;
                 contact.BirthDate = BirthDate;
                 contact.DefaultLanguage = DefaultLanguage;
+                contact.CurrencyCode = CurrencyCode;
                 contact.FullName = FullName;
                 contact.Salutation = Salutation;
                 contact.TimeZone = TimeZone;
@@ -112,6 +116,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 LastName = contact.LastName;
                 BirthDate = contact.BirthDate;
                 DefaultLanguage = contact.DefaultLanguage;
+                CurrencyCode = contact.CurrencyCode;
                 FullName = member.Name = contact.FullName;
                 Salutation = contact.Salutation;
                 TimeZone = contact.TimeZone;
@@ -174,6 +179,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 contact.LastName = LastName;
                 contact.BirthDate = BirthDate;
                 contact.DefaultLanguage = DefaultLanguage;
+                contact.CurrencyCode = CurrencyCode;
                 contact.FullName = FullName;
                 contact.Salutation = Salutation;
                 contact.TimeZone = TimeZone;

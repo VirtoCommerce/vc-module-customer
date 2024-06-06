@@ -97,3 +97,25 @@
         </ui-select>
     </div>
 </script>
+
+<script type="text/ng-template" id="language.html">
+    <div class="form-input">
+      <ui-select ng-model="blade.currentEntity.defaultLanguage">
+        <ui-select-match allow-clear placeholder="{{ 'customer.blades.contact-detail.placeholders.defaultLanguage' | translate }}">{{$select.selected}}</ui-select-match>
+        <ui-select-choices repeat="x in blade.languages | filter: $select.search">
+          <span ng-bind-html="x | highlight: $select.search"></span>
+        </ui-select-choices>
+      </ui-select>
+    </div>
+</script>
+
+<script type="text/ng-template" id="currencyCode.html">
+  <div class="form-input">
+    <ui-select ng-model="blade.currentEntity.currencyCode">
+      <ui-select-match allow-clear placeholder="{{'customer.blades.contact-detail.placeholders.currency' | translate}}">{{$select.selected.code}}</ui-select-match>
+      <ui-select-choices repeat="x.code as x in blade.currencies | filter: $select.search">
+        <span ng-bind-html="x.code | highlight: $select.search"></span>
+      </ui-select-choices>
+    </ui-select>
+  </div>
+</script>

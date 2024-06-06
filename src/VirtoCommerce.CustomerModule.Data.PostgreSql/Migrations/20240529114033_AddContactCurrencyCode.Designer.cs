@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VirtoCommerce.CustomerModule.Data.Repositories;
@@ -11,9 +12,11 @@ using VirtoCommerce.CustomerModule.Data.Repositories;
 namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
 {
     [DbContext(typeof(CustomerDbContext))]
-    partial class CustomerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240529114033_AddContactCurrencyCode")]
+    partial class AddContactCurrencyCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -106,8 +109,8 @@ namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
                         .HasColumnType("character varying(2048)");
 
                     b.Property<string>("Organization")
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("OuterId")
                         .HasMaxLength(128)
