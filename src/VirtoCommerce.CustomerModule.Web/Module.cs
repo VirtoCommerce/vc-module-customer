@@ -84,7 +84,7 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<MemberSearchRequestBuilder>();
             serviceCollection.AddSingleton<IFavoriteAddressService, FavoriteAddressService>();
 
-            serviceCollection.AddSingleton<MemberDocumentChangesProvider>();
+            serviceCollection.AddSingleton<IIndexDocumentChangesProvider, MemberDocumentChangesProvider>();
             serviceCollection.AddSingleton<MemberDocumentBuilder>();
 
             serviceCollection.AddSingleton(provider => new IndexDocumentConfiguration
@@ -92,7 +92,7 @@ namespace VirtoCommerce.CustomerModule.Web
                 DocumentType = KnownDocumentTypes.Member,
                 DocumentSource = new IndexDocumentSource
                 {
-                    ChangesProvider = provider.GetService<MemberDocumentChangesProvider>(),
+                    ChangesProvider = provider.GetService<IIndexDocumentChangesProvider>(),
                     DocumentBuilder = provider.GetService<MemberDocumentBuilder>(),
                 },
             });
