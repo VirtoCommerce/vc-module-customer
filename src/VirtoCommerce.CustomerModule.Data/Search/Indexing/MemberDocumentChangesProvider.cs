@@ -38,7 +38,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             }
             else
             {
-                var criteria = GetChangeLogSearchCriteria(ChangeLogObjectType, startDate, endDate);
+                var criteria = GetChangeLogSearchCriteria(startDate, endDate, 0, 0);
                 // Get changes count from operation log
                 result = (await _changeLogSearchService.SearchAsync(criteria)).TotalCount;
             }
@@ -74,7 +74,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             }
             else
             {
-                var criteria = GetChangeLogSearchCriteria(ChangeLogObjectType, startDate, endDate, skip, take);
+                var criteria = GetChangeLogSearchCriteria(startDate, endDate, skip, take);
                 // Get changes from operation log
                 var operations = (await _changeLogSearchService.SearchAsync(criteria)).Results;
 
@@ -101,16 +101,15 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             };
         }
 
-        protected virtual ChangeLogSearchCriteria GetChangeLogSearchCriteria(string changeLogObjectType, DateTime? startDate, DateTime? endDate, long skip = 0, long take = 0)
+        protected virtual ChangeLogSearchCriteria GetChangeLogSearchCriteria(DateTime? startDate, DateTime? endDate, long skip, long take)
         {
-            var criteria = new ChangeLogSearchCriteria
-            {
-                ObjectType = changeLogObjectType,
-                StartDate = startDate,
-                EndDate = endDate,
-                Skip = (int)skip,
-                Take = (int)take
-            };
+            var criteria = AbstractTypeFactory<ChangeLogSearchCriteria>.TryCreateInstance();
+
+            criteria.ObjectType = ChangeLogObjectType;
+            criteria.StartDate = startDate;
+            criteria.EndDate = endDate;
+            criteria.Skip = (int)skip;
+            criteria.Take = (int)take;
 
             return criteria;
         }
