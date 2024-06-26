@@ -38,13 +38,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             }
             else
             {
-                var criteria = new ChangeLogSearchCriteria
-                {
-                    ObjectType = ChangeLogObjectType,
-                    StartDate = startDate,
-                    EndDate = endDate,
-                    Take = 0
-                };
+                var criteria = GetChangeLogSearchCriteria(startDate, endDate, 0, 0);
                 // Get changes count from operation log
                 result = (await _changeLogSearchService.SearchAsync(criteria)).TotalCount;
             }
@@ -80,15 +74,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             }
             else
             {
-                var criteria = new ChangeLogSearchCriteria
-                {
-                    ObjectType = ChangeLogObjectType,
-                    StartDate = startDate,
-                    EndDate = endDate,
-                    Skip = (int)skip,
-                    Take = (int)take
-                };
-
+                var criteria = GetChangeLogSearchCriteria(startDate, endDate, skip, take);
                 // Get changes from operation log
                 var operations = (await _changeLogSearchService.SearchAsync(criteria)).Results;
 
@@ -113,6 +99,19 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                 EntryState.Deleted => IndexDocumentChangeType.Deleted,
                 _ => IndexDocumentChangeType.Modified,
             };
+        }
+
+        protected virtual ChangeLogSearchCriteria GetChangeLogSearchCriteria(DateTime? startDate, DateTime? endDate, long skip, long take)
+        {
+            var criteria = AbstractTypeFactory<ChangeLogSearchCriteria>.TryCreateInstance();
+
+            criteria.ObjectType = ChangeLogObjectType;
+            criteria.StartDate = startDate;
+            criteria.EndDate = endDate;
+            criteria.Skip = (int)skip;
+            criteria.Take = (int)take;
+
+            return criteria;
         }
     }
 }
