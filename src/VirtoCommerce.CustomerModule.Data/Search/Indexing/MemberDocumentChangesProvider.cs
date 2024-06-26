@@ -38,13 +38,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             }
             else
             {
-                var criteria = new ChangeLogSearchCriteria
-                {
-                    ObjectType = ChangeLogObjectType,
-                    StartDate = startDate,
-                    EndDate = endDate,
-                    Take = 0
-                };
+                var criteria = GetChangeLogSearchCriteria(ChangeLogObjectType, startDate, endDate);
                 // Get changes count from operation log
                 result = (await _changeLogSearchService.SearchAsync(criteria)).TotalCount;
             }
@@ -80,15 +74,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             }
             else
             {
-                var criteria = new ChangeLogSearchCriteria
-                {
-                    ObjectType = ChangeLogObjectType,
-                    StartDate = startDate,
-                    EndDate = endDate,
-                    Skip = (int)skip,
-                    Take = (int)take
-                };
-
+                var criteria = GetChangeLogSearchCriteria(ChangeLogObjectType, startDate, endDate, skip, take);
                 // Get changes from operation log
                 var operations = (await _changeLogSearchService.SearchAsync(criteria)).Results;
 
@@ -113,6 +99,20 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                 EntryState.Deleted => IndexDocumentChangeType.Deleted,
                 _ => IndexDocumentChangeType.Modified,
             };
+        }
+
+        protected virtual ChangeLogSearchCriteria GetChangeLogSearchCriteria(string changeLogObjectType, DateTime? startDate, DateTime? endDate, long skip = 0, long take = 0)
+        {
+            var criteria = new ChangeLogSearchCriteria
+            {
+                ObjectType = changeLogObjectType,
+                StartDate = startDate,
+                EndDate = endDate,
+                Skip = (int)skip,
+                Take = (int)take
+            };
+
+            return criteria;
         }
     }
 }
