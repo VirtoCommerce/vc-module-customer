@@ -20,6 +20,11 @@ namespace VirtoCommerce.CustomerModule.Core
 
                 public static string[] AllPermissions { get; } = { Read, Create, Access, Update, Delete };
             }
+
+            public static class Claims
+            {
+                public const string OrganizationId = "organization_id";
+            }
         }
 
         public static class Settings
