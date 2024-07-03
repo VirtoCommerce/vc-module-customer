@@ -3,7 +3,7 @@
   <id>VirtoCommerce.Customer</id>
   <version>3.811.0</version>
   <version-tag />
-  <platformVersion>3.825.0</platformVersion>
+  <platformVersion>3.841.0</platformVersion>
   <dependencies>
     <dependency id="VirtoCommerce.Core" version="3.800.0" />
     <dependency id="VirtoCommerce.Notifications" version="3.800.0" />
@@ -14,7 +14,7 @@
   <description>Managing customers contacts and organizations</description>
   <authors>
     <author>Artem Dudarev</author>
-    <author>Egidijus MaÅ¾eika</author>
+    <author>Egidijus Mažeika</author>
   </authors>
   <owners>
     <owner>Virto Commerce</owner>

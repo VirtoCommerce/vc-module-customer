@@ -17,6 +17,7 @@ using VirtoCommerce.CustomerModule.Data.ExportImport;
 using VirtoCommerce.CustomerModule.Data.Handlers;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.MySql;
+using VirtoCommerce.CustomerModule.Data.OpenIddict;
 using VirtoCommerce.CustomerModule.Data.PostgreSql;
 using VirtoCommerce.CustomerModule.Data.Repositories;
 using VirtoCommerce.CustomerModule.Data.Search;
@@ -36,6 +37,7 @@ using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Security.Events;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Extensions;
+using VirtoCommerce.Platform.Security.OpenIddict;
 using VirtoCommerce.SearchModule.Core.Model;
 using VirtoCommerce.SearchModule.Core.Services;
 using VirtoCommerce.StoreModule.Core.Model;
@@ -104,6 +106,9 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<IAuthorizationHandler, CustomerAuthorizationHandler>();
 
             serviceCollection.AddTransient<AbstractValidator<Member>, MemberValidator>();
+
+            serviceCollection.AddSingleton<ITokenRequestValidator, OrganizationIdRequestValidator>();
+            serviceCollection.AddSingleton<ITokenClaimProvider, OrganizationIdClaimProvider>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
