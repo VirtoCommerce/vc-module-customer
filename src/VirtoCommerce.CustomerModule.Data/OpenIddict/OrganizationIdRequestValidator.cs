@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using OpenIddict.Abstractions;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.Platform.Security.OpenIddict;
@@ -25,6 +27,13 @@ public class OrganizationIdRequestValidator(IMemberService memberService) : ITok
         var availableOrganizationIds = await GetAvailableOrganizationIds(context);
         if (availableOrganizationIds.Contains(organizationId))
         {
+            return _valid;
+        }
+
+        // Replace invalid organization ID with default organization ID when signing in
+        if (context.Request.GrantType == OpenIddictConstants.GrantTypes.Password)
+        {
+            context.Request.SetParameter(Parameters.OrganizationId, availableOrganizationIds.FirstOrDefault());
             return _valid;
         }
 
