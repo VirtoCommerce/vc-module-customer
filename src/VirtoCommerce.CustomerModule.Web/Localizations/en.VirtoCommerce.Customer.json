@@ -151,7 +151,9 @@
           "unnamed-filter": "Unnamed filter",
           "filter-vendor": "Vendors",
           "filter-contact": "Contacts",
-          "filter-organization": "Companies"
+          "filter-organization": "Companies",
+          "copy-id": "Copy ID",
+          "copy-name": "Copy name"
         },
         "placeholders": {
           "select-filter": "Select filter"
