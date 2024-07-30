@@ -1,6 +1,6 @@
 angular.module('virtoCommerce.customerModule')
-    .controller('virtoCommerce.customerModule.memberListController', ['$scope', 'virtoCommerce.customerModule.members', 'platformWebApp.dialogService', 'platformWebApp.bladeUtils', 'platformWebApp.uiGridHelper', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.ui-grid.extension',
-        function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesResolverService, gridOptionExtension) {
+    .controller('virtoCommerce.customerModule.memberListController', ['$scope', '$location', 'virtoCommerce.customerModule.members', 'platformWebApp.dialogService', 'platformWebApp.bladeUtils', 'platformWebApp.uiGridHelper', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.ui-grid.extension',
+        function ($scope, $location, members, dialogService, bladeUtils, uiGridHelper, memberTypesResolverService, gridOptionExtension) {
             $scope.uiGridConstants = uiGridHelper.uiGridConstants;
 
             var blade = $scope.blade;
@@ -49,12 +49,14 @@ angular.module('virtoCommerce.customerModule')
 
                     //prevent duplicate items
                     if (_.all(breadcrumbs, function (x) { return x.id !== blade.currentEntity.id; })) {
-                        var breadCrumb = generateBreadcrumb(blade.currentEntity.id, blade.currentEntity.name);
-                        breadcrumbs.push(breadCrumb);
+                        if (blade.currentEntity.id) {
+                            var breadCrumb = generateBreadcrumb(blade.currentEntity.id, blade.currentEntity.name);
+                            breadcrumbs.push(breadCrumb);
+                        }
                     }
                     blade.breadcrumbs = breadcrumbs;
                 } else {
-                    blade.breadcrumbs = [generateBreadcrumb(null, 'customer.blades.member-list.breadcrumb-all')];
+                    blade.breadcrumbs = [];
                 }
             }
 
@@ -63,10 +65,12 @@ angular.module('virtoCommerce.customerModule')
                     id: id,
                     name: name,
                     blade: blade,
-                    navigate: function (breadcrumb) {
-                        breadcrumb.blade.disableOpenAnimation = true;
-                        bladeNavigationService.showBlade(breadcrumb.blade);
-                        breadcrumb.blade.refresh();
+                    navigate: function () {
+                        bladeNavigationService.closeBlade(blade,
+                            function () {
+                                blade.disableOpenAnimation = true;
+                                bladeNavigationService.showBlade(blade, blade.parentBlade);
+                            });
                     }
                 };
             }
@@ -127,6 +131,8 @@ angular.module('virtoCommerce.customerModule')
 
             blade.setSelectedNode = function (listItem) {
                 $scope.selectedNodeId = listItem.id;
+
+                $location.search({ memberId: listItem.id });
             };
 
             $scope.selectNode = function (listItem) {
@@ -135,17 +141,16 @@ angular.module('virtoCommerce.customerModule')
                 var foundTemplate = memberTypesResolverService.resolve(listItem.memberType);
                 if (foundTemplate && foundTemplate.knownChildrenTypes && foundTemplate.knownChildrenTypes.length) {
                     var newBlade = {
-                        id: blade.id,
+                        id: 'members' + (blade.level + 1),
+                        level: blade.level + 1,
                         breadcrumbs: blade.breadcrumbs,
                         subtitle: 'customer.blades.member-list.subtitle',
                         subtitleValues: { name: listItem.name },
                         currentEntity: listItem,
-                        disableOpenAnimation: true,
                         controller: blade.controller,
                         template: blade.template,
-                        isClosingDisabled: true
                     };
-                    bladeNavigationService.showBlade(newBlade, blade.parentBlade);
+                    bladeNavigationService.showBlade(newBlade, blade);
                 } else {
                     blade.showDetailBlade(listItem);
                 }
@@ -232,6 +237,23 @@ angular.module('virtoCommerce.customerModule')
                 };
                 return searchCriteria;
             }
+
+
+            $scope.copy = function (text) {
+                var copyElement = document.createElement("span");
+                copyElement.appendChild(document.createTextNode(text));
+                copyElement.id = 'tempCopyToClipboard';
+                angular.element(document.body.append(copyElement));
+
+                var range = document.createRange();
+                range.selectNode(copyElement);
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+
+                document.execCommand('copy');
+                window.getSelection().removeAllRanges();
+                copyElement.remove();
+            };
 
 
             //No need to call this because page 'pageSettings.currentPage' is watched!!! It would trigger subsequent duplicated req...

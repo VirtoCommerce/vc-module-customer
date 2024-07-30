@@ -13,15 +13,44 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                     url: '/customers',
                     templateUrl: '$(Platform)/Scripts/common/templates/home.tpl.html',
                     controller: [
-                        '$scope', 'platformWebApp.bladeNavigationService', function ($scope, bladeNavigationService) {
-                            var newBlade = {
-                                id: 'memberList',
-                                currentEntity: { id: null },
-                                controller: 'virtoCommerce.customerModule.memberListController',
-                                template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/member-list.tpl.html',
-                                isClosingDisabled: true
-                            };
-                            bladeNavigationService.showBlade(newBlade);
+                        '$scope', '$location', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.members', 'virtoCommerce.customerModule.memberTypesResolverService',
+                        function ($scope, $location, bladeNavigationService, members, memberTypesResolverService) {
+                            var memberId = $location.search().memberId;
+
+                            if (memberId) {
+                                members.get({ id: memberId }, function (listItem) {
+                                    var foundTemplate = memberTypesResolverService.resolve(listItem.memberType);
+                                    if (foundTemplate) {
+                                        var newBlade = angular.copy(foundTemplate.detailBlade);
+                                        newBlade.id = 'members';
+                                        newBlade.level = 0;
+                                        newBlade.isClosingDisabled = true;
+                                        newBlade.currentEntity = listItem;
+                                        newBlade.currentEntityId = listItem.id;
+                                        newBlade.isNew = false;
+                                        bladeNavigationService.showBlade(newBlade);
+                                    } else {
+                                        dialogService.showNotificationDialog({
+                                            id: "error",
+                                            title: "customer.dialogs.unknown-member-type.title",
+                                            message: "customer.dialogs.unknown-member-type.message",
+                                            messageValues: { memberType: listItem.memberType },
+                                        });
+                                    }
+                                });
+                            }
+                            else {
+                                var newBlade = {
+                                    id: 'members',
+                                    level: 0,
+                                    currentEntity: { id: null },
+                                    controller: 'virtoCommerce.customerModule.memberListController',
+                                    template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/member-list.tpl.html',
+                                    isClosingDisabled: true
+                                };
+                                bladeNavigationService.showBlade(newBlade);
+
+                            }
                         }
                     ]
                 });
@@ -59,13 +88,13 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                     icon: 'fas fa-address-card',
                     title: 'customer.main-menu-title',
                     priority: 180,
-                    action: function () { $state.go('workspace.customerModule'); },
+                    action: function () { $state.go('workspace.customerModule', {}, { reload: true }); },
                     permission: 'customer:access'
                 };
                 mainMenuService.addMenuItem(menuItem);
 
                 // register back-button
-                toolbarService.register(breadcrumbHistoryService.getBackButtonInstance(), 'virtoCommerce.customerModule.memberListController');
+                //toolbarService.register(breadcrumbHistoryService.getBackButtonInstance(), 'virtoCommerce.customerModule.memberListController');
 
                 // create required WIDGETS
                 var accountsWidget = {
