@@ -16,6 +16,7 @@
           "defaultLanguage": "Default language",
           "currency": "Currency",
           "organizations": "Member of company(ies)",
+          "default-organization": "Default company",
           "associated-organizations": "Associated company(ies)",
           "taxpayerId": "Taxpayer ID",
           "preferred-communication": "Preferred communication channel",
@@ -58,6 +59,7 @@
           "photo-url": "Photo URL",
           "defaultLanguage": "Default language",
           "organizations": "Company(ies)",
+          "default-organization": "Default company",
           "timezone": "Time zone"
         },
         "placeholders": {

@@ -271,6 +271,11 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                         },
                         {
                             colSpan: 2,
+                            title: "customer.blades.employee-detail.labels.default-organization",
+                            templateUrl: "defaultOrganization.html"
+                        },
+                        {
+                            colSpan: 2,
                             title: "customer.blades.employee-detail.labels.timezone",
                             templateUrl: "timeZone.html"
                         },

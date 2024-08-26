@@ -82,12 +82,10 @@
     </ui-scroll-drop-down>
 </script>
 <script type="text/ng-template" id="defaultOrganization.html">
-
-  
-  <ui-scroll-drop-down ng-if="blade.redrawTrigger"
+  <ui-scroll-drop-down ng-if="blade.currentOrganizationsReloaded"
                        ng-model="blade.currentEntity.defaultOrganizationId"
                        data="blade.fetchSelectedOrganizations()"
-                       placeholder="'customer.blades.contact-detail.placeholders.associated-organizations'">
+                       placeholder="'customer.blades.contact-detail.placeholders.organizations'">
   </ui-scroll-drop-down>
 </script>
 <script type="text/ng-template" id="birthDate.html">

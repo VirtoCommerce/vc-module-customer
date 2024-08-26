@@ -6,7 +6,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
             blade.currentEntityId = blade.currentEntity.id;
 
             blade.currentOrganizations = [];
-            blade.redrawTrigger = true;
+            blade.currentOrganizationsReloaded = true;
 
             blade.refresh = function (parentRefresh) {
                 if (blade.isNew) {
@@ -18,7 +18,6 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                     }, blade.currentEntity);
                 } else {
                     blade.isLoading = true;
-                    blade.redrawTrigger = true
                     members.get({ id: blade.currentEntity.id }, initializeBlade);
 
                     if (parentRefresh) {
@@ -66,24 +65,18 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                 blade.customInitialize();
                 blade.isLoading = false;
 
-                // ------------ Load organizations ------------
-                var criteria = {
-                    objectIds: blade.currentEntity.organizations,
-                    skip: 0,
-                    take: blade.currentEntity.organizations.length
-                };
-                blade.redrawTrigger = true
-                organizationsResource.search(criteria, function (organizationsData) {
-                    blade.currentOrganizations = organizationsData.results;
-                    blade.redrawTrigger = false
-                    //$scope.defaultOrganizationsTriggered = false;
-                    $timeout(triggerdefaultOrganizationsRedraw, 0);
-                })
-            }
+                if (blade.currentEntity.organizations) {
+                    var organizationCriteria = {
+                        objectIds: blade.currentEntity.organizations,
+                        skip: 0,
+                        take: blade.currentEntity.organizations.length
+                    };
 
-            function triggerdefaultOrganizationsRedraw() {
-                blade.redrawTrigger = true
-                $scope.defaultOrganizationsTriggered = true;
+                    organizationsResource.search(organizationCriteria, function (organizationsData) {
+                        blade.currentOrganizations = organizationsData.results;
+                        reloadCurrentOrganizations();
+                    });
+                }
             }
 
             // base function to override as needed
@@ -154,31 +147,37 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                 return organizationsResource.search(criteria);
             }
 
-
             blade.selectOrganization = function (item) {
                 blade.currentOrganizations.push(item);
 
-                blade.redrawTrigger = false;
-                $timeout(triggerdefaultOrganizationsRedraw, 0);
-
+                reloadCurrentOrganizations();
             }
 
             blade.removeOrganization = function (item) {
+                var index = _.findIndex(blade.currentOrganizations, function (x) {
+                    return x.id === item.id;
+                });
 
+                if (index > -1) {
+                    blade.currentOrganizations.splice(index, 1);
+                }
+
+                if (item.id == blade.currentEntity.defaultOrganizationId) {
+                    blade.currentEntity.defaultOrganizationId = null;
+                }
+
+                reloadCurrentOrganizations();
             }
 
             blade.fetchSelectedOrganizations = function () {
                 return blade.currentOrganizations;
+            }
 
-
-                //if (blade.currentEntity && blade.currentEntity.organizations && blade.currentEntity.organizations.length) {
-                //    criteria.objectIds = blade.currentEntity.organizations;
-                //    criteria.skip = 0;
-                //    criteria.take = criteria.objectIds.length;
-                //    return organizationsResource.search(criteria);
-                //}
-
-                //return [];
+            function reloadCurrentOrganizations() {
+                blade.currentOrganizationsReloaded = false;
+                $timeout(function () {
+                    blade.currentOrganizationsReloaded = true;
+                }, 0);
             }
 
             blade.refresh(false);
