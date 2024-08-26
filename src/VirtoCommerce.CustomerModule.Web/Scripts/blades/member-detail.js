@@ -1,9 +1,12 @@
 angular.module('virtoCommerce.customerModule').controller('virtoCommerce.customerModule.memberDetailController',
-    ['$scope', '$q', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.members', 'platformWebApp.dynamicProperties.api', 'virtoCommerce.customerModule.organizations', 'platformWebApp.settings',
-        function ($scope, $q, bladeNavigationService, members, dynamicPropertiesApi, organizationsResource, settings) {
+    ['$scope', '$q', '$timeout', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.members', 'platformWebApp.dynamicProperties.api', 'virtoCommerce.customerModule.organizations', 'platformWebApp.settings',
+        function ($scope, $q, $timeout, bladeNavigationService, members, dynamicPropertiesApi, organizationsResource, settings) {
             var blade = $scope.blade;
             blade.updatePermission = 'customer:update';
             blade.currentEntityId = blade.currentEntity.id;
+
+            blade.currentOrganizations = [];
+            blade.redrawTrigger = true;
 
             blade.refresh = function (parentRefresh) {
                 if (blade.isNew) {
@@ -15,7 +18,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                     }, blade.currentEntity);
                 } else {
                     blade.isLoading = true;
-
+                    blade.redrawTrigger = true
                     members.get({ id: blade.currentEntity.id }, initializeBlade);
 
                     if (parentRefresh) {
@@ -62,6 +65,25 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                 blade.origEntity = data;
                 blade.customInitialize();
                 blade.isLoading = false;
+
+                // ------------ Load organizations ------------
+                var criteria = {
+                    objectIds: blade.currentEntity.organizations,
+                    skip: 0,
+                    take: blade.currentEntity.organizations.length
+                };
+                blade.redrawTrigger = true
+                organizationsResource.search(criteria, function (organizationsData) {
+                    blade.currentOrganizations = organizationsData.results;
+                    blade.redrawTrigger = false
+                    //$scope.defaultOrganizationsTriggered = false;
+                    $timeout(triggerdefaultOrganizationsRedraw, 0);
+                })
+            }
+
+            function triggerdefaultOrganizationsRedraw() {
+                blade.redrawTrigger = true
+                $scope.defaultOrganizationsTriggered = true;
             }
 
             // base function to override as needed
@@ -130,6 +152,33 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
             blade.fetchOrganizations = function (criteria) {
                 criteria.deepSearch = true;
                 return organizationsResource.search(criteria);
+            }
+
+
+            blade.selectOrganization = function (item) {
+                blade.currentOrganizations.push(item);
+
+                blade.redrawTrigger = false;
+                $timeout(triggerdefaultOrganizationsRedraw, 0);
+
+            }
+
+            blade.removeOrganization = function (item) {
+
+            }
+
+            blade.fetchSelectedOrganizations = function () {
+                return blade.currentOrganizations;
+
+
+                //if (blade.currentEntity && blade.currentEntity.organizations && blade.currentEntity.organizations.length) {
+                //    criteria.objectIds = blade.currentEntity.organizations;
+                //    criteria.skip = 0;
+                //    criteria.take = criteria.objectIds.length;
+                //    return organizationsResource.search(criteria);
+                //}
+
+                //return [];
             }
 
             blade.refresh(false);

@@ -328,6 +328,11 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                         },
                         {
                             colSpan: 2,
+                            title: "customer.blades.contact-detail.labels.default-organization",
+                            templateUrl: "defaultOrganization.html"
+                        },
+                        {
+                            colSpan: 2,
                             title: "customer.blades.contact-detail.labels.associated-organizations",
                             templateUrl: "associatedOrganizations.html"
                         },

@@ -65,6 +65,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         public string About { get; set; }
 
+        [StringLength(128)]
+        public string DefaultOrganizationId { get; set; }
+
         #endregion UserProfile members
 
         public override Member ToModel(Member member)
@@ -103,6 +106,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                     .ToList();
                 contact.Name = contact.FullName;
                 contact.About = About;
+                contact.DefaultOrganizationId = DefaultOrganizationId;
             }
             return member;
         }
@@ -128,6 +132,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 PhotoUrl = contact.PhotoUrl;
                 IsAnonymized = contact.IsAnonymized;
                 About = contact.About;
+                DefaultOrganizationId = contact.DefaultOrganizationId;
 
                 if (contact.Organizations != null)
                 {
@@ -191,6 +196,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 contact.PhotoUrl = PhotoUrl;
                 contact.IsAnonymized = IsAnonymized;
                 contact.About = About;
+                contact.DefaultOrganizationId = DefaultOrganizationId;
             }
 
             base.Patch(target);
