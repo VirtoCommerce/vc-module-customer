@@ -162,7 +162,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                     blade.currentOrganizations.splice(index, 1);
                 }
 
-                if (item.id == blade.currentEntity.defaultOrganizationId) {
+                if (item.id === blade.currentEntity.defaultOrganizationId) {
                     blade.currentEntity.defaultOrganizationId = null;
                 }
 
