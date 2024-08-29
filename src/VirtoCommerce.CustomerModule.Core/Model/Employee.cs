@@ -21,6 +21,7 @@ namespace VirtoCommerce.CustomerModule.Core.Model
         public string DefaultLanguage { get; set; }
         public string TimeZone { get; set; }
         public IList<string> Organizations { get; set; }
+        public string DefaultOrganizationId { get; set; }
 
         /// <summary>
         /// Employee type

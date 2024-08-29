@@ -48,8 +48,8 @@ public class OrganizationIdClaimProvider(IMemberService memberService) : ITokenC
 
         return member switch
         {
-            Contact contact => contact.Organizations?.FirstOrDefault(),
-            Employee employee => employee.Organizations?.FirstOrDefault(),
+            Contact contact => contact.DefaultOrganizationId ?? contact.Organizations?.FirstOrDefault(),
+            Employee employee => employee.DefaultOrganizationId ?? employee.Organizations?.FirstOrDefault(),
             _ => null,
         };
     }

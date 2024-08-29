@@ -38,6 +38,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         public DateTime? BirthDate { get; set; }
 
+        [StringLength(128)]
+        public string DefaultOrganizationId { get; set; }
+
         public override Member ToModel(Member member)
         {
             //Call base converter first
@@ -61,6 +64,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                     .OfType<OrganizationEntity>()
                     .Select(x => x.Id)
                     .ToList();
+                employee.DefaultOrganizationId = DefaultOrganizationId;
             }
             return member;
         }
@@ -80,6 +84,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 Type = employee.MemberType;
                 TimeZone = employee.TimeZone;
                 PhotoUrl = employee.PhotoUrl;
+                DefaultOrganizationId = employee.DefaultOrganizationId;
 
                 if (employee.Organizations != null)
                 {
@@ -114,6 +119,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 employee.Type = Type;
                 employee.TimeZone = TimeZone;
                 employee.PhotoUrl = PhotoUrl;
+                employee.DefaultOrganizationId = DefaultOrganizationId;
             }
 
             base.Patch(target);
