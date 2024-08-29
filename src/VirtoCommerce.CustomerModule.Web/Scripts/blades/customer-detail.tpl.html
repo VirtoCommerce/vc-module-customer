@@ -67,6 +67,8 @@
     <ui-scroll-drop-down multiple
                          page-size="50"
                          ng-model="blade.currentEntity.organizations"
+                         on-select="blade.selectOrganization(item)"
+                         on-remove="blade.removeOrganization(item)"
                          data="blade.fetchOrganizations(criteria)"
                          placeholder="'customer.blades.contact-detail.placeholders.organizations'">
     </ui-scroll-drop-down>
@@ -78,6 +80,13 @@
                          data="blade.fetchOrganizations(criteria)"
                          placeholder="'customer.blades.contact-detail.placeholders.associated-organizations'">
     </ui-scroll-drop-down>
+</script>
+<script type="text/ng-template" id="defaultOrganization.html">
+  <ui-scroll-drop-down ng-if="blade.currentOrganizationsReloaded"
+                       ng-model="blade.currentEntity.defaultOrganizationId"
+                       data="blade.fetchSelectedOrganizations()"
+                       placeholder="'customer.blades.contact-detail.placeholders.organizations'">
+  </ui-scroll-drop-down>
 </script>
 <script type="text/ng-template" id="birthDate.html">
     <div class="form-input __calendar">

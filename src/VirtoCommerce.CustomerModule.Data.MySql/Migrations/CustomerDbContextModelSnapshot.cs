@@ -573,6 +573,12 @@ namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
                         .HasColumnType("varchar(32)")
                         .HasColumnName("DefaultLanguage");
 
+                    b.Property<string>("DefaultOrganizationId")
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)")
+                        .HasColumnName("DefaultOrganizationId");
+
                     b.Property<string>("DefaultShippingAddressId")
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
@@ -650,6 +656,12 @@ namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("varchar(32)")
                         .HasColumnName("DefaultLanguage");
+
+                    b.Property<string>("DefaultOrganizationId")
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)")
+                        .HasColumnName("DefaultOrganizationId");
 
                     b.Property<string>("FirstName")
                         .ValueGeneratedOnUpdateSometimes()

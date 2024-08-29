@@ -573,6 +573,12 @@ namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
                         .HasColumnType("character varying(32)")
                         .HasColumnName("DefaultLanguage");
 
+                    b.Property<string>("DefaultOrganizationId")
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("DefaultOrganizationId");
+
                     b.Property<string>("DefaultShippingAddressId")
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
@@ -650,6 +656,12 @@ namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)")
                         .HasColumnName("DefaultLanguage");
+
+                    b.Property<string>("DefaultOrganizationId")
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("DefaultOrganizationId");
 
                     b.Property<string>("FirstName")
                         .ValueGeneratedOnUpdateSometimes()
