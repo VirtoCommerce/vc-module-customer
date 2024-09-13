@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <id>VirtoCommerce.Customer</id>
-  <version>3.813.0</version>
+  <version>3.814.0</version>
   <version-tag />
-  <platformVersion>3.841.0</platformVersion>
+
+  <platformVersion>3.851.0</platformVersion>
   <dependencies>
     <dependency id="VirtoCommerce.Core" version="3.800.0" />
     <dependency id="VirtoCommerce.Notifications" version="3.800.0" />
     <dependency id="VirtoCommerce.Search" version="3.800.0" />
     <dependency id="VirtoCommerce.Store" version="3.800.0" />
   </dependencies>
+
   <title>Companies and Contacts</title>
   <description>Managing customers contacts and organizations</description>
   <authors>
