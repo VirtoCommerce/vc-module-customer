@@ -8,7 +8,7 @@
   <dependencies>
     <dependency id="VirtoCommerce.Core" version="3.800.0" />
     <dependency id="VirtoCommerce.Notifications" version="3.800.0" />
-    <dependency id="VirtoCommerce.Search" version="3.800.0" />
+    <dependency id="VirtoCommerce.Search" version="3.803.0" />
     <dependency id="VirtoCommerce.Store" version="3.800.0" />
   </dependencies>
 

@@ -6,6 +6,7 @@ using VirtoCommerce.CustomerModule.Core.Model.Search;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Core.Services.Indexed;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.SearchModule.Core.Extensions;
 using VirtoCommerce.SearchModule.Core.Model;
 using VirtoCommerce.SearchModule.Core.Services;
 
@@ -70,6 +71,8 @@ namespace VirtoCommerce.CustomerModule.Data.Search
                     .ToArray();
 
                 result.AddRange(members);
+
+                documents.SetRelevanceScore(result);
             }
 
             return result;
