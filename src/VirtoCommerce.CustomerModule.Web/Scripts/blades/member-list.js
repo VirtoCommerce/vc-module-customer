@@ -230,14 +230,14 @@ angular.module('virtoCommerce.customerModule')
             };
 
             function getSearchCriteria() {
-                var sort_criteria = uiGridHelper.getSortExpression($scope);
+                var sortCriteria = uiGridHelper.getSortExpression($scope);
 
                 var searchCriteria = {
                     memberType: blade.memberType,
                     memberId: blade.currentEntity.id,
                     keyword: filter.keyword ? filter.keyword : undefined,
                     deepSearch: filter.keyword ? true : false,
-                    sort: filter.keyword && filter.ignoreSortingForRelevance == sort_criteria ? '' : sort_criteria,
+                    sort: filter.keyword && filter.ignoreSortingForRelevance == sortCriteria ? '' : sortCriteria,
                     skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
                     take: $scope.pageSettings.itemsPerPageCount,
                     objectType: 'Member'
