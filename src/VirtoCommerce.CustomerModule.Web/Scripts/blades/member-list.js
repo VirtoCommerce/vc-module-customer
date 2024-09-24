@@ -198,6 +198,11 @@ angular.module('virtoCommerce.customerModule')
             // simple and advanced filtering
             var filter = blade.filter = { keyword: null };
 
+            filter.filterByKeyword = function () {
+                filter.ignoreSortingForRelevance = uiGridHelper.getSortExpression($scope);
+                filter.criteriaChanged();
+            };
+
             filter.criteriaChanged = function () {
                 if (filter.keyword === null) {
                     blade.memberType = undefined;
@@ -225,12 +230,14 @@ angular.module('virtoCommerce.customerModule')
             };
 
             function getSearchCriteria() {
+                var sort_criteria = uiGridHelper.getSortExpression($scope);
+
                 var searchCriteria = {
                     memberType: blade.memberType,
                     memberId: blade.currentEntity.id,
                     keyword: filter.keyword ? filter.keyword : undefined,
                     deepSearch: filter.keyword ? true : false,
-                    sort: uiGridHelper.getSortExpression($scope),
+                    sort: filter.keyword && filter.ignoreSortingForRelevance == sort_criteria ? '' : sort_criteria,
                     skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
                     take: $scope.pageSettings.itemsPerPageCount,
                     objectType: 'Member'
