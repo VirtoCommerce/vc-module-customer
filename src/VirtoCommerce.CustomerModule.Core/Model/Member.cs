@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using VirtoCommerce.CoreModule.Core.Seo;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
+using VirtoCommerce.SearchModule.Core.Model;
 
 namespace VirtoCommerce.CustomerModule.Core.Model
 {
-    public abstract class Member : AuditableEntity, IHasDynamicProperties, ISeoSupport, IHasOuterId, ICloneable
+    public abstract class Member : AuditableEntity, IHasDynamicProperties, ISeoSupport, IHasOuterId, ICloneable, IHasRelevanceScore
     {
         protected Member()
         {
@@ -27,6 +27,8 @@ namespace VirtoCommerce.CustomerModule.Core.Model
         public IList<Note> Notes { get; set; }
         public IList<string> Groups { get; set; }
         public string IconUrl { get; set; }
+
+        public double? RelevanceScore { get; set; }
 
         #region IHasDynamicProperties Members
 
