@@ -6,6 +6,7 @@ using VirtoCommerce.CustomerModule.Core.Model.Search;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Core.Services.Indexed;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.SearchModule.Core.Extensions;
 using VirtoCommerce.SearchModule.Core.Model;
 using VirtoCommerce.SearchModule.Core.Services;
 
@@ -65,7 +66,17 @@ namespace VirtoCommerce.CustomerModule.Data.Search
 
                 // Preserve documents order
                 var members = documents
-                    .Select(doc => itemsMap.ContainsKey(doc.Id) ? itemsMap[doc.Id] : null)
+                    .Select(doc =>
+                    {
+                        var member = itemsMap.TryGetValue(doc.Id, out var value) ? value : null;
+
+                        if (member != null)
+                        {
+                            member.RelevanceScore = doc.GetRelevanceScore();
+                        }
+
+                        return member;
+                    })
                     .Where(m => m != null)
                     .ToArray();
 
