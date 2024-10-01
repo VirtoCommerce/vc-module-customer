@@ -15,6 +15,9 @@
     <None Remove="node_modules\**" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="VirtoCommerce.StoreModule.Core" Version="3.809.0" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.CustomerModule.Core\VirtoCommerce.CustomerModule.Core.csproj" />
     <ProjectReference Include="..\VirtoCommerce.CustomerModule.Data.MySql\VirtoCommerce.CustomerModule.Data.MySql.csproj" />
     <ProjectReference Include="..\VirtoCommerce.CustomerModule.Data.PostgreSql\VirtoCommerce.CustomerModule.Data.PostgreSql.csproj" />
