@@ -20,7 +20,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                     blade.isLoading = true;
                     members.get({ id: blade.currentEntity.id }, initializeBlade);
 
-                    if (parentRefresh) {
+                    if (parentRefresh && blade.parentBlade) {
                         blade.parentBlade.refresh(true);
                     }
                 }
@@ -100,7 +100,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                 if (blade.isNew) {
                     members.save(blade.currentEntity,
                         function () {
-                            blade.parentBlade.refresh(true);
+                            blade.parentBlade && blade.parentBlade.refresh(true);
                             blade.origEntity = blade.currentEntity;
                             $scope.bladeClose();
                         });
