@@ -150,6 +150,12 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                     isVisible: function (blade) { return !blade.isNew; }
                 };
 
+                var accountContactWidget = {
+                    controller: 'virtoCommerce.customerModule.accountContactWidgetController',
+                    template: 'Modules/$(VirtoCommerce.Customer)/Scripts/widgets/accountContactWidget.tpl.html',
+                };
+                widgetService.registerWidget(accountContactWidget, 'accountDetail');
+
                 //Register widgets in customer details
                 widgetService.registerWidget(accountsWidget, 'customerDetail1');
                 widgetService.registerWidget(addressesWidget, 'customerDetail1');

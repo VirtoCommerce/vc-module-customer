@@ -24,6 +24,7 @@ function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFil
                 id: 'listItemChild',
                 data: node,
                 title: node.userName,
+                fromContact: true,
                 subtitle: blade.subtitle,
                 controller: 'platformWebApp.accountDetailController',
                 template: '$(Platform)/Scripts/app/security/blades/account-detail.tpl.html'
