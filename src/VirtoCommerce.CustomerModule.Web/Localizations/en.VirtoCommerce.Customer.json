@@ -241,6 +241,9 @@
       },
       "organization-assets": {
         "title": "Assets"
+      },
+      "account-contact": {
+        "title": "No member"
       }
     },
     "dialogs": {

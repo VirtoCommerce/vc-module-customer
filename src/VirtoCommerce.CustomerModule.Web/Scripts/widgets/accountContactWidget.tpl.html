@@ -1,0 +1,6 @@
+<div class="gridster-cnt" ng-click="openBlade()" ng-style="{ 'cursor': currentMember ? 'pointer' : 'not-allowed' }">
+  <div class="cnt-inner">
+    <div ng-if="!currentEntity.memberId" class="list-t">{{'customer.widgets.account-contact.title' | translate}}</div>
+    <div ng-if="currentMember" class="list-t">{{ currentMember.fullName }}</div>
+  </div>
+</div>
