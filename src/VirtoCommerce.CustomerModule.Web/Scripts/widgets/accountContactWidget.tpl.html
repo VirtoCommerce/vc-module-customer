@@ -1,6 +1,6 @@
-<div class="gridster-cnt" ng-click="openBlade()" ng-style="{ 'cursor': currentMember ? 'pointer' : 'not-allowed' }">
+<div class="gridster-cnt" ng-click="openBlade()" ng-style="{ 'cursor': currentMember && !blade.fromContact ? 'pointer' : 'not-allowed' }">
   <div class="cnt-inner">
-    <div ng-if="!currentEntity.memberId" class="list-t">{{'customer.widgets.account-contact.no-contact' | translate}}</div>
+    <div ng-if="!currentEntity.memberId || !currentMember" class="list-t">{{'customer.widgets.account-contact.no-contact' | translate}}</div>
     <div ng-if="currentMember" class="list-t">{{'customer.widgets.account-contact.show-contact' | translate}}</div>
   </div>
 </div>

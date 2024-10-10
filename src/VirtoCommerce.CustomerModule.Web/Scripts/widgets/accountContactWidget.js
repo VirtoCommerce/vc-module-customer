@@ -17,7 +17,7 @@ angular.module('virtoCommerce.customerModule')
         }
 
         $scope.openBlade = function () {
-            if (!$scope.currentMember) {
+            if (!$scope.currentMember || blade.fromContact) {
                 return;
             }
             var foundTemplate = memberTypesResolverService.resolve($scope.currentMember.memberType);
