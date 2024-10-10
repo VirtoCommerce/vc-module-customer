@@ -2,7 +2,9 @@ angular.module('virtoCommerce.customerModule')
 .controller('virtoCommerce.customerModule.customerAccountsWidgetController', ['$scope', 'platformWebApp.bladeNavigationService', function ($scope, bladeNavigationService) {
     
     $scope.openBlade = function () {
-        if ($scope.blade.fromAccount) return;
+        if ($scope.blade.fromAccount) {
+            return;
+        }
         var newBlade = {
             id: "customerChildBlade",
             title: $scope.blade.title,
