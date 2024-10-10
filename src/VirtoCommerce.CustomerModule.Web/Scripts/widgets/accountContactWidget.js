@@ -2,7 +2,8 @@ angular.module('virtoCommerce.customerModule')
     .controller('virtoCommerce.customerModule.accountContactWidgetController', ['$scope',
         'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.members',
         'virtoCommerce.customerModule.memberTypesResolverService',
-        function ($scope, bladeNavigationService, members, memberTypesResolverService) {
+        'platformWebApp.dialogService',
+        function ($scope, bladeNavigationService, members, memberTypesResolverService, dialogService) {
 
         var blade = $scope.widget.blade;
 
@@ -25,6 +26,7 @@ angular.module('virtoCommerce.customerModule')
                 newBlade.currentEntity = $scope.currentMember;
                 newBlade.currentEntityId = $scope.currentMember.id;
                 newBlade.isNew = false;
+                newBlade.fromAccount = true;
                 bladeNavigationService.showBlade(newBlade, blade);
             } else {
                 dialogService.showNotificationDialog({

@@ -243,7 +243,8 @@
         "title": "Assets"
       },
       "account-contact": {
-        "title": "No member"
+        "no-contact": "No contact",
+        "show-contact": "Show contact"
       }
     },
     "dialogs": {
