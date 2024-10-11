@@ -241,6 +241,10 @@
       },
       "organization-assets": {
         "title": "Assets"
+      },
+      "account-contact": {
+        "no-contact": "No contact",
+        "show-contact": "Show contact"
       }
     },
     "dialogs": {
