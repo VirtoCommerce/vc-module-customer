@@ -1,0 +1,347 @@
+{
+  "customer": {
+    "main-menu-title": "Contactos",
+    "blades": {
+      "contact-detail": {
+        "title-new": "Nuevo contacto",
+        "subtitle": "Detalles del contacto",
+        "labels": {
+          "first-name": "Nombre",
+          "middle-name": "Segundo nombre",
+          "last-name": "Apellido",
+          "groups": "Grupos de usuarios",
+          "full-name": "Nombre completo",
+          "birthday": "Fecha de nacimiento",
+          "salutation": "Título",
+          "defaultLanguage": "Idioma por defecto",
+          "currency": "Moneda",
+          "organizations": "Miembro de la(s) empresa(s)",
+          "default-organization": "Empresa por defecto",
+          "associated-organizations": "Empresa(s) asociada(s)",
+          "taxpayerId": "ID de contribuyente",
+          "preferred-communication": "Canal de comunicación preferido",
+          "preferred-delivery": "Método de entrega preferido",
+          "timezone": "Zona horaria",
+          "about": "Detalles",
+          "description": "Descripción"
+        },
+        "placeholders": {
+          "groups": "Seleccionar grupos de usuarios",
+          "first-name": "Ingrese su nombre",
+          "middle-name": "Ingrese su segundo nombre",
+          "last-name": "Ingrese su apellido",
+          "full-name": "Ingrese su nombre completo",
+          "birthday": "Ingrese su fecha de nacimiento",
+          "salutation": "Ingrese su título",
+          "defaultLanguage": "Proporcione su idioma",
+          "currency": "Proporcione su moneda",
+          "preferred-communication": "Proporcione su canal de comunicación",
+          "preferred-delivery": "Proporcione su método de entrega",
+          "taxpayerId": "Proporcione su ID de contribuyente",
+          "organizations": "Seleccionar una empresa",
+          "associated-organizations": "Seleccionar una empresa",
+          "timezone": "Seleccionar",
+          "about": "Ingrese información de contacto",
+          "description": "Ingrese una descripción de la dirección"
+        }
+      },
+      "employee-detail": {
+        "title-new": "Nuevo empleado",
+        "subtitle": "Detalles del empleado",
+        "labels": {
+          "is-active": "Activo",
+          "first-name": "Nombre",
+          "middle-name": "Segundo nombre",
+          "last-name": "Apellido",
+          "full-name": "Nombre completo",
+          "type": "Tipo de empleado",
+          "birthday": "Fecha de nacimiento",
+          "photo-url": "URL de la foto",
+          "defaultLanguage": "Idioma por defecto",
+          "organizations": "Empresa(s)",
+          "default-organization": "Empresa por defecto",
+          "timezone": "Zona horaria"
+        },
+        "placeholders": {
+          "first-name": "Ingrese su nombre",
+          "middle-name": "Ingrese su segundo nombre",
+          "last-name": "Ingrese su apellido",
+          "full-name": "Ingrese su nombre completo",
+          "type": "Ingrese el tipo",
+          "birthday": "Ingrese su fecha de nacimiento",
+          "photo-url": "Ingrese la URL",
+          "defaultLanguage": "Proporcione su idioma",
+          "organizations": "Seleccionar una empresa",
+          "timezone": "Seleccionar un valor"
+        }
+      },
+      "pick-store-list": {
+        "title": "Nueva cuenta",
+        "subtitle": "Seleccionar una tienda para la nueva cuenta",
+        "labels": {
+          "name": "Nombre de la tienda"
+        }
+      },
+      "organization-detail": {
+        "title-new": "Nueva empresa",
+        "subtitle": "Detalles de la empresa",
+        "labels": {
+          "name": "Nombre",
+          "description": "Descripción",
+          "business-category": "Campo de negocio"
+        },
+        "placeholders": {
+          "name": "Ingrese el nombre",
+          "description": "Proporcione una descripción"
+        }
+      },
+      "vendor-detail": {
+        "title-new": "Nuevo proveedor",
+        "subtitle": "Detalles del proveedor",
+        "labels": {
+          "name": "Nombre",
+          "site-url": "URL del sitio web",
+          "logo-url": "URL del logo",
+          "group-name": "Nombre del grupo",
+          "description": "Descripción"
+        },
+        "placeholders": {
+          "name": "Ingrese su nombre",
+          "site-url": "Ingrese la URL",
+          "logo-url": "Ingrese la URL",
+          "group-name": "Ingrese el nombre del grupo",
+          "description": "Proporcione una descripción"
+        }
+      },
+      "member-add": {
+        "title": "Nuevo contacto",
+        "subtitle": "Seleccione un tipo de contacto que le gustaría crear",
+        "organization": {
+          "description": "Un perfil de empresa que puede contener información sobre empleados, contactos regulares u otras empresas"
+        },
+        "employee": {
+          "description": "Un empleado que trabaja en una empresa"
+        },
+        "contact": {
+          "description": "Un cliente de la tienda que puede ser miembro de una empresa o actuar como comprador individual"
+        },
+        "vendor": {
+          "description": "Un comerciante o proveedor"
+        }
+      },
+      "member-emails-list": {
+        "labels": {
+          "no-emails": "No hay correos electrónicos aún",
+          "name": "Nombre",
+          "address": "Dirección",
+          "Email": "Correo electrónico"
+        },
+        "placeholders": {
+          "email": "Ingrese el correo electrónico"
+        }
+      },
+      "member-list": {
+        "title": "Empresas y contactos",
+        "subtitle": "Cargando '{{name}}'",
+        "breadcrumb-all": "Todos los contactos",
+        "labels": {
+          "type": "Tipo",
+          "name": "Nombre",
+          "address": "Dirección",
+          "email": "Correo electrónico",
+          "filter-new": "Agregar nuevo filtro",
+          "unnamed-filter": "Filtro sin nombre",
+          "filter-vendor": "Proveedores",
+          "filter-contact": "Contactos",
+          "filter-organization": "Empresas",
+          "copy-id": "Copiar ID",
+          "copy-name": "Copiar nombre"
+        },
+        "placeholders": {
+          "select-filter": "Seleccionar filtro"
+        }
+      },
+      "member-phones-list": {
+        "labels": {
+          "no-phones": "No hay números de teléfono aún"
+        },
+        "placeholders": {
+          "phone": "Por favor ingrese el número de teléfono..."
+        }
+      },
+      "customer-accounts-list": {
+        "commands": {
+          "link": "Vincular cuenta",
+          "unlink": "Desvincular cuenta"
+        }
+      },
+      "filter-detail": {
+        "subtitle": "Editar filtro",
+        "new-title": "Nuevo filtro",
+        "new-subtitle": "Creando un nuevo filtro",
+        "labels": {
+          "criteria": "Frase de búsqueda",
+          "name": "Nombre del filtro",
+          "searchInVariations": "Mostrar variaciones de producto",
+          "syntax-example-1": "Todos los contactos que contienen 'org1.com' en los valores de propiedad indexados",
+          "syntax-example-2": "Todos los contactos que contienen 'James' y 'Smith' en los valores de propiedad indexados",
+          "syntax-example-3": "Use un asterisco (*) para reemplazar cero o más caracteres",
+          "syntax-example-4": "Todos los contactos con un nombre que contiene 'Alex' o 'James'",
+          "syntax-example-5": "Use un signo de exclamación (!) como operador NOT para los filtros",
+          "syntax-example-6": "Todos los contactos con el tipo de miembro seleccionado",
+          "syntax-example-7": "Todos los contactos con una fecha de creación entre dos valores (inclusive)",
+          "syntax-example-8": "Todos los contactos con una fecha de creación entre dos valores (exclusiva)",
+          "syntax-example-9": "Todos los contactos con una fecha de modificación mayor o igual a '2016-12-26'",
+          "syntax-example-10": "Combine tanto palabras clave como filtros"
+        },
+        "placeholders": {
+          "criteria": "Ingrese la frase de búsqueda",
+          "name": "Dé un nombre a este filtro"
+        }
+      },
+      "member-icon": {
+        "title": "Gestionar ícono",
+        "labels": {
+          "choose-icon": "Elegir nuevo ícono",
+          "choice-description": "Seleccione una imagen en formato PNG, JPG o SVG",
+          "preview": "Vista previa",
+          "preview-description": "Ícono actual",
+          "reset": "Eliminar ícono"
+        }
+      },
+      "shared": {
+        "labels": {
+          "status": "Estado",
+          "progress": "Progreso"
+        },
+        "placeholders": {
+          "status": "Por favor seleccione un valor"
+        }
+      }
+    },
+    "widgets": {
+      "address-list": {
+        "title": "Direcciones",
+        "blade-subtitle": "Gestionar direcciones"
+      },
+      "member-emails-list": {
+        "title": "Correos electrónicos",
+        "blade-subtitle": "Gestionar correos electrónicos"
+      },
+      "member-phones-list": {
+        "title": "Números de teléfono",
+        "blade-subtitle": "Gestionar números de teléfono"
+      },
+      "customer-accounts-list": {
+        "title": "Cuentas",
+        "blade-subtitle": "Gestionar cuentas de clientes"
+      },
+      "member-icon": {
+        "title": "Ícono"
+      },
+      "organization-assets": {
+        "title": "Recursos"
+      },
+      "account-contact": {
+        "no-contact": "Sin contacto",
+        "show-contact": "Mostrar contacto"
+      }
+    },
+    "dialogs": {
+      "members-delete": {
+        "title": "Confirmar eliminación",
+        "message": "¿Está seguro de que desea eliminar la(s) empresa(s) o contacto(s) seleccionados?"
+      },
+      "unknown-member-type": {
+        "title": "Error",
+        "message": "No se puede editar un miembro de un tipo desconocido: '{{memberType}}'"
+      },
+      "member-save": {
+        "title": "Guardar cambios",
+        "message": "Este contacto ha sido modificado. ¿Desea guardar los cambios?"
+      },
+      "email-save": {
+        "title": "Guardar cambios",
+        "message": "El correo electrónico ha sido modificado. ¿Desea guardar los cambios?"
+      },
+      "phone-number-save": {
+        "title": "Guardar cambios",
+        "message": "El número de teléfono ha sido modificado. ¿Desea guardar los cambios?"
+      }
+    }
+  },
+  "permissions": {
+    "customer:access": "Abrir menú de clientes",
+    "customer:create": "Crear datos de cliente",
+    "customer:read": "Ver datos de cliente",
+    "customer:update": "Actualizar datos de cliente",
+    "customer:delete": "Eliminar datos de cliente"
+  },
+  "settings": {
+    "Customer": {
+      "MemberGroups": {
+        "title": "Diccionario de grupos de miembros",
+        "description": "Todos los valores de grupo de miembros disponibles"
+      },
+      "ExportImport.PageSize": {
+        "title": "Tamaño de página utilizado para exportación / importación",
+        "description": "Nota: Valores grandes pueden resultar en un rendimiento disminuido"
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "Habilitar indexación basada en eventos para entidades de clientes (se requiere reinicio)",
+            "description": "Cualquier cambio en una entidad de cliente desencadena una tarea en segundo plano que aplica estos cambios al índice de búsqueda"
+          }
+        }
+      },
+      "OrganizationStatuses": {
+        "title": "Estados de la empresa",
+        "description": "Editar estados de la empresa"
+      },
+      "VendorStatuses": {
+        "title": "Estados de proveedores",
+        "description": "Editar estados de proveedores"
+      },
+      "EmployeeStatuses": {
+        "title": "Estados de empleados",
+        "description": "Editar estados de empleados"
+      },
+      "ContactStatuses": {
+        "title": "Estados de contacto",
+        "description": "Editar estados de contacto"
+      },
+      "OrganizationDefaultStatus": {
+        "title": "Estado por defecto de la empresa",
+        "description": "Este estado se asignará a la empresa recientemente registrada"
+      },
+      "ContactDefaultStatus": {
+        "title": "Estado por defecto de contacto",
+        "description": "Este estado se asignará al propietario de la empresa recientemente registrada"
+      }
+    },
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Member": {
+              "title": "Fecha y hora de indexación de miembros",
+              "description": "Fecha y hora en que comenzará la tarea de indexación de miembros"
+            }
+          }
+        }
+      }
+    }
+  },
+  "module": {
+    "VirtoCommerce.Customer": {
+      "description": "Exportar o importar contactos y empresas"
+    }
+  },
+  "notificationTypes": {
+    "RegisterCompanyEmailNotification": {
+      "displayName": "Notificación por correo electrónico de registro de la organización",
+      "description": "El cliente recibe una notificación por correo electrónico cuando su empresa se ha registrado"
+    }
+  }
+}

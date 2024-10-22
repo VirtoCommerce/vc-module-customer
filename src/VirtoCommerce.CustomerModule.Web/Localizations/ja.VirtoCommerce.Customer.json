@@ -1,0 +1,347 @@
+{
+  "customer": {
+    "main-menu-title": "連絡先",
+    "blades": {
+      "contact-detail": {
+        "title-new": "新しい連絡先",
+        "subtitle": "連絡先の詳細",
+        "labels": {
+          "first-name": "名",
+          "middle-name": "ミドルネーム",
+          "last-name": "姓",
+          "groups": "ユーザーグループ",
+          "full-name": "フルネーム",
+          "birthday": "生年月日",
+          "salutation": "敬称",
+          "defaultLanguage": "デフォルト言語",
+          "currency": "通貨",
+          "organizations": "会社のメンバー",
+          "default-organization": "デフォルトの会社",
+          "associated-organizations": "関連会社",
+          "taxpayerId": "納税者ID",
+          "preferred-communication": "好ましい通信チャネル",
+          "preferred-delivery": "好ましい配達方法",
+          "timezone": "タイムゾーン",
+          "about": "詳細",
+          "description": "説明"
+        },
+        "placeholders": {
+          "groups": "ユーザーグループを選択",
+          "first-name": "データを入力",
+          "middle-name": "データを入力",
+          "last-name": "データを入力",
+          "full-name": "データを入力",
+          "birthday": "データを入力",
+          "salutation": "データを入力",
+          "defaultLanguage": "詳細を提供",
+          "currency": "詳細を提供",
+          "preferred-communication": "詳細を提供",
+          "preferred-delivery": "詳細を提供",
+          "taxpayerId": "詳細を提供",
+          "organizations": "会社を選択",
+          "associated-organizations": "会社を選択",
+          "timezone": "選択",
+          "about": "連絡先情報を入力",
+          "description": "住所の説明を入力"
+        }
+      },
+      "employee-detail": {
+        "title-new": "新しい従業員",
+        "subtitle": "従業員の詳細",
+        "labels": {
+          "is-active": "アクティブ",
+          "first-name": "名",
+          "middle-name": "ミドルネーム",
+          "last-name": "姓",
+          "full-name": "フルネーム",
+          "type": "従業員の種類",
+          "birthday": "生年月日",
+          "photo-url": "写真のURL",
+          "defaultLanguage": "デフォルト言語",
+          "organizations": "会社",
+          "default-organization": "デフォルトの会社",
+          "timezone": "タイムゾーン"
+        },
+        "placeholders": {
+          "first-name": "データを入力",
+          "middle-name": "データを入力",
+          "last-name": "データを入力",
+          "full-name": "データを入力",
+          "type": "データを入力",
+          "birthday": "データを入力",
+          "photo-url": "URLを入力",
+          "defaultLanguage": "詳細を提供",
+          "organizations": "会社を選択",
+          "timezone": "値を選択"
+        }
+      },
+      "pick-store-list": {
+        "title": "新しいアカウント",
+        "subtitle": "新しいアカウントのための店舗を選択",
+        "labels": {
+          "name": "店舗名"
+        }
+      },
+      "organization-detail": {
+        "title-new": "新しい会社",
+        "subtitle": "会社の詳細",
+        "labels": {
+          "name": "名前",
+          "description": "説明",
+          "business-category": "ビジネス分野"
+        },
+        "placeholders": {
+          "name": "名前を入力",
+          "description": "説明を提供"
+        }
+      },
+      "vendor-detail": {
+        "title-new": "新しいベンダー",
+        "subtitle": "ベンダーの詳細",
+        "labels": {
+          "name": "名前",
+          "site-url": "ウェブサイトのURL",
+          "logo-url": "ロゴのURL",
+          "group-name": "グループ名",
+          "description": "説明"
+        },
+        "placeholders": {
+          "name": "データを入力",
+          "site-url": "URLを入力",
+          "logo-url": "URLを入力",
+          "group-name": "データを入力",
+          "description": "説明を提供"
+        }
+      },
+      "member-add": {
+        "title": "新しい連絡先",
+        "subtitle": "作成したい連絡先の種類を選択",
+        "organization": {
+          "description": "従業員、通常の連絡先、または他の会社に関する情報を含む可能性のある会社のプロフィール"
+        },
+        "employee": {
+          "description": "会社で働く従業員"
+        },
+        "contact": {
+          "description": "会社のメンバーであるか、個人の買い物客として行動する可能性のある店舗の顧客"
+        },
+        "vendor": {
+          "description": "商人またはベンダー"
+        }
+      },
+      "member-emails-list": {
+        "labels": {
+          "no-emails": "まだメールはありません",
+          "name": "名前",
+          "address": "住所",
+          "Email": "メール"
+        },
+        "placeholders": {
+          "email": "メールを入力"
+        }
+      },
+      "member-list": {
+        "title": "会社と連絡先",
+        "subtitle": "'{{name}}'を読み込んでいます",
+        "breadcrumb-all": "すべての連絡先",
+        "labels": {
+          "type": "タイプ",
+          "name": "名前",
+          "address": "住所",
+          "email": "メール",
+          "filter-new": "新しいフィルターを追加",
+          "unnamed-filter": "名前のないフィルター",
+          "filter-vendor": "ベンダー",
+          "filter-contact": "連絡先",
+          "filter-organization": "会社",
+          "copy-id": "IDをコピー",
+          "copy-name": "名前をコピー"
+        },
+        "placeholders": {
+          "select-filter": "フィルターを選択"
+        }
+      },
+      "member-phones-list": {
+        "labels": {
+          "no-phones": "まだ電話番号はありません"
+        },
+        "placeholders": {
+          "phone": "電話番号を入力してください..."
+        }
+      },
+      "customer-accounts-list": {
+        "commands": {
+          "link": "アカウントをリンク",
+          "unlink": "アカウントのリンクを解除"
+        }
+      },
+      "filter-detail": {
+        "subtitle": "フィルターを編集",
+        "new-title": "新しいフィルター",
+        "new-subtitle": "新しいフィルターを作成",
+        "labels": {
+          "criteria": "検索フレーズ",
+          "name": "フィルター名",
+          "searchInVariations": "商品バリエーションを表示",
+          "syntax-example-1": "'org1.com'を含むすべての連絡先",
+          "syntax-example-2": "'James'と'Smith'を含むすべての連絡先",
+          "syntax-example-3": "アスタリスク(*)を使用して0文字以上を置き換えます",
+          "syntax-example-4": "名が'Alex'または'James'を含むすべての連絡先",
+          "syntax-example-5": "フィルターのNOT演算子として感嘆符(!)を使用します",
+          "syntax-example-6": "選択したメンバータイプのすべての連絡先",
+          "syntax-example-7": "2つの値の間に作成日があるすべての連絡先（含む）",
+          "syntax-example-8": "2つの値の間に作成日があるすべての連絡先（除外）",
+          "syntax-example-9": "'2016-12-26'以上の修正日を持つすべての連絡先",
+          "syntax-example-10": "キーワードとフィルターの両方を組み合わせます"
+        },
+        "placeholders": {
+          "criteria": "検索フレーズを入力",
+          "name": "このフィルターに名前を付けてください"
+        }
+      },
+      "member-icon": {
+        "title": "アイコンを管理",
+        "labels": {
+          "choose-icon": "新しいアイコンを選択",
+          "choice-description": "PNG、JPG、またはSVG形式の画像を選択",
+          "preview": "プレビュー",
+          "preview-description": "現在のアイコン",
+          "reset": "アイコンを削除"
+        }
+      },
+      "shared": {
+        "labels": {
+          "status": "ステータス",
+          "progress": "進捗"
+        },
+        "placeholders": {
+          "status": "値を選択してください"
+        }
+      }
+    },
+    "widgets": {
+      "address-list": {
+        "title": "住所",
+        "blade-subtitle": "住所を管理"
+      },
+      "member-emails-list": {
+        "title": "メール",
+        "blade-subtitle": "メールを管理"
+      },
+      "member-phones-list": {
+        "title": "電話番号",
+        "blade-subtitle": "電話番号を管理"
+      },
+      "customer-accounts-list": {
+        "title": "アカウント",
+        "blade-subtitle": "顧客アカウントを管理"
+      },
+      "member-icon": {
+        "title": "アイコン"
+      },
+      "organization-assets": {
+        "title": "リソース"
+      },
+      "account-contact": {
+        "no-contact": "連絡先なし",
+        "show-contact": "連絡先を表示"
+      }
+    },
+    "dialogs": {
+      "members-delete": {
+        "title": "削除を確認",
+        "message": "選択した会社または連絡先を削除してもよろしいですか？"
+      },
+      "unknown-member-type": {
+        "title": "エラー",
+        "message": "不明なタイプのメンバーを編集できません: '{{memberType}}'"
+      },
+      "member-save": {
+        "title": "変更を保存",
+        "message": "この連絡先は変更されました。変更を保存しますか？"
+      },
+      "email-save": {
+        "title": "変更を保存",
+        "message": "メールが変更されました。変更を保存しますか？"
+      },
+      "phone-number-save": {
+        "title": "変更を保存",
+        "message": "電話番号が変更されました。変更を保存しますか？"
+      }
+    }
+  },
+  "permissions": {
+    "customer:access": "顧客メニューを開く",
+    "customer:create": "顧客データを作成",
+    "customer:read": "顧客データを表示",
+    "customer:update": "顧客データを更新",
+    "customer:delete": "顧客データを削除"
+  },
+  "settings": {
+    "Customer": {
+      "MemberGroups": {
+        "title": "メンバーグループ辞書",
+        "description": "利用可能なすべてのメンバーグループの値"
+      },
+      "ExportImport.PageSize": {
+        "title": "エクスポート/インポートに使用されるページサイズ",
+        "description": "注意: 大きな値はパフォーマンスの低下を引き起こす可能性があります"
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "顧客エンティティのイベントベースのインデックス作成を有効にする（再起動が必要）",
+            "description": "顧客エンティティの変更は、これらの変更を検索インデックスに適用するバックグラウンドタスクをトリガーします"
+          }
+        }
+      },
+      "OrganizationStatuses": {
+        "title": "会社のステータス",
+        "description": "会社のステータスを編集"
+      },
+      "VendorStatuses": {
+        "title": "ベンダーのステータス",
+        "description": "ベンダーのステータスを編集"
+      },
+      "EmployeeStatuses": {
+        "title": "従業員のステータス",
+        "description": "従業員のステータスを編集"
+      },
+      "ContactStatuses": {
+        "title": "連絡先のステータス",
+        "description": "連絡先のステータスを編集"
+      },
+      "OrganizationDefaultStatus": {
+        "title": "会社のデフォルトステータス",
+        "description": "このステータスは最近登録された会社に割り当てられます"
+      },
+      "ContactDefaultStatus": {
+        "title": "連絡先のデフォルトステータス",
+        "description": "このステータスは最近登録された会社の所有者に割り当てられます"
+      }
+    },
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Member": {
+              "title": "メンバーのインデックス作成日と時刻",
+              "description": "メンバーのインデックス作成タスクが開始される日付と時刻"
+            }
+          }
+        }
+      }
+    }
+  },
+  "module": {
+    "VirtoCommerce.Customer": {
+      "description": "連絡先と会社をエクスポートまたはインポート"
+    }
+  },
+  "notificationTypes": {
+    "RegisterCompanyEmailNotification": {
+      "displayName": "組織登録メール通知",
+      "description": "顧客は、彼の会社が登録されたときにメール通知を受け取ります"
+    }
+  }
+}

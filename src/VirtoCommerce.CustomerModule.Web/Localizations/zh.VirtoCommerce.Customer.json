@@ -1,0 +1,347 @@
+{
+  "customer": {
+    "main-menu-title": "联系人",
+    "blades": {
+      "contact-detail": {
+        "title-new": "新联系人",
+        "subtitle": "联系信息",
+        "labels": {
+          "first-name": "名",
+          "middle-name": "中间名",
+          "last-name": "姓",
+          "groups": "用户组",
+          "full-name": "全名",
+          "birthday": "出生日期",
+          "salutation": "称谓",
+          "defaultLanguage": "默认语言",
+          "currency": "货币",
+          "organizations": "公司成员",
+          "default-organization": "默认公司",
+          "associated-organizations": "关联公司",
+          "taxpayerId": "纳税人ID",
+          "preferred-communication": "首选通信渠道",
+          "preferred-delivery": "首选交付方式",
+          "timezone": "时区",
+          "about": "详细信息",
+          "description": "描述"
+        },
+        "placeholders": {
+          "groups": "选择用户组",
+          "first-name": "输入您的名字",
+          "middle-name": "输入您的中间名",
+          "last-name": "输入您的姓",
+          "full-name": "输入您的全名",
+          "birthday": "输入您的出生日期",
+          "salutation": "输入您的称谓",
+          "defaultLanguage": "提供您的详细信息",
+          "currency": "提供您的详细信息",
+          "preferred-communication": "提供您的详细信息",
+          "preferred-delivery": "提供您的详细信息",
+          "taxpayerId": "提供您的详细信息",
+          "organizations": "选择一家公司",
+          "associated-organizations": "选择一家公司",
+          "timezone": "选择",
+          "about": "输入联系信息",
+          "description": "输入地址描述"
+        }
+      },
+      "employee-detail": {
+        "title-new": "新员工",
+        "subtitle": "员工信息",
+        "labels": {
+          "is-active": "活跃",
+          "first-name": "名",
+          "middle-name": "中间名",
+          "last-name": "姓",
+          "full-name": "全名",
+          "type": "员工类型",
+          "birthday": "出生日期",
+          "photo-url": "照片URL",
+          "defaultLanguage": "默认语言",
+          "organizations": "公司",
+          "default-organization": "默认公司",
+          "timezone": "时区"
+        },
+        "placeholders": {
+          "first-name": "输入您的名字",
+          "middle-name": "输入您的中间名",
+          "last-name": "输入您的姓",
+          "full-name": "输入您的全名",
+          "type": "输入类型",
+          "birthday": "输入出生日期",
+          "photo-url": "输入URL",
+          "defaultLanguage": "提供您的详细信息",
+          "organizations": "选择一家公司",
+          "timezone": "选择一个值"
+        }
+      },
+      "pick-store-list": {
+        "title": "新账户",
+        "subtitle": "为新账户选择商店",
+        "labels": {
+          "name": "商店名称"
+        }
+      },
+      "organization-detail": {
+        "title-new": "新公司",
+        "subtitle": "公司信息",
+        "labels": {
+          "name": "名称",
+          "description": "描述",
+          "business-category": "业务领域"
+        },
+        "placeholders": {
+          "name": "输入名称",
+          "description": "提供描述"
+        }
+      },
+      "vendor-detail": {
+        "title-new": "新供应商",
+        "subtitle": "供应商信息",
+        "labels": {
+          "name": "名称",
+          "site-url": "网站URL",
+          "logo-url": "标志URL",
+          "group-name": "组名",
+          "description": "描述"
+        },
+        "placeholders": {
+          "name": "输入您的数据",
+          "site-url": "输入URL",
+          "logo-url": "输入URL",
+          "group-name": "输入组名",
+          "description": "提供描述"
+        }
+      },
+      "member-add": {
+        "title": "新联系人",
+        "subtitle": "选择您想要创建的联系人类型",
+        "organization": {
+          "description": "可能包含有关员工、常规联系人或其他公司的信息的公司资料"
+        },
+        "employee": {
+          "description": "在公司工作的员工"
+        },
+        "contact": {
+          "description": "可能是公司成员或作为个人购物者的商店客户"
+        },
+        "vendor": {
+          "description": "商人或供应商"
+        }
+      },
+      "member-emails-list": {
+        "labels": {
+          "no-emails": "尚无电子邮件",
+          "name": "名称",
+          "address": "地址",
+          "Email": "电子邮件"
+        },
+        "placeholders": {
+          "email": "输入电子邮件"
+        }
+      },
+      "member-list": {
+        "title": "公司和联系人",
+        "subtitle": "加载 '{{name}}'",
+        "breadcrumb-all": "所有联系人",
+        "labels": {
+          "type": "类型",
+          "name": "名称",
+          "address": "地址",
+          "email": "电子邮件",
+          "filter-new": "添加新过滤器",
+          "unnamed-filter": "未命名过滤器",
+          "filter-vendor": "供应商",
+          "filter-contact": "联系人",
+          "filter-organization": "公司",
+          "copy-id": "复制ID",
+          "copy-name": "复制名称"
+        },
+        "placeholders": {
+          "select-filter": "选择过滤器"
+        }
+      },
+      "member-phones-list": {
+        "labels": {
+          "no-phones": "尚无电话号码"
+        },
+        "placeholders": {
+          "phone": "请输入电话号码..."
+        }
+      },
+      "customer-accounts-list": {
+        "commands": {
+          "link": "链接账户",
+          "unlink": "取消链接账户"
+        }
+      },
+      "filter-detail": {
+        "subtitle": "编辑过滤器",
+        "new-title": "新过滤器",
+        "new-subtitle": "创建新过滤器",
+        "labels": {
+          "criteria": "搜索短语",
+          "name": "过滤器名称",
+          "searchInVariations": "显示产品变体",
+          "syntax-example-1": "所有包含 'org1.com' 的联系人",
+          "syntax-example-2": "所有包含 'James' 和 'Smith' 的联系人",
+          "syntax-example-3": "使用星号 (*) 替换零个或多个字符",
+          "syntax-example-4": "所有名中包含 'Alex' 或 'James' 的联系人",
+          "syntax-example-5": "使用感叹号 (!) 作为过滤器的 NOT 运算符",
+          "syntax-example-6": "所有具有所选成员类型的联系人",
+          "syntax-example-7": "所有创建日期在两个值之间的联系人（包含）",
+          "syntax-example-8": "所有创建日期在两个值之间的联系人（不包含）",
+          "syntax-example-9": "所有修改日期大于或等于 '2016-12-26' 的联系人",
+          "syntax-example-10": "组合关键字和过滤器"
+        },
+        "placeholders": {
+          "criteria": "输入搜索短语",
+          "name": "给此过滤器命名"
+        }
+      },
+      "member-icon": {
+        "title": "管理图标",
+        "labels": {
+          "choose-icon": "选择新图标",
+          "choice-description": "选择PNG、JPG或SVG格式的图像",
+          "preview": "预览",
+          "preview-description": "当前图标",
+          "reset": "移除图标"
+        }
+      },
+      "shared": {
+        "labels": {
+          "status": "状态",
+          "progress": "进度"
+        },
+        "placeholders": {
+          "status": "请选择一个值"
+        }
+      }
+    },
+    "widgets": {
+      "address-list": {
+        "title": "地址",
+        "blade-subtitle": "管理地址"
+      },
+      "member-emails-list": {
+        "title": "电子邮件",
+        "blade-subtitle": "管理电子邮件"
+      },
+      "member-phones-list": {
+        "title": "电话号码",
+        "blade-subtitle": "管理电话号码"
+      },
+      "customer-accounts-list": {
+        "title": "账户",
+        "blade-subtitle": "管理客户账户"
+      },
+      "member-icon": {
+        "title": "图标"
+      },
+      "organization-assets": {
+        "title": "资源"
+      },
+      "account-contact": {
+        "no-contact": "无联系人",
+        "show-contact": "显示联系人"
+      }
+    },
+    "dialogs": {
+      "members-delete": {
+        "title": "确认删除",
+        "message": "您确定要删除所选的公司或联系人吗？"
+      },
+      "unknown-member-type": {
+        "title": "错误",
+        "message": "无法编辑未知类型的成员: '{{memberType}}'"
+      },
+      "member-save": {
+        "title": "保存更改",
+        "message": "此联系人已被修改。您要保存更改吗？"
+      },
+      "email-save": {
+        "title": "保存更改",
+        "message": "电子邮件已被修改。您要保存更改吗？"
+      },
+      "phone-number-save": {
+        "title": "保存更改",
+        "message": "电话号码已被修改。您要保存更改吗？"
+      }
+    }
+  },
+  "permissions": {
+    "customer:access": "打开客户菜单",
+    "customer:create": "创建客户数据",
+    "customer:read": "查看客户数据",
+    "customer:update": "更新客户数据",
+    "customer:delete": "删除客户数据"
+  },
+  "settings": {
+    "Customer": {
+      "MemberGroups": {
+        "title": "成员组字典",
+        "description": "所有可用的成员组值"
+      },
+      "ExportImport.PageSize": {
+        "title": "用于导出/导入的页面大小",
+        "description": "注意: 大值可能导致性能下降"
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "启用基于事件的客户实体索引（需要重启）",
+            "description": "对客户实体的任何更改都会触发后台任务，将这些更改应用于搜索索引"
+          }
+        }
+      },
+      "OrganizationStatuses": {
+        "title": "公司状态",
+        "description": "编辑公司状态"
+      },
+      "VendorStatuses": {
+        "title": "供应商状态",
+        "description": "编辑供应商状态"
+      },
+      "EmployeeStatuses": {
+        "title": "员工状态",
+        "description": "编辑员工状态"
+      },
+      "ContactStatuses": {
+        "title": "联系人状态",
+        "description": "编辑联系人状态"
+      },
+      "OrganizationDefaultStatus": {
+        "title": "公司默认状态",
+        "description": "此状态将分配给最近注册的公司"
+      },
+      "ContactDefaultStatus": {
+        "title": "联系人默认状态",
+        "description": "此状态将分配给最近注册的公司的所有者"
+      }
+    },
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Member": {
+              "title": "成员索引日期和时间",
+              "description": "成员索引任务开始的日期和时间"
+            }
+          }
+        }
+      }
+    }
+  },
+  "module": {
+    "VirtoCommerce.Customer": {
+      "description": "导出或导入联系人和公司"
+    }
+  },
+  "notificationTypes": {
+    "RegisterCompanyEmailNotification": {
+      "displayName": "组织注册电子邮件通知",
+      "description": "客户在其公司注册时会收到电子邮件通知"
+    }
+  }
+}

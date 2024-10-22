@@ -3,7 +3,7 @@
     "main-menu-title": "Contacts",
     "blades": {
       "contact-detail": {
-        "title-new": "New Contact",
+        "title-new": "New contact",
         "subtitle": "Contact details",
         "labels": {
           "first-name": "First name",
@@ -27,26 +27,26 @@
         },
         "placeholders": {
           "groups": "Select user groups",
-          "first-name": "Please specify a value",
-          "middle-name": "Please specify a value",
-          "last-name": "Please specify a value",
-          "full-name": "Please specify a value",
-          "birthday": "Please specify a value",
-          "salutation": "Please specify a value",
-          "defaultLanguage": "Please specify a value",
-          "currency": "Please specify a value",
-          "preferred-communication": "Please specify a value",
-          "preferred-delivery": "Please specify a value",
-          "taxpayerId": "Please specify a value",
-          "organizations": "Please select a company",
-          "associated-organizations": "Please select a company",
-          "timezone": "Please select",
-          "about": "Please, enter the information about contact",
-          "description": "Please, enter a description of the address"
+          "first-name": "Enter your data",
+          "middle-name": "Enter your data",
+          "last-name": "Enter your data",
+          "full-name": "Enter your data",
+          "birthday": "Enter your data",
+          "salutation": "Enter your data",
+          "defaultLanguage": "Provide your details",
+          "currency": "Provide your details",
+          "preferred-communication": "Provide your details",
+          "preferred-delivery": "Provide your details",
+          "taxpayerId": "Provide your details",
+          "organizations": "Select a company",
+          "associated-organizations": "Select a company",
+          "timezone": "Select",
+          "about": "Enter contact information",
+          "description": "Enter a description of the address"
         }
       },
       "employee-detail": {
-        "title-new": "New Employee",
+        "title-new": "New employee",
         "subtitle": "Employee details",
         "labels": {
           "is-active": "Active",
@@ -63,40 +63,40 @@
           "timezone": "Time zone"
         },
         "placeholders": {
-          "first-name": "Please specify a value",
-          "middle-name": "Please specify a value",
-          "last-name": "Please specify a value",
-          "full-name": "Please specify a value",
-          "type": "Please specify a value",
-          "birthday": "Please specify a value",
-          "photo-url": "Please enter URL",
-          "defaultLanguage": "Please specify a value",
-          "organizations": "Please select a company",
-          "timezone": "Please select a value"
+          "first-name": "Enter your data",
+          "middle-name": "Enter your data",
+          "last-name": "Enter your data",
+          "full-name": "Enter your data",
+          "type": "Enter your data",
+          "birthday": "Enter your data",
+          "photo-url": "Enter URL",
+          "defaultLanguage": "Provide your details",
+          "organizations": "Select a company",
+          "timezone": "Select a value"
         }
       },
       "pick-store-list": {
-        "title": "New Account",
+        "title": "New account",
         "subtitle": "Select a store for the new account",
         "labels": {
           "name": "Store name"
         }
       },
       "organization-detail": {
-        "title-new": "New Company",
+        "title-new": "New company",
         "subtitle": "Company details",
         "labels": {
           "name": "Name",
           "description": "Description",
-          "business-category": "Business domain"
+          "business-category": "Business field"
         },
         "placeholders": {
           "name": "Enter name",
-          "description": "Please provide description"
+          "description": "Provide description"
         }
       },
       "vendor-detail": {
-        "title-new": "New Vendor",
+        "title-new": "New vendor",
         "subtitle": "Vendor details",
         "labels": {
           "name": "Name",
@@ -106,18 +106,18 @@
           "description": "Description"
         },
         "placeholders": {
-          "name": "Please enter name",
-          "site-url": "Please enter URL",
-          "logo-url": "Please enter URL",
-          "group-name": "Please specify a value",
-          "description": "Please provide description"
+          "name": "Enter your data",
+          "site-url": "Enter URL",
+          "logo-url": "Enter URL",
+          "group-name": "Enter your data",
+          "description": "Provide description"
         }
       },
       "member-add": {
-        "title": "New Contact",
+        "title": "New contact",
         "subtitle": "Select a type of contact you would like to create",
         "organization": {
-          "description": "A company profile that may house information on employees, regular contacts, or other companies"
+          "description": "A company profile that may contain information on employees, regular contacts, or other companies"
         },
         "employee": {
           "description": "An employee that works in a company"
@@ -137,11 +137,11 @@
           "Email": "Email"
         },
         "placeholders": {
-          "email": "Please specify a value"
+          "email": "Enter email"
         }
       },
       "member-list": {
-        "title": "Companies and Contacts",
+        "title": "Companies and contacts",
         "subtitle": "Loading '{{name}}'",
         "breadcrumb-all": "All contacts",
         "labels": {
@@ -177,7 +177,7 @@
       },
       "filter-detail": {
         "subtitle": "Edit filter",
-        "new-title": "New Filter",
+        "new-title": "New filter",
         "new-subtitle": "Creating a new filter",
         "labels": {
           "criteria": "Search phrase",
@@ -195,15 +195,15 @@
           "syntax-example-10": "Combine both keywords and filters"
         },
         "placeholders": {
-          "criteria": "Please enter search phrase",
-          "name": "Please give this filter a name"
+          "criteria": "Enter search phrase",
+          "name": "Give this filter a name"
         }
       },
       "member-icon": {
         "title": "Manage icon",
         "labels": {
           "choose-icon": "Choose new icon",
-          "choice-description": "Select image with the PNG, JPG or SVG format.",
+          "choice-description": "Select image in the PNG, JPG, or SVG format",
           "preview": "Preview",
           "preview-description": "Current icon",
           "reset": "Remove icon" 
@@ -249,7 +249,7 @@
     },
     "dialogs": {
       "members-delete": {
-        "title": "Confirm Delete",
+        "title": "Confirm delete",
         "message": "Are you sure you want to delete the selected company(ies) or contact(s)?"
       },
       "unknown-member-type": {
@@ -284,14 +284,14 @@
         "description": "All available member group values"
       },
       "ExportImport.PageSize": {
-        "title": "Page size being used for Export / Import",
+        "title": "Page size being used for export / import",
         "description": "Note: Large values may result in decreased performance"
       },
       "Search": {
         "EventBasedIndexation": {
           "Enable": {
             "title": "Enable event-based indexing for customer entities (restart required)",
-            "description": "Any change to a customer entity will trigger a background task that will apply these changes to the search index."
+            "description": "Any change to a customer entity triggers a background task that applies these changes to the search index"
           }
         }
       },
@@ -326,7 +326,7 @@
           "IndexationDate": {
             "Member": {
               "title": "Member indexing date and time",
-              "description": "Date and time the member indexing task will start at"
+              "description": "Date and time member indexing task starts"
             }
           }
         }
@@ -341,7 +341,7 @@
   "notificationTypes": {
     "RegisterCompanyEmailNotification": {
       "displayName": "Organization registration email notification",
-      "description": "The customer will get an email notification once his company has registered"
+      "description": "The customer gets an email notification when his company has registered"
     }
   }
 }
