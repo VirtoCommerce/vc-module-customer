@@ -126,7 +126,7 @@
           "description": "Ein Kunde des Geschäfts, der entweder Mitglied eines Unternehmens sein oder als individueller Käufer auftreten kann"
         },
         "vendor": {
-          "description": "Ein Händler oder Anbieter"
+          "description": "Ein Händler oder Verkäufer"
         }
       },
       "member-emails-list": {
