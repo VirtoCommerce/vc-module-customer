@@ -82,6 +82,10 @@
           "name": "Store name"
         }
       },
+      "pick-security-account-list": {
+        "title": "Link Account",
+        "subtitle": "Select a security account to associate with the Contact"
+      },
       "organization-detail": {
         "title-new": "New company",
         "subtitle": "Company details",

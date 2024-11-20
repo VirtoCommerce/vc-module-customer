@@ -48,6 +48,18 @@ function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFil
         bladeNavigationService.showBlade(newBlade, blade);
     }
 
+    function openLinkAccountWizard(store) {
+        var newBlade = {
+            id: 'pickAccountList',
+            title: 'customer.blades.pick-security-account-list.title',
+            subtitle: 'customer.blades.pick-security-account-list.subtitle',
+            currentEntity: { storeId: store.id, memberId: blade.memberId },
+            controller: 'virtoCommerce.customerModule.pickSecurityAccountController',
+            template: '$(Platform)/Scripts/app/security/blades/account-list.tpl.html',
+        };
+        bladeNavigationService.showBlade(newBlade, blade);
+    }
+
     $scope.deleteList = function (selection) {
         var dialog = {
             id: "confirmDeleteItem",
@@ -77,6 +89,24 @@ function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFil
                         title: 'customer.blades.pick-store-list.title',
                         subtitle: 'customer.blades.pick-store-list.subtitle',
                         onAfterNodeSelected: openNewAccountWizard,
+                        controller: 'virtoCommerce.customerModule.pickStoreListController',
+                        template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/pick-store-list.tpl.html'
+                    };
+                    bladeNavigationService.showBlade(newBlade, blade);
+                });
+            },
+            canExecuteMethod: function () { return true; },
+            permission: 'platform:security:create'
+        },
+        {
+            name: "customer.blades.customer-accounts-list.commands.link", icon: 'fas fa-link',
+            executeMethod: function () {
+                bladeNavigationService.closeChildrenBlades(blade, function () {
+                    var newBlade = {
+                        id: 'pickStoreList',
+                        title: 'customer.blades.pick-security-account-list.title',
+                        subtitle: 'customer.blades.pick-security-account-list.subtitle',
+                        onAfterNodeSelected: openLinkAccountWizard,
                         controller: 'virtoCommerce.customerModule.pickStoreListController',
                         template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/pick-store-list.tpl.html'
                     };
