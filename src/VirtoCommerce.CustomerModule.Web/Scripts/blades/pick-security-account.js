@@ -1,8 +1,10 @@
 angular.module('virtoCommerce.customerModule')
-    .controller('virtoCommerce.customerModule.pickSecurityAccountController', ['$scope', 'platformWebApp.accounts', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeNavigationService', 'platformWebApp.bladeUtils',
+    .controller('virtoCommerce.customerModule.pickSecurityAccountController',
+        ['$scope', 'platformWebApp.accounts', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeNavigationService', 'platformWebApp.bladeUtils',
 function ($scope, accounts, uiGridHelper, bladeNavigationService, bladeUtils) {
     $scope.uiGridConstants = uiGridHelper.uiGridConstants;
     var blade = $scope.blade;
+    var filter = $scope.filter = {};
 
     blade.refresh = function () {
         blade.isLoading = true;
@@ -48,8 +50,6 @@ function ($scope, accounts, uiGridHelper, bladeNavigationService, bladeUtils) {
         }
     ];
 
-
-    var filter = $scope.filter = {};
     filter.criteriaChanged = function () {
         if ($scope.pageSettings.currentPage > 1) {
             $scope.pageSettings.currentPage = 1;
