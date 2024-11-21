@@ -82,6 +82,10 @@
           "name": "店舗名"
         }
       },
+      "pick-security-account-list": {
+        "title": "アカウントをリンク",
+        "subtitle": "連絡先に関連付けるセキュリティアカウントを選択"
+      },
       "organization-detail": {
         "title-new": "新しい会社",
         "subtitle": "会社の詳細",

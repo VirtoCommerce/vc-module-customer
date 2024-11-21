@@ -82,6 +82,10 @@
           "name": "Nazwa sklepu"
         }
       },
+      "pick-security-account-list": {
+        "title": "Połącz konto",
+        "subtitle": "Wybierz konto zabezpieczeń do powiązania z kontaktem"
+      },
       "organization-detail": {
         "title-new": "Nowa firma",
         "subtitle": "Szczegóły firmy",

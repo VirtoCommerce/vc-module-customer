@@ -82,6 +82,10 @@
           "name": "Nome da loja"
         }
       },
+      "pick-security-account-list": {
+        "title": "Vincular Conta",
+        "subtitle": "Selecione uma conta de segurança para associar ao Contato"
+      },
       "organization-detail": {
         "title-new": "Nova empresa",
         "subtitle": "Detalhes da empresa",

@@ -82,6 +82,10 @@
           "name": "Название магазина"
         }
       },
+      "pick-security-account-list": {
+        "title": "Связать аккаунт",
+        "subtitle": "Выберите учетную запись для ассоциации с контактом"
+      },
       "organization-detail": {
         "title-new": "Новая компания",
         "subtitle": "Детали компании",

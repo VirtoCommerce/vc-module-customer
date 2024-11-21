@@ -82,6 +82,10 @@
           "name": "Nom du magasin"
         }
       },
+      "pick-security-account-list": {
+        "title": "Lier le compte",
+        "subtitle": "Sélectionnez un compte de sécurité à associer au contact"
+      },
       "organization-detail": {
         "title-new": "Nouvelle entreprise",
         "subtitle": "Détails de l'entreprise",

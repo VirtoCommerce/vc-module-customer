@@ -82,6 +82,10 @@
           "name": "Geschäftsname"
         }
       },
+      "pick-security-account-list": {
+        "title": "Konto verknüpfen",
+        "subtitle": "Wählen Sie ein Sicherheitskonto aus, das dem Kontakt zugeordnet werden soll"
+      },
       "organization-detail": {
         "title-new": "Neue Firma",
         "subtitle": "Firmendetails",

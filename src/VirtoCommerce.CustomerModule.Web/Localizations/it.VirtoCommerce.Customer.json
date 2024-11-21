@@ -82,6 +82,10 @@
           "name": "Nome del negozio"
         }
       },
+      "pick-security-account-list": {
+        "title": "Collega account",
+        "subtitle": "Seleziona un account di sicurezza da associare al contatto"
+      },
       "organization-detail": {
         "title-new": "Nuova azienda",
         "subtitle": "Dettagli dell'azienda",

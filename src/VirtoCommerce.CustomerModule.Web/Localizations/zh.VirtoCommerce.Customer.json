@@ -82,6 +82,10 @@
           "name": "商店名称"
         }
       },
+      "pick-security-account-list": {
+        "title": "链接账户",
+        "subtitle": "选择一个安全账户与联系人关联"
+      },
       "organization-detail": {
         "title-new": "新公司",
         "subtitle": "公司信息",
