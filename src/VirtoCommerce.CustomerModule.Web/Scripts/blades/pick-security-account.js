@@ -1,6 +1,8 @@
 angular.module('virtoCommerce.customerModule')
     .controller('virtoCommerce.customerModule.pickSecurityAccountController',
-        ['$scope', 'platformWebApp.accounts', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeNavigationService', 'platformWebApp.bladeUtils', 'virtoCommerce.customerModule.members', 'platformWebApp.dialogService',
+        ['$scope', 'platformWebApp.accounts', 'platformWebApp.uiGridHelper',
+            'platformWebApp.bladeNavigationService', 'platformWebApp.bladeUtils',
+            'virtoCommerce.customerModule.members', 'platformWebApp.dialogService',
             function ($scope, accounts, uiGridHelper, bladeNavigationService, bladeUtils, members, dialogService) {
     $scope.uiGridConstants = uiGridHelper.uiGridConstants;
     var blade = $scope.blade;
@@ -29,14 +31,14 @@ angular.module('virtoCommerce.customerModule')
     };
 
     blade.selectNode = function (node) {
-        let nodeMemberId = node.memberId;
+        const nodeMemberId = node.memberId;
         node.memberId = blade.currentEntity.memberId;
         node.storeId = blade.currentEntity.storeId;
 
         if (nodeMemberId) {
             members.get({ id: nodeMemberId }, function (member) {
                 if (member?.name) {
-                    let dialog = {
+                    const dialog = {
                         id: 'confirmLinkAccount',
                         title: 'customer.blades.pick-security-account-list.title',
                         message: `The selected account is already associated with ${member.name}. Do you want to proceed?`,
