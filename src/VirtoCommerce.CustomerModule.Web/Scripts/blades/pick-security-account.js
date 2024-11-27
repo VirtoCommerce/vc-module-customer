@@ -1,10 +1,14 @@
 angular.module('virtoCommerce.customerModule')
     .controller('virtoCommerce.customerModule.pickSecurityAccountController',
-        ['$scope', 'platformWebApp.accounts', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeNavigationService', 'platformWebApp.bladeUtils',
-function ($scope, accounts, uiGridHelper, bladeNavigationService, bladeUtils) {
+        ['$scope', 'platformWebApp.accounts', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeNavigationService', 'platformWebApp.bladeUtils', 'virtoCommerce.customerModule.members', 'platformWebApp.dialogService',
+            function ($scope, accounts, uiGridHelper, bladeNavigationService, bladeUtils, members, dialogService) {
     $scope.uiGridConstants = uiGridHelper.uiGridConstants;
     var blade = $scope.blade;
     var filter = $scope.filter = {};
+
+
+    blade.title = 'customer.blades.pick-security-account-list.title';
+    blade.subtitle = 'customer.blades.pick-security-account-list.subtitle';
 
     blade.refresh = function () {
         blade.isLoading = true;
@@ -25,10 +29,37 @@ function ($scope, accounts, uiGridHelper, bladeNavigationService, bladeUtils) {
     };
 
     blade.selectNode = function (node) {
+        let nodeMemberId = node.memberId;
         node.memberId = blade.currentEntity.memberId;
         node.storeId = blade.currentEntity.storeId;
 
-        accounts.update(node, function (result) {
+        if (nodeMemberId) {
+            members.get({ id: nodeMemberId }, function (member) {
+                if (member?.name) {
+                    let dialog = {
+                        id: 'confirmLinkAccount',
+                        title: 'customer.blades.pick-security-account-list.title',
+                        message: `The selected account is already associated with ${member.name}. Do you want to proceed?`,
+                        callback: function (link) {
+                            if (link) {
+                                updateAccount(node);
+                            }
+                        }
+                    }
+                    dialogService.showConfirmationDialog(dialog);
+                }
+                else {
+                    updateAccount(node);
+                }
+            });
+        }
+        else {
+            updateAccount(node);
+        }
+    };
+
+    function updateAccount(account) {
+        accounts.update(account, function (result) {
             if (result.succeeded) {
                 blade.parentBlade.refresh();
             }
@@ -36,7 +67,7 @@ function ($scope, accounts, uiGridHelper, bladeNavigationService, bladeUtils) {
                 bladeNavigationService.setError(result.errors.join(), blade);
             }
         });
-    };
+    }
 
     blade.headIcon = 'fas fa-key';
 
