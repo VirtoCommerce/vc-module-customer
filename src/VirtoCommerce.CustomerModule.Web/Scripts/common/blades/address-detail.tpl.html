@@ -3,10 +3,11 @@
     <div class="inner-block">
       <form class="form" name="detailForm">
         <va-metaform blade="blade" registered-inputs="blade.metaFields" column-count="1" ng-init="setForm(detailForm)"></va-metaform>
+
+        <div class="form-group">
+          <va-widget-container group="addressDetail" blade="blade" data="blade.currentEntity" gridster-opts="{columns: 3}"></va-widget-container>
+        </div>
       </form>
-    </div>
-    <div class="form-group">
-      <va-widget-container group="addressDetail" blade="blade" data="blade.currentEntity" gridster-opts="{columns: 3}"></va-widget-container>
     </div>
   </div>
 </div>
