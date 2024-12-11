@@ -48,16 +48,6 @@ function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFil
         bladeNavigationService.showBlade(newBlade, blade);
     }
 
-    function openLinkAccountWizard(store) {
-        var newBlade = {
-            id: 'pickAccountList',
-            controller: 'virtoCommerce.customerModule.pickSecurityAccountController',
-            template: '$(Platform)/Scripts/app/security/blades/account-list.tpl.html',
-            currentEntity: { storeId: store.id, memberId: blade.memberId },
-        };
-        bladeNavigationService.showBlade(newBlade, blade);
-    }
-
     $scope.deleteList = function (selection) {
         var dialog = {
             id: "confirmDeleteItem",
@@ -101,12 +91,10 @@ function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFil
             executeMethod: function () {
                 bladeNavigationService.closeChildrenBlades(blade, function () {
                     var newBlade = {
-                        id: 'pickStoreList',
-                        controller: 'virtoCommerce.customerModule.pickStoreListController',
-                        template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/pick-store-list.tpl.html',
-                        onAfterNodeSelected: openLinkAccountWizard,
-                        title: 'customer.blades.pick-security-account-list.title',
-                        subtitle: 'customer.blades.pick-security-account-list.subtitle'
+                        id: 'pickAccountList',
+                        controller: 'virtoCommerce.customerModule.pickSecurityAccountController',
+                        template: '$(Platform)/Scripts/app/security/blades/account-list.tpl.html',
+                        currentEntity: { memberId: blade.memberId },
                     };
                     bladeNavigationService.showBlade(newBlade, blade);
                 });

@@ -32,8 +32,6 @@ angular.module('virtoCommerce.customerModule')
 
     blade.selectNode = function (node) {
         const nodeMemberId = node.memberId;
-        node.memberId = blade.currentEntity.memberId;
-        node.storeId = blade.currentEntity.storeId;
 
         if (nodeMemberId) {
             members.get({ id: nodeMemberId }, function (member) {
@@ -44,36 +42,56 @@ angular.module('virtoCommerce.customerModule')
                         message: `The selected account is already associated with ${member.name}. Do you want to proceed?`,
                         callback: function (link) {
                             if (link) {
-                                updateAccount(node);
+                                $scope.gridApi.selection.selectRow(node);
+                            } else {
+                                $scope.gridApi.selection.unSelectRow(node);
                             }
                         }
                     }
                     dialogService.showConfirmationDialog(dialog);
                 }
                 else {
-                    updateAccount(node);
+                    $scope.gridApi.selection.selectRow(node);
                 }
             });
         }
-        else {
-            updateAccount(node);
-        }
     };
 
-    function updateAccount(account) {
-        accounts.update(account, function (result) {
-            if (result.succeeded) {
-                blade.parentBlade.refresh();
-            }
-            else {
-                bladeNavigationService.setError(result.errors.join(), blade);
-            }
+
+    blade.linkAccount = function () {
+        blade.isLoading = true;
+
+        let selectedNodes = $scope.gridApi.selection.getSelectedRows();
+        let updatePromises = selectedNodes.map(node => {
+            return new Promise((resolve, reject) => {
+                node.memberId = blade.currentEntity.memberId;
+                accounts.update(node, function (result) {
+                    if (result.succeeded) {
+                        resolve();
+                    } else {
+                        bladeNavigationService.setError(result.errors.join(), blade);
+                        reject(result.errors);
+                    }
+                });
+            });
         });
-    }
+
+        Promise.all(updatePromises).then(() => {
+            blade.parentBlade.refresh();
+            $scope.bladeClose();
+        }).finally(() => {
+            blade.isLoading = false;
+        });
+    };
 
     blade.headIcon = 'fas fa-key';
 
     blade.toolbarCommands = [
+        {
+            name: "platform.commands.save", icon: 'fas fa-save',
+            executeMethod: blade.linkAccount,
+            canExecuteMethod: () => $scope.gridApi?.selection?.getSelectedRows()?.length > 0
+        },
         {
             name: "platform.commands.refresh", icon: 'fa fa-refresh',
             executeMethod: blade.refresh,
