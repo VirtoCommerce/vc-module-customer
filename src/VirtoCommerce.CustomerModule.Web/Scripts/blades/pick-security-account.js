@@ -61,8 +61,8 @@ angular.module('virtoCommerce.customerModule')
     blade.linkAccount = function () {
         blade.isLoading = true;
 
-        let selectedNodes = $scope.gridApi.selection.getSelectedRows();
-        let updatePromises = selectedNodes.map(node => {
+        const selectedNodes = $scope.gridApi.selection.getSelectedRows();
+        const updatePromises = selectedNodes.map(node => {
             return new Promise((resolve, reject) => {
                 node.memberId = blade.currentEntity.memberId;
                 accounts.update(node, function (result) {
