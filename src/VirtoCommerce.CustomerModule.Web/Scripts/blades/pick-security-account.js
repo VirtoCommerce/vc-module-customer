@@ -120,7 +120,7 @@ angular.module('virtoCommerce.customerModule')
 
                 // ui-grid
                 $scope.setGridOptions = function (gridOptions) {
-                    gridOptions.enableSelectAll = false;    
+                    gridOptions.enableSelectAll = false;
                     gridOptions.isRowSelectable = isRowSelectable;
 
                     uiGridHelper.initialize($scope, gridOptions, function (gridApi) {
