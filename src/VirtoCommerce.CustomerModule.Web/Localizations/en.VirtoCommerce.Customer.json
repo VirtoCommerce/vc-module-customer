@@ -175,8 +175,8 @@
       },
       "customer-accounts-list": {
         "commands": {
-          "link": "Link account",
-          "unlink": "Unlink account"
+          "link": "Link",
+          "unlink": "Unlink"
         }
       },
       "filter-detail": {
@@ -210,8 +210,8 @@
           "choice-description": "Select image in the PNG, JPG, or SVG format",
           "preview": "Preview",
           "preview-description": "Current icon",
-          "reset": "Remove icon" 
-        } 
+          "reset": "Remove icon"
+        }
       },
       "shared": {
         "labels": {
@@ -259,6 +259,14 @@
       "unknown-member-type": {
         "title": "Error",
         "message": "Cannot edit member of an unknown type: '{{memberType}}'"
+      },
+      "confirm-account-link": {
+        "title": "Confirm link",
+        "message": "The selected account is already associated with '{{memberName}}'. Do you want to proceed?"
+      },
+      "confirm-account-unlink": {
+        "title": "Confirm unlink",
+        "message": "Are you sure you want to unlink the selected account(s)?"
       },
       "member-save": {
         "title": "Save changes",
