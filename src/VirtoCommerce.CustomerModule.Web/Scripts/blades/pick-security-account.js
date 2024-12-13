@@ -61,6 +61,9 @@ angular.module('virtoCommerce.customerModule')
                                     callback: function (isConfirmed) {
                                         row.isSelected = isConfirmed;
                                     },
+                                    callbackOnDismiss: function (_) {
+                                        row.isSelected = false;
+                                    },
                                 };
                                 dialogService.showConfirmationDialog(dialog);
                             }
