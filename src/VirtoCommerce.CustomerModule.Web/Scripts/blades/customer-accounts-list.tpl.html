@@ -12,9 +12,9 @@
   <div class="blade-inner">
     <div class="inner-block">
       <div class="table-wrapper" ng-init="setGridOptions({
-        rowTemplate: 'account-list.row.html',
+        rowTemplate: 'customer-account-list.row.html',
         columnDefs: [
-            { name: 'actions', displayName: '', enableColumnResizing: false, enableSorting: false, width: 30, cellTemplate: 'list-actions.cell.html', pinnedLeft:true },
+            { name: 'actions', displayName: '', enableColumnResizing: false, enableSorting: false, width: 30, cellTemplate: 'customer-account-list-actions.cell.html', pinnedLeft:true },
             {
                 displayName: 'platform.blades.account-list.labels.name', name: 'userName',
                 sort: { direction: uiGridConstants.ASC }, width: '*'
@@ -35,10 +35,22 @@
     </div>
   </div>
 </div>
-<script type="text/ng-template" id="account-list.row.html">
-  <div ng-click='grid.appScope.blade.selectNode(row.entity)' ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.uid" ui-grid-one-bind-id-grid="rowRenderIndex + '-' + col.uid + '-cell'" class="ui-grid-cell" ng-class="{'ui-grid-row-header-cell': col.isRowHeader, '__hovered': grid.appScope.contextMenuEntity === row.entity, '__selected': row.entity.userName===grid.appScope.selectedNodeId }" role="{{col.isRowHeader ? 'rowheader' : 'gridcell' }}" ui-grid-cell context-menu="grid.appScope.contextMenuEntity = row.entity" data-target="cal_menu"></div>
+<script type="text/ng-template" id="customer-account-list.row.html">
+  <div ng-click='grid.appScope.blade.selectNode(row.entity)'
+       ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.uid"
+       ui-grid-one-bind-id-grid="rowRenderIndex + '-' + col.uid + '-cell'"
+       class="ui-grid-cell"
+       ng-class="{
+          'ui-grid-row-header-cell': col.isRowHeader,
+          '__hovered': grid.appScope.contextMenuEntity === row.entity,
+          '__selected': row.entity.userName===grid.appScope.selectedNodeId
+       }"
+       role="{{col.isRowHeader ? 'rowheader' : 'gridcell' }}"
+       ui-grid-cell
+       context-menu="grid.appScope.contextMenuEntity = row.entity"
+       data-target="cal_menu"></div>
 </script>
-<script type="text/ng-template" id="list-actions.cell.html">
+<script type="text/ng-template" id="customer-account-list-actions.cell.html">
   <div class="ui-grid-actions" left-click-menu="grid.appScope.contextMenuEntity = row.entity" data-target="cal_menu">
     <span class="fa fa-ellipsis-v"></span>
   </div>
