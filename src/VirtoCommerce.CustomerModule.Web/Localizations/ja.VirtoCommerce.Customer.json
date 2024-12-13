@@ -84,7 +84,7 @@
       },
       "pick-security-account-list": {
         "title": "アカウントをリンク",
-        "subtitle": "連絡先に関連付けるセキュリティアカウントを選択"
+        "subtitle": "連絡先に関連付けるセキュリティアカウントを選択してください"
       },
       "organization-detail": {
         "title-new": "新しい会社",
@@ -130,7 +130,7 @@
           "description": "会社のメンバーであるか、個人の買い物客として行動する可能性のある店舗の顧客"
         },
         "vendor": {
-          "description": "商人またはベンダー"
+          "description": "売り手、商人、業者"
         }
       },
       "member-emails-list": {
@@ -175,8 +175,8 @@
       },
       "customer-accounts-list": {
         "commands": {
-          "link": "アカウントをリンク",
-          "unlink": "アカウントのリンクを解除"
+          "link": "をリンク",
+          "unlink": "のリンクを解除"
         }
       },
       "filter-detail": {
@@ -259,6 +259,14 @@
       "unknown-member-type": {
         "title": "エラー",
         "message": "不明なタイプのメンバーを編集できません: '{{memberType}}'"
+      },
+      "confirm-account-link": {
+        "title": "リンクの確認",
+        "message": "選択されたアカウントはすでに '{{memberName}}' に関連付けられています。続行しますか？"
+      },
+      "confirm-account-unlink": {
+        "title": "リンク解除の確認",
+        "message": "選択されたアカウントを解除してもよろしいですか？"
       },
       "member-save": {
         "title": "変更を保存",

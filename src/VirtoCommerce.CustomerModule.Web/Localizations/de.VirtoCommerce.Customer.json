@@ -130,7 +130,7 @@
           "description": "Ein Kunde des Geschäfts, der entweder Mitglied eines Unternehmens sein oder als individueller Käufer auftreten kann"
         },
         "vendor": {
-          "description": "Ein Händler oder Verkäufer"
+          "description": "Verkäufer, Händler oder Lieferant"
         }
       },
       "member-emails-list": {
@@ -175,8 +175,8 @@
       },
       "customer-accounts-list": {
         "commands": {
-          "link": "Konto verknüpfen",
-          "unlink": "Konto trennen"
+          "link": "Verknüpfen",
+          "unlink": "Trennen"
         }
       },
       "filter-detail": {
@@ -259,6 +259,14 @@
       "unknown-member-type": {
         "title": "Fehler",
         "message": "Kann Mitglied eines unbekannten Typs nicht bearbeiten: '{{memberType}}'"
+      },
+      "confirm-account-link": {
+        "title": "Verknüpfung bestätigen",
+        "message": "Das ausgewählte Konto ist bereits mit '{{memberName}}' verknüpft. Möchten Sie fortfahren?"
+      },
+      "confirm-account-unlink": {
+        "title": "Trennung bestätigen",
+        "message": "Möchten Sie die ausgewählten Konten wirklich trennen?"
       },
       "member-save": {
         "title": "Änderungen speichern",

@@ -130,7 +130,7 @@
           "description": "Un cliente del negozio che può essere membro di un'azienda o agire come acquirente individuale"
         },
         "vendor": {
-          "description": "Un commerciante o fornitore"
+          "description": "Venditore, commerciante o fornitore"
         }
       },
       "member-emails-list": {
@@ -175,8 +175,8 @@
       },
       "customer-accounts-list": {
         "commands": {
-          "link": "Collega account",
-          "unlink": "Scollega account"
+          "link": "Collega",
+          "unlink": "Scollega"
         }
       },
       "filter-detail": {
@@ -259,6 +259,14 @@
       "unknown-member-type": {
         "title": "Errore",
         "message": "Impossibile modificare un membro di un tipo sconosciuto: '{{memberType}}'"
+      },
+      "confirm-account-link": {
+        "title": "Conferma collegamento",
+        "message": "L'account selezionato è già associato a '{{memberName}}'. Vuoi procedere?"
+      },
+      "confirm-account-unlink": {
+        "title": "Conferma scollegamento",
+        "message": "Sei sicuro di voler scollegare l'account/i selezionato/i?"
       },
       "member-save": {
         "title": "Salva modifiche",

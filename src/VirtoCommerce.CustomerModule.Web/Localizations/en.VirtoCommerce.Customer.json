@@ -83,8 +83,8 @@
         }
       },
       "pick-security-account-list": {
-        "title": "Link Account",
-        "subtitle": "Select a security account to associate with the Contact"
+        "title": "Link account",
+        "subtitle": "Select a security account to associate with the contact"
       },
       "organization-detail": {
         "title-new": "New company",
@@ -130,7 +130,7 @@
           "description": "A store customer that may either be a member of a company or act as an individual shopper"
         },
         "vendor": {
-          "description": "A merchant or vendor"
+          "description": "Seller, merchant, or vendor"
         }
       },
       "member-emails-list": {

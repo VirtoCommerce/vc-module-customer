@@ -83,8 +83,8 @@
         }
       },
       "pick-security-account-list": {
-        "title": "Vincular Conta",
-        "subtitle": "Selecione uma conta de segurança para associar ao Contato"
+        "title": "Vincular conta",
+        "subtitle": "Selecione uma conta de segurança para associar ao contato"
       },
       "organization-detail": {
         "title-new": "Nova empresa",
@@ -130,7 +130,7 @@
           "description": "Um cliente da loja que pode ser membro de uma empresa ou atuar como um comprador individual"
         },
         "vendor": {
-          "description": "Um comerciante ou fornecedor"
+          "description": "Vendedor, comerciante ou fornecedor"
         }
       },
       "member-emails-list": {
@@ -175,8 +175,8 @@
       },
       "customer-accounts-list": {
         "commands": {
-          "link": "Vincular conta",
-          "unlink": "Desvincular conta"
+          "link": "Vincular",
+          "unlink": "Desvincular"
         }
       },
       "filter-detail": {
@@ -259,6 +259,14 @@
       "unknown-member-type": {
         "title": "Erro",
         "message": "Não é possível editar membro de um tipo desconhecido: '{{memberType}}'"
+      },
+      "confirm-account-link": {
+        "title": "Confirmar vinculação",
+        "message": "A conta selecionada já está associada a '{{memberName}}'. Deseja continuar?"
+      },
+      "confirm-account-unlink": {
+        "title": "Confirmar desvinculação",
+        "message": "Tem certeza de que deseja desvincular a(s) conta(s) selecionada(s)?"
       },
       "member-save": {
         "title": "Salvar alterações",
