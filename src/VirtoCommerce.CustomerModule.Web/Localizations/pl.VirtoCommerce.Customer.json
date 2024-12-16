@@ -82,6 +82,10 @@
           "name": "Nazwa sklepu"
         }
       },
+      "pick-security-account-list": {
+        "title": "Połącz konto",
+        "subtitle": "Wybierz konto zabezpieczeń, które ma zostać powiązane z kontaktem"
+      },
       "organization-detail": {
         "title-new": "Nowa firma",
         "subtitle": "Szczegóły firmy",
@@ -126,7 +130,7 @@
           "description": "Klient sklepu, który może być członkiem firmy lub działać jako indywidualny nabywca"
         },
         "vendor": {
-          "description": "Handlowiec lub dostawca"
+          "description": "Sprzedawca, kupiec lub dostawca"
         }
       },
       "member-emails-list": {
@@ -171,8 +175,8 @@
       },
       "customer-accounts-list": {
         "commands": {
-          "link": "Połącz konto",
-          "unlink": "Odłącz konto"
+          "link": "Połącz",
+          "unlink": "Odłącz"
         }
       },
       "filter-detail": {
@@ -255,6 +259,14 @@
       "unknown-member-type": {
         "title": "Błąd",
         "message": "Nie można edytować członka o nieznanym typie: '{{memberType}}'"
+      },
+      "confirm-account-link": {
+        "title": "Potwierdź połączenie",
+        "message": "Wybrane konto jest już powiązane z '{{memberName}}'. Czy chcesz kontynuować?"
+      },
+      "confirm-account-unlink": {
+        "title": "Potwierdź odłączenie",
+        "message": "Czy na pewno chcesz odłączyć wybrane konto(-a)?"
       },
       "member-save": {
         "title": "Zapisz zmiany",
