@@ -82,6 +82,10 @@
           "name": "Nom du magasin"
         }
       },
+      "pick-security-account-list": {
+        "title": "Lier un compte",
+        "subtitle": "Sélectionnez un compte de sécurité à associer au contact"
+      },
       "organization-detail": {
         "title-new": "Nouvelle entreprise",
         "subtitle": "Détails de l'entreprise",
@@ -126,7 +130,7 @@
           "description": "Un client du magasin qui peut être membre d'une entreprise ou agir en tant qu'acheteur individuel"
         },
         "vendor": {
-          "description": "Un commerçant ou un fournisseur"
+          "description": "Vendeur, marchand ou distributeur"
         }
       },
       "member-emails-list": {
@@ -171,8 +175,8 @@
       },
       "customer-accounts-list": {
         "commands": {
-          "link": "Lier le compte",
-          "unlink": "Délier le compte"
+          "link": "Lier",
+          "unlink": "Délier"
         }
       },
       "filter-detail": {
@@ -255,6 +259,14 @@
       "unknown-member-type": {
         "title": "Erreur",
         "message": "Impossible de modifier un membre d'un type inconnu : '{{memberType}}'"
+      },
+      "confirm-account-link": {
+        "title": "Confirmer la liaison",
+        "message": "Le compte sélectionné est déjà associé à '{{memberName}}'. Voulez-vous continuer?"
+      },
+      "confirm-account-unlink": {
+        "title": "Confirmer la déliaison",
+        "message": "Êtes-vous sûr de vouloir dissocier le(s) compte(s) sélectionné(s)?"
       },
       "member-save": {
         "title": "Enregistrer les modifications",
