@@ -1,8 +1,10 @@
 angular.module('virtoCommerce.customerModule')
 .controller('virtoCommerce.customerModule.customerAccountsListController', ['$scope', 'platformWebApp.dialogService', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeNavigationService', 'filterFilter', 'platformWebApp.accounts',
 function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFilter, accounts) {
-    $scope.uiGridConstants = uiGridHelper.uiGridConstants;
     var blade = $scope.blade;
+    blade.headIcon = 'fas fa-key';
+
+    $scope.uiGridConstants = uiGridHelper.uiGridConstants;
 
     blade.refresh = function () {
         blade.isLoading = true;
@@ -56,8 +58,46 @@ function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFil
             callback: function (remove) {
                 if (remove) {
                     bladeNavigationService.closeChildrenBlades(blade, function () {
-                        var itemIds = _.pluck(selection, 'userName');
-                        accounts.remove({ names: itemIds }, blade.refresh);
+                        var userNames = _.pluck(selection, 'userName');
+                        accounts.remove({ names: userNames }, blade.refresh);
+                    });
+                }
+            }
+        };
+        dialogService.showWarningDialog(dialog);
+    };
+
+    $scope.unlinkAccounts = function (selectedAccounts) {
+        var dialog = {
+            id: "confirmUnlinkAccount",
+            title: "customer.dialogs.confirm-account-unlink.title",
+            message: "customer.dialogs.confirm-account-unlink.message",
+            callback: function (isConfirmed) {
+                if (isConfirmed) {
+                    bladeNavigationService.closeChildrenBlades(blade, function () {
+                        blade.isLoading = true;
+
+                        const updatePromises = selectedAccounts.map(account => {
+                            return new Promise((resolve, reject) => {
+                                account.memberId = null;
+                                accounts.update(account, function (result) {
+                                    if (result.succeeded) {
+                                        resolve();
+                                    } else {
+                                        bladeNavigationService.setError(result.errors.join(), blade);
+                                        reject(result.errors);
+                                    }
+                                });
+                            });
+                        });
+
+                        Promise.all(updatePromises)
+                            .then(() => {
+                                blade.refresh();
+                            })
+                            .finally(() => {
+                                blade.isLoading = false;
+                            });
                     });
                 }
             }
@@ -65,11 +105,10 @@ function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFil
         dialogService.showConfirmationDialog(dialog);
     };
 
-    blade.headIcon = 'fas fa-key';
-
     blade.toolbarCommands = [
         {
-            name: "platform.commands.add", icon: 'fas fa-plus',
+            name: "platform.commands.add",
+            icon: 'fas fa-plus',
             executeMethod: function () {
                 bladeNavigationService.closeChildrenBlades(blade, function () {
                     var newBlade = {
@@ -87,7 +126,34 @@ function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFil
             permission: 'platform:security:create'
         },
         {
-            name: "platform.commands.delete", icon: 'fas fa-trash-alt',
+            name: "customer.blades.customer-accounts-list.commands.link",
+            icon: 'fas fa-link',
+            executeMethod: function () {
+                bladeNavigationService.closeChildrenBlades(blade, function () {
+                    var newBlade = {
+                        id: 'pickAccountList',
+                        controller: 'virtoCommerce.customerModule.pickSecurityAccountController',
+                        template: '$(Platform)/Scripts/app/security/blades/account-list.tpl.html',
+                        currentEntity: { memberId: blade.memberId },
+                    };
+                    bladeNavigationService.showBlade(newBlade, blade);
+                });
+            },
+            canExecuteMethod: function () { return true; },
+            permission: 'platform:security:update'
+        },
+        {
+            name: "customer.blades.customer-accounts-list.commands.unlink",
+            icon: 'fas fa-unlink',
+            executeMethod: function () { $scope.unlinkAccounts($scope.gridApi.selection.getSelectedRows()); },
+            canExecuteMethod: function () {
+                return $scope.gridApi && $scope.gridApi.selection.getSelectedRows().length > 0;
+            },
+            permission: 'platform:security:update'
+        },
+        {
+            name: "platform.commands.delete",
+            icon: 'fas fa-trash-alt',
             executeMethod: function () { $scope.deleteList($scope.gridApi.selection.getSelectedRows()); },
             canExecuteMethod: function () {
                 return $scope.gridApi && _.any($scope.gridApi.selection.getSelectedRows());

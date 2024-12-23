@@ -82,6 +82,10 @@
           "name": "商店名称"
         }
       },
+      "pick-security-account-list": {
+        "title": "链接账户",
+        "subtitle": "选择一个安全账户与该联系人关联"
+      },
       "organization-detail": {
         "title-new": "新公司",
         "subtitle": "公司信息",
@@ -126,7 +130,7 @@
           "description": "可能是公司成员或作为个人购物者的商店客户"
         },
         "vendor": {
-          "description": "商人或供应商"
+          "description": "卖家、商人或供应商"
         }
       },
       "member-emails-list": {
@@ -171,8 +175,8 @@
       },
       "customer-accounts-list": {
         "commands": {
-          "link": "链接账户",
-          "unlink": "取消链接账户"
+          "link": "链接",
+          "unlink": "解除链接"
         }
       },
       "filter-detail": {
@@ -255,6 +259,14 @@
       "unknown-member-type": {
         "title": "错误",
         "message": "无法编辑未知类型的成员: '{{memberType}}'"
+      },
+      "confirm-account-link": {
+        "title": "确认链接",
+        "message": "选定的账户已经与 '{{memberName}}' 关联。您要继续吗？"
+      },
+      "confirm-account-unlink": {
+        "title": "确认解除链接",
+        "message": "您确定要解除选定账户的关联吗？"
       },
       "member-save": {
         "title": "保存更改",
