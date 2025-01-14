@@ -67,6 +67,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
 
                 if (blade.currentEntity.organizations) {
                     var organizationCriteria = {
+                        deepSearch: true,
                         objectIds: blade.currentEntity.organizations,
                         skip: 0,
                         take: blade.currentEntity.organizations.length
