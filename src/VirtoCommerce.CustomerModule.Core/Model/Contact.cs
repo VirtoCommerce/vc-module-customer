@@ -5,7 +5,7 @@ using VirtoCommerce.Platform.Core.Security;
 
 namespace VirtoCommerce.CustomerModule.Core.Model
 {
-    public class Contact : Member, IHasSecurityAccounts, IHasPersonName
+    public class Contact : Member, IHasSecurityAccounts, IHasPersonName, IHasOrganizations
     {
         public Contact()
         {
@@ -26,6 +26,7 @@ namespace VirtoCommerce.CustomerModule.Core.Model
         public IList<string> Organizations { get; set; }
         public IList<string> AssociatedOrganizations { get; set; }
         public string DefaultOrganizationId { get; set; }
+        public string CurrentOrganizationId { get; set; }
 
         public string TaxPayerId { get; set; }
         public string PreferredDelivery { get; set; }

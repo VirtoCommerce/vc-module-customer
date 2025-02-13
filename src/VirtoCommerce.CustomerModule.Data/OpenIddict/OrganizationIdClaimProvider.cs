@@ -33,10 +33,10 @@ public class OrganizationIdClaimProvider(IMemberService memberService) : ITokenC
             return organizationId;
         }
 
-        return await GetDefaultOrganizationId(context);
+        return await GetMemberOrganizationId(context);
     }
 
-    private async Task<string> GetDefaultOrganizationId(TokenRequestContext context)
+    private async Task<string> GetMemberOrganizationId(TokenRequestContext context)
     {
         var memberId = context.User?.MemberId;
         if (string.IsNullOrEmpty(memberId))
@@ -48,8 +48,7 @@ public class OrganizationIdClaimProvider(IMemberService memberService) : ITokenC
 
         return member switch
         {
-            Contact contact => contact.DefaultOrganizationId ?? contact.Organizations?.FirstOrDefault(),
-            Employee employee => employee.DefaultOrganizationId ?? employee.Organizations?.FirstOrDefault(),
+            IHasOrganizations contact => contact.CurrentOrganizationId ?? contact.DefaultOrganizationId ?? contact.Organizations?.FirstOrDefault(),
             _ => null,
         };
     }
