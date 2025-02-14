@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
+using VirtoCommerce.Platform.Core;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Security.Extensions;
 using VirtoCommerce.Platform.Security.OpenIddict;
@@ -11,7 +12,9 @@ public class CurrentOrganizationIdTokenHandler(IMemberService memberService) : I
 {
     public async Task HandleAsync(ApplicationUser user, TokenRequestContext context)
     {
-        if (context.Principal != null && context.Principal.IsImpersonated())
+        // skip currentOrganizationId change for any form of impersonation
+        if (context.Request.GrantType == PlatformConstants.Security.GrantTypes.Impersonate ||
+            (context.Principal != null && context.Principal.IsImpersonated()))
         {
             return;
         }
