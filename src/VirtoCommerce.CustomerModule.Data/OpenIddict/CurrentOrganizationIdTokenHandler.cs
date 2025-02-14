@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.Platform.Core.Security;
+using VirtoCommerce.Platform.Security.Extensions;
 using VirtoCommerce.Platform.Security.OpenIddict;
 
 namespace VirtoCommerce.CustomerModule.Data.OpenIddict;
@@ -10,6 +11,11 @@ public class CurrentOrganizationIdTokenHandler(IMemberService memberService) : I
 {
     public async Task HandleAsync(ApplicationUser user, TokenRequestContext context)
     {
+        if (context.Principal != null && context.Principal.IsImpersonated())
+        {
+            return;
+        }
+
         var organizationId = context.Request.GetParameter(Parameters.OrganizationId)?.Value?.ToString();
         if (string.IsNullOrEmpty(organizationId))
         {

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using OpenIddict.Abstractions;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
+using VirtoCommerce.Platform.Core;
 using VirtoCommerce.Platform.Security.OpenIddict;
 using static VirtoCommerce.CustomerModule.Core.ModuleConstants.Security;
 
@@ -18,6 +19,12 @@ public class OrganizationIdRequestValidator(IMemberService memberService) : ITok
 
     public virtual async Task<IList<TokenResponse>> ValidateAsync(TokenRequestContext context)
     {
+        // Restrict organization ID change for impersonate grant type
+        if (context.Request.GrantType == PlatformConstants.Security.GrantTypes.Impersonate && context.Request.HasParameter(Parameters.OrganizationId))
+        {
+            return [ErrorDescriber.InvalidParamOrganizationId()];
+        }
+
         var organizationId = GetOrganizationId(context);
         if (string.IsNullOrEmpty(organizationId))
         {

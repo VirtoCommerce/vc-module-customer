@@ -12,4 +12,12 @@ public static class ErrorDescriber
         Code = nameof(InvalidOrganizationId).ToSnakeCase(),
         ErrorDescription = $"Access denied. You cannot switch to organization '{organizationId}'.",
     };
+
+
+    public static TokenResponse InvalidParamOrganizationId() => new()
+    {
+        Error = Errors.InvalidRequest,
+        Code = nameof(InvalidParamOrganizationId).ToSnakeCase(),
+        ErrorDescription = $"You cannot use 'impersonate' grant and 'organization_id' param.",
+    };
 }
