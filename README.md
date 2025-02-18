@@ -12,7 +12,7 @@ VirtoCommerce.Customer module represents contacts management system. The main pu
 
 ## Documentation
 
-1. [Customer Module Document](/docs/index.md)
+1. [Customer Module Document](https://docs.virtocommerce.org/platform/user-guide/contacts/overview/)
 1. [View on Github](https://github.com/VirtoCommerce/vc-module-customer)
 
 1. Developer guide: <a href="https://virtocommerce.com/docs/vc2devguide/extending-commerce/extending-members-domain-types" target="_blank">Extending Members domain types</a>
@@ -25,11 +25,11 @@ VirtoCommerce.Customer module represents contacts management system. The main pu
 
 ## References
 
-1. Deploy: https://virtocommerce.com/docs/latest/developer-guide/deploy-module-from-source-code/
-1. Installation: https://www.virtocommerce.com/docs/latest/user-guide/modules/
-1. Home: https://virtocommerce.com
-1. Community: https://www.virtocommerce.org
-1. [Download Latest Release](https://github.com/VirtoCommerce/vc-module-customer/releases/tag/3.2.0)
+* Deploy: https://docs.virtocommerce.org/platform/developer-guide/Tutorials-and-How-tos/Tutorials/deploy-module-from-source-code/
+* Installation: https://docs.virtocommerce.org/platform/user-guide/modules-installation/
+* Home: https://virtocommerce.com
+* Community: https://www.virtocommerce.org
+* [Download Latest Release](https://github.com/VirtoCommerce/vc-module-customer/releases/tag/3.2.0)
 
 ## Available resources
 
