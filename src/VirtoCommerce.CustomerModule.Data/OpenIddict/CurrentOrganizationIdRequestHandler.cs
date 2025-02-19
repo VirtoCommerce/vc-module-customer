@@ -8,7 +8,7 @@ using VirtoCommerce.Platform.Security.OpenIddict;
 
 namespace VirtoCommerce.CustomerModule.Data.OpenIddict;
 
-public class CurrentOrganizationIdTokenHandler(IMemberService memberService) : ITokenRequestHandler
+public class CurrentOrganizationIdRequestHandler(IMemberService memberService) : ITokenRequestHandler
 {
     public async Task HandleAsync(ApplicationUser user, TokenRequestContext context)
     {
