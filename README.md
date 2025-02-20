@@ -1,14 +1,14 @@
-# Overview
+# Virto Commerce Customer Module
 
 [![CI status](https://github.com/VirtoCommerce/vc-module-customer/workflows/Module%20CI/badge.svg?branch=dev)](https://github.com/VirtoCommerce/vc-module-customer/actions?query=workflow%3A"Module+CI") [![Quality gate](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-customer&metric=alert_status&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-customer) [![Reliability rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-customer&metric=reliability_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-customer) [![Security rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-customer&metric=security_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-customer) [![Sqale rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-customer&metric=sqale_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-customer)
 
-The Virto Commerce Customer module represents contacts management system. The main purpose of this functionality is to keep the users contact information. The VC Customer Module helps to view, search and edit contact information.
+The Virto Commerce Customer module represents contacts management system. The main purpose of this functionality is to keep the users contact information. The Customer Module helps to view, search, and edit contact information.
 
 ## Key features
 
 * Сontacts arrangement in hierarchical structure
 * Module extensibility with custom contact types
-* "Organization", "Employee", "Customer" and "Vendor" contact types supported out of the box
+* **Organization**, **Employee**, **Customer** and **Vendor** contact types supported out of the box
 
 ## Documentation
 
