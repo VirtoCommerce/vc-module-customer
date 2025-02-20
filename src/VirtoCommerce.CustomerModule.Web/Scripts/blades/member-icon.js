@@ -1,6 +1,6 @@
 angular.module("virtoCommerce.customerModule")
-    .controller("virtoCommerce.customerModule.memberIconController", ["$scope", "$http", "FileUploader", "platformWebApp.bladeNavigationService", "platformWebApp.dialogService",
-        ($scope, $http, FileUploader, bladeNavigationService, dialogService) => {
+    .controller("virtoCommerce.customerModule.memberIconController", ['$rootScope', "$scope", "FileUploader", "platformWebApp.bladeNavigationService", "platformWebApp.dialogService", 'virtoCommerce.customerModule.members',
+        ($rootScope, $scope, FileUploader, bladeNavigationService, dialogService, membersApi) => {
             var blade = $scope.blade;
             blade.title = "customer.blades.member-icon.title";
 
@@ -31,7 +31,9 @@ angular.module("virtoCommerce.customerModule")
                 iconUploader.onSuccessItem = (_, uploadedImages) => {
                     // Need to change icon URL each time to reload image on the blades,
                     // so that we add random postfix to the URL.
-                    blade.tempUrl = uploadedImages[0].url;
+                    // blade.tempUrl = uploadedImages[0].url;
+                    var postfix = Math.random().toString(36).slice(2, 7);
+                    blade.tempUrl = uploadedImages[0].url + "?" + postfix;
                 };
 
                 iconUploader.onErrorItem = (element, response, status, _) => {
@@ -84,6 +86,10 @@ angular.module("virtoCommerce.customerModule")
             blade.saveChanges = () => {
                 blade.currentEntity.iconUrl = blade.tempUrl;
                 angular.copy(blade.currentEntity, blade.originalEntity);
+                if (blade.saveImmediately) {
+                    membersApi.update(blade.currentEntity);
+                    $rootScope.$broadcast('memberIconChanged', blade.currentEntity.iconUrl);
+                }
                 $scope.bladeClose();
             };
 

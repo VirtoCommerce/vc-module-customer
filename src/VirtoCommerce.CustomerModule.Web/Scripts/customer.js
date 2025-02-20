@@ -191,6 +191,9 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                 widgetService.registerWidget(vendorSeoWidget, 'vendorDetail2');
                 widgetService.registerWidget(indexWidget, 'vendorDetail2');
 
+                //Register widgets in user details
+                widgetService.registerWidget(iconWidget, 'userProfileDetail');
+
                 // register member types
                 memberTypesResolverService.registerType({
                     memberType: 'Organization',
