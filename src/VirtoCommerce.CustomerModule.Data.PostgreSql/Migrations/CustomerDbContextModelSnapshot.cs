@@ -17,7 +17,7 @@ namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -338,7 +338,7 @@ namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
 
                     b.ToTable("Member", (string)null);
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("MemberEntity");
+                    b.HasDiscriminator().HasValue("MemberEntity");
 
                     b.UseTphMappingStrategy();
                 });
@@ -563,6 +563,12 @@ namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
+                    b.Property<string>("CurrentOrganizationId")
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("CurrentOrganizationId");
+
                     b.Property<string>("DefaultBillingAddressId")
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
@@ -650,6 +656,12 @@ namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
                         .ValueGeneratedOnUpdateSometimes()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("BirthDate");
+
+                    b.Property<string>("CurrentOrganizationId")
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("CurrentOrganizationId");
 
                     b.Property<string>("DefaultLanguage")
                         .ValueGeneratedOnUpdateSometimes()

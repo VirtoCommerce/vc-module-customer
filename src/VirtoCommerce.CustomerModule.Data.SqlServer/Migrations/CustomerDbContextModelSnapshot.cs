@@ -17,7 +17,7 @@ namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -338,7 +338,7 @@ namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
 
                     b.ToTable("Member", (string)null);
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("MemberEntity");
+                    b.HasDiscriminator().HasValue("MemberEntity");
 
                     b.UseTphMappingStrategy();
                 });
@@ -563,6 +563,12 @@ namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
 
+                    b.Property<string>("CurrentOrganizationId")
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("CurrentOrganizationId");
+
                     b.Property<string>("DefaultBillingAddressId")
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
@@ -650,6 +656,12 @@ namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
                         .ValueGeneratedOnUpdateSometimes()
                         .HasColumnType("datetime2")
                         .HasColumnName("BirthDate");
+
+                    b.Property<string>("CurrentOrganizationId")
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("CurrentOrganizationId");
 
                     b.Property<string>("DefaultLanguage")
                         .ValueGeneratedOnUpdateSometimes()
