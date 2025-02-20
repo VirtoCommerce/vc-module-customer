@@ -122,6 +122,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             modelBuilder.Entity<ContactEntity>().Property(p => p.BirthDate).HasColumnName("BirthDate");
             modelBuilder.Entity<ContactEntity>().Property(p => p.About).HasColumnName("About");
             modelBuilder.Entity<ContactEntity>().Property(p => p.DefaultOrganizationId).HasColumnName("DefaultOrganizationId");
+            modelBuilder.Entity<ContactEntity>().Property(p => p.CurrentOrganizationId).HasColumnName("CurrentOrganizationId");
 
             #endregion
 
@@ -139,6 +140,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             modelBuilder.Entity<EmployeeEntity>().Property(p => p.PhotoUrl).HasColumnName("PhotoUrl");
             modelBuilder.Entity<EmployeeEntity>().Property(p => p.BirthDate).HasColumnName("BirthDate");
             modelBuilder.Entity<EmployeeEntity>().Property(p => p.DefaultOrganizationId).HasColumnName("DefaultOrganizationId");
+            modelBuilder.Entity<EmployeeEntity>().Property(p => p.CurrentOrganizationId).HasColumnName("CurrentOrganizationId");
 
             #endregion
 
