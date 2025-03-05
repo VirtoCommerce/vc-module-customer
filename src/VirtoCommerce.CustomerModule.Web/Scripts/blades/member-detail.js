@@ -110,7 +110,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                         function () { blade.refresh(true); });
                 }
                 // We always send this event because we don't know if the icon was really changed (it's a bit overwhelming to track it down)
-                $rootScope.$broadcast('memberIconChanged', blade.currentEntity.iconUrl);
+                $rootScope.$broadcast('memberIconChanged', blade.currentEntity);
                 bladeNavigationService.closeChildrenBlades(blade);
             };
 

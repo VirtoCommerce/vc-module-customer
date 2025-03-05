@@ -88,7 +88,7 @@ angular.module("virtoCommerce.customerModule")
                 angular.copy(blade.currentEntity, blade.originalEntity);
                 if (blade.saveImmediately) {
                     membersApi.update(blade.currentEntity);
-                    $rootScope.$broadcast('memberIconChanged', blade.currentEntity.iconUrl);
+                    $rootScope.$broadcast('memberIconChanged', blade.currentEntity);
                 }
                 $scope.bladeClose();
             };
