@@ -103,7 +103,7 @@ angular.module("virtoCommerce.customerModule")
 
                 if (blade.saveImmediately) {
                     membersApi.update(blade.originalEntity);
-                    if (userProfileIconService.userId == blade.currentEntity.id) {
+                    if (userProfileIconService.userId === blade.currentEntity.id) {
                         userProfileIconService.userIconUrl = blade.currentEntity.iconUrl;
                     }
                 }

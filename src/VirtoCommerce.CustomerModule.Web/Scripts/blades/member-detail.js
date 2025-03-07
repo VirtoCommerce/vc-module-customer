@@ -111,7 +111,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                 }
 
                 // If current authenticated user is the same as the user being edited, update the user icon
-                if (userProfileIconService.userId == blade.currentEntity.id && userProfileIconService.userIconUrl != blade.currentEntity.iconUrl) {
+                if (userProfileIconService.userId === blade.currentEntity.id && userProfileIconService.userIconUrl !== blade.currentEntity.iconUrl) {
                     userProfileIconService.userIconUrl = blade.currentEntity.iconUrl;
                 }
 
