@@ -80,8 +80,8 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
         };
     }])
     .run(
-        ['$rootScope', 'platformWebApp.mainMenuService', 'platformWebApp.toolbarService', 'platformWebApp.breadcrumbHistoryService', 'platformWebApp.authService', 'platformWebApp.widgetService', '$state', 'platformWebApp.permissionScopeResolver', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', 'virtoCommerce.customerModule.predefinedSearchFilters', 'virtoCommerce.customerModule.members',
-            function ($rootScope, mainMenuService, toolbarService, breadcrumbHistoryService, authService, widgetService, $state, scopeResolver, memberTypesResolverService, settings, predefinedSearchFilters, membersApi) {
+        ['$rootScope', 'platformWebApp.mainMenuService', 'platformWebApp.toolbarService', 'platformWebApp.breadcrumbHistoryService', 'platformWebApp.authService', 'platformWebApp.widgetService', '$state', 'platformWebApp.permissionScopeResolver', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.settings', 'virtoCommerce.customerModule.predefinedSearchFilters', 'virtoCommerce.customerModule.members', 'platformWebApp.userProfileIconService',
+            function ($rootScope, mainMenuService, toolbarService, breadcrumbHistoryService, authService, widgetService, $state, scopeResolver, memberTypesResolverService, settings, predefinedSearchFilters, membersApi, userProfileIconService) {
                 //Register module in main menu
                 var menuItem = {
                     path: 'browse/member',
@@ -461,8 +461,12 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                 $rootScope.$on("loginStatusChanged", function (event, authContext) {
                     if (authContext.isAuthenticated && (authContext.memberId)) {
                         membersApi.get({ id: authContext.memberId }, function (member) {
-                            authContext.member = member;
+                            userProfileIconService.userIconUrl = member.iconUrl;
+                            userProfileIconService.userId = member.id;
                         });
+                    } else {
+                        userProfileIconService.userIconUrl = null;
+                        userProfileIconService.userId = null;
                     }
                 });
             }]);

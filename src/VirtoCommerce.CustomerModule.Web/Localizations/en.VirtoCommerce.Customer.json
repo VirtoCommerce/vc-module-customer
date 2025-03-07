@@ -210,7 +210,8 @@
           "choice-description": "Select image in the PNG, JPG, or SVG format",
           "preview": "Preview",
           "preview-description": "Current icon",
-          "reset": "Remove icon"
+          "reset": "Reset icon",
+          "delete": "Delete icon"
         }
       },
       "shared": {

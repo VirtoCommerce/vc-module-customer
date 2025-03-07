@@ -1,6 +1,6 @@
 angular.module('virtoCommerce.customerModule').controller('virtoCommerce.customerModule.memberDetailController',
-    ['$rootScope', '$scope', '$timeout', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.members', 'platformWebApp.dynamicProperties.api', 'virtoCommerce.customerModule.organizations', 'platformWebApp.settings',
-        function ($rootScope, $scope, $timeout, bladeNavigationService, members, dynamicPropertiesApi, organizationsResource, settings) {
+    ['$rootScope', '$scope', '$timeout', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.members', 'platformWebApp.dynamicProperties.api', 'virtoCommerce.customerModule.organizations', 'platformWebApp.settings', 'platformWebApp.userProfileIconService',
+        function ($rootScope, $scope, $timeout, bladeNavigationService, members, dynamicPropertiesApi, organizationsResource, settings, userProfileIconService) {
             var blade = $scope.blade;
             blade.updatePermission = 'customer:update';
             blade.currentEntityId = blade.currentEntity.id;
@@ -109,8 +109,12 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                     members.update(blade.currentEntity,
                         function () { blade.refresh(true); });
                 }
-                // We always send this event because we don't know if the icon was really changed (it's a bit overwhelming to track it down)
-                $rootScope.$broadcast('memberIconChanged', blade.currentEntity);
+
+                // If current authenticated user is the same as the user being edited, update the user icon
+                if (userProfileIconService.userId == blade.currentEntity.id && userProfileIconService.userIconUrl != blade.currentEntity.iconUrl) {
+                    userProfileIconService.userIconUrl = blade.currentEntity.iconUrl;
+                }
+
                 bladeNavigationService.closeChildrenBlades(blade);
             };
 
