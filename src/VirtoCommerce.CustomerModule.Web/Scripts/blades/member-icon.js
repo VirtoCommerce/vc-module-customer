@@ -68,9 +68,9 @@ angular.module("virtoCommerce.customerModule")
                     blade.isLoading = false;
                 } else {
                     membersApi.get({ id: blade.memberId },
-                        function(data) {
-                            blade.currentEntity = angular.copy(data);
+                        function (data) {
                             blade.originalEntity = data;
+                            blade.currentEntity = angular.copy(blade.originalEntity);
                             blade.saveImmediately = true;
                             blade.isLoading = false;
                         },
@@ -103,9 +103,7 @@ angular.module("virtoCommerce.customerModule")
 
                 if (blade.saveImmediately) {
                     membersApi.update(blade.originalEntity);
-                    if (userProfileIconService.userId === blade.currentEntity.id) {
-                        userProfileIconService.userIconUrl = blade.currentEntity.iconUrl;
-                    }
+                    userProfileIconService.setUserIconUrl(blade.originalEntity.id, blade.originalEntity.iconUrl);
                 }
 
                 $scope.bladeClose();

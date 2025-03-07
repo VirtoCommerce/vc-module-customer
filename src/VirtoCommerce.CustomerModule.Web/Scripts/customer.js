@@ -461,12 +461,8 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                 $rootScope.$on("loginStatusChanged", function (event, authContext) {
                     if (authContext.isAuthenticated && (authContext.memberId)) {
                         membersApi.get({ id: authContext.memberId }, function (member) {
-                            userProfileIconService.userIconUrl = member.iconUrl;
-                            userProfileIconService.userId = member.id;
+                            userProfileIconService.setUserIconUrl(member.id, member.iconUrl);
                         });
-                    } else {
-                        userProfileIconService.userIconUrl = null;
-                        userProfileIconService.userId = null;
                     }
                 });
             }]);
