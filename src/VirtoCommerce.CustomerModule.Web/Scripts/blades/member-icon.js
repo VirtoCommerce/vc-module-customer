@@ -33,7 +33,7 @@ angular.module("virtoCommerce.customerModule")
 
                 iconUploader.onSuccessItem = (_, uploadedImages) => {
                     // Need to change icon URL each time to reload image on the blades,
-                    // so that we add a timestamp to the URL.
+                    // so we add a timestamp to the URL.
                     blade.currentEntity.iconUrl = `${uploadedImages[0].url}?${Date.now()}`;
                 };
 
