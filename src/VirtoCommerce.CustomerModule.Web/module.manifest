@@ -4,7 +4,7 @@
   <version>3.824.0</version>
   <version-tag />
 
-  <platformVersion>3.853.0</platformVersion>
+  <platformVersion>3.881.0-pr-2891-3fed-vcst-2698-3fed2e73</platformVersion>
   <dependencies>
     <dependency id="VirtoCommerce.Core" version="3.808.0" />
     <dependency id="VirtoCommerce.Notifications" version="3.809.0" />
@@ -25,7 +25,7 @@
   <iconUrl>Modules/$(VirtoCommerce.Customer)/Content/logo.png</iconUrl>
   <requireLicenseAcceptance>false</requireLicenseAcceptance>
   <releaseNotes>First version.</releaseNotes>
-  <copyright>Copyright © 2011-2024 Virto Commerce. All rights reserved</copyright>
+  <copyright>Copyright © 2011–2025 Virto Commerce. All rights reserved</copyright>
   <tags>customer</tags>
   <assemblyFile>VirtoCommerce.CustomerModule.Web.dll</assemblyFile>
   <moduleType>VirtoCommerce.CustomerModule.Web.Module, VirtoCommerce.CustomerModule.Web</moduleType>
