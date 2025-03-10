@@ -210,7 +210,8 @@
           "choice-description": "Выберите изображение в формате PNG, JPG или SVG",
           "preview": "Предварительный просмотр",
           "preview-description": "Текущая иконка",
-          "reset": "Удалить иконку"
+          "reset": "Сбросить иконку",
+          "delete": "Удалить иконку"
         }
       },
       "shared": {

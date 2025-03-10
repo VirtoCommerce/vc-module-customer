@@ -210,7 +210,8 @@
           "choice-description": "Wählen Sie ein Bild im PNG-, JPG- oder SVG-Format",
           "preview": "Vorschau",
           "preview-description": "Aktuelles Symbol",
-          "reset": "Symbol entfernen"
+          "reset": "Symbol zurücksetzen",
+          "delete": "Symbol löschen"
         }
       },
       "shared": {
