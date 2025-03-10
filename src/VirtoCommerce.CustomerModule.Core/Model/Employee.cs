@@ -4,7 +4,7 @@ using VirtoCommerce.Platform.Core.Security;
 
 namespace VirtoCommerce.CustomerModule.Core.Model
 {
-    public class Employee : Member, IHasSecurityAccounts, IHasPersonName
+    public class Employee : Member, IHasSecurityAccounts, IHasPersonName, IHasOrganizations
     {
         public Employee()
         {
@@ -22,6 +22,7 @@ namespace VirtoCommerce.CustomerModule.Core.Model
         public string TimeZone { get; set; }
         public IList<string> Organizations { get; set; }
         public string DefaultOrganizationId { get; set; }
+        public string CurrentOrganizationId { get; set; }
 
         /// <summary>
         /// Employee type
