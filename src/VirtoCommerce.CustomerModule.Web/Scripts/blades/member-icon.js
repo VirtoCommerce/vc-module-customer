@@ -1,6 +1,7 @@
 angular.module("virtoCommerce.customerModule")
     .controller("virtoCommerce.customerModule.memberIconController", [
-        "$scope", "FileUploader", "platformWebApp.bladeNavigationService", "platformWebApp.dialogService", 'platformWebApp.userProfileIconService', 'virtoCommerce.customerModule.members',
+        "$scope", "FileUploader",
+        "platformWebApp.bladeNavigationService", "platformWebApp.dialogService", 'platformWebApp.userProfileIconService', 'virtoCommerce.customerModule.members',
         ($scope, FileUploader, bladeNavigationService, dialogService, userProfileIconService, membersApi) => {
             var blade = $scope.blade;
             blade.title = "customer.blades.member-icon.title";
