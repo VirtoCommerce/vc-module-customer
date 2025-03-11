@@ -278,11 +278,12 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         {
             var memberEntityType = AbstractTypeFactory<Member>.AllTypeInfos
                 .Where(t => t.MappedType != null && t.IsAssignableTo(model.MemberType))
-                .Select(t => t.MappedType).FirstOrDefault();
-            ArgumentNullException.ThrowIfNull(memberEntityType, nameof(model));
+                .Select(t => t.MappedType)
+                .FirstOrDefault()
+                ?? throw new InvalidOperationException($"Cannot find entity type for member type: {model.MemberType}");
 
-            var dataSourceMember = AbstractTypeFactory<MemberEntity>.TryCreateInstance(memberEntityType.Name);
-            ArgumentNullException.ThrowIfNull(dataSourceMember, nameof(model));
+            var dataSourceMember = AbstractTypeFactory<MemberEntity>.TryCreateInstance(memberEntityType.Name)
+                ?? throw new InvalidOperationException($"Cannot create instance of entity type: {memberEntityType.Name}");
 
             dataSourceMember.FromModel(model, keyMap);
             return dataSourceMember;
