@@ -71,6 +71,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(128)]
         public string CurrentOrganizationId { get; set; }
 
+        [StringLength(128)]
+        public string SelectedAddressId { get; set; }
+
         #endregion UserProfile members
 
         public override Member ToModel(Member member)
@@ -111,6 +114,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 contact.About = About;
                 contact.DefaultOrganizationId = DefaultOrganizationId;
                 contact.CurrentOrganizationId = CurrentOrganizationId;
+                contact.SelectedAddressId = SelectedAddressId;
             }
             return member;
         }
@@ -138,6 +142,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 About = contact.About;
                 DefaultOrganizationId = contact.DefaultOrganizationId;
                 CurrentOrganizationId = contact.CurrentOrganizationId;
+                SelectedAddressId = contact.SelectedAddressId;
 
                 if (contact.Organizations != null)
                 {
@@ -203,6 +208,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 contact.About = About;
                 contact.DefaultOrganizationId = DefaultOrganizationId;
                 contact.CurrentOrganizationId = CurrentOrganizationId;
+                contact.SelectedAddressId = SelectedAddressId;
             }
 
             base.Patch(target);
