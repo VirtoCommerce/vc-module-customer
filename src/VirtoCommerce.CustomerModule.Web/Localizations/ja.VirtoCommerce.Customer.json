@@ -210,7 +210,8 @@
           "choice-description": "PNG、JPG、またはSVG形式の画像を選択",
           "preview": "プレビュー",
           "preview-description": "現在のアイコン",
-          "reset": "アイコンを削除"
+          "reset": "リセットアイコン",
+          "delete": "削除アイコン"
         }
       },
       "shared": {

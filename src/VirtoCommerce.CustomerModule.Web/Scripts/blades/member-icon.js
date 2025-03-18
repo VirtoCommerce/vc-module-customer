@@ -1,8 +1,11 @@
 angular.module("virtoCommerce.customerModule")
-    .controller("virtoCommerce.customerModule.memberIconController", ["$scope", "$http", "FileUploader", "platformWebApp.bladeNavigationService", "platformWebApp.dialogService",
-        ($scope, $http, FileUploader, bladeNavigationService, dialogService) => {
+    .controller("virtoCommerce.customerModule.memberIconController", [
+        "$scope", "FileUploader",
+        "platformWebApp.bladeNavigationService", "platformWebApp.dialogService", 'platformWebApp.userProfileIconService', 'virtoCommerce.customerModule.members',
+        ($scope, FileUploader, bladeNavigationService, dialogService, userProfileIconService, membersApi) => {
             var blade = $scope.blade;
             blade.title = "customer.blades.member-icon.title";
+            blade.saveImmediately = false;
 
             if (!$scope.iconUploader) {
                 const iconUploader = $scope.iconUploader = new FileUploader({
@@ -30,8 +33,8 @@ angular.module("virtoCommerce.customerModule")
 
                 iconUploader.onSuccessItem = (_, uploadedImages) => {
                     // Need to change icon URL each time to reload image on the blades,
-                    // so that we add random postfix to the URL.
-                    blade.tempUrl = uploadedImages[0].url;
+                    // so we add a timestamp to the URL.
+                    blade.currentEntity.iconUrl = `${uploadedImages[0].url}?${Date.now()}`;
                 };
 
                 iconUploader.onErrorItem = (element, response, status, _) => {
@@ -40,13 +43,14 @@ angular.module("virtoCommerce.customerModule")
 
                 iconUploader.onBeforeUploadItem = (item) => {
                     var fileName = item.file.name;
-                    var extension = fileName.split(".")[1];
+                    var fileNameParts = fileName.split(".");
+                    var extension = fileNameParts[fileNameParts.length - 1];
 
                     // Due not to overwrite icon just on upload we have two files for each contact
                     // and change it on saving.
                     var nameTale = "";
-                    if (blade.currentEntity.iconUrl) {
-                        var oldUrlParts = blade.currentEntity.iconUrl.split("/");
+                    if (blade.originalEntity.iconUrl) {
+                        var oldUrlParts = blade.originalEntity.iconUrl.split("/");
                         var oldFileName = oldUrlParts[[oldUrlParts.length - 1]];
 
                         if (!oldFileName.includes("-1")) {
@@ -60,10 +64,19 @@ angular.module("virtoCommerce.customerModule")
             }
 
             blade.refresh = () => {
-                blade.originalEntity = blade.currentEntity;
-                blade.currentEntity = angular.copy(blade.currentEntity);
-
-                blade.isLoading = false;
+                if (blade.originalEntity) {
+                    blade.currentEntity = angular.copy(blade.originalEntity);
+                    blade.isLoading = false;
+                } else {
+                    blade.saveImmediately = true;
+                    membersApi.get({ id: blade.memberId },
+                        function (data) {
+                            blade.originalEntity = data;
+                            blade.currentEntity = angular.copy(blade.originalEntity);
+                            blade.isLoading = false;
+                        },
+                        function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
+                }
             };
 
             let formScope;
@@ -73,35 +86,61 @@ angular.module("virtoCommerce.customerModule")
                 window.document.querySelector(`#${id}`).click();
             }
 
+            $scope.isValid = false;
+            $scope.$watch("blade.currentEntity", function () {
+                $scope.isValid = canSave;
+            }, true);
+
             function isDirty() {
-                return blade.currentEntity.iconUrl !== blade.originalEntity.iconUrl || blade.tempUrl !== blade.currentEntity.iconUrl;
+                return blade.currentEntity && blade.originalEntity && blade.currentEntity.iconUrl !== blade.originalEntity.iconUrl;
             }
 
             function canSave() {
                 return isDirty() && formScope && formScope.$valid;
             }
 
-            blade.saveChanges = () => {
-                blade.currentEntity.iconUrl = blade.tempUrl;
-                angular.copy(blade.currentEntity, blade.originalEntity);
+            $scope.saveChanges = () => {
+                blade.originalEntity.iconUrl = blade.currentEntity.iconUrl;
+
+                if (blade.saveImmediately) {
+                    membersApi.update(blade.originalEntity);
+                    userProfileIconService.setUserIconUrl(blade.originalEntity.id, blade.originalEntity.iconUrl);
+                }
+
+                $scope.bladeClose();
+            };
+
+            $scope.cancelChanges = () => {
                 $scope.bladeClose();
             };
 
             blade.toolbarCommands = [
                 {
-                    name: "platform.commands.save", icon: "fas fa-save",
-                    executeMethod: blade.saveChanges,
-                    canExecuteMethod: canSave
+                    name: "customer.blades.member-icon.labels.reset",
+                    icon: "fa fa-undo",
+                    executeMethod: () => {
+                        blade.currentEntity.iconUrl = blade.originalEntity.iconUrl;
+                    },
+                    canExecuteMethod: isDirty,
                 },
                 {
-                    name: "customer.blades.member-icon.labels.reset", icon: "fa fa-undo",
+                    name: "customer.blades.member-icon.labels.delete",
+                    icon: "fas fa-trash-alt",
                     executeMethod: () => {
                         blade.currentEntity.iconUrl = null;
-                        blade.tempUrl = null;
                     },
-                    canExecuteMethod: () => blade.currentEntity.iconUrl || blade.tempUrl
+                    canExecuteMethod: () => blade.currentEntity && blade.originalEntity && blade.currentEntity.iconUrl && blade.originalEntity.iconUrl,
                 }
             ];
+
+            if (!blade.originalEntity) {
+                blade.toolbarCommands.unshift({
+                    name: "platform.commands.save",
+                    icon: "fas fa-save",
+                    executeMethod: $scope.saveChanges,
+                    canExecuteMethod: canSave,
+                });
+            }
 
             blade.refresh();
         }]);

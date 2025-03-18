@@ -210,7 +210,8 @@
           "choice-description": "Sélectionnez une image au format PNG, JPG ou SVG",
           "preview": "Aperçu",
           "preview-description": "Icône actuelle",
-          "reset": "Supprimer l'icône"
+          "reset": "Icône de réinitialisation",
+          "delete": "Icône de suppression"
         }
       },
       "shared": {
