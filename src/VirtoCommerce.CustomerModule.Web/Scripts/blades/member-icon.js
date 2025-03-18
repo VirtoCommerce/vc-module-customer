@@ -1,6 +1,8 @@
 angular.module("virtoCommerce.customerModule")
-    .controller("virtoCommerce.customerModule.memberIconController", ["$scope", "FileUploader", "platformWebApp.bladeNavigationService", "platformWebApp.dialogService", 'virtoCommerce.customerModule.members', 'platformWebApp.userProfileIconService',
-        ($scope, FileUploader, bladeNavigationService, dialogService, membersApi, userProfileIconService) => {
+    .controller("virtoCommerce.customerModule.memberIconController", [
+        "$scope", "FileUploader",
+        "platformWebApp.bladeNavigationService", "platformWebApp.dialogService", 'platformWebApp.userProfileIconService', 'virtoCommerce.customerModule.members',
+        ($scope, FileUploader, bladeNavigationService, dialogService, userProfileIconService, membersApi) => {
             var blade = $scope.blade;
             blade.title = "customer.blades.member-icon.title";
             blade.saveImmediately = false;
@@ -31,9 +33,8 @@ angular.module("virtoCommerce.customerModule")
 
                 iconUploader.onSuccessItem = (_, uploadedImages) => {
                     // Need to change icon URL each time to reload image on the blades,
-                    // so that we add random postfix to the URL.
-                    var postfix = Math.random().toString(36).slice(2, 7);
-                    blade.currentEntity.iconUrl = uploadedImages[0].url + "?" + postfix;
+                    // so we add a timestamp to the URL.
+                    blade.currentEntity.iconUrl = `${uploadedImages[0].url}?${Date.now()}`;
                 };
 
                 iconUploader.onErrorItem = (element, response, status, _) => {
@@ -67,14 +68,14 @@ angular.module("virtoCommerce.customerModule")
                     blade.currentEntity = angular.copy(blade.originalEntity);
                     blade.isLoading = false;
                 } else {
+                    blade.saveImmediately = true;
                     membersApi.get({ id: blade.memberId },
                         function (data) {
                             blade.originalEntity = data;
                             blade.currentEntity = angular.copy(blade.originalEntity);
-                            blade.saveImmediately = true;
                             blade.isLoading = false;
                         },
-                        function(error) { bladeNavigationService.setError('Error ' + error.status, blade); });
+                        function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
                 }
             };
 
@@ -115,26 +116,29 @@ angular.module("virtoCommerce.customerModule")
 
             blade.toolbarCommands = [
                 {
-                    name: "customer.blades.member-icon.labels.reset", icon: "fa fa-undo",
+                    name: "customer.blades.member-icon.labels.reset",
+                    icon: "fa fa-undo",
                     executeMethod: () => {
                         blade.currentEntity.iconUrl = blade.originalEntity.iconUrl;
                     },
-                    canExecuteMethod: isDirty
+                    canExecuteMethod: isDirty,
                 },
                 {
-                    name: "customer.blades.member-icon.labels.delete", icon: "fas fa-trash-alt",
+                    name: "customer.blades.member-icon.labels.delete",
+                    icon: "fas fa-trash-alt",
                     executeMethod: () => {
                         blade.currentEntity.iconUrl = null;
                     },
-                    canExecuteMethod: () => blade.currentEntity && blade.originalEntity && blade.currentEntity.iconUrl && blade.originalEntity.iconUrl
+                    canExecuteMethod: () => blade.currentEntity && blade.originalEntity && blade.currentEntity.iconUrl && blade.originalEntity.iconUrl,
                 }
             ];
 
             if (!blade.originalEntity) {
                 blade.toolbarCommands.unshift({
-                    name: "platform.commands.save", icon: "fas fa-save",
+                    name: "platform.commands.save",
+                    icon: "fas fa-save",
                     executeMethod: $scope.saveChanges,
-                    canExecuteMethod: canSave
+                    canExecuteMethod: canSave,
                 });
             }
 
