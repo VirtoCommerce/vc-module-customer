@@ -112,6 +112,7 @@ namespace VirtoCommerce.CustomerModule.Web
 
             serviceCollection.AddSingleton<ITokenRequestValidator, OrganizationIdRequestValidator>();
             serviceCollection.AddSingleton<ITokenClaimProvider, OrganizationIdClaimProvider>();
+            serviceCollection.AddSingleton<ITokenRequestHandler, CurrentOrganizationIdTokenRequestHandler>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
