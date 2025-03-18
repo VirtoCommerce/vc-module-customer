@@ -1,7 +1,7 @@
 <div class="gridster-cnt" ng-click="openBlade()">
     <div class="cnt-inner">
-        <i class="fas fa-user fa-2x fa-gray" ng-show="!blade.currentEntity.iconUrl"></i>
-        <img style="height:47px;width:47px;" ng-show="blade.currentEntity.iconUrl" fallback-src="{{ blade.currentEntity.iconUrl}}" ng-src="{{ blade.currentEntity.iconUrl | thumbnail: '_64x64' }}">
+        <span class="fas fa-user fa-2x fa-gray" ng-show="!blade.currentEntity.iconUrl && !blade.iconUrl"></span>
+        <img style="height:47px;width:47px;" ng-show="blade.currentEntity.iconUrl || blade.iconUrl" fallback-src="{{ blade.currentEntity.iconUrl || blade.iconUrl }}" ng-src="{{ (blade.currentEntity.iconUrl || blade.iconUrl) | thumbnail: '_64x64' }}">
         <div class="list-t">{{ 'customer.widgets.member-icon.title' | translate }}</div>
     </div>
 </div>

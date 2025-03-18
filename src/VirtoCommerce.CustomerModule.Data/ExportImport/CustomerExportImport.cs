@@ -93,11 +93,11 @@ namespace VirtoCommerce.CustomerModule.Data.ExportImport
                     {
                         var readerValueString = reader.Value?.ToString();
 
-                        if (readerValueString.EqualsInvariant("MembersTotalCount"))
+                        if (readerValueString.EqualsIgnoreCase("MembersTotalCount"))
                         {
                             membersTotalCount = await reader.ReadAsInt32Async() ?? 0;
                         }
-                        else if (readerValueString.EqualsInvariant("Members"))
+                        else if (readerValueString.EqualsIgnoreCase("Members"))
                         {
                             cancellationToken.ThrowIfCancellationRequested();
                             await reader.ReadAsync();
