@@ -23,7 +23,7 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                 CustomerSearchCacheRegion.ExpireRegion();
                 CustomerCacheRegion.ExpireMemberById(change.NewEntry.MemberId);
 
-                if (!change.NewEntry.MemberId.EqualsInvariant(change.OldEntry.MemberId))
+                if (!change.NewEntry.MemberId.EqualsIgnoreCase(change.OldEntry.MemberId))
                 {
                     CustomerCacheRegion.ExpireMemberById(change.OldEntry.MemberId);
                 }
