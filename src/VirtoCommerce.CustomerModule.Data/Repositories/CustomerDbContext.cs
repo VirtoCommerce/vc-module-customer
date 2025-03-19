@@ -123,6 +123,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             modelBuilder.Entity<ContactEntity>().Property(p => p.About).HasColumnName("About");
             modelBuilder.Entity<ContactEntity>().Property(p => p.DefaultOrganizationId).HasColumnName("DefaultOrganizationId");
             modelBuilder.Entity<ContactEntity>().Property(p => p.CurrentOrganizationId).HasColumnName("CurrentOrganizationId");
+            modelBuilder.Entity<ContactEntity>().Property(p => p.SelectedAddressId).HasColumnName("SelectedAddressId");
 
             #endregion
 
