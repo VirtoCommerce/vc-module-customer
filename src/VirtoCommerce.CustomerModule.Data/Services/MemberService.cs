@@ -100,7 +100,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
                 foreach (var hasAccountMember in hasSecurityAccountMembers)
                 {
-                    hasAccountMember.SecurityAccounts = usersSearchResult.Results.Where(x => x.MemberId.EqualsInvariant(hasAccountMember.Id)).ToList();
+                    hasAccountMember.SecurityAccounts = usersSearchResult.Results.Where(x => x.MemberId.EqualsIgnoreCase(hasAccountMember.Id)).ToList();
 
                     if (hasAccountMember.SecurityAccounts.Count > 0)
                     {
