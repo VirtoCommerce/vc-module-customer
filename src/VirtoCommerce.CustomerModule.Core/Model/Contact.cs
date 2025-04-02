@@ -27,6 +27,7 @@ namespace VirtoCommerce.CustomerModule.Core.Model
         public IList<string> AssociatedOrganizations { get; set; }
         public string DefaultOrganizationId { get; set; }
         public string CurrentOrganizationId { get; set; }
+        public string SelectedAddressId { get; set; }
 
         public string TaxPayerId { get; set; }
         public string PreferredDelivery { get; set; }
