@@ -292,14 +292,14 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// Partial update for Member
         /// </summary>
         /// <param name="id">Member id</param>
-        /// <param name="patchDoc">JsonPatchDocument object with fields to update</param>
+        /// <param name="patchDocument">JsonPatchDocument object with fields to update</param>
         /// <returns></returns>
         [HttpPatch]
         [Route("members/{id}")]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> PatchMember(string id, [FromBody] JsonPatchDocument<Member> patchDoc)
+        public async Task<IActionResult> PatchMember(string id, [FromBody] JsonPatchDocument<Member> patchDocument)
         {
-            if (patchDoc == null)
+            if (patchDocument == null)
             {
                 return BadRequest();
             }
@@ -315,7 +315,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                 return Forbid();
             }
 
-            patchDoc.ApplyTo(member, ModelState);
+            patchDocument.ApplyTo(member, ModelState);
 
             if (!ModelState.IsValid)
             {
@@ -402,19 +402,19 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// Partial update for Contact
         /// </summary>
         /// <param name="id">Contact id</param>
-        /// <param name="patchDoc">JsonPatchDocument object with fields to update</param>
+        /// <param name="patchDocument">JsonPatchDocument object with fields to update</param>
         /// <returns></returns>
         [HttpPatch]
         [Route("contacts/{id}")]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> PatchContact(string id, [FromBody] JsonPatchDocument<Contact> patchDoc)
+        public async Task<IActionResult> PatchContact(string id, [FromBody] JsonPatchDocument<Contact> patchDocument)
         {
-            if (patchDoc == null)
+            if (patchDocument == null)
             {
                 return BadRequest();
             }
 
-            var contact = await _memberService.GetByIdAsync(id, null, nameof(Contact)) as Contact;
+            var contact = await _memberService.GetByIdAsync(id, responseGroup: null, memberType: nameof(Contact)) as Contact;
             if (contact == null)
             {
                 return NotFound();
@@ -425,7 +425,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                 return Forbid();
             }
 
-            patchDoc.ApplyTo(contact, ModelState);
+            patchDocument.ApplyTo(contact, ModelState);
 
             if (!ModelState.IsValid)
             {
@@ -667,19 +667,19 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         /// Partial update for Organization
         /// </summary>
         /// <param name="id">Organization id</param>
-        /// <param name="patchDoc">JsonPatchDocument object with fields to update</param>
+        /// <param name="patchDocument">JsonPatchDocument object with fields to update</param>
         /// <returns></returns>
         [HttpPatch]
         [Route("organizations/{id}")]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> PatchOrganization(string id, [FromBody] JsonPatchDocument<Organization> patchDoc)
+        public async Task<IActionResult> PatchOrganization(string id, [FromBody] JsonPatchDocument<Organization> patchDocument)
         {
-            if (patchDoc == null)
+            if (patchDocument == null)
             {
                 return BadRequest();
             }
 
-            var contact = await _memberService.GetByIdAsync(id, null, nameof(Organization)) as Organization;
+            var contact = await _memberService.GetByIdAsync(id, responseGroup: null, memberType: nameof(Organization)) as Organization;
             if (contact == null)
             {
                 return NotFound();
@@ -690,7 +690,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                 return Forbid();
             }
 
-            patchDoc.ApplyTo(contact, ModelState);
+            patchDocument.ApplyTo(contact, ModelState);
 
             if (!ModelState.IsValid)
             {
