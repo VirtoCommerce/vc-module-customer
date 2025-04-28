@@ -214,6 +214,14 @@
           "delete": "Icona di eliminazione"
         }
       },
+      "address-details": {
+        "labels": {
+          "middle-name": "Secondo nome"
+        },
+        "placeholders": {
+          "middle-name": "Inserisci il tuo secondo nome"
+        }
+      },
       "shared": {
         "labels": {
           "status": "Stato",

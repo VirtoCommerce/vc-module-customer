@@ -214,6 +214,14 @@
           "delete": "Icône de suppression"
         }
       },
+      "address-details": {
+        "labels": {
+          "middle-name": "Deuxième prénom"
+        },
+        "placeholders": {
+          "middle-name": "Entrez le deuxième prénom"
+        }
+      },
       "shared": {
         "labels": {
           "status": "Statut",

@@ -214,6 +214,14 @@
           "delete": "削除アイコン"
         }
       },
+      "address-details": {
+        "labels": {
+          "middle-name": "ミドルネーム"
+        },
+        "placeholders": {
+          "middle-name": "ミドルネームを入力してください"
+        }
+      },
       "shared": {
         "labels": {
           "status": "ステータス",

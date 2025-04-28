@@ -214,6 +214,14 @@
           "delete": "Удалить иконку"
         }
       },
+      "address-details": {
+        "labels": {
+          "middle-name": "Отчество"
+        },
+        "placeholders": {
+          "middle-name": "Введите отчество"
+        }
+      },
       "shared": {
         "labels": {
           "status": "Статус",

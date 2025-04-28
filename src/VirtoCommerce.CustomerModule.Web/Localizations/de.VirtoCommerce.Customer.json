@@ -214,6 +214,14 @@
           "delete": "Symbol löschen"
         }
       },
+      "address-details": {
+        "labels": {
+          "middle-name": "Zweiter Vorname"
+        },
+        "placeholders": {
+          "middle-name": "Geben Sie den zweiten Vornamen ein"
+        }
+      },
       "shared": {
         "labels": {
           "status": "Status",

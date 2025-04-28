@@ -214,6 +214,14 @@
           "delete": "Delete icon"
         }
       },
+      "address-details": {
+        "labels": {
+          "middle-name": "Middle name"
+        },
+        "placeholders": {
+          "middle-name": "Enter middle name"
+        }
+      },
       "shared": {
         "labels": {
           "status": "Status",

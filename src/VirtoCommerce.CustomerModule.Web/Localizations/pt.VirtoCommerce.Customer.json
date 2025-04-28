@@ -214,6 +214,14 @@
           "delete": "Ícone de exclusão"
         }
       },
+      "address-details": {
+        "labels": {
+          "middle-name": "Nome do meio"
+        },
+        "placeholders": {
+          "middle-name": "Digite seu nome do meio"
+        }
+      },
       "shared": {
         "labels": {
           "status": "Status",

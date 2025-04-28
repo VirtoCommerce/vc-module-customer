@@ -214,6 +214,14 @@
           "delete": "删除图标"
         }
       },
+      "address-details": {
+        "labels": {
+          "middle-name": "中间名"
+        },
+        "placeholders": {
+          "middle-name": "输入您的中间名"
+        }
+      },
       "shared": {
         "labels": {
           "status": "状态",
