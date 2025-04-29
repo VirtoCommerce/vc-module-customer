@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.CustomerModule.Core;
@@ -167,7 +168,8 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                 return actionResult;
             }
 
-            await _memberService.SaveChangesAsync(new[] { member });
+            await _memberService.SaveChangesAsync([member]);
+
             var retVal = await _memberService.GetByIdAsync(member.Id, null, member.MemberType);
 
             // Casting to dynamic fixes a serialization error in XML formatter when the returned object type is derived from the Member class.
@@ -213,7 +215,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                 return actionResult;
             }
 
-            await _memberService.SaveChangesAsync(new[] { member });
+            await _memberService.SaveChangesAsync([member]);
             return NoContent();
         }
 
@@ -286,7 +288,53 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             return NoContent();
         }
 
+        /// <summary>
+        /// Partial update for Member
+        /// </summary>
+        /// <param name="id">Member id</param>
+        /// <param name="patchDocument">JsonPatchDocument object with fields to update</param>
+        /// <returns></returns>
+        [HttpPatch]
+        [Route("members/{id}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> PatchMember(string id, [FromBody] JsonPatchDocument<Member> patchDocument)
+        {
+            if (patchDocument == null)
+            {
+                return BadRequest();
+            }
+
+            var member = await _memberService.GetByIdAsync(id);
+            if (member == null)
+            {
+                return NotFound();
+            }
+
+            if (!(await AuthorizeAsync(member, ModuleConstants.Security.Permissions.Update)).Succeeded)
+            {
+                return Forbid();
+            }
+
+            patchDocument.ApplyTo(member, ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (HasDefaultBillingAndShippingAddress(member, out var actionResult))
+            {
+                return actionResult;
+            }
+
+            await _memberService.SaveChangesAsync([member]);
+
+            return NoContent();
+        }
+
         #region Special members for storefront C# API client  (because it not support polymorph types)
+
+        #region Contact
 
         /// <summary>
         /// Create contact
@@ -299,7 +347,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             {
                 return Forbid();
             }
-            await _memberService.SaveChangesAsync(new[] { contact });
+            await _memberService.SaveChangesAsync([contact]);
             return Ok(contact);
         }
 
@@ -330,7 +378,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             {
                 return Forbid();
             }
-            await _memberService.SaveChangesAsync(new[] { contact });
+            await _memberService.SaveChangesAsync([contact]);
             return NoContent();
         }
 
@@ -351,6 +399,128 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
+        /// Partial update for Contact
+        /// </summary>
+        /// <param name="id">Contact id</param>
+        /// <param name="patchDocument">JsonPatchDocument object with fields to update</param>
+        /// <returns></returns>
+        [HttpPatch]
+        [Route("contacts/{id}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> PatchContact(string id, [FromBody] JsonPatchDocument<Contact> patchDocument)
+        {
+            if (patchDocument == null)
+            {
+                return BadRequest();
+            }
+
+            var contact = await _memberService.GetByIdAsync(id, responseGroup: null, memberType: nameof(Contact)) as Contact;
+            if (contact == null)
+            {
+                return NotFound();
+            }
+
+            if (!(await AuthorizeAsync(contact, ModuleConstants.Security.Permissions.Update)).Succeeded)
+            {
+                return Forbid();
+            }
+
+            patchDocument.ApplyTo(contact, ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _memberService.SaveChangesAsync([contact]);
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Delete contacts
+        /// </summary>
+        /// <remarks>Delete contacts by given array of ids.</remarks>
+        /// <param name="ids">An array of contacts ids</param>
+        [HttpDelete]
+        [Route("contacts")]
+        [Authorize(ModuleConstants.Security.Permissions.Delete)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        public Task<ActionResult> DeleteContacts([FromQuery] string[] ids)
+        {
+            return DeleteMembers(ids);
+        }
+
+        /// <summary>
+        /// Get contact
+        /// </summary>
+        /// <param name="id">Contact ID</param>
+        [HttpGet]
+        [Route("contacts/{id}")]
+        public async Task<ActionResult<Contact>> GetContactById(string id)
+        {
+            var result = await _memberService.GetByIdAsync(id, null, typeof(Contact).Name);
+            if (!(await AuthorizeAsync(result, ModuleConstants.Security.Permissions.Read)).Succeeded)
+            {
+                return Forbid();
+            }
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Get plenty contacts
+        /// </summary>
+        /// <param name="ids">contact IDs</param>
+        [HttpGet]
+        [Route("contacts")]
+        public async Task<ActionResult<Contact[]>> GetContactsByIds([FromQuery] string[] ids)
+        {
+            var result = await _memberService.GetByIdsAsync(ids, null, [typeof(Contact).Name]);
+            if (!(await AuthorizeAsync(result, ModuleConstants.Security.Permissions.Read)).Succeeded)
+            {
+                return Forbid();
+            }
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Search contacts
+        /// </summary>
+        /// <remarks>Get array of contacts satisfied search criteria.</remarks>
+        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
+        [HttpPost]
+        [Route("contacts/search")]
+        public async Task<ActionResult<ContactSearchResult>> SearchContacts([FromBody] MembersSearchCriteria criteria)
+        {
+            if (criteria == null)
+            {
+                criteria = AbstractTypeFactory<MembersSearchCriteria>.TryCreateInstance();
+            }
+
+            criteria.MemberType = typeof(Contact).Name;
+            criteria.MemberTypes = [criteria.MemberType];
+
+            if (!(await AuthorizeAsync(criteria, ModuleConstants.Security.Permissions.Read)).Succeeded)
+            {
+                return Forbid();
+            }
+
+            var searchResult = await _memberSearchService.SearchMembersAsync(criteria);
+
+            var result = new ContactSearchResult
+            {
+                TotalCount = searchResult.TotalCount,
+                Results = searchResult.Results.OfType<Contact>().ToList()
+            };
+
+            return Ok(result);
+        }
+
+        #endregion
+
+        #region Organization
+
+        /// <summary>
         /// Create organization
         /// </summary>
         [HttpPost]
@@ -361,7 +531,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             {
                 return Forbid();
             }
-            await _memberService.SaveChangesAsync(new[] { organization });
+            await _memberService.SaveChangesAsync([organization]);
             return Ok(organization);
         }
 
@@ -394,7 +564,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             {
                 return Forbid();
             }
-            await _memberService.SaveChangesAsync(new[] { organization });
+            await _memberService.SaveChangesAsync([organization]);
             return NoContent();
         }
 
@@ -429,20 +599,6 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
-        /// Delete contacts
-        /// </summary>
-        /// <remarks>Delete contacts by given array of ids.</remarks>
-        /// <param name="ids">An array of contacts ids</param>
-        [HttpDelete]
-        [Route("contacts")]
-        [Authorize(ModuleConstants.Security.Permissions.Delete)]
-        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
-        public Task<ActionResult> DeleteContacts([FromQuery] string[] ids)
-        {
-            return DeleteMembers(ids);
-        }
-
-        /// <summary>
         /// Get organization
         /// </summary>
         /// <param name="id">Organization id</param>
@@ -466,7 +622,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [Route("organizations")]
         public async Task<ActionResult<Organization[]>> GetOrganizationsByIds([FromQuery] string[] ids)
         {
-            var result = await _memberService.GetByIdsAsync(ids, null, new[] { typeof(Organization).Name });
+            var result = await _memberService.GetByIdsAsync(ids, null, [typeof(Organization).Name]);
             if (!(await AuthorizeAsync(result, ModuleConstants.Security.Permissions.Read)).Succeeded)
             {
                 return Forbid();
@@ -489,7 +645,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             }
 
             criteria.MemberType = typeof(Organization).Name;
-            criteria.MemberTypes = new[] { criteria.MemberType };
+            criteria.MemberTypes = [criteria.MemberType];
 
             if (!(await AuthorizeAsync(criteria, ModuleConstants.Security.Permissions.Read)).Succeeded)
             {
@@ -508,70 +664,47 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         /// <summary>
-        /// Get contact
+        /// Partial update for Organization
         /// </summary>
-        /// <param name="id">Contact ID</param>
-        [HttpGet]
-        [Route("contacts/{id}")]
-        public async Task<ActionResult<Contact>> GetContactById(string id)
+        /// <param name="id">Organization id</param>
+        /// <param name="patchDocument">JsonPatchDocument object with fields to update</param>
+        /// <returns></returns>
+        [HttpPatch]
+        [Route("organizations/{id}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> PatchOrganization(string id, [FromBody] JsonPatchDocument<Organization> patchDocument)
         {
-            var result = await _memberService.GetByIdAsync(id, null, typeof(Contact).Name);
-            if (!(await AuthorizeAsync(result, ModuleConstants.Security.Permissions.Read)).Succeeded)
+            if (patchDocument == null)
             {
-                return Forbid();
-            }
-            return Ok(result);
-        }
-
-
-        /// <summary>
-        /// Get plenty contacts
-        /// </summary>
-        /// <param name="ids">contact IDs</param>
-        [HttpGet]
-        [Route("contacts")]
-        public async Task<ActionResult<Contact[]>> GetContactsByIds([FromQuery] string[] ids)
-        {
-            var result = await _memberService.GetByIdsAsync(ids, null, new[] { typeof(Contact).Name });
-            if (!(await AuthorizeAsync(result, ModuleConstants.Security.Permissions.Read)).Succeeded)
-            {
-                return Forbid();
-            }
-            return Ok(result);
-        }
-
-        /// <summary>
-        /// Search contacts
-        /// </summary>
-        /// <remarks>Get array of contacts satisfied search criteria.</remarks>
-        /// <param name="criteria">concrete instance of SearchCriteria type type will be created by using PolymorphicMemberSearchCriteriaJsonConverter</param>
-        [HttpPost]
-        [Route("contacts/search")]
-        public async Task<ActionResult<ContactSearchResult>> SearchContacts([FromBody] MembersSearchCriteria criteria)
-        {
-            if (criteria == null)
-            {
-                criteria = AbstractTypeFactory<MembersSearchCriteria>.TryCreateInstance();
+                return BadRequest();
             }
 
-            criteria.MemberType = typeof(Contact).Name;
-            criteria.MemberTypes = new[] { criteria.MemberType };
+            var contact = await _memberService.GetByIdAsync(id, responseGroup: null, memberType: nameof(Organization)) as Organization;
+            if (contact == null)
+            {
+                return NotFound();
+            }
 
-            if (!(await AuthorizeAsync(criteria, ModuleConstants.Security.Permissions.Read)).Succeeded)
+            if (!(await AuthorizeAsync(contact, ModuleConstants.Security.Permissions.Update)).Succeeded)
             {
                 return Forbid();
             }
 
-            var searchResult = await _memberSearchService.SearchMembersAsync(criteria);
+            patchDocument.ApplyTo(contact, ModelState);
 
-            var result = new ContactSearchResult
+            if (!ModelState.IsValid)
             {
-                TotalCount = searchResult.TotalCount,
-                Results = searchResult.Results.OfType<Contact>().ToList()
-            };
+                return BadRequest(ModelState);
+            }
 
-            return Ok(result);
+            await _memberService.SaveChangesAsync([contact]);
+
+            return NoContent();
         }
+
+        #endregion
+
+        #region Vendor
 
         /// <summary>
         /// Get vendor
@@ -625,6 +758,8 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             return Ok(result);
         }
 
+        #endregion
+
         [HttpPut]
         [Route("addresses")]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
@@ -638,7 +773,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                     return Forbid();
                 }
                 member.Addresses = addresses.ToList();
-                await _memberService.SaveChangesAsync(new[] { member });
+                await _memberService.SaveChangesAsync([member]);
             }
             return NoContent();
         }
@@ -651,7 +786,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [Authorize(ModuleConstants.Security.Permissions.Create)]
         public async Task<ActionResult<Employee>> CreateEmployee([FromBody] Employee employee)
         {
-            await _memberService.SaveChangesAsync(new[] { employee });
+            await _memberService.SaveChangesAsync([employee]);
             return Ok(employee);
         }
 
@@ -688,7 +823,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [Route("members/{id}/organizations")]
         public async Task<ActionResult<Organization[]>> GetMemberOrganizations(string id)
         {
-            var members = await _memberService.GetByIdsAsync(new[] { id }, null, new[] { typeof(Employee).Name, typeof(Contact).Name });
+            var members = await _memberService.GetByIdsAsync([id], null, [typeof(Employee).Name, typeof(Contact).Name]);
             var member = members.FirstOrDefault();
             var organizationsIds = new List<string>();
             if (member != null)
@@ -703,10 +838,10 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                 }
             }
 
-            return await GetOrganizationsByIds(organizationsIds.ToArray());
+            return await GetOrganizationsByIds([.. organizationsIds]);
         }
-        #endregion
 
+        #endregion
 
         private bool HasDefaultBillingAndShippingAddress(Member member, out ActionResult actionResult)
         {

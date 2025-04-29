@@ -9,7 +9,7 @@ namespace VirtoCommerce.CustomerModule.Core.Model
     {
         public Contact()
         {
-            //Retain Contact as discriminator  in case of  derived types must have the same MemberType
+            //Retain Contact as discriminator in case of derived types must have the same MemberType
             MemberType = nameof(Contact);
         }
 
