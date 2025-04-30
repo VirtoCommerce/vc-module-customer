@@ -12,7 +12,7 @@ angular.module('virtoCommerce.customerModule')
 
                     $scope.selectedItem = address;
                     const newBlade = {
-                        id: 'coreAddressDetail',
+                        id: 'customerAddressDetails',
                         currentEntity: address,
                         title: blade.title,
                         controller: 'virtoCommerce.customerModule.addressDetailsController',
