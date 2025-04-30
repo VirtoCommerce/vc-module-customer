@@ -127,7 +127,7 @@ angular.module('virtoCommerce.customerModule')
                             }
 
                             // If the current address is BillingAndShipping force remove the default flag
-                            if (blade.currentEntity.addressType === blade.addressTypesDict.billingAndShipping) { 
+                            if (blade.currentEntity.addressType === blade.addressTypesDict.billingAndShipping) {
                                 blade.currentEntity.isDefault = false;
                             }
 
