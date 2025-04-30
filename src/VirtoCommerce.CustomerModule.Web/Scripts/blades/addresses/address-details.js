@@ -55,7 +55,7 @@ angular.module('virtoCommerce.customerModule')
                     }
                 );
 
-                const currentRegions = [];
+                let currentRegions = [];
                 if (blade.currentEntity.regionName && !blade.currentEntity.regionId) {
                     addRegion(currentRegions, blade.currentEntity.regionName);
                 }
