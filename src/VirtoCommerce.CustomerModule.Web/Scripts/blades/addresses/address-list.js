@@ -16,25 +16,27 @@ angular.module('virtoCommerce.customerModule')
                         currentEntity: address,
                         title: blade.title,
                         controller: 'virtoCommerce.customerModule.addressDetailsController',
-                        confirmChangesFn: function (address) {
-                            address.name = $scope.getAddressName(address);
-                            if (address.isNew) {
-                                address.isNew = undefined;
-                                blade.currentEntities.push(address);
+                        confirmChangesFn: function (changedAddress) {
+                            changedAddress.name = $scope.getAddressName(changedAddress);
+                            if (changedAddress.isNew) {
+                                changedAddress.isNew = undefined;
+                                blade.currentEntities.push(changedAddress);
                                 if (blade.confirmChangesFn) {
-                                    blade.confirmChangesFn(address);
+                                    blade.confirmChangesFn(changedAddress);
                                 }
                             }
                         },
-                        deleteFn: function (address) {
-                            const toRemove = _.find(blade.currentEntities, function (x) { return angular.equals(x, address) });
+                        deleteFn: function (deletedAddress) {
+                            const toRemove = _.find(blade.currentEntities, function (x) {
+                                return angular.equals(x, deletedAddress)
+                            });
 
                             if (toRemove) {
                                 const idx = blade.currentEntities.indexOf(toRemove);
                                 blade.currentEntities.splice(idx, 1);
 
                                 if (blade.deleteFn) {
-                                    blade.deleteFn(address);
+                                    blade.deleteFn(deletedAddress);
                                 }
                             }
                         },

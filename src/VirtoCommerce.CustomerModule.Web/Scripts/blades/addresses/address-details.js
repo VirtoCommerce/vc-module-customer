@@ -64,7 +64,7 @@ angular.module('virtoCommerce.customerModule')
                     var results = currentRegions;
 
                     if (search && search.length > 1) {
-                        const filtered = $filter('filter')(results, search);
+                        let filtered = $filter('filter')(results, search);
 
                         if (!_.some(filtered)) {
                             addRegion(results, search);
@@ -89,7 +89,7 @@ angular.module('virtoCommerce.customerModule')
                         return;
                     }
 
-                    const newId = null;
+                    let newId = null;
 
                     if (regionName) {
                         const region = _.findWhere(currentRegions, { name: regionName });
@@ -111,13 +111,13 @@ angular.module('virtoCommerce.customerModule')
                             if (!blade.currentEntity.isNew && !angular.equals(blade.currentEntity.addressType, blade.origEntity.addressType)) {
                                 blade.currentEntity.isDefault = false;
 
-                                if (blade.numberOfAddresses(blade.origEntity.addressType) == 2 && blade.origEntity.addressType !== blade.addressTypesDict.billingAndShipping) {
+                                if (blade.numberOfAddresses(blade.origEntity.addressType) === 2 && blade.origEntity.addressType !== blade.addressTypesDict.billingAndShipping) {
                                     blade.searchSecondAddress(blade.origEntity.addressType, blade.currentEntity.name);
                                 }
                             }
 
                             // set deafult flag is there's only 1 address of a given type
-                            if (blade.numberOfAddresses(blade.currentEntity.addressType) == 0) {
+                            if (blade.numberOfAddresses(blade.currentEntity.addressType) === 0) {
                                 blade.currentEntity.isDefault = true;
                             }
 
@@ -127,7 +127,7 @@ angular.module('virtoCommerce.customerModule')
                             }
 
                             // If the current address is BillingAndShipping force remove the default flag
-                            if (blade.currentEntity.addressType == blade.addressTypesDict.billingAndShipping) { 
+                            if (blade.currentEntity.addressType === blade.addressTypesDict.billingAndShipping) { 
                                 blade.currentEntity.isDefault = false;
                             }
 
@@ -209,7 +209,7 @@ angular.module('virtoCommerce.customerModule')
                                     blade.deleteFn(blade.currentEntity);
                                 }
                                 $scope.bladeClose();
-                                if (blade.numberOfAddresses(blade.origEntity.addressType) == 1 && blade.currentEntity.addressType !== blade.addressTypesDict.billingAndShipping) {
+                                if (blade.numberOfAddresses(blade.origEntity.addressType) === 1 && blade.currentEntity.addressType !== blade.addressTypesDict.billingAndShipping) {
                                     blade.searchSecondAddress(blade.origEntity.addressType, blade.currentEntity.name);
                                 }
                             }
