@@ -245,6 +245,14 @@
           "email": "请输入电子邮件...",
           "phone": "请输入电话...",
           "description": "请输入描述..."
+        },
+        "commands": {
+          "default": "设为默认"
+        }
+      },
+      "address-list": {
+        "labels": {
+          "no-addresses": "暂无地址"
         }
       },
       "shared": {
@@ -313,6 +321,14 @@
       "phone-number-save": {
         "title": "保存更改",
         "message": "电话号码已被修改。您要保存更改吗？"
+      },
+      "address-delete": {
+        "title": "确认删除",
+        "message": "您确定要删除此地址吗？"
+      },
+      "address-save": {
+        "title": "保存更改",
+        "message": "地址已被修改。您想保存更改吗？"
       }
     }
   },

@@ -156,7 +156,7 @@ angular.module('virtoCommerce.customerModule')
                         }
                     },
                     {
-                        name: 'customer.commands.default', icon: 'fas fa-flag',
+                        name: 'customer.blades.address-details.commands.default', icon: 'fas fa-flag',
                         executeMethod: function () {
                             blade.currentEntity.isDefault = true;
                         },

@@ -245,6 +245,14 @@
           "email": "メールアドレスを入力...",
           "phone": "電話番号を入力...",
           "description": "説明を入力..."
+        },
+        "commands": {
+          "default": "デフォルトに設定"
+        }
+      },
+      "address-list": {
+        "labels": {
+          "no-addresses": "まだ住所がありません"
         }
       },
       "shared": {
@@ -313,6 +321,14 @@
       "phone-number-save": {
         "title": "変更を保存",
         "message": "電話番号が変更されました。変更を保存しますか？"
+      },
+      "address-delete": {
+        "title": "削除の確認",
+        "message": "この住所を削除してもよろしいですか？"
+      },
+      "address-save": {
+        "title": "変更を保存",
+        "message": "住所が変更されました。変更を保存しますか？"
       }
     }
   },

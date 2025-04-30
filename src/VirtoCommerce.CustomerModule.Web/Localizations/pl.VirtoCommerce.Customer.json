@@ -245,6 +245,14 @@
           "email": "Wpisz e-mail...",
           "phone": "Wpisz telefon...",
           "description": "Wpisz opis..."
+        },
+        "commands": {
+          "default": "Ustaw jako domyślne"
+        }
+      },
+      "address-list": {
+        "labels": {
+          "no-addresses": "Brak adresów"
         }
       },
       "shared": {
@@ -313,6 +321,14 @@
       "phone-number-save": {
         "title": "Zapisz zmiany",
         "message": "Numer telefonu został zmodyfikowany. Czy chcesz zapisać zmiany?"
+      },
+      "address-delete": {
+        "title": "Potwierdź usunięcie",
+        "message": "Czy na pewno chcesz usunąć ten adres?"
+      },
+      "address-save": {
+        "title": "Zapisz zmiany",
+        "message": "Adres został zmodyfikowany. Czy chcesz zapisać zmiany?"
       }
     }
   },
