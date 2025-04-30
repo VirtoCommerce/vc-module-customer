@@ -4,12 +4,12 @@ angular.module('virtoCommerce.customerModule')
 
     $scope.openBlade = function () {
         var newBlade = {
-        	id: "orderOperationAddresses",
+        	id: 'memberAddresses',
             currentEntities: blade.currentEntity.addresses,
             title: blade.title,
             subtitle: 'customer.widgets.address-list.blade-subtitle',
-            controller: 'virtoCommerce.customerModule.common.coreAddressListController',
-            template: 'Modules/$(VirtoCommerce.Customer)/Scripts/common/blades/address-list.tpl.html'
+            controller: 'virtoCommerce.customerModule.addressListController',
+            template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/addresses/address-list.tpl.html'
         };
         bladeNavigationService.showBlade(newBlade, blade);
     };

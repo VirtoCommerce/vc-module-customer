@@ -94,6 +94,10 @@ namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(128)");
 
+                    b.Property<string>("MiddleName")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");

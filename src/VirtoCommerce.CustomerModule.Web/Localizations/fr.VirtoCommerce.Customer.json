@@ -214,6 +214,47 @@
           "delete": "Icône de suppression"
         }
       },
+      "address-details": {
+        "labels": {
+          "name": "Nom de l'adresse",
+          "address-type": "Type d'adresse",
+          "first-name": "Prénom",
+          "middle-name": "Deuxième prénom",
+          "last-name": "Nom de famille",
+          "country": "Pays",
+          "region": "Région",
+          "city": "Ville",
+          "address1": "Adresse ligne 1",
+          "address2": "Adresse ligne 2",
+          "zip-code": "Code postal",
+          "email": "E-mail",
+          "phone": "Téléphone",
+          "description": "Description"
+        },
+        "placeholders": {
+          "address-type": "Sélectionnez le type d'adresse...",
+          "first-name": "Entrez le prénom...",
+          "middle-name": "Entrez le deuxième prénom...",
+          "last-name": "Entrez le nom de famille...",
+          "country": "Sélectionnez un pays...",
+          "region": "Sélectionnez une région...",
+          "city": "Entrez la ville...",
+          "address1": "Entrez l'adresse ligne 1...",
+          "address2": "Entrez l'adresse ligne 2...",
+          "zip-code": "Entrez le code postal...",
+          "email": "Entrez l'e-mail...",
+          "phone": "Entrez le téléphone...",
+          "description": "Entrez une description..."
+        },
+        "commands": {
+          "default": "Définir par défaut"
+        }
+      },
+      "address-list": {
+        "labels": {
+          "no-addresses": "Pas encore d'adresses"
+        }
+      },
       "shared": {
         "labels": {
           "status": "Statut",
@@ -280,6 +321,14 @@
       "phone-number-save": {
         "title": "Enregistrer les modifications",
         "message": "Le numéro de téléphone a été modifié. Voulez-vous enregistrer les modifications ?"
+      },
+      "address-delete": {
+        "title": "Confirmer la suppression",
+        "message": "Êtes-vous sûr de vouloir supprimer cette adresse ?"
+      },
+      "address-save": {
+        "title": "Enregistrer les modifications",
+        "message": "L'adresse a été modifiée. Voulez-vous enregistrer les modifications ?"
       }
     }
   },

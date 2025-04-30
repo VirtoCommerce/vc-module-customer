@@ -214,6 +214,47 @@
           "delete": "Icona di eliminazione"
         }
       },
+      "address-details": {
+        "labels": {
+          "name": "Nome dell'indirizzo",
+          "address-type": "Tipo di indirizzo",
+          "first-name": "Nome",
+          "middle-name": "Secondo nome",
+          "last-name": "Cognome",
+          "country": "Paese",
+          "region": "Regione",
+          "city": "Città",
+          "address1": "Indirizzo riga 1",
+          "address2": "Indirizzo riga 2",
+          "zip-code": "CAP",
+          "email": "Email",
+          "phone": "Telefono",
+          "description": "Descrizione"
+        },
+        "placeholders": {
+          "address-type": "Seleziona tipo di indirizzo...",
+          "first-name": "Inserisci nome...",
+          "middle-name": "Inserisci secondo nome...",
+          "last-name": "Inserisci cognome...",
+          "country": "Seleziona paese...",
+          "region": "Seleziona regione...",
+          "city": "Inserisci città...",
+          "address1": "Inserisci indirizzo riga 1...",
+          "address2": "Inserisci indirizzo riga 2...",
+          "zip-code": "Inserisci CAP...",
+          "email": "Inserisci email...",
+          "phone": "Inserisci telefono...",
+          "description": "Inserisci descrizione..."
+        },
+        "commands": {
+          "default": "Imposta come predefinito"
+        }
+      },
+      "address-list": {
+        "labels": {
+          "no-addresses": "Nessun indirizzo ancora"
+        }
+      },
       "shared": {
         "labels": {
           "status": "Stato",
@@ -280,6 +321,14 @@
       "phone-number-save": {
         "title": "Salva modifiche",
         "message": "Il numero di telefono è stato modificato. Vuoi salvare le modifiche?"
+      },
+      "address-delete": {
+        "title": "Conferma eliminazione",
+        "message": "Sei sicuro di voler eliminare questo indirizzo?"
+      },
+      "address-save": {
+        "title": "Salva modifiche",
+        "message": "L'indirizzo è stato modificato. Vuoi salvare le modifiche?"
       }
     }
   },

@@ -94,6 +94,10 @@ namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
                         .IsRequired()
                         .HasColumnType("character varying(128)");
 
+                    b.Property<string>("MiddleName")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
