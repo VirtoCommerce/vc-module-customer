@@ -216,10 +216,35 @@
       },
       "address-details": {
         "labels": {
-          "middle-name": "Middle name"
+          "name": "Address name",
+          "address-type": "Address type",
+          "first-name": "First name",
+          "middle-name": "Middle name",
+          "last-name": "Last name",
+          "country": "Country",
+          "region": "Region",
+          "city": "City",
+          "address1": "Address line 1",
+          "address2": "Address line 2",
+          "zip-code": "ZIP code",
+          "email": "Email",
+          "phone": "Phone",
+          "description": "Description"
         },
         "placeholders": {
-          "middle-name": "Enter middle name"
+          "address-type": "Select address type...",
+          "first-name": "Enter first name...",
+          "middle-name": "Enter middle name...",
+          "last-name": "Enter last name...",
+          "country": "Select country...",
+          "region": "Select region...",
+          "city": "Enter city...",
+          "address1": "Enter address line 1...",
+          "address2": "Enter address line 2...",
+          "zip-code": "Enter ZIP code...",
+          "email": "Enter email...",
+          "phone": "Enter phone...",
+          "description": "Enter description..."
         }
       },
       "shared": {

@@ -216,10 +216,35 @@
       },
       "address-details": {
         "labels": {
-          "middle-name": "ミドルネーム"
+          "name": "住所名",
+          "address-type": "住所の種類",
+          "first-name": "名",
+          "middle-name": "ミドルネーム",
+          "last-name": "姓",
+          "country": "国",
+          "region": "地域",
+          "city": "市区町村",
+          "address1": "住所1行目",
+          "address2": "住所2行目",
+          "zip-code": "郵便番号",
+          "email": "メールアドレス",
+          "phone": "電話番号",
+          "description": "説明"
         },
         "placeholders": {
-          "middle-name": "ミドルネームを入力してください"
+          "address-type": "住所の種類を選択...",
+          "first-name": "名を入力...",
+          "middle-name": "ミドルネームを入力...",
+          "last-name": "姓を入力...",
+          "country": "国を選択...",
+          "region": "地域を選択...",
+          "city": "市区町村を入力...",
+          "address1": "住所1行目を入力...",
+          "address2": "住所2行目を入力...",
+          "zip-code": "郵便番号を入力...",
+          "email": "メールアドレスを入力...",
+          "phone": "電話番号を入力...",
+          "description": "説明を入力..."
         }
       },
       "shared": {

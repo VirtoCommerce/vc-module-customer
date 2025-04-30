@@ -216,10 +216,35 @@
       },
       "address-details": {
         "labels": {
-          "middle-name": "中间名"
+          "name": "地址名称",
+          "address-type": "地址类型",
+          "first-name": "名",
+          "middle-name": "中间名",
+          "last-name": "姓",
+          "country": "国家",
+          "region": "地区",
+          "city": "城市",
+          "address1": "地址行1",
+          "address2": "地址行2",
+          "zip-code": "邮政编码",
+          "email": "电子邮件",
+          "phone": "电话",
+          "description": "描述"
         },
         "placeholders": {
-          "middle-name": "输入您的中间名"
+          "address-type": "请选择地址类型...",
+          "first-name": "请输入名...",
+          "middle-name": "请输入中间名...",
+          "last-name": "请输入姓...",
+          "country": "请选择国家...",
+          "region": "请选择地区...",
+          "city": "请输入城市...",
+          "address1": "请输入地址行1...",
+          "address2": "请输入地址行2...",
+          "zip-code": "请输入邮政编码...",
+          "email": "请输入电子邮件...",
+          "phone": "请输入电话...",
+          "description": "请输入描述..."
         }
       },
       "shared": {

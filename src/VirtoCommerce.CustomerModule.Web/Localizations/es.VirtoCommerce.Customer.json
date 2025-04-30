@@ -216,10 +216,35 @@
       },
       "address-details": {
         "labels": {
-          "middle-name": "Segundo nombre"
+          "name": "Nombre de la dirección",
+          "address-type": "Tipo de dirección",
+          "first-name": "Nombre",
+          "middle-name": "Segundo nombre",
+          "last-name": "Apellido",
+          "country": "País",
+          "region": "Región",
+          "city": "Ciudad",
+          "address1": "Dirección línea 1",
+          "address2": "Dirección línea 2",
+          "zip-code": "Código postal",
+          "email": "Correo electrónico",
+          "phone": "Teléfono",
+          "description": "Descripción"
         },
         "placeholders": {
-          "middle-name": "Ingrese su segundo nombre"
+          "address-type": "Seleccione tipo de dirección...",
+          "first-name": "Ingrese nombre...",
+          "middle-name": "Ingrese segundo nombre...",
+          "last-name": "Ingrese apellido...",
+          "country": "Seleccione país...",
+          "region": "Seleccione región...",
+          "city": "Ingrese ciudad...",
+          "address1": "Ingrese dirección línea 1...",
+          "address2": "Ingrese dirección línea 2...",
+          "zip-code": "Ingrese código postal...",
+          "email": "Ingrese correo electrónico...",
+          "phone": "Ingrese teléfono...",
+          "description": "Ingrese descripción..."
         }
       },
       "shared": {
