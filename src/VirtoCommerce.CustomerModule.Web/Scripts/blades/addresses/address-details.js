@@ -85,7 +85,9 @@ angular.module('virtoCommerce.customerModule')
                 }
 
                 $scope.$watch('blade.currentEntity.regionName', function (regionName, old) {
-                    if (regionName === old) return;
+                    if (regionName === old) {
+                        return;
+                    }
 
                     const newId = null;
 
@@ -159,10 +161,12 @@ angular.module('virtoCommerce.customerModule')
                             blade.currentEntity.isDefault = true;
                         },
                         canExecuteMethod: function () {
-                            if (blade.currentEntity.addressType === blade.addressTypesDict.billingAndShipping)
+                            if (blade.currentEntity.addressType === blade.addressTypesDict.billingAndShipping) {
                                 return false;
-                            else
+                            }
+                            else {
                                 return !blade.currentEntity.isDefault;
+                            }
                         },
                         meta: 'default'
                     }
