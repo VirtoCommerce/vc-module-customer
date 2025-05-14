@@ -1,11 +1,11 @@
 //Call this to register our module to main application
-var moduleName = "virtoCommerce.customerModule";
+var moduleName = 'virtoCommerce.customerModule';
 
 if (AppDependencies != undefined) {
     AppDependencies.push(moduleName);
 }
 
-angular.module(moduleName, ['virtoCommerce.customerModule.common'])
+angular.module(moduleName, [])
     .config(
         ['$stateProvider', function ($stateProvider) {
             $stateProvider
@@ -81,10 +81,11 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
     }])
     .run([
         '$rootScope', '$state', 'platformWebApp.mainMenuService', 'platformWebApp.authService', 'platformWebApp.permissionScopeResolver',
-        'platformWebApp.widgetService', 'platformWebApp.settings', 'platformWebApp.userProfileIconService',
+        'platformWebApp.widgetService', 'platformWebApp.settings', 'platformWebApp.userProfileIconService', 'platformWebApp.metaFormsService',
         'virtoCommerce.customerModule.memberTypesResolverService', 'virtoCommerce.customerModule.predefinedSearchFilters', 'virtoCommerce.customerModule.members',
         function (
-            $rootScope, $state, mainMenuService, authService, scopeResolver, widgetService, settings, userProfileIconService,
+            $rootScope, $state, mainMenuService, authService, scopeResolver,
+            widgetService, settings, userProfileIconService, metaFormsService,
             memberTypesResolverService, predefinedSearchFilters, membersApi) {
             //Register module in main menu
             var menuItem = {
@@ -445,6 +446,94 @@ angular.module(moduleName, ['virtoCommerce.customerModule.common'])
                     }]
                 }
             });
+
+            metaFormsService.registerMetaFields('CustomerAddressDetails', [
+                {
+                    templateUrl: 'description.html',
+                    priority: 0
+                },
+                {
+                    templateUrl: 'addressTypeSelector.html',
+                    priority: 1
+                },
+                {
+                    name: 'firstName',
+                    title: 'customer.blades.address-details.labels.first-name',
+                    placeholder: 'customer.blades.address-details.placeholders.first-name',
+                    valueType: 'ShortText',
+                    isRequired: false,
+                    priority: 2
+                },
+                {
+                    name: 'middleName',
+                    title: 'customer.blades.address-details.labels.middle-name',
+                    placeholder: 'customer.blades.address-details.placeholders.middle-name',
+                    valueType: 'ShortText',
+                    isRequired: false,
+                    priority: 3
+                },
+                {
+                    name: 'lastName',
+                    title: 'customer.blades.address-details.labels.last-name',
+                    placeholder: 'customer.blades.address-details.placeholders.last-name',
+                    valueType: 'ShortText',
+                    isRequired: false,
+                    priority: 4
+                },
+                {
+                    templateUrl: 'countrySelector.html',
+                    priority: 5
+                },
+                {
+                    templateUrl: 'countryRegionSelector.html',
+                    priority: 6
+                },
+                {
+                    name: 'city',
+                    title: 'customer.blades.address-details.labels.city',
+                    placeholder: 'customer.blades.address-details.placeholders.city',
+                    valueType: 'ShortText',
+                    isRequired: true,
+                    priority: 7
+                },
+                {
+                    name: 'line1',
+                    title: 'customer.blades.address-details.labels.address1',
+                    placeholder: 'customer.blades.address-details.placeholders.address1',
+                    valueType: 'ShortText',
+                    isRequired: true,
+                    priority: 8
+                },
+                {
+                    name: 'line2',
+                    title: 'customer.blades.address-details.labels.address2',
+                    placeholder: 'customer.blades.address-details.placeholders.address2',
+                    valueType: 'ShortText',
+                    priority: 9
+                },
+                {
+                    name: 'postalCode',
+                    title: 'customer.blades.address-details.labels.zip-code',
+                    placeholder: 'customer.blades.address-details.placeholders.zip-code',
+                    valueType: 'ShortText',
+                    isRequired: true,
+                    priority: 10
+                },
+                {
+                    name: 'email',
+                    title: 'customer.blades.address-details.labels.email',
+                    placeholder: 'customer.blades.address-details.placeholders.email',
+                    valueType: 'Email',
+                    priority: 11
+                },
+                {
+                    name: 'phone',
+                    title: 'customer.blades.address-details.labels.phone',
+                    placeholder: 'customer.blades.address-details.placeholders.phone',
+                    valueType: 'ShortText',
+                    priority: 12
+                }
+            ]);
 
             const lastTimeModificationDate = 1583235535540;
             // predefine search filters for customer search
