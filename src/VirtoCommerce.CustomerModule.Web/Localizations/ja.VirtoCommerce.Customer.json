@@ -214,6 +214,47 @@
           "delete": "削除アイコン"
         }
       },
+      "address-details": {
+        "labels": {
+          "name": "住所名",
+          "address-type": "住所の種類",
+          "first-name": "名",
+          "middle-name": "ミドルネーム",
+          "last-name": "姓",
+          "country": "国",
+          "region": "地域",
+          "city": "市区町村",
+          "address1": "住所1行目",
+          "address2": "住所2行目",
+          "zip-code": "郵便番号",
+          "email": "メールアドレス",
+          "phone": "電話番号",
+          "description": "説明"
+        },
+        "placeholders": {
+          "address-type": "住所の種類を選択...",
+          "first-name": "名を入力...",
+          "middle-name": "ミドルネームを入力...",
+          "last-name": "姓を入力...",
+          "country": "国を選択...",
+          "region": "地域を選択...",
+          "city": "市区町村を入力...",
+          "address1": "住所1行目を入力...",
+          "address2": "住所2行目を入力...",
+          "zip-code": "郵便番号を入力...",
+          "email": "メールアドレスを入力...",
+          "phone": "電話番号を入力...",
+          "description": "説明を入力..."
+        },
+        "commands": {
+          "default": "デフォルトに設定"
+        }
+      },
+      "address-list": {
+        "labels": {
+          "no-addresses": "まだ住所がありません"
+        }
+      },
       "shared": {
         "labels": {
           "status": "ステータス",
@@ -280,6 +321,14 @@
       "phone-number-save": {
         "title": "変更を保存",
         "message": "電話番号が変更されました。変更を保存しますか？"
+      },
+      "address-delete": {
+        "title": "削除の確認",
+        "message": "この住所を削除してもよろしいですか？"
+      },
+      "address-save": {
+        "title": "変更を保存",
+        "message": "住所が変更されました。変更を保存しますか？"
       }
     }
   },
