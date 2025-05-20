@@ -4,12 +4,12 @@
   <version>3.831.0</version>
   <version-tag />
 
-  <platformVersion>3.881.0</platformVersion>
+  <platformVersion>3.887.0</platformVersion>
   <dependencies>
-    <dependency id="VirtoCommerce.Core" version="3.808.0" />
+    <dependency id="VirtoCommerce.Core" version="3.821.0" />
     <dependency id="VirtoCommerce.Notifications" version="3.809.0" />
     <dependency id="VirtoCommerce.Search" version="3.804.0" />
-    <dependency id="VirtoCommerce.Store" version="3.809.0" />
+    <dependency id="VirtoCommerce.Store" version="3.814.0" />
   </dependencies>
 
   <title>Companies and Contacts</title>
