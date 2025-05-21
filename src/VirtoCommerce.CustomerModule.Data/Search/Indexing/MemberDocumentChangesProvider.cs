@@ -105,7 +105,10 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
         {
             var criteria = AbstractTypeFactory<ChangeLogSearchCriteria>.TryCreateInstance();
 
-            criteria.ObjectType = ChangeLogObjectType;
+            var types = AbstractTypeFactory<Member>.AllTypeInfos.Select(x => x.TypeName).ToList();
+            types.Add(nameof(Member));
+
+            criteria.ObjectTypes = types;
             criteria.StartDate = startDate;
             criteria.EndDate = endDate;
             criteria.Skip = (int)skip;
