@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using VirtoCommerce.CoreModule.Core.Seo;
 using VirtoCommerce.Platform.Core.Security;
+using VirtoCommerce.Seo.Core.Models;
 
 namespace VirtoCommerce.CustomerModule.Core.Model
 {
