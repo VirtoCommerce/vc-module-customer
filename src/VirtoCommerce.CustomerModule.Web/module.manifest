@@ -10,7 +10,7 @@
     <dependency id="VirtoCommerce.Notifications" version="3.809.0" />
     <dependency id="VirtoCommerce.Search" version="3.804.0" />
     <dependency id="VirtoCommerce.Seo" version="3.800.0" />
-    <dependency id="VirtoCommerce.Store" version="3.814.0" />
+    <dependency id="VirtoCommerce.Store" version="3.815.0" />
   </dependencies>
 
   <title>Companies and Contacts</title>
