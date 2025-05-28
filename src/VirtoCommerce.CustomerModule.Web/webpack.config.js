@@ -1,4 +1,4 @@
-const moduleId = "VirtoCommerce.Customer"
+const moduleId = "VirtoCommerce.Customer";
 
 const glob = require("glob");
 const path = require("path");
@@ -8,12 +8,12 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 const rootPath = path.resolve(__dirname, "dist");
 
-function getEntrypoints() {
+function getEntryPoints(isProduction) {
     const result = [
         ...glob.sync("./Scripts/**/*.js", { nosort: true }),
+        ...(isProduction ? glob.sync("./Scripts/**/*.html", { nosort: true }) : []),
         ...glob.sync("./Content/**/*.css", { nosort: true })
     ];
-
     return result;
 }
 
@@ -21,7 +21,7 @@ module.exports = (env, argv) => {
     const isProduction = argv.mode === "production";
 
     return {
-        entry: getEntrypoints(),
+        entry: getEntryPoints(isProduction),
         devtool: false,
         output: {
             path: rootPath,
@@ -32,6 +32,24 @@ module.exports = (env, argv) => {
                 {
                     test: /\.css$/,
                     use: [MiniCssExtractPlugin.loader, "css-loader"]
+                },
+                {
+                    test: /\.html$/,
+                    use: [
+                        {
+                            loader: "ngtemplate-loader",
+                            options: {
+                                relativeTo: path.resolve(__dirname, "./"),
+                                prefix: "Modules/$(" + moduleId + ")/",
+                            }
+                        },
+                        {
+                            loader: "html-loader",
+                            options: {
+                                sources: false  
+                            }
+                        }
+                    ]
                 }
             ]
         },
@@ -51,4 +69,3 @@ module.exports = (env, argv) => {
         ]
     };
 };
-
