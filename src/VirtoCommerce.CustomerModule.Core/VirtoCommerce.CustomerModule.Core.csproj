@@ -14,6 +14,6 @@
     <PackageReference Include="VirtoCommerce.NotificationsModule.Core" Version="3.809.0" />
     <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.889.0" />
     <PackageReference Include="VirtoCommerce.SearchModule.Core" Version="3.804.0" />
-    <PackageReference Include="VirtoCommerce.Seo.Core" Version="3.800.0-alpha.20-vcst-3299" />
+    <PackageReference Include="VirtoCommerce.Seo.Core" Version="3.800.0-alpha.23-vcst-3299" />
   </ItemGroup>
 </Project>
