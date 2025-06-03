@@ -40,7 +40,7 @@ module.exports = (env, argv) => {
                             loader: "ngtemplate-loader",
                             options: {
                                 relativeTo: path.resolve(__dirname, "./"),
-                                prefix: "Modules/$(" + moduleId + ")/",
+                                prefix: `Modules/$(${moduleId})/`,
                             }
                         },
                         {
