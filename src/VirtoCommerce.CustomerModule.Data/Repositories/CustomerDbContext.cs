@@ -8,6 +8,8 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 {
     public class CustomerDbContext : DbContextBase
     {
+        public const int Length1024 = 1024;
+
         public CustomerDbContext(DbContextOptions<CustomerDbContext> options)
             : base(options)
         {
@@ -180,8 +182,8 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
                 builder.ToTable("CustomerPreference").HasKey(x => x.Id);
                 builder.Property(x => x.Id).HasMaxLength(IdLength).ValueGeneratedOnAdd();
                 builder.Property(x => x.UserId).HasMaxLength(IdLength).IsRequired();
-                builder.Property(x => x.Name).HasMaxLength(1024);
-                builder.Property(x => x.Value).HasMaxLength(1024);
+                builder.Property(x => x.Name).HasMaxLength(Length1024);
+                builder.Property(x => x.Value).HasMaxLength(Length1024);
                 builder.HasIndex(x => new { x.UserId, x.Name }).IsUnique();
             });
 
