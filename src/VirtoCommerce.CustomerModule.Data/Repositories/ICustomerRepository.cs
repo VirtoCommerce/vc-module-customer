@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using VirtoCommerce.CustomerModule.Data.Model;
 
 namespace VirtoCommerce.CustomerModule.Data.Repositories
@@ -9,5 +11,8 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
         IQueryable<ContactEntity> Contacts { get; }
         IQueryable<VendorEntity> Vendors { get; }
         IQueryable<EmployeeEntity> Employees { get; }
+        IQueryable<CustomerPreferenceEntity> CustomerPreferences { get; }
+
+        Task<IList<CustomerPreferenceEntity>> GetCustomerPreferencesByIdsAsync(IList<string> ids, string responseGroup);
     }
 }
