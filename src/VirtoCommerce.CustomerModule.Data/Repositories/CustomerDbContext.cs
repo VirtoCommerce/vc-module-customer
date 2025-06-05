@@ -20,6 +20,8 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             #region Member
 
             modelBuilder.Entity<MemberEntity>().HasKey(x => x.Id);
@@ -123,7 +125,9 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             modelBuilder.Entity<ContactEntity>().Property(p => p.About).HasColumnName("About");
             modelBuilder.Entity<ContactEntity>().Property(p => p.DefaultOrganizationId).HasColumnName("DefaultOrganizationId");
             modelBuilder.Entity<ContactEntity>().Property(p => p.CurrentOrganizationId).HasColumnName("CurrentOrganizationId");
+#pragma warning disable VC0011 // Type or member is obsolete
             modelBuilder.Entity<ContactEntity>().Property(p => p.SelectedAddressId).HasColumnName("SelectedAddressId");
+#pragma warning restore VC0011 // Type or member is obsolete
 
             #endregion
 
@@ -171,11 +175,19 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
                 .HasDatabaseName("IX_MemberDynamicPropertyObjectValue_ObjectType_ObjectId");
             #endregion
 
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<CustomerPreferenceEntity>(builder =>
+            {
+                builder.ToTable("CustomerPreference").HasKey(x => x.Id);
+                builder.Property(x => x.Id).HasMaxLength(IdLength).ValueGeneratedOnAdd();
+                builder.Property(x => x.UserId).HasMaxLength(IdLength).IsRequired();
+                builder.Property(x => x.Name).HasMaxLength(1024);
+                builder.Property(x => x.Value).HasMaxLength(1024);
+                builder.HasIndex(x => new { x.UserId, x.Name }).IsUnique();
+            });
 
             // Allows configuration for an entity type for different database types.
             // Applies configuration from all <see cref="IEntityTypeConfiguration{TEntity}" in VirtoCommerce.CustomerModule.Data.XXX project. /> 
-            switch (this.Database.ProviderName)
+            switch (Database.ProviderName)
             {
                 case "Pomelo.EntityFrameworkCore.MySql":
                     modelBuilder.ApplyConfigurationsFromAssembly(Assembly.Load("VirtoCommerce.CustomerModule.Data.MySql"));
