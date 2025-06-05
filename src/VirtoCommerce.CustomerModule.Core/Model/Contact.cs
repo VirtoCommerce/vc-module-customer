@@ -28,7 +28,7 @@ namespace VirtoCommerce.CustomerModule.Core.Model
         public string DefaultOrganizationId { get; set; }
         public string CurrentOrganizationId { get; set; }
 
-        [Obsolete("Use GetSelectedAddressId() or SaveSelectedAddressId() form VirtoCommerce.CustomerModule.Core.Extensions.CustomerPreferenceServiceExtensions", DiagnosticId = "VC0011", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions/")]
+        [Obsolete("Use GetSelectedAddressId() or SaveSelectedAddressId() from VirtoCommerce.CustomerModule.Core.Extensions.CustomerPreferenceServiceExtensions", DiagnosticId = "VC0011", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions/")]
         public string SelectedAddressId { get; set; }
 
         public string TaxPayerId { get; set; }
