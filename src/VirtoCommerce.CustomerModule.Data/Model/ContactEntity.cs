@@ -71,6 +71,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(128)]
         public string CurrentOrganizationId { get; set; }
 
+        [Obsolete("Use GetSelectedAddressId() or SaveSelectedAddressId() from VirtoCommerce.CustomerModule.Core.Extensions.CustomerPreferenceServiceExtensions", DiagnosticId = "VC0011", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions/")]
         [StringLength(128)]
         public string SelectedAddressId { get; set; }
 
@@ -114,7 +115,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 contact.About = About;
                 contact.DefaultOrganizationId = DefaultOrganizationId;
                 contact.CurrentOrganizationId = CurrentOrganizationId;
+#pragma warning disable VC0011 // Type or member is obsolete
                 contact.SelectedAddressId = SelectedAddressId;
+#pragma warning restore VC0011 // Type or member is obsolete
             }
             return member;
         }
@@ -142,7 +145,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 About = contact.About;
                 DefaultOrganizationId = contact.DefaultOrganizationId;
                 CurrentOrganizationId = contact.CurrentOrganizationId;
+#pragma warning disable VC0011 // Type or member is obsolete
                 SelectedAddressId = contact.SelectedAddressId;
+#pragma warning restore VC0011 // Type or member is obsolete
 
                 if (contact.Organizations != null)
                 {
@@ -208,7 +213,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 contact.About = About;
                 contact.DefaultOrganizationId = DefaultOrganizationId;
                 contact.CurrentOrganizationId = CurrentOrganizationId;
+#pragma warning disable VC0011 // Type or member is obsolete
                 contact.SelectedAddressId = SelectedAddressId;
+#pragma warning restore VC0011 // Type or member is obsolete
             }
 
             base.Patch(target);
