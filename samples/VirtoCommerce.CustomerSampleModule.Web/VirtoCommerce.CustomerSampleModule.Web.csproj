@@ -14,6 +14,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\VirtoCommerce.CustomerModule.Core\VirtoCommerce.CustomerModule.Core.csproj" />
+    <ProjectReference Include="..\..\src\VirtoCommerce.CustomerModule.Data.SqlServer\VirtoCommerce.CustomerModule.Data.SqlServer.csproj" />
     <ProjectReference Include="..\..\src\VirtoCommerce.CustomerModule.Data\VirtoCommerce.CustomerModule.Data.csproj" />
   </ItemGroup>
 </Project>

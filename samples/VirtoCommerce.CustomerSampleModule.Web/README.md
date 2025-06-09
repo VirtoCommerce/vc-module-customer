@@ -14,8 +14,9 @@ The Virto Commerce Customer Sample Module demonstrates the extensibility framewo
 ## Features
 This module includes the following features:
 
-* Extends the Contact model by adding a new property, JobTitle.
+* Extends the Contact model by adding a new property, JobTitle and WebContactId.
 * Introduces a new entity, Supplier.
+* Demonstrates how to create a new event hander: WebContactIdInitializationHandler.
 
 ## Screenshots
 ### Supplier Type

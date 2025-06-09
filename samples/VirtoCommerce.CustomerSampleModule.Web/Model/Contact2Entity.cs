@@ -10,12 +10,16 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Model
         [StringLength(128)]
         public string JobTitle { get; set; }
 
+        [StringLength(128)]
+        public string WebContactId { get; set; }
+
         public override MemberEntity FromModel(Member member, PrimaryKeyResolvingMap pkMap)
         {
             var contact2 = member as Contact2;
             if (contact2 != null)
             {
                 JobTitle = contact2.JobTitle;
+                WebContactId = contact2.WebContactId;
             }
             //Call base converter
             return base.FromModel(member, pkMap);
@@ -29,6 +33,7 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Model
             if (contact2 != null)
             {
                 contact2.JobTitle = JobTitle;
+                contact2.WebContactId = WebContactId;
             }
             return member;
         }
@@ -38,8 +43,8 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Model
             if (memberDataEntity is Contact2Entity contact2)
             {
                 contact2.JobTitle = JobTitle;
+                contact2.WebContactId = WebContactId;
             }
-
             base.Patch(memberDataEntity);
         }
     }
