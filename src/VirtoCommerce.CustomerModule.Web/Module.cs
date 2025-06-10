@@ -113,6 +113,10 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddSingleton<ITokenRequestValidator, OrganizationIdRequestValidator>();
             serviceCollection.AddSingleton<ITokenClaimProvider, OrganizationIdClaimProvider>();
             serviceCollection.AddSingleton<ITokenRequestHandler, CurrentOrganizationIdTokenRequestHandler>();
+
+            serviceCollection.AddTransient<ICustomerPreferenceCrudService, CustomerPreferenceCrudService>();
+            serviceCollection.AddTransient<ICustomerPreferenceSearchService, CustomerPreferenceSearchService>();
+            serviceCollection.AddTransient<ICustomerPreferenceService, CustomerPreferenceService>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
