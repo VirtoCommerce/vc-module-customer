@@ -8,8 +8,6 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 {
     public class CustomerDbContext : DbContextBase
     {
-        public const int Length1024 = 1024;
-
         public CustomerDbContext(DbContextOptions<CustomerDbContext> options)
             : base(options)
         {
