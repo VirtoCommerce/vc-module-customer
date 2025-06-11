@@ -19,8 +19,10 @@ public static class ModuleConstants
                 DefaultValue = "PP{0:yyMMdd}-{1:D5}"
             };
 
-
-            public static IEnumerable<SettingDescriptor> AllSettings => [WebContactIdTemplate];
+            public static IEnumerable<SettingDescriptor> AllSettings =>
+            [
+                WebContactIdTemplate
+            ];
         }
 
         public static IEnumerable<SettingDescriptor> AllSettings => General.AllSettings;
