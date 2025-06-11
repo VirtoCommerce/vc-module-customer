@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VirtoCommerce.CustomerSampleModule.Web.Repositories;
 
@@ -11,9 +12,11 @@ using VirtoCommerce.CustomerSampleModule.Web.Repositories;
 namespace VirtoCommerce.CustomerSampleModule.Web.Migrations
 {
     [DbContext(typeof(CustomerSampleDbContext))]
-    partial class CustomerSampleDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250609122405_WebContactId")]
+    partial class WebContactId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

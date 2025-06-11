@@ -1,7 +1,10 @@
+// Ignore Spelling: Virto
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Hangfire;
+using Hangfire.MemoryStorage;
 using Moq;
 using VirtoCommerce.CustomerModule.Core.Events;
 using VirtoCommerce.CustomerModule.Core.Model;
@@ -17,12 +20,17 @@ namespace VirtoCommerce.CustomerModule.Tests
     [Trait("Category", "IntegrationTest")]
     public class LogChangesMemberChangedEventHandlerTests
     {
+        public LogChangesMemberChangedEventHandlerTests()
+        {
+            // Use in-memory Hangfire storage to avoid ArgumentNullException
+            GlobalConfiguration.Configuration.UseMemoryStorage();
+        }
+
         [Theory]
         [MemberData(nameof(LogsData))]
-        public async Task LogChangesMemberChangedEventHandler_SavesChanges(
+        public Task LogChangesMemberChangedEventHandler_SavesChanges(
             Contact oldMember, Contact newMember, IReadOnlyCollection<string> expectedLogs)
         {
-            JobStorage.Current = new Mock<JobStorage>().Object;
             var changesLogService = new Mock<IChangeLogService>();
             changesLogService
                 .Setup(x => x.SaveChangesAsync(It.IsAny<OperationLog[]>()))
@@ -53,7 +61,7 @@ namespace VirtoCommerce.CustomerModule.Tests
             var message = new MemberChangedEvent(
                 new[] { new GenericChangedEntry<Member>(newMember, oldMember, EntryState.Modified) });
 
-            await handler.Handle(message);
+            return handler.Handle(message);
         }
 
         public static TheoryData<Contact, Contact, IReadOnlyCollection<string>> LogsData()
