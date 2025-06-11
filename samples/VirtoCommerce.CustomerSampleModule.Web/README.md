@@ -16,7 +16,7 @@ This module includes the following features:
 
 * Extends the Contact model by adding new properties: JobTitle and WebContactId.
 * Introduces a new entity, Supplier.
-* Demonstrates how to create a new event hander: WebContactIdInitializationHandler.
+* Demonstrates how to create extend MemberService to initialize WebContactId using IUniqueNumberGenerator.
 
 ## Screenshots
 ### Supplier Type
