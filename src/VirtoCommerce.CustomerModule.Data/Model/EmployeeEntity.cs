@@ -46,7 +46,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         public override Member ToModel(Member member)
         {
-            //Call base converter first
+            // Call base converter first
             base.ToModel(member);
 
             if (member is Employee employee)
@@ -70,11 +70,15 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 employee.DefaultOrganizationId = DefaultOrganizationId;
                 employee.CurrentOrganizationId = CurrentOrganizationId;
             }
+
             return member;
         }
 
         public override MemberEntity FromModel(Member member, PrimaryKeyResolvingMap pkMap)
         {
+            // Call base converter first
+            base.FromModel(member, pkMap);
+
             if (member is Employee employee)
             {
                 member.Name = employee.FullName;
@@ -106,12 +110,14 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                     }
                 }
             }
-            //Call base converter
-            return base.FromModel(member, pkMap);
+
+            return this;
         }
 
         public override void Patch(MemberEntity target)
         {
+            base.Patch(target);
+
             if (target is EmployeeEntity employee)
             {
                 employee.FirstName = FirstName;
@@ -127,8 +133,6 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 employee.DefaultOrganizationId = DefaultOrganizationId;
                 employee.CurrentOrganizationId = CurrentOrganizationId;
             }
-
-            base.Patch(target);
         }
     }
 }

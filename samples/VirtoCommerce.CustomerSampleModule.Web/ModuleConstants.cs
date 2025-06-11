@@ -11,20 +11,20 @@ public static class ModuleConstants
     {
         public static class General
         {
-            public static SettingDescriptor WebContactIdTemplate = new SettingDescriptor
+            public static SettingDescriptor WebContactIdTemplate { get; } = new()
             {
                 Name = "Customer.WebContactIdTemplate",
                 ValueType = SettingValueType.ShortText,
                 GroupName = "Customer|General",
-                DefaultValue = "PP{0:yyMMdd}-{1:D5}"
+                DefaultValue = "PP{0:yyMMdd}-{1:D5}",
             };
 
-            public static IEnumerable<SettingDescriptor> AllSettings =>
+            public static IEnumerable<SettingDescriptor> AllGeneralSettings =>
             [
-                WebContactIdTemplate
+                WebContactIdTemplate,
             ];
         }
 
-        public static IEnumerable<SettingDescriptor> AllSettings => General.AllSettings;
+        public static IEnumerable<SettingDescriptor> AllSettings => General.AllGeneralSettings;
     }
 }

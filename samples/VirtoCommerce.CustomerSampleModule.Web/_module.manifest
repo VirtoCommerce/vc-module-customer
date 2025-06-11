@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <module>
-    <id>VirtoCommerce.CustomerSample</id>
-    <version>3.800.0</version>
-    <platformVersion>3.881.0</platformVersion>
-    <dependencies>
-        <dependency id="VirtoCommerce.Core" version="3.808.0" />
-        <dependency id="VirtoCommerce.Search" version="3.804.0" />
-        <dependency id="VirtoCommerce.Customer" version="3.800.0" />
-    </dependencies>
+  <id>VirtoCommerce.CustomerSample</id>
+  <version>3.800.0</version>
 
-    <title>Companies and Contacts Extension Sample</title>
-    <description>Demo</description>
-    <authors>
-        <author>Virto Commerce</author>
-    </authors>
-    <owners>
-        <owner>Virto Commerce</owner>
-    </owners>
-    <projectUrl>https://virtocommerce.com/apps/extensions/virto-customer-module</projectUrl>
-    <releaseNotes>First version.</releaseNotes>
-    <copyright>Copyright © 2011-2025 Virto Commerce. All rights reserved</copyright>
-    <tags>customer</tags>
+  <platformVersion>3.889.0</platformVersion>
+  <dependencies>
+    <dependency id="VirtoCommerce.Core" version="3.821.0" />
+    <dependency id="VirtoCommerce.Search" version="3.804.0" />
+    <dependency id="VirtoCommerce.Customer" version="3.800.0" />
+  </dependencies>
 
-    <assemblyFile>VirtoCommerce.CustomerSampleModule.Web.dll</assemblyFile>
-    <moduleType>VirtoCommerce.CustomerSampleModule.Web.Module, VirtoCommerce.CustomerSampleModule.Web</moduleType>
+  <title>Companies and Contacts Extension Sample</title>
+  <description>Demo</description>
+  <authors>
+    <author>Virto Commerce</author>
+  </authors>
+  <owners>
+    <owner>Virto Commerce</owner>
+  </owners>
+  <projectUrl>https://virtocommerce.com/apps/extensions/virto-customer-module</projectUrl>
+  <releaseNotes>First version.</releaseNotes>
+  <copyright>Copyright © 2011–2025 Virto Commerce. All rights reserved</copyright>
+  <tags>customer</tags>
+
+  <assemblyFile>VirtoCommerce.CustomerSampleModule.Web.dll</assemblyFile>
+  <moduleType>VirtoCommerce.CustomerSampleModule.Web.Module, VirtoCommerce.CustomerSampleModule.Web</moduleType>
 </module>

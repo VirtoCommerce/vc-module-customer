@@ -20,6 +20,7 @@ namespace VirtoCommerce.CustomerSampleModule.Web
     public class Module : IModule
     {
         public ManifestModuleInfo ModuleInfo { get; set; }
+
         public void Initialize(IServiceCollection serviceCollection)
         {
             serviceCollection.AddDbContext<CustomerSampleDbContext>((provider, options) =>
@@ -27,6 +28,7 @@ namespace VirtoCommerce.CustomerSampleModule.Web
                 var configuration = provider.GetRequiredService<IConfiguration>();
                 options.UseSqlServer(configuration.GetConnectionString(ModuleInfo.Id) ?? configuration.GetConnectionString("VirtoCommerce.Customer") ?? configuration.GetConnectionString("VirtoCommerce"));
             });
+
             serviceCollection.AddTransient<ICustomerRepository, CustomerSampleRepositoryImpl>();
             serviceCollection.AddTransient<IMemberService, MemberService2>();
         }
@@ -48,14 +50,10 @@ namespace VirtoCommerce.CustomerSampleModule.Web
             AbstractTypeFactory<MemberEntity>.OverrideType<ContactEntity, Contact2Entity>();
             AbstractTypeFactory<MembersSearchCriteria>.RegisterType<Contact2SearchCriteria>();
 
-            using (var serviceScope = appBuilder.ApplicationServices.CreateScope())
-            {
-                using (var dbContext = serviceScope.ServiceProvider.GetRequiredService<CustomerSampleDbContext>())
-                {
-                    dbContext.Database.EnsureCreated();
-                    dbContext.Database.Migrate();
-                }
-            }
+            using var serviceScope = appBuilder.ApplicationServices.CreateScope();
+            using var dbContext = serviceScope.ServiceProvider.GetRequiredService<CustomerSampleDbContext>();
+            dbContext.Database.EnsureCreated();
+            dbContext.Database.Migrate();
         }
 
         public void Uninstall()

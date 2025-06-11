@@ -5,18 +5,18 @@ The Virto Commerce Customer Sample Module demonstrates the extensibility framewo
 
 ## Known limitations
 * This sample is intended for demonstration purposes on a local machine.
-* The module does not convert Contact to Contact2. To save the Job Title, you need to either create a new Contact or add a custom script to update the Discriminator from ContactEntity to Contact2Entity.
+* The module does not convert Contact to Contact2 in the database. To save the Job Title, you need to either create a new Contact or add a custom script to update the Discriminator from ContactEntity to Contact2Entity.
 * The module is provided as a single project.
 * Is not compatible with the VC-BUILD utility.
 * This module is designed to work with a SQL Server database.
-* The provided _module.manifest is incorrect to prevent activation with Customer modules. 
+* The name of the provided _module.manifest is incorrect to prevent activation with Customer modules. 
 
 ## Features
 This module includes the following features:
 
 * Extends the Contact model by adding new properties: JobTitle and WebContactId.
 * Introduces a new entity, Supplier.
-* Demonstrates how to create extend MemberService to initialize WebContactId using IUniqueNumberGenerator.
+* Demonstrates how to extend MemberService to initialize WebContactId using IUniqueNumberGenerator.
 
 ## Screenshots
 ### Supplier Type

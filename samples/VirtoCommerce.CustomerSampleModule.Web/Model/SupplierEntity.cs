@@ -12,37 +12,38 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Model
 
         public override Member ToModel(Member member)
         {
-            //Call base converter first
+            // Call base converter first
             base.ToModel(member);
 
-            var member2 = member as Supplier;
-            if (member2 != null)
+            if (member is Supplier supplier)
             {
-                member2.ContractNumber = ContractNumber;
+                supplier.ContractNumber = ContractNumber;
             }
+
             return member;
         }
 
         public override MemberEntity FromModel(Member member, PrimaryKeyResolvingMap pkMap)
         {
-            var member2 = member as Supplier;
+            // Call base converter first
+            base.FromModel(member, pkMap);
 
-            if (member2 != null)
+            if (member is Supplier supplier)
             {
-                ContractNumber = member2.ContractNumber;
+                ContractNumber = supplier.ContractNumber;
             }
 
-            //Call base converter
-            return base.FromModel(member, pkMap);
+            return this;
         }
 
-        public override void Patch(MemberEntity memberEntity)
+        public override void Patch(MemberEntity target)
         {
-            var target = memberEntity as SupplierEntity;
-
-            target.ContractNumber = ContractNumber;
-
             base.Patch(target);
+
+            if (target is SupplierEntity supplier)
+            {
+                supplier.ContractNumber = ContractNumber;
+            }
         }
     }
 }
