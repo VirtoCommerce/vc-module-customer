@@ -15,10 +15,9 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Model
             // Call base converter first
             base.ToModel(member);
 
-            var member2 = member as Supplier;
-            if (member2 != null)
+            if (member is Supplier supplier)
             {
-                member2.ContractNumber = ContractNumber;
+                supplier.ContractNumber = ContractNumber;
             }
 
             return member;
@@ -29,9 +28,9 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Model
             // Call base converter first
             base.FromModel(member, pkMap);
 
-            if (member is Supplier member2)
+            if (member is Supplier supplier)
             {
-                ContractNumber = member2.ContractNumber;
+                ContractNumber = supplier.ContractNumber;
             }
 
             return this;
@@ -41,9 +40,9 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Model
         {
             base.Patch(target);
 
-            if (target is SupplierEntity supplierEntity)
+            if (target is SupplierEntity supplier)
             {
-                supplierEntity.ContractNumber = ContractNumber;
+                supplier.ContractNumber = ContractNumber;
             }
         }
     }

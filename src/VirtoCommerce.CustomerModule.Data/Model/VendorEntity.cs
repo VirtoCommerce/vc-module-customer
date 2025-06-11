@@ -53,12 +53,12 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         {
             base.Patch(target);
 
-            if (target is VendorEntity vendorTarget)
+            if (target is VendorEntity vendor)
             {
-                vendorTarget.SiteUrl = SiteUrl;
-                vendorTarget.LogoUrl = LogoUrl;
-                vendorTarget.GroupName = GroupName;
-                vendorTarget.Description = Description;
+                vendor.SiteUrl = SiteUrl;
+                vendor.LogoUrl = LogoUrl;
+                vendor.GroupName = GroupName;
+                vendor.Description = Description;
             }
         }
     }
