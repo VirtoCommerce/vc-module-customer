@@ -6,16 +6,22 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Repositories
 {
     public class CustomerSampleDbContext : CustomerDbContext
     {
-        public CustomerSampleDbContext(DbContextOptions<CustomerSampleDbContext> options) : base(options)
+        public CustomerSampleDbContext(DbContextOptions<CustomerSampleDbContext> options)
+            : base(options)
+        {
+        }
+
+        protected CustomerSampleDbContext(DbContextOptions options)
+            : base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<SupplierEntity>();
-            modelBuilder.Entity<Contact2Entity>();
-
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Contact2Entity>();
+            modelBuilder.Entity<SupplierEntity>();
         }
     }
 }

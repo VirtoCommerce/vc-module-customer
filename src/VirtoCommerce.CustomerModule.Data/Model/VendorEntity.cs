@@ -10,14 +10,16 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         [StringLength(2048)]
         public string SiteUrl { get; set; }
+
         [StringLength(2048)]
         public string LogoUrl { get; set; }
+
         [StringLength(64)]
         public string GroupName { get; set; }
 
         public override Member ToModel(Member member)
         {
-            //Call base converter first
+            // Call base converter first
             base.ToModel(member);
 
             if (member is Vendor vendor)
@@ -33,6 +35,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         public override MemberEntity FromModel(Member member, PrimaryKeyResolvingMap pkMap)
         {
+            // Call base converter first
+            base.FromModel(member, pkMap);
+
             if (member is Vendor vendor)
             {
                 SiteUrl = vendor.SiteUrl;
@@ -40,12 +45,14 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 GroupName = vendor.GroupName;
                 Description = vendor.Description;
             }
-            //Call base converter
-            return base.FromModel(member, pkMap);
+
+            return this;
         }
 
         public override void Patch(MemberEntity target)
         {
+            base.Patch(target);
+
             if (target is VendorEntity vendorTarget)
             {
                 vendorTarget.SiteUrl = SiteUrl;
@@ -53,8 +60,6 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 vendorTarget.GroupName = GroupName;
                 vendorTarget.Description = Description;
             }
-
-            base.Patch(target);
         }
     }
 }

@@ -14,33 +14,23 @@ using VirtoCommerce.Platform.Core.Settings;
 
 namespace VirtoCommerce.CustomerSampleModule.Web.Services;
 
-public class MemberService2 : MemberService
+public class MemberService2(
+    Func<IMemberRepository> repositoryFactory,
+    IUserSearchService userSearchService,
+    IEventPublisher eventPublisher,
+    IPlatformMemoryCache platformMemoryCache,
+    AbstractValidator<Member> memberValidator,
+    ICountriesService countriesService,
+    ISettingsManager settingsManager,
+    IUniqueNumberGenerator uniqueNumberGenerator)
+    : MemberService(
+        repositoryFactory,
+        userSearchService,
+        eventPublisher,
+        platformMemoryCache,
+        memberValidator,
+        countriesService)
 {
-    private readonly ISettingsManager _settingsManager;
-    private readonly IUniqueNumberGenerator _uniqueNumberGenerator;
-
-    public MemberService2(
-            Func<IMemberRepository> repositoryFactory,
-            IUserSearchService userSearchService,
-            IEventPublisher eventPublisher,
-            IPlatformMemoryCache platformMemoryCache,
-            AbstractValidator<Member> memberValidator,
-            ICountriesService countriesService,
-            ISettingsManager settingsManager,
-            IUniqueNumberGenerator uniqueNumberGenerator)
-        : base(
-            repositoryFactory,
-            userSearchService,
-            eventPublisher,
-            platformMemoryCache,
-            memberValidator,
-            countriesService
-            )
-    {
-        _settingsManager = settingsManager;
-        _uniqueNumberGenerator = uniqueNumberGenerator;
-    }
-
     public override Task SaveChangesAsync(Member[] members)
     {
         foreach (var member in members)
@@ -48,9 +38,8 @@ public class MemberService2 : MemberService
             if (member is Contact2 contact2 &&
                 string.IsNullOrEmpty(contact2.WebContactId))
             {
-                var WebContactIdTemplate = _settingsManager.GetValue<string>(ModuleConstants.Settings.General.WebContactIdTemplate);
-
-                contact2.WebContactId = _uniqueNumberGenerator.GenerateNumber(WebContactIdTemplate);
+                var webContactIdTemplate = settingsManager.GetValue<string>(ModuleConstants.Settings.General.WebContactIdTemplate);
+                contact2.WebContactId = uniqueNumberGenerator.GenerateNumber(webContactIdTemplate);
             }
         }
 

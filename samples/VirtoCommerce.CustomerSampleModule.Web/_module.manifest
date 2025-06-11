@@ -19,7 +19,7 @@
     </owners>
     <projectUrl>https://virtocommerce.com/apps/extensions/virto-customer-module</projectUrl>
     <releaseNotes>First version.</releaseNotes>
-    <copyright>Copyright © 2011-2025 Virto Commerce. All rights reserved</copyright>
+    <copyright>Copyright © 2011–2025 Virto Commerce. All rights reserved</copyright>
     <tags>customer</tags>
 
     <assemblyFile>VirtoCommerce.CustomerSampleModule.Web.dll</assemblyFile>
