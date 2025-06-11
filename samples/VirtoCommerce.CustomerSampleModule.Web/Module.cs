@@ -56,7 +56,6 @@ namespace VirtoCommerce.CustomerSampleModule.Web
                     dbContext.Database.Migrate();
                 }
             }
-
         }
 
         public void Uninstall()

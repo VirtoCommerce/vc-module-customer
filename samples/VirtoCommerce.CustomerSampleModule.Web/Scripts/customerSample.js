@@ -13,15 +13,16 @@ angular.module(moduleName, [])
             var contactInfo = memberTypesResolverService.resolve("Contact");
             contactInfo.detailBlade.metaFields.unshift(
                 {
-                name: 'jobTitle',
-                title: "JobTitle",
-                valueType: "ShortText"
+                    name: 'jobTitle',
+                    title: "JobTitle",
+                    valueType: "ShortText"
                 },
                 {
                     name: 'webContactId',
                     title: "WebContactId",
                     valueType: "ShortText"
-                });
+                }
+            );
 
             // register new Supplier member type
             memberTypesResolverService.registerType({

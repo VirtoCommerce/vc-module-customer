@@ -48,13 +48,12 @@ public class MemberService2 : MemberService
             if (member is Contact2 contact2 &&
                 string.IsNullOrEmpty(contact2.WebContactId))
             {
-                var webContactIdNumberTemplate = _settingsManager.GetValue<string>(ModuleConstants.Settings.General.WebContactIdNumberTemplate);
+                var WebContactIdTemplate = _settingsManager.GetValue<string>(ModuleConstants.Settings.General.WebContactIdTemplate);
 
-                contact2.WebContactId = _uniqueNumberGenerator.GenerateNumber(webContactIdNumberTemplate);
+                contact2.WebContactId = _uniqueNumberGenerator.GenerateNumber(WebContactIdTemplate);
             }
         }
 
         return base.SaveChangesAsync(members);
     }
-
 }
