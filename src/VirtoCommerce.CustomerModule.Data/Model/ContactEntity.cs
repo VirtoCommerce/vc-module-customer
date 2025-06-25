@@ -71,6 +71,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(128)]
         public string CurrentOrganizationId { get; set; }
 
+        [Obsolete("Use GetSelectedAddressId() or SaveSelectedAddressId() from VirtoCommerce.CustomerModule.Core.Extensions.CustomerPreferenceServiceExtensions", DiagnosticId = "VC0011", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions/")]
         [StringLength(128)]
         public string SelectedAddressId { get; set; }
 
@@ -78,8 +79,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         public override Member ToModel(Member member)
         {
-            //Call base converter first
+            // Call base converter first
             base.ToModel(member);
+
             if (member is Contact contact)
             {
                 contact.FirstName = FirstName;
@@ -114,13 +116,18 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 contact.About = About;
                 contact.DefaultOrganizationId = DefaultOrganizationId;
                 contact.CurrentOrganizationId = CurrentOrganizationId;
+#pragma warning disable VC0011 // Type or member is obsolete
                 contact.SelectedAddressId = SelectedAddressId;
+#pragma warning restore VC0011 // Type or member is obsolete
             }
             return member;
         }
 
         public override MemberEntity FromModel(Member member, PrimaryKeyResolvingMap pkMap)
         {
+            // Call base converter first
+            base.FromModel(member, pkMap);
+
             if (member is Contact contact)
             {
                 FirstName = contact.FirstName;
@@ -142,7 +149,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 About = contact.About;
                 DefaultOrganizationId = contact.DefaultOrganizationId;
                 CurrentOrganizationId = contact.CurrentOrganizationId;
+#pragma warning disable VC0011 // Type or member is obsolete
                 SelectedAddressId = contact.SelectedAddressId;
+#pragma warning restore VC0011 // Type or member is obsolete
 
                 if (contact.Organizations != null)
                 {
@@ -181,12 +190,14 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                     }
                 }
             }
-            //Call base converter
-            return base.FromModel(member, pkMap);
+
+            return this;
         }
 
         public override void Patch(MemberEntity target)
         {
+            base.Patch(target);
+
             if (target is ContactEntity contact)
             {
                 contact.FirstName = FirstName;
@@ -208,10 +219,10 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 contact.About = About;
                 contact.DefaultOrganizationId = DefaultOrganizationId;
                 contact.CurrentOrganizationId = CurrentOrganizationId;
+#pragma warning disable VC0011 // Type or member is obsolete
                 contact.SelectedAddressId = SelectedAddressId;
+#pragma warning restore VC0011 // Type or member is obsolete
             }
-
-            base.Patch(target);
         }
     }
 }

@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VirtoCommerce.CustomerSampleModule.Web.Repositories;
 
+#nullable disable
+
 namespace VirtoCommerce.CustomerSampleModule.Web.Migrations
 {
     [DbContext(typeof(CustomerSampleDbContext))]
@@ -15,200 +17,387 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.0-rtm-30799")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "8.0.11")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.AddressEntity", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("City")
                         .IsRequired()
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("CountryCode")
                         .IsRequired()
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("CountryName")
-                        .IsRequired()
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("CreatedBy")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
-                    b.Property<DateTime>("CreatedDate");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("DaytimePhoneNumber")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("EveningPhoneNumber")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("FaxNumber")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("FirstName")
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Line1")
                         .IsRequired()
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Line2")
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("MemberId")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("MiddleName")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ModifiedBy")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
-                    b.Property<DateTime?>("ModifiedDate");
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(2048);
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
 
                     b.Property<string>("Organization")
-                        .HasMaxLength(128);
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<string>("OuterId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("PostalCode")
                         .IsRequired()
-                        .HasMaxLength(32);
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
                     b.Property<string>("RegionId")
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("RegionName")
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("StateProvince")
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Type")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MemberId");
 
-                    b.ToTable("Address");
+                    b.ToTable("Address", (string)null);
                 });
 
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.EmailEntity", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Address")
-                        .HasMaxLength(254);
+                        .HasMaxLength(254)
+                        .HasColumnType("nvarchar(254)");
 
-                    b.Property<bool>("IsValidated");
+                    b.Property<bool>("IsValidated")
+                        .HasColumnType("bit");
 
                     b.Property<string>("MemberId")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Type")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Address")
-                        .HasName("IX_Email_Address");
+                        .HasDatabaseName("IX_Email_Address");
 
                     b.HasIndex("MemberId");
 
-                    b.ToTable("Email");
+                    b.ToTable("Email", (string)null);
+                });
+
+            modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.FavoriteAddressEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("AddressId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_FavoriteAddress_UserId");
+
+                    b.HasIndex("UserId", "AddressId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_FavoriteAddress_UserId_AddressId");
+
+                    b.ToTable("FavoriteAddress", (string)null);
+                });
+
+            modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.MemberDynamicPropertyObjectValueEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<bool?>("BooleanValue")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateTimeValue")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("DecimalValue")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<string>("DictionaryItemId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<int?>("IntegerValue")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Locale")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("LongTextValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ObjectId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("ObjectType")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PropertyId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("PropertyName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ShortTextValue")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<string>("ValueType")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ObjectId");
+
+                    b.HasIndex("ObjectType", "ObjectId")
+                        .HasDatabaseName("IX_MemberDynamicPropertyObjectValue_ObjectType_ObjectId");
+
+                    b.ToTable("MemberDynamicPropertyObjectValue", (string)null);
                 });
 
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.MemberEntity", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("CreatedBy")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
-                    b.Property<DateTime>("CreatedDate");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Discriminator")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("IconUrl")
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
 
                     b.Property<string>("MemberType")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("ModifiedBy")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
-                    b.Property<DateTime?>("ModifiedDate");
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128);
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<string>("OuterId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MemberType")
-                        .HasName("IX_MemberType");
+                        .HasDatabaseName("IX_MemberType");
 
                     b.HasIndex("Name")
-                        .HasName("IX_Member_Name");
+                        .HasDatabaseName("IX_Member_Name");
 
-                    b.ToTable("Member");
+                    b.ToTable("Member", (string)null);
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("MemberEntity");
+                    b.HasDiscriminator().HasValue("MemberEntity");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.MemberGroupEntity", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Group")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("MemberId")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(128)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Group")
-                        .HasName("IX_MemberGroup_Group");
+                        .HasDatabaseName("IX_MemberGroup_Group");
 
                     b.HasIndex("MemberId");
 
-                    b.ToTable("MemberGroup");
+                    b.ToTable("MemberGroup", (string)null);
                 });
 
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.MemberRelationEntity", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("AncestorId")
                         .IsRequired()
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
-                    b.Property<int>("AncestorSequence");
+                    b.Property<int>("AncestorSequence")
+                        .HasColumnType("int");
 
                     b.Property<string>("DescendantId")
                         .IsRequired()
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("RelationType")
-                        .HasMaxLength(64);
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)")
+                        .HasDefaultValueSql("'Membership'");
 
                     b.HasKey("Id");
 
@@ -216,118 +405,254 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Migrations
 
                     b.HasIndex("DescendantId");
 
-                    b.ToTable("MemberRelation");
+                    b.ToTable("MemberRelation", (string)null);
                 });
 
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.NoteEntity", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("AuthorName")
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("Body");
+                    b.Property<string>("Body")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreatedBy")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
-                    b.Property<DateTime>("CreatedDate");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsSticky");
+                    b.Property<bool>("IsSticky")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("MemberId");
+                    b.Property<string>("MemberId")
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ModifiedBy")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
-                    b.Property<DateTime?>("ModifiedDate");
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ModifierName")
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("OuterId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Title")
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MemberId");
 
-                    b.ToTable("Note");
+                    b.ToTable("Note", (string)null);
                 });
 
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.PhoneEntity", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("MemberId")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Number")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("Type")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MemberId");
 
-                    b.ToTable("Phone");
+                    b.ToTable("Phone", (string)null);
+                });
+
+            modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.SeoInfoEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ImageAltDescription")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Keyword")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Language")
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("MemberId")
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("MetaDescription")
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("MetaKeywords")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("StoreId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("MemberSeoInfo", (string)null);
                 });
 
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.ContactEntity", b =>
                 {
                     b.HasBaseType("VirtoCommerce.CustomerModule.Data.Model.MemberEntity");
 
+                    b.Property<string>("About")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("About");
+
                     b.Property<DateTime?>("BirthDate")
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasColumnType("datetime2")
                         .HasColumnName("BirthDate");
 
+                    b.Property<string>("CurrencyCode")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("CurrentOrganizationId")
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("CurrentOrganizationId");
+
+                    b.Property<string>("DefaultBillingAddressId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
                     b.Property<string>("DefaultLanguage")
-                        .HasColumnName("DefaultLanguage")
-                        .HasMaxLength(32);
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)")
+                        .HasColumnName("DefaultLanguage");
+
+                    b.Property<string>("DefaultOrganizationId")
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("DefaultOrganizationId");
+
+                    b.Property<string>("DefaultShippingAddressId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("FirstName")
-                        .HasColumnName("FirstName")
-                        .HasMaxLength(128);
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("FirstName");
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnName("FullName")
-                        .HasMaxLength(254);
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnName("FullName");
+
+                    b.Property<bool>("IsAnonymized")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
-                        .HasColumnName("LastName")
-                        .HasMaxLength(128);
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("LastName");
 
                     b.Property<string>("MiddleName")
-                        .HasColumnName("MiddleName")
-                        .HasMaxLength(128);
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("MiddleName");
 
                     b.Property<string>("PhotoUrl")
-                        .HasColumnName("PhotoUrl")
-                        .HasMaxLength(2083);
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(2083)
+                        .HasColumnType("nvarchar(2083)")
+                        .HasColumnName("PhotoUrl");
 
                     b.Property<string>("PreferredCommunication")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("PreferredDelivery")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("Salutation")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("SelectedAddressId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("SelectedAddressId");
 
                     b.Property<string>("TaxpayerId")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("TimeZone")
-                        .HasColumnName("TimeZone")
-                        .HasMaxLength(32);
-
-                    b.ToTable("ContactEntity");
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)")
+                        .HasColumnName("TimeZone");
 
                     b.HasDiscriminator().HasValue("ContactEntity");
                 });
@@ -337,43 +662,71 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Migrations
                     b.HasBaseType("VirtoCommerce.CustomerModule.Data.Model.MemberEntity");
 
                     b.Property<DateTime?>("BirthDate")
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasColumnType("datetime2")
                         .HasColumnName("BirthDate");
 
+                    b.Property<string>("CurrentOrganizationId")
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("CurrentOrganizationId");
+
                     b.Property<string>("DefaultLanguage")
-                        .HasColumnName("DefaultLanguage")
-                        .HasMaxLength(32);
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)")
+                        .HasColumnName("DefaultLanguage");
+
+                    b.Property<string>("DefaultOrganizationId")
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("DefaultOrganizationId");
 
                     b.Property<string>("FirstName")
-                        .HasColumnName("FirstName")
-                        .HasMaxLength(128);
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("FirstName");
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnName("FullName")
-                        .HasMaxLength(254);
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)")
+                        .HasColumnName("FullName");
 
-                    b.Property<bool>("IsActive");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
-                        .HasColumnName("LastName")
-                        .HasMaxLength(128);
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("LastName");
 
                     b.Property<string>("MiddleName")
-                        .HasColumnName("MiddleName")
-                        .HasMaxLength(128);
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("MiddleName");
 
                     b.Property<string>("PhotoUrl")
-                        .HasColumnName("PhotoUrl")
-                        .HasMaxLength(2083);
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(2083)
+                        .HasColumnType("nvarchar(2083)")
+                        .HasColumnName("PhotoUrl");
 
                     b.Property<string>("TimeZone")
-                        .HasColumnName("TimeZone")
-                        .HasMaxLength(32);
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)")
+                        .HasColumnName("TimeZone");
 
                     b.Property<string>("Type")
-                        .HasMaxLength(64);
-
-                    b.ToTable("EmployeeEntity");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.HasDiscriminator().HasValue("EmployeeEntity");
                 });
@@ -383,16 +736,17 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Migrations
                     b.HasBaseType("VirtoCommerce.CustomerModule.Data.Model.MemberEntity");
 
                     b.Property<string>("BusinessCategory")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("Description")
-                        .HasColumnName("Description")
-                        .HasMaxLength(256);
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Description");
 
                     b.Property<string>("OwnerId")
-                        .HasMaxLength(128);
-
-                    b.ToTable("OrganizationEntity");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.HasDiscriminator().HasValue("OrganizationEntity");
                 });
@@ -402,33 +756,34 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Migrations
                     b.HasBaseType("VirtoCommerce.CustomerModule.Data.Model.MemberEntity");
 
                     b.Property<string>("Description")
-                        .HasColumnName("Description")
-                        .HasMaxLength(256);
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Description");
 
                     b.Property<string>("GroupName")
-                        .HasMaxLength(64);
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("LogoUrl")
-                        .HasMaxLength(2048);
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
 
                     b.Property<string>("SiteUrl")
-                        .HasMaxLength(2048);
-
-                    b.ToTable("VendorEntity");
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
 
                     b.HasDiscriminator().HasValue("VendorEntity");
                 });
 
-            modelBuilder.Entity("VirtoCommerce.CustomerSampleModule.Web.Model.Member2Entity", b =>
+            modelBuilder.Entity("VirtoCommerce.CustomerSampleModule.Web.Model.SupplierEntity", b =>
                 {
                     b.HasBaseType("VirtoCommerce.CustomerModule.Data.Model.MemberEntity");
 
-                    b.Property<string>("Property2")
-                        .HasMaxLength(128);
+                    b.Property<string>("ContractNumber")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
-                    b.ToTable("Member2");
-
-                    b.HasDiscriminator().HasValue("Member2Entity");
+                    b.HasDiscriminator().HasValue("SupplierEntity");
                 });
 
             modelBuilder.Entity("VirtoCommerce.CustomerSampleModule.Web.Model.Contact2Entity", b =>
@@ -436,9 +791,12 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Migrations
                     b.HasBaseType("VirtoCommerce.CustomerModule.Data.Model.ContactEntity");
 
                     b.Property<string>("JobTitle")
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
-                    b.ToTable("Contact2");
+                    b.Property<string>("WebContactId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.HasDiscriminator().HasValue("Contact2Entity");
                 });
@@ -448,7 +806,10 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Migrations
                     b.HasOne("VirtoCommerce.CustomerModule.Data.Model.MemberEntity", "Member")
                         .WithMany("Addresses")
                         .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.EmailEntity", b =>
@@ -456,7 +817,31 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Migrations
                     b.HasOne("VirtoCommerce.CustomerModule.Data.Model.MemberEntity", "Member")
                         .WithMany("Emails")
                         .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.FavoriteAddressEntity", b =>
+                {
+                    b.HasOne("VirtoCommerce.CustomerModule.Data.Model.AddressEntity", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.MemberDynamicPropertyObjectValueEntity", b =>
+                {
+                    b.HasOne("VirtoCommerce.CustomerModule.Data.Model.MemberEntity", "Member")
+                        .WithMany("DynamicPropertyObjectValues")
+                        .HasForeignKey("ObjectId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.MemberGroupEntity", b =>
@@ -464,7 +849,10 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Migrations
                     b.HasOne("VirtoCommerce.CustomerModule.Data.Model.MemberEntity", "Member")
                         .WithMany("Groups")
                         .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.MemberRelationEntity", b =>
@@ -472,12 +860,18 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Migrations
                     b.HasOne("VirtoCommerce.CustomerModule.Data.Model.MemberEntity", "Ancestor")
                         .WithMany()
                         .HasForeignKey("AncestorId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("VirtoCommerce.CustomerModule.Data.Model.MemberEntity", "Descendant")
                         .WithMany("MemberRelations")
                         .HasForeignKey("DescendantId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.Navigation("Ancestor");
+
+                    b.Navigation("Descendant");
                 });
 
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.NoteEntity", b =>
@@ -486,6 +880,8 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Migrations
                         .WithMany("Notes")
                         .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.PhoneEntity", b =>
@@ -493,7 +889,39 @@ namespace VirtoCommerce.CustomerSampleModule.Web.Migrations
                     b.HasOne("VirtoCommerce.CustomerModule.Data.Model.MemberEntity", "Member")
                         .WithMany("Phones")
                         .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.SeoInfoEntity", b =>
+                {
+                    b.HasOne("VirtoCommerce.CustomerModule.Data.Model.MemberEntity", "Member")
+                        .WithMany("SeoInfos")
+                        .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.MemberEntity", b =>
+                {
+                    b.Navigation("Addresses");
+
+                    b.Navigation("DynamicPropertyObjectValues");
+
+                    b.Navigation("Emails");
+
+                    b.Navigation("Groups");
+
+                    b.Navigation("MemberRelations");
+
+                    b.Navigation("Notes");
+
+                    b.Navigation("Phones");
+
+                    b.Navigation("SeoInfos");
                 });
 #pragma warning restore 612, 618
         }
