@@ -11,11 +11,18 @@ angular.module(moduleName, [])
 
             // add JobTitle field to Contact detail blade
             var contactInfo = memberTypesResolverService.resolve("Contact");
-            contactInfo.detailBlade.metaFields.unshift({
-                name: 'jobTitle',
-                title: "JobTitle",
-                valueType: "ShortText"
-            });
+            contactInfo.detailBlade.metaFields.unshift(
+                {
+                    name: 'jobTitle',
+                    title: "JobTitle",
+                    valueType: "ShortText"
+                },
+                {
+                    name: 'webContactId',
+                    title: "WebContactId",
+                    valueType: "ShortText"
+                }
+            );
 
             // register new Supplier member type
             memberTypesResolverService.registerType({

@@ -1,7 +1,7 @@
 angular.module('virtoCommerce.customerSampleModule')
-    .controller('virtoCommerce.customerSampleModule.supplierDetailController',  ['$scope', function ($scope) {
+    .controller('virtoCommerce.customerSampleModule.supplierDetailController', ['$scope', function ($scope) {
         var blade = $scope.blade;
-        
+
         if (blade.isNew) {
             blade.title = 'New Supplier';
 
