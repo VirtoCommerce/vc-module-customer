@@ -178,7 +178,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
             modelBuilder.Entity<CustomerPreferenceEntity>(builder =>
             {
-                builder.ToAuditableEntityTable("CustomerPreference").HasKey(x => x.Id);
+                builder.ToAuditableEntityTable("CustomerPreference");
                 builder.Property(x => x.UserId).HasMaxLength(IdLength).IsRequired();
                 builder.Property(x => x.Name).HasMaxLength(Length1024);
                 builder.HasIndex(x => new { x.UserId, x.Name }).IsUnique();
