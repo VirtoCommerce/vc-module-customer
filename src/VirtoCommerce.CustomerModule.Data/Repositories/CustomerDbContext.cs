@@ -181,7 +181,6 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
                 builder.Property(x => x.Id).HasMaxLength(IdLength).ValueGeneratedOnAdd();
                 builder.Property(x => x.UserId).HasMaxLength(IdLength).IsRequired();
                 builder.Property(x => x.Name).HasMaxLength(Length1024);
-                builder.Property(x => x.Value).HasColumnType("ntext");
                 builder.HasIndex(x => new { x.UserId, x.Name }).IsUnique();
             });
 
