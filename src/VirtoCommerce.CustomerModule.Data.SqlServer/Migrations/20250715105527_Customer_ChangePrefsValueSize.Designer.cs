@@ -12,7 +12,7 @@ using VirtoCommerce.CustomerModule.Data.Repositories;
 namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
 {
     [DbContext(typeof(CustomerDbContext))]
-    [Migration("20250714110936_Customer_ChangePrefsValueSize")]
+    [Migration("20250715105527_Customer_ChangePrefsValueSize")]
     partial class Customer_ChangePrefsValueSize
     {
         /// <inheritdoc />
@@ -180,7 +180,7 @@ namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
                         .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Value")
-                        .HasColumnType("ntext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

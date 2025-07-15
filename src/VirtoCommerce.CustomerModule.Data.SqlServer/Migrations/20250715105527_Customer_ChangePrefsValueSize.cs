@@ -13,7 +13,7 @@ namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "Value",
                 table: "CustomerPreference",
-                type: "ntext",
+                type: "nvarchar(max)",
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(1024)",
@@ -31,7 +31,7 @@ namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
                 maxLength: 1024,
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "ntext",
+                oldType: "nvarchar(max)",
                 oldNullable: true);
         }
     }

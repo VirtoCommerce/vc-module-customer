@@ -2,6 +2,7 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Data.Model;
+using VirtoCommerce.Platform.Data.Extensions;
 using VirtoCommerce.Platform.Data.Infrastructure;
 
 namespace VirtoCommerce.CustomerModule.Data.Repositories
@@ -177,8 +178,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
             modelBuilder.Entity<CustomerPreferenceEntity>(builder =>
             {
-                builder.ToTable("CustomerPreference").HasKey(x => x.Id);
-                builder.Property(x => x.Id).HasMaxLength(IdLength).ValueGeneratedOnAdd();
+                builder.ToAuditableEntityTable("CustomerPreference").HasKey(x => x.Id);
                 builder.Property(x => x.UserId).HasMaxLength(IdLength).IsRequired();
                 builder.Property(x => x.Name).HasMaxLength(Length1024);
                 builder.HasIndex(x => new { x.UserId, x.Name }).IsUnique();

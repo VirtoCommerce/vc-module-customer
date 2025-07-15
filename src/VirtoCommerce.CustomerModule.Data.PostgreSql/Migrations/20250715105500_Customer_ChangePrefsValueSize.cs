@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
+namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
 {
     /// <inheritdoc />
     public partial class Customer_ChangePrefsValueSize : Migration
@@ -13,14 +13,12 @@ namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "Value",
                 table: "CustomerPreference",
-                type: "ntext",
+                type: "text",
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "varchar(1024)",
+                oldType: "character varying(1024)",
                 oldMaxLength: 1024,
-                oldNullable: true)
-                .Annotation("MySql:CharSet", "utf8mb4")
-                .OldAnnotation("MySql:CharSet", "utf8mb4");
+                oldNullable: true);
         }
 
         /// <inheritdoc />
@@ -29,14 +27,12 @@ namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "Value",
                 table: "CustomerPreference",
-                type: "varchar(1024)",
+                type: "character varying(1024)",
                 maxLength: 1024,
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "ntext",
-                oldNullable: true)
-                .Annotation("MySql:CharSet", "utf8mb4")
-                .OldAnnotation("MySql:CharSet", "utf8mb4");
+                oldType: "text",
+                oldNullable: true);
         }
     }
 }

@@ -177,7 +177,7 @@ namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
                         .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Value")
-                        .HasColumnType("ntext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

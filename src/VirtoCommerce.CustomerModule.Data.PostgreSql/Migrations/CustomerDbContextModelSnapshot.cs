@@ -177,7 +177,7 @@ namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
                         .HasColumnType("character varying(128)");
 
                     b.Property<string>("Value")
-                        .HasColumnType("ntext");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
