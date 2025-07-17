@@ -78,9 +78,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                   var property = AbstractTypeFactory<DynamicObjectProperty>.TryCreateInstance();
                   property.Id = x.First()?.PropertyId;
                   property.Name = x.FirstOrDefault()?.PropertyName;
-                  property.Values = x.Select(v => v.ToModel(AbstractTypeFactory<DynamicPropertyObjectValue>.TryCreateInstance())).ToArray();
+                  property.Values = x.Select(v => v.ToModel(AbstractTypeFactory<DynamicPropertyObjectValue>.TryCreateInstance())).ToList();
                   return property;
-              }).ToArray();
+              }).ToList();
 
             return member;
         }
