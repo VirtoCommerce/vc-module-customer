@@ -177,8 +177,7 @@ namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
                         .HasColumnType("varchar(128)");
 
                     b.Property<string>("Value")
-                        .HasMaxLength(1024)
-                        .HasColumnType("varchar(1024)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
