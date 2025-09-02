@@ -16,7 +16,7 @@ angular.module('virtoCommerce.customerModule')
                 const oldMetafiels = metaFormsService.getMetaFields('CustomeraddressDetails');
 
                 if (oldMetafiels && oldMetafiels.length) {
-                    blade.metaFields.push(oldMetafiels);
+                    blade.metaFields.push(...oldMetafiels);
                 }
 
                 if (blade.currentEntity.isNew) {
