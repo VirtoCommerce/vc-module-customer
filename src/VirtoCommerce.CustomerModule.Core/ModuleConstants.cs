@@ -62,7 +62,7 @@ namespace VirtoCommerce.CustomerModule.Core
                     Name = "Customer.Search.EventBasedIndexation.Enable",
                     GroupName = "Customer|General",
                     ValueType = SettingValueType.Boolean,
-                    DefaultValue = false
+                    DefaultValue = true
                 };
 
                 #region Statuses
