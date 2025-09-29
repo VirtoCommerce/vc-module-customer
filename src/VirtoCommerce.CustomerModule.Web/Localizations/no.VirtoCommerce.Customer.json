@@ -1,0 +1,409 @@
+{
+  "customer": {
+    "main-menu-title": "Kontakter",
+    "blades": {
+      "contact-detail": {
+        "title-new": "Ny kontakt",
+        "subtitle": "Kontaktdetaljer",
+        "labels": {
+          "first-name": "Fornavn",
+          "middle-name": "Mellomnavn",
+          "last-name": "Etternavn",
+          "groups": "Brukergrupper",
+          "full-name": "Fullt navn",
+          "birthday": "Fødselsdato",
+          "salutation": "Tittel",
+          "defaultLanguage": "Standardspråk",
+          "currency": "Valuta",
+          "organizations": "Medlem av selskap(er)",
+          "default-organization": "Standardselskap",
+          "associated-organizations": "Tilknyttede selskap(er)",
+          "taxpayerId": "Skattebetaler-ID",
+          "preferred-communication": "Foretrukket kommunikasjonskanal",
+          "preferred-delivery": "Foretrukket leveringsmetode",
+          "timezone": "Tidssone",
+          "about": "Om",
+          "description": "Beskrivelse"
+        },
+        "placeholders": {
+          "groups": "Velg brukergrupper",
+          "first-name": "Skriv inn dine opplysninger",
+          "middle-name": "Skriv inn dine opplysninger",
+          "last-name": "Skriv inn dine opplysninger",
+          "full-name": "Skriv inn dine opplysninger",
+          "birthday": "Skriv inn dine opplysninger",
+          "salutation": "Skriv inn dine opplysninger",
+          "defaultLanguage": "Angi dine detaljer",
+          "currency": "Angi dine detaljer",
+          "preferred-communication": "Angi dine detaljer",
+          "preferred-delivery": "Angi dine detaljer",
+          "taxpayerId": "Angi dine detaljer",
+          "organizations": "Velg et selskap",
+          "associated-organizations": "Velg et selskap",
+          "timezone": "Velg",
+          "about": "Skriv inn kontaktinformasjon",
+          "description": "Skriv inn en beskrivelse av adressen"
+        }
+      },
+      "employee-detail": {
+        "title-new": "Ny ansatt",
+        "subtitle": "Ansattes detaljer",
+        "labels": {
+          "is-active": "Aktiv",
+          "first-name": "Fornavn",
+          "middle-name": "Mellomnavn",
+          "last-name": "Etternavn",
+          "full-name": "Fullt navn",
+          "type": "Ansatttype",
+          "birthday": "Fødselsdato",
+          "photo-url": "Foto-URL",
+          "defaultLanguage": "Standardspråk",
+          "organizations": "Selskap(er)",
+          "default-organization": "Standardselskap",
+          "timezone": "Tidssone"
+        },
+        "placeholders": {
+          "first-name": "Skriv inn dine opplysninger",
+          "middle-name": "Skriv inn dine opplysninger",
+          "last-name": "Skriv inn dine opplysninger",
+          "full-name": "Skriv inn dine opplysninger",
+          "type": "Skriv inn dine opplysninger",
+          "birthday": "Skriv inn dine opplysninger",
+          "photo-url": "Skriv inn URL",
+          "defaultLanguage": "Angi dine detaljer",
+          "organizations": "Velg et selskap",
+          "timezone": "Velg en verdi"
+        }
+      },
+      "pick-store-list": {
+        "title": "Ny konto",
+        "subtitle": "Velg en butikk for den nye kontoen",
+        "labels": {
+          "name": "Butikknavn"
+        }
+      },
+      "pick-security-account-list": {
+        "title": "Koble konto",
+        "subtitle": "Velg en sikkerhetskonto å knytte til kontakten"
+      },
+      "organization-detail": {
+        "title-new": "Nytt selskap",
+        "subtitle": "Selskapsdetaljer",
+        "labels": {
+          "name": "Navn",
+          "description": "Beskrivelse",
+          "business-category": "Forretningsområde"
+        },
+        "placeholders": {
+          "name": "Skriv inn navn",
+          "description": "Angi beskrivelse"
+        }
+      },
+      "vendor-detail": {
+        "title-new": "Ny leverandør",
+        "subtitle": "Leverandørdetaljer",
+        "labels": {
+          "name": "Navn",
+          "site-url": "Nettsted-URL",
+          "logo-url": "Logo-URL",
+          "group-name": "Gruppenavn",
+          "description": "Beskrivelse"
+        },
+        "placeholders": {
+          "name": "Skriv inn dine opplysninger",
+          "site-url": "Skriv inn URL",
+          "logo-url": "Skriv inn URL",
+          "group-name": "Skriv inn dine opplysninger",
+          "description": "Angi beskrivelse"
+        }
+      },
+      "member-add": {
+        "title": "Ny kontakt",
+        "subtitle": "Velg hvilken type kontakt du ønsker å opprette",
+        "organization": {
+          "description": "En selskapsprofil som kan inneholde informasjon om ansatte, vanlige kontakter eller andre selskaper"
+        },
+        "employee": {
+          "description": "En ansatt som jobber i et selskap"
+        },
+        "contact": {
+          "description": "En butikkkunde som enten kan være medlem av et selskap eller opptre som en individuell kjøper"
+        },
+        "vendor": {
+          "description": "Selger, kjøpmann eller leverandør"
+        }
+      },
+      "member-emails-list": {
+        "labels": {
+          "no-emails": "Ingen e-poster ennå",
+          "name": "Navn",
+          "address": "Adresse",
+          "Email": "E-post"
+        },
+        "placeholders": {
+          "email": "Skriv inn e-post"
+        }
+      },
+      "member-list": {
+        "title": "Selskaper og kontakter",
+        "subtitle": "Laster '{{name}}'",
+        "breadcrumb-all": "Alle kontakter",
+        "labels": {
+          "type": "Type",
+          "name": "Navn",
+          "address": "Adresse",
+          "email": "E-post",
+          "filter-new": "Legg til nytt filter",
+          "unnamed-filter": "Navnløst filter",
+          "filter-vendor": "Leverandører",
+          "filter-contact": "Kontakter",
+          "filter-organization": "Selskaper",
+          "copy-id": "Kopier ID",
+          "copy-name": "Kopier navn"
+        },
+        "placeholders": {
+          "select-filter": "Velg filter"
+        }
+      },
+      "member-phones-list": {
+        "labels": {
+          "no-phones": "Ingen telefonnumre ennå"
+        },
+        "placeholders": {
+          "phone": "Skriv inn telefonnummer..."
+        }
+      },
+      "customer-accounts-list": {
+        "commands": {
+          "link": "Koble",
+          "unlink": "Fjern kobling"
+        }
+      },
+      "filter-detail": {
+        "subtitle": "Rediger filter",
+        "new-title": "Nytt filter",
+        "new-subtitle": "Oppretter et nytt filter",
+        "labels": {
+          "criteria": "Søkefrase",
+          "name": "Filternavn",
+          "searchInVariations": "Vis produktvariasjoner",
+          "syntax-example-1": "Alle kontakter som inneholder 'org1.com' i de indekserte egenskapsverdiene",
+          "syntax-example-2": "Alle kontakter som inneholder 'James' og 'Smith' i de indekserte egenskapsverdiene",
+          "syntax-example-3": "Bruk en stjerne (*) for å erstatte null eller flere tegn",
+          "syntax-example-4": "Alle kontakter med fornavn som inneholder 'Alex' eller 'James'",
+          "syntax-example-5": "Bruk utropstegn (!) som en IKKE-operator for filtre",
+          "syntax-example-6": "Alle kontakter med den valgte medlemstypen",
+          "syntax-example-7": "Alle kontakter med en opprettelsesdato mellom to verdier (inklusive)",
+          "syntax-example-8": "Alle kontakter med en opprettelsesdato mellom to verdier (eksklusiv)",
+          "syntax-example-9": "Alle kontakter med en endringsdato større enn eller lik '2016-12-26'",
+          "syntax-example-10": "Kombiner både nøkkelord og filtre"
+        },
+        "placeholders": {
+          "criteria": "Skriv inn søkefrase",
+          "name": "Gi dette filteret et navn"
+        }
+      },
+      "member-icon": {
+        "title": "Administrer ikon",
+        "labels": {
+          "choose-icon": "Velg nytt ikon",
+          "choice-description": "Velg bilde i PNG-, JPG- eller SVG-format",
+          "preview": "Forhåndsvisning",
+          "preview-description": "Gjeldende ikon",
+          "reset": "Tilbakestill ikon",
+          "delete": "Slett ikon"
+        }
+      },
+      "address-details": {
+        "labels": {
+          "name": "Adressenavn",
+          "address-type": "Adresstype",
+          "first-name": "Fornavn",
+          "middle-name": "Mellomnavn",
+          "last-name": "Etternavn",
+          "country": "Land",
+          "region": "Region",
+          "city": "By",
+          "address1": "Adresselinje 1",
+          "address2": "Adresselinje 2",
+          "zip-code": "Postnummer",
+          "email": "E-post",
+          "phone": "Telefon",
+          "description": "Beskrivelse"
+        },
+        "placeholders": {
+          "address-type": "Velg adresstype...",
+          "first-name": "Skriv inn fornavn...",
+          "middle-name": "Skriv inn mellomnavn...",
+          "last-name": "Skriv inn etternavn...",
+          "country": "Velg land...",
+          "region": "Velg region...",
+          "city": "Skriv inn by...",
+          "address1": "Skriv inn adresselinje 1...",
+          "address2": "Skriv inn adresselinje 2...",
+          "zip-code": "Skriv inn postnummer...",
+          "email": "Skriv inn e-post...",
+          "phone": "Skriv inn telefon...",
+          "description": "Skriv inn beskrivelse..."
+        },
+        "commands": {
+          "default": "Sett som standard"
+        }
+      },
+      "address-list": {
+        "labels": {
+          "no-addresses": "Ingen adresser ennå"
+        }
+      },
+      "shared": {
+        "labels": {
+          "status": "Status",
+          "progress": "Fremgang"
+        },
+        "placeholders": {
+          "status": "Velg en verdi"
+        }
+      }
+    },
+    "widgets": {
+      "address-list": {
+        "title": "Adresser",
+        "blade-subtitle": "Administrer adresser"
+      },
+      "member-emails-list": {
+        "title": "E-poster",
+        "blade-subtitle": "Administrer e-poster"
+      },
+      "member-phones-list": {
+        "title": "Telefonnumre",
+        "blade-subtitle": "Administrer telefonnumre"
+      },
+      "customer-accounts-list": {
+        "title": "Kontoer",
+        "blade-subtitle": "Administrer kundekontoer"
+      },
+      "member-icon": {
+        "title": "Ikon"
+      },
+      "organization-assets": {
+        "title": "Eiendeler"
+      },
+      "account-contact": {
+        "no-contact": "Ingen kontakt",
+        "show-contact": "Vis kontakt"
+      }
+    },
+    "dialogs": {
+      "members-delete": {
+        "title": "Bekreft sletting",
+        "message": "Er du sikker på at du vil slette de valgte selskapene eller kontaktene?"
+      },
+      "unknown-member-type": {
+        "title": "Feil",
+        "message": "Kan ikke redigere medlem av ukjent type: '{{memberType}}'"
+      },
+      "confirm-account-link": {
+        "title": "Bekreft kobling",
+        "message": "Den valgte kontoen er allerede knyttet til '{{memberName}}'. Vil du fortsette?"
+      },
+      "confirm-account-unlink": {
+        "title": "Bekreft fjerning av kobling",
+        "message": "Er du sikker på at du vil fjerne koblingen for de valgte kontoene?"
+      },
+      "member-save": {
+        "title": "Lagre endringer",
+        "message": "Denne kontakten har blitt endret. Vil du lagre endringene?"
+      },
+      "email-save": {
+        "title": "Lagre endringer",
+        "message": "E-posten har blitt endret. Vil du lagre endringene?"
+      },
+      "phone-number-save": {
+        "title": "Lagre endringer",
+        "message": "Telefonnummeret har blitt endret. Vil du lagre endringene?"
+      },
+      "address-delete": {
+        "title": "Bekreft sletting",
+        "message": "Er du sikker på at du vil slette denne adressen?"
+      },
+      "address-save": {
+        "title": "Lagre endringer",
+        "message": "Adressen har blitt endret. Vil du lagre endringene?"
+      }
+    }
+  },
+  "permissions": {
+    "customer:access": "Åpne kundemeny",
+    "customer:create": "Opprett kundedata",
+    "customer:read": "Vis kundedata",
+    "customer:update": "Oppdater kundedata",
+    "customer:delete": "Slett kundedata"
+  },
+  "settings": {
+    "Customer": {
+      "MemberGroups": {
+        "title": "Medlemsgruppeordbok",
+        "description": "Alle tilgjengelige medlemsgruppeverdier"
+      },
+      "ExportImport.PageSize": {
+        "title": "Sidestørrelse brukt for eksport/import",
+        "description": "Merk: Store verdier kan føre til redusert ytelse"
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "Aktiver hendelsesbasert indeksering for kundeobjekter (krever omstart)",
+            "description": "Enhver endring i et kundeobjekt utløser en bakgrunnsoppgave som bruker disse endringene på søkeindeksen"
+          }
+        }
+      },
+      "OrganizationStatuses": {
+        "title": "Selskapsstatuser",
+        "description": "Rediger selskapsstatuser"
+      },
+      "VendorStatuses": {
+        "title": "Leverandørstatuser",
+        "description": "Rediger leverandørstatuser"
+      },
+      "EmployeeStatuses": {
+        "title": "Ansattstatuser",
+        "description": "Rediger ansattstatuser"
+      },
+      "ContactStatuses": {
+        "title": "Kontaktstatuser",
+        "description": "Rediger kontaktstatuser"
+      },
+      "OrganizationDefaultStatus": {
+        "title": "Selskapets standardstatus",
+        "description": "Denne statusen tildeles det nylig registrerte selskapet"
+      },
+      "ContactDefaultStatus": {
+        "title": "Kontaktens standardstatus",
+        "description": "Denne statusen tildeles eieren av det nylig registrerte selskapet"
+      }
+    },
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Member": {
+              "title": "Medlemsindekseringsdato og -tid",
+              "description": "Dato og tid når medlemsindekseringsoppgaven starter"
+            }
+          }
+        }
+      }
+    }
+  },
+  "module": {
+    "VirtoCommerce.Customer": {
+      "description": "Eksporter eller importer kontakter og selskaper"
+    }
+  },
+  "notificationTypes": {
+    "RegisterCompanyEmailNotification": {
+      "displayName": "E-postvarsel om selskapsregistrering",
+      "description": "Kunden mottar et e-postvarsel når selskapet deres har blitt registrert"
+    }
+  }
+}
