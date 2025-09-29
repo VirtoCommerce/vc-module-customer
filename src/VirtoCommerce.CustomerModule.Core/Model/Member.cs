@@ -35,6 +35,24 @@ namespace VirtoCommerce.CustomerModule.Core.Model
         public virtual string ObjectType => typeof(Member).FullName;
         public ICollection<DynamicObjectProperty> DynamicProperties { get; set; }
 
+        public bool UseDynamicPropertyAccessor { get; set; } = false;
+
+        private DynamicPropertyAccessor _dynamicPropertyAccessor;
+
+        public DynamicPropertyAccessor DynamicPropertyAccessor
+        {
+            get
+            {
+                _dynamicPropertyAccessor ??= new DynamicPropertyAccessor(this);
+                return _dynamicPropertyAccessor;
+            }
+            set
+            {
+                _dynamicPropertyAccessor = value;
+                _dynamicPropertyAccessor.ConnectEntity(this, UseDynamicPropertyAccessor);
+            }
+        }
+
         #endregion IHasDynamicProperties Members
 
         #region ISeoSupport Members
