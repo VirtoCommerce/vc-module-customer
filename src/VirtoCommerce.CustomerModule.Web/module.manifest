@@ -4,7 +4,7 @@
   <version>3.840.0</version>
   <version-tag />
 
-  <platformVersion>3.889.0</platformVersion>
+  <platformVersion>3.909.0</platformVersion>
   <dependencies>
     <dependency id="VirtoCommerce.Core" version="3.821.0" />
     <dependency id="VirtoCommerce.Notifications" version="3.809.0" />
