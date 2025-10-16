@@ -375,11 +375,11 @@
       },
       "OrganizationDefaultStatus": {
         "title": "Company default status",
-        "description": "This status will be assigned to the recently registered company"
+        "description": "Specify the status assigned to newly registered companies"
       },
       "ContactDefaultStatus": {
         "title": "Contact default status",
-        "description": "This status will be assigned to the recently registered company's owner"
+        "description": "Specifies the status assigned to newly registered company owners"
       }
     },
     "VirtoCommerce": {
