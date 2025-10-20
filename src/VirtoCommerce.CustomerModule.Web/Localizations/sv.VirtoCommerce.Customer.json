@@ -1,0 +1,409 @@
+{
+  "customer": {
+    "main-menu-title": "Kontakter",
+    "blades": {
+      "contact-detail": {
+        "title-new": "Ny kontakt",
+        "subtitle": "Kontaktuppgifter",
+        "labels": {
+          "first-name": "Förnamn",
+          "middle-name": "Mellannamn",
+          "last-name": "Efternamn",
+          "groups": "Användargrupper",
+          "full-name": "Fullständigt namn",
+          "birthday": "Födelsedatum",
+          "salutation": "Titel",
+          "defaultLanguage": "Standardspråk",
+          "currency": "Valuta",
+          "organizations": "Medlem i företag",
+          "default-organization": "Standardföretag",
+          "associated-organizations": "Associerade företag",
+          "taxpayerId": "Skattebetalar-ID",
+          "preferred-communication": "Föredragen kommunikationskanal",
+          "preferred-delivery": "Föredragen leveransmetod",
+          "timezone": "Tidszon",
+          "about": "Om",
+          "description": "Beskrivning"
+        },
+        "placeholders": {
+          "groups": "Välj användargrupper",
+          "first-name": "Ange dina uppgifter",
+          "middle-name": "Ange dina uppgifter",
+          "last-name": "Ange dina uppgifter",
+          "full-name": "Ange dina uppgifter",
+          "birthday": "Ange dina uppgifter",
+          "salutation": "Ange dina uppgifter",
+          "defaultLanguage": "Ange dina uppgifter",
+          "currency": "Ange dina uppgifter",
+          "preferred-communication": "Ange dina uppgifter",
+          "preferred-delivery": "Ange dina uppgifter",
+          "taxpayerId": "Ange dina uppgifter",
+          "organizations": "Välj ett företag",
+          "associated-organizations": "Välj ett företag",
+          "timezone": "Välj",
+          "about": "Ange kontaktinformation",
+          "description": "Ange en beskrivning av adressen"
+        }
+      },
+      "employee-detail": {
+        "title-new": "Ny anställd",
+        "subtitle": "Anställds uppgifter",
+        "labels": {
+          "is-active": "Aktiv",
+          "first-name": "Förnamn",
+          "middle-name": "Mellannamn",
+          "last-name": "Efternamn",
+          "full-name": "Fullständigt namn",
+          "type": "Anställdstyp",
+          "birthday": "Födelsedatum",
+          "photo-url": "Foto-URL",
+          "defaultLanguage": "Standardspråk",
+          "organizations": "Företag",
+          "default-organization": "Standardföretag",
+          "timezone": "Tidszon"
+        },
+        "placeholders": {
+          "first-name": "Ange dina uppgifter",
+          "middle-name": "Ange dina uppgifter",
+          "last-name": "Ange dina uppgifter",
+          "full-name": "Ange dina uppgifter",
+          "type": "Ange dina uppgifter",
+          "birthday": "Ange dina uppgifter",
+          "photo-url": "Ange URL",
+          "defaultLanguage": "Ange dina uppgifter",
+          "organizations": "Välj ett företag",
+          "timezone": "Välj ett värde"
+        }
+      },
+      "pick-store-list": {
+        "title": "Nytt konto",
+        "subtitle": "Välj en butik för det nya kontot",
+        "labels": {
+          "name": "Butiksnamn"
+        }
+      },
+      "pick-security-account-list": {
+        "title": "Länka konto",
+        "subtitle": "Välj ett säkerhetskonto att associera med kontakten"
+      },
+      "organization-detail": {
+        "title-new": "Nytt företag",
+        "subtitle": "Företagsuppgifter",
+        "labels": {
+          "name": "Namn",
+          "description": "Beskrivning",
+          "business-category": "Verksamhetsområde"
+        },
+        "placeholders": {
+          "name": "Ange namn",
+          "description": "Ange beskrivning"
+        }
+      },
+      "vendor-detail": {
+        "title-new": "Ny leverantör",
+        "subtitle": "Leverantörsuppgifter",
+        "labels": {
+          "name": "Namn",
+          "site-url": "Webbplats-URL",
+          "logo-url": "Logotyp-URL",
+          "group-name": "Gruppnamn",
+          "description": "Beskrivning"
+        },
+        "placeholders": {
+          "name": "Ange dina uppgifter",
+          "site-url": "Ange URL",
+          "logo-url": "Ange URL",
+          "group-name": "Ange dina uppgifter",
+          "description": "Ange beskrivning"
+        }
+      },
+      "member-add": {
+        "title": "Ny kontakt",
+        "subtitle": "Välj vilken typ av kontakt du vill skapa",
+        "organization": {
+          "description": "En företagsprofil som kan innehålla information om anställda, vanliga kontakter eller andra företag"
+        },
+        "employee": {
+          "description": "En anställd som arbetar i ett företag"
+        },
+        "contact": {
+          "description": "En butikskund som antingen kan vara medlem i ett företag eller agera som en individuell köpare"
+        },
+        "vendor": {
+          "description": "Säljare, handlare eller leverantör"
+        }
+      },
+      "member-emails-list": {
+        "labels": {
+          "no-emails": "Inga e-postmeddelanden ännu",
+          "name": "Namn",
+          "address": "Adress",
+          "Email": "E-post"
+        },
+        "placeholders": {
+          "email": "Ange e-post"
+        }
+      },
+      "member-list": {
+        "title": "Företag och kontakter",
+        "subtitle": "Laddar '{{name}}'",
+        "breadcrumb-all": "Alla kontakter",
+        "labels": {
+          "type": "Typ",
+          "name": "Namn",
+          "address": "Adress",
+          "email": "E-post",
+          "filter-new": "Lägg till nytt filter",
+          "unnamed-filter": "Namnlöst filter",
+          "filter-vendor": "Leverantörer",
+          "filter-contact": "Kontakter",
+          "filter-organization": "Företag",
+          "copy-id": "Kopiera ID",
+          "copy-name": "Kopiera namn"
+        },
+        "placeholders": {
+          "select-filter": "Välj filter"
+        }
+      },
+      "member-phones-list": {
+        "labels": {
+          "no-phones": "Inga telefonnummer ännu"
+        },
+        "placeholders": {
+          "phone": "Ange telefonnummer..."
+        }
+      },
+      "customer-accounts-list": {
+        "commands": {
+          "link": "Länka",
+          "unlink": "Ta bort länk"
+        }
+      },
+      "filter-detail": {
+        "subtitle": "Redigera filter",
+        "new-title": "Nytt filter",
+        "new-subtitle": "Skapar ett nytt filter",
+        "labels": {
+          "criteria": "Sökfras",
+          "name": "Filternamn",
+          "searchInVariations": "Visa produktvariationer",
+          "syntax-example-1": "Alla kontakter som innehåller 'org1.com' i de indexerade egenskapsvärdena",
+          "syntax-example-2": "Alla kontakter som innehåller 'James' och 'Smith' i de indexerade egenskapsvärdena",
+          "syntax-example-3": "Använd en asterisk (*) för att ersätta noll eller fler tecken",
+          "syntax-example-4": "Alla kontakter med förnamn som innehåller 'Alex' eller 'James'",
+          "syntax-example-5": "Använd utropstecken (!) som en ICKE-operator för filter",
+          "syntax-example-6": "Alla kontakter med den valda medlemstypen",
+          "syntax-example-7": "Alla kontakter med ett skapelsedatum mellan två värden (inklusive)",
+          "syntax-example-8": "Alla kontakter med ett skapelsedatum mellan två värden (exklusive)",
+          "syntax-example-9": "Alla kontakter med ett ändringsdatum större än eller lika med '2016-12-26'",
+          "syntax-example-10": "Kombinera både nyckelord och filter"
+        },
+        "placeholders": {
+          "criteria": "Ange sökfras",
+          "name": "Ge detta filter ett namn"
+        }
+      },
+      "member-icon": {
+        "title": "Hantera ikon",
+        "labels": {
+          "choose-icon": "Välj ny ikon",
+          "choice-description": "Välj bild i PNG-, JPG- eller SVG-format",
+          "preview": "Förhandsgranskning",
+          "preview-description": "Nuvarande ikon",
+          "reset": "Återställ ikon",
+          "delete": "Radera ikon"
+        }
+      },
+      "address-details": {
+        "labels": {
+          "name": "Adressnamn",
+          "address-type": "Adresstyp",
+          "first-name": "Förnamn",
+          "middle-name": "Mellannamn",
+          "last-name": "Efternamn",
+          "country": "Land",
+          "region": "Region",
+          "city": "Stad",
+          "address1": "Adressrad 1",
+          "address2": "Adressrad 2",
+          "zip-code": "Postnummer",
+          "email": "E-post",
+          "phone": "Telefon",
+          "description": "Beskrivning"
+        },
+        "placeholders": {
+          "address-type": "Välj adresstyp...",
+          "first-name": "Ange förnamn...",
+          "middle-name": "Ange mellannamn...",
+          "last-name": "Ange efternamn...",
+          "country": "Välj land...",
+          "region": "Välj region...",
+          "city": "Ange stad...",
+          "address1": "Ange adressrad 1...",
+          "address2": "Ange adressrad 2...",
+          "zip-code": "Ange postnummer...",
+          "email": "Ange e-post...",
+          "phone": "Ange telefon...",
+          "description": "Ange beskrivning..."
+        },
+        "commands": {
+          "default": "Gör till standard"
+        }
+      },
+      "address-list": {
+        "labels": {
+          "no-addresses": "Inga adresser ännu"
+        }
+      },
+      "shared": {
+        "labels": {
+          "status": "Status",
+          "progress": "Framsteg"
+        },
+        "placeholders": {
+          "status": "Välj ett värde"
+        }
+      }
+    },
+    "widgets": {
+      "address-list": {
+        "title": "Adresser",
+        "blade-subtitle": "Hantera adresser"
+      },
+      "member-emails-list": {
+        "title": "E-postmeddelanden",
+        "blade-subtitle": "Hantera e-postmeddelanden"
+      },
+      "member-phones-list": {
+        "title": "Telefonnummer",
+        "blade-subtitle": "Hantera telefonnummer"
+      },
+      "customer-accounts-list": {
+        "title": "Konton",
+        "blade-subtitle": "Hantera kundkonton"
+      },
+      "member-icon": {
+        "title": "Ikon"
+      },
+      "organization-assets": {
+        "title": "Tillgångar"
+      },
+      "account-contact": {
+        "no-contact": "Ingen kontakt",
+        "show-contact": "Visa kontakt"
+      }
+    },
+    "dialogs": {
+      "members-delete": {
+        "title": "Bekräfta radering",
+        "message": "Är du säker på att du vill radera de valda företagen eller kontakterna?"
+      },
+      "unknown-member-type": {
+        "title": "Fel",
+        "message": "Kan inte redigera medlem av okänd typ: '{{memberType}}'"
+      },
+      "confirm-account-link": {
+        "title": "Bekräfta länkning",
+        "message": "Det valda kontot är redan associerat med '{{memberName}}'. Vill du fortsätta?"
+      },
+      "confirm-account-unlink": {
+        "title": "Bekräfta borttagning av länk",
+        "message": "Är du säker på att du vill ta bort länkningen för de valda kontona?"
+      },
+      "member-save": {
+        "title": "Spara ändringar",
+        "message": "Denna kontakt har ändrats. Vill du spara ändringarna?"
+      },
+      "email-save": {
+        "title": "Spara ändringar",
+        "message": "E-postmeddelandet har ändrats. Vill du spara ändringarna?"
+      },
+      "phone-number-save": {
+        "title": "Spara ändringar",
+        "message": "Telefonnumret har ändrats. Vill du spara ändringarna?"
+      },
+      "address-delete": {
+        "title": "Bekräfta radering",
+        "message": "Är du säker på att du vill radera denna adress?"
+      },
+      "address-save": {
+        "title": "Spara ändringar",
+        "message": "Adressen har ändrats. Vill du spara ändringarna?"
+      }
+    }
+  },
+  "permissions": {
+    "customer:access": "Öppna kundmenyn",
+    "customer:create": "Skapa kunddata",
+    "customer:read": "Visa kunddata",
+    "customer:update": "Uppdatera kunddata",
+    "customer:delete": "Radera kunddata"
+  },
+  "settings": {
+    "Customer": {
+      "MemberGroups": {
+        "title": "Medlemsgruppsordlista",
+        "description": "Alla tillgängliga medlemsgruppsvärden"
+      },
+      "ExportImport.PageSize": {
+        "title": "Sidstorlek som används för export/import",
+        "description": "Notera: Stora värden kan leda till försämrad prestanda"
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "Aktivera händelsebaserad indexering för kundentiteter (omstart krävs)",
+            "description": "Alla ändringar i en kundentitet utlöser en bakgrundsuppgift som tillämpar dessa ändringar på sökindexet"
+          }
+        }
+      },
+      "OrganizationStatuses": {
+        "title": "Företagsstatusar",
+        "description": "Redigera företagsstatusar"
+      },
+      "VendorStatuses": {
+        "title": "Leverantörsstatusar",
+        "description": "Redigera leverantörsstatusar"
+      },
+      "EmployeeStatuses": {
+        "title": "Anställdsstatusar",
+        "description": "Redigera anställdsstatusar"
+      },
+      "ContactStatuses": {
+        "title": "Kontaktstatusar",
+        "description": "Redigera kontaktstatusar"
+      },
+      "OrganizationDefaultStatus": {
+        "title": "Företagets standardstatus",
+        "description": "Denna status tilldelas det nyligen registrerade företaget"
+      },
+      "ContactDefaultStatus": {
+        "title": "Kontaktens standardstatus",
+        "description": "Denna status tilldelas ägaren till det nyligen registrerade företaget"
+      }
+    },
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Member": {
+              "title": "Medlemsindexeringsdatum och tid",
+              "description": "Datum och tid då medlemsindexeringsuppgiften startar"
+            }
+          }
+        }
+      }
+    }
+  },
+  "module": {
+    "VirtoCommerce.Customer": {
+      "description": "Exportera eller importera kontakter och företag"
+    }
+  },
+  "notificationTypes": {
+    "RegisterCompanyEmailNotification": {
+      "displayName": "E-postmeddelande om företagsregistrering",
+      "description": "Kunden får ett e-postmeddelande när deras företag har registrerats"
+    }
+  }
+}

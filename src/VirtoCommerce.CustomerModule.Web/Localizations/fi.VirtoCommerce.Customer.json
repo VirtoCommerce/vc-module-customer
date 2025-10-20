@@ -1,0 +1,409 @@
+{
+  "customer": {
+    "main-menu-title": "Yhteystiedot",
+    "blades": {
+      "contact-detail": {
+        "title-new": "Uusi yhteystieto",
+        "subtitle": "Yhteystiedot",
+        "labels": {
+          "first-name": "Etunimi",
+          "middle-name": "Toinen nimi",
+          "last-name": "Sukunimi",
+          "groups": "Käyttäjäryhmät",
+          "full-name": "Koko nimi",
+          "birthday": "Syntymäpäivä",
+          "salutation": "Titteli",
+          "defaultLanguage": "Oletuskieli",
+          "currency": "Valuutta",
+          "organizations": "Yrityksen jäsen",
+          "default-organization": "Oletusyritys",
+          "associated-organizations": "Liitetyt yritykset",
+          "taxpayerId": "Veronmaksajatunnus",
+          "preferred-communication": "Ensisijainen viestintäkanava",
+          "preferred-delivery": "Ensisijainen toimitustapa",
+          "timezone": "Aikavyöhyke",
+          "about": "Tietoja",
+          "description": "Kuvaus"
+        },
+        "placeholders": {
+          "groups": "Valitse käyttäjäryhmät",
+          "first-name": "Syötä tiedot",
+          "middle-name": "Syötä tiedot",
+          "last-name": "Syötä tiedot",
+          "full-name": "Syötä tiedot",
+          "birthday": "Syötä tiedot",
+          "salutation": "Syötä tiedot",
+          "defaultLanguage": "Anna tietosi",
+          "currency": "Anna tietosi",
+          "preferred-communication": "Anna tietosi",
+          "preferred-delivery": "Anna tietosi",
+          "taxpayerId": "Anna tietosi",
+          "organizations": "Valitse yritys",
+          "associated-organizations": "Valitse yritys",
+          "timezone": "Valitse",
+          "about": "Syötä yhteystiedot",
+          "description": "Syötä osoitteen kuvaus"
+        }
+      },
+      "employee-detail": {
+        "title-new": "Uusi työntekijä",
+        "subtitle": "Työntekijän tiedot",
+        "labels": {
+          "is-active": "Aktiivinen",
+          "first-name": "Etunimi",
+          "middle-name": "Toinen nimi",
+          "last-name": "Sukunimi",
+          "full-name": "Koko nimi",
+          "type": "Työntekijän tyyppi",
+          "birthday": "Syntymäpäivä",
+          "photo-url": "Kuva-URL",
+          "defaultLanguage": "Oletuskieli",
+          "organizations": "Yritykset",
+          "default-organization": "Oletusyritys",
+          "timezone": "Aikavyöhyke"
+        },
+        "placeholders": {
+          "first-name": "Syötä tiedot",
+          "middle-name": "Syötä tiedot",
+          "last-name": "Syötä tiedot",
+          "full-name": "Syötä tiedot",
+          "type": "Syötä tiedot",
+          "birthday": "Syötä tiedot",
+          "photo-url": "Syötä URL",
+          "defaultLanguage": "Anna tietosi",
+          "organizations": "Valitse yritys",
+          "timezone": "Valitse arvo"
+        }
+      },
+      "pick-store-list": {
+        "title": "Uusi tili",
+        "subtitle": "Valitse kauppa uudelle tilille",
+        "labels": {
+          "name": "Kaupan nimi"
+        }
+      },
+      "pick-security-account-list": {
+        "title": "Linkitä tili",
+        "subtitle": "Valitse turvallisuustili, joka liitetään yhteystietoon"
+      },
+      "organization-detail": {
+        "title-new": "Uusi yritys",
+        "subtitle": "Yrityksen tiedot",
+        "labels": {
+          "name": "Nimi",
+          "description": "Kuvaus",
+          "business-category": "Liiketoiminta-ala"
+        },
+        "placeholders": {
+          "name": "Syötä nimi",
+          "description": "Anna kuvaus"
+        }
+      },
+      "vendor-detail": {
+        "title-new": "Uusi toimittaja",
+        "subtitle": "Toimittajan tiedot",
+        "labels": {
+          "name": "Nimi",
+          "site-url": "Verkkosivun URL",
+          "logo-url": "Logon URL",
+          "group-name": "Ryhmän nimi",
+          "description": "Kuvaus"
+        },
+        "placeholders": {
+          "name": "Syötä tiedot",
+          "site-url": "Syötä URL",
+          "logo-url": "Syötä URL",
+          "group-name": "Syötä tiedot",
+          "description": "Anna kuvaus"
+        }
+      },
+      "member-add": {
+        "title": "Uusi yhteystieto",
+        "subtitle": "Valitse luotavan yhteystiedon tyyppi",
+        "organization": {
+          "description": "Yritysprofiili, joka voi sisältää tietoja työntekijöistä, tavallisista yhteystiedoista tai muista yrityksistä"
+        },
+        "employee": {
+          "description": "Työntekijä, joka työskentelee yrityksessä"
+        },
+        "contact": {
+          "description": "Kaupan asiakas, joka voi olla yrityksen jäsen tai toimia yksittäisenä ostajana"
+        },
+        "vendor": {
+          "description": "Myyjä, kauppias tai toimittaja"
+        }
+      },
+      "member-emails-list": {
+        "labels": {
+          "no-emails": "Ei sähköposteja vielä",
+          "name": "Nimi",
+          "address": "Osoite",
+          "Email": "Sähköposti"
+        },
+        "placeholders": {
+          "email": "Syötä sähköposti"
+        }
+      },
+      "member-list": {
+        "title": "Yritykset ja yhteystiedot",
+        "subtitle": "Ladataan '{{name}}'",
+        "breadcrumb-all": "Kaikki yhteystiedot",
+        "labels": {
+          "type": "Tyyppi",
+          "name": "Nimi",
+          "address": "Osoite",
+          "email": "Sähköposti",
+          "filter-new": "Lisää uusi suodatin",
+          "unnamed-filter": "Nimetön suodatin",
+          "filter-vendor": "Toimittajat",
+          "filter-contact": "Yhteystiedot",
+          "filter-organization": "Yritykset",
+          "copy-id": "Kopioi tunnus",
+          "copy-name": "Kopioi nimi"
+        },
+        "placeholders": {
+          "select-filter": "Valitse suodatin"
+        }
+      },
+      "member-phones-list": {
+        "labels": {
+          "no-phones": "Ei puhelinnumeroita vielä"
+        },
+        "placeholders": {
+          "phone": "Syötä puhelinnumero..."
+        }
+      },
+      "customer-accounts-list": {
+        "commands": {
+          "link": "Linkitä",
+          "unlink": "Poista linkitys"
+        }
+      },
+      "filter-detail": {
+        "subtitle": "Muokkaa suodatinta",
+        "new-title": "Uusi suodatin",
+        "new-subtitle": "Luodaan uusi suodatin",
+        "labels": {
+          "criteria": "Hakulauseke",
+          "name": "Suodattimen nimi",
+          "searchInVariations": "Näytä tuotevariaatiot",
+          "syntax-example-1": "Kaikki yhteystiedot, jotka sisältävät 'org1.com' indeksoiduissa ominaisuusarvoissa",
+          "syntax-example-2": "Kaikki yhteystiedot, jotka sisältävät 'James' ja 'Smith' indeksoiduissa ominaisuusarvoissa",
+          "syntax-example-3": "Käytä tähteä (*) korvaamaan nolla tai useampia merkkejä",
+          "syntax-example-4": "Kaikki yhteystiedot, joiden etunimi sisältää 'Alex' tai 'James'",
+          "syntax-example-5": "Käytä huutomerkkiä (!) EI-operaattorina suodattimissa",
+          "syntax-example-6": "Kaikki yhteystiedot valitulla jäsentypillä",
+          "syntax-example-7": "Kaikki yhteystiedot, joiden luontipäivä on kahden arvon välillä (sisältäen rajat)",
+          "syntax-example-8": "Kaikki yhteystiedot, joiden luontipäivä on kahden arvon välillä (poissulkeva)",
+          "syntax-example-9": "Kaikki yhteystiedot, joiden muokkauspäivä on suurempi tai yhtä suuri kuin '2016-12-26'",
+          "syntax-example-10": "Yhdistä avainsanat ja suodattimet"
+        },
+        "placeholders": {
+          "criteria": "Syötä hakulauseke",
+          "name": "Anna suodattimelle nimi"
+        }
+      },
+      "member-icon": {
+        "title": "Hallitse kuvaketta",
+        "labels": {
+          "choose-icon": "Valitse uusi kuvake",
+          "choice-description": "Valitse kuva PNG-, JPG- tai SVG-muodossa",
+          "preview": "Esikatselu",
+          "preview-description": "Nykyinen kuvake",
+          "reset": "Nollaa kuvake",
+          "delete": "Poista kuvake"
+        }
+      },
+      "address-details": {
+        "labels": {
+          "name": "Osoitteen nimi",
+          "address-type": "Osoitteen tyyppi",
+          "first-name": "Etunimi",
+          "middle-name": "Toinen nimi",
+          "last-name": "Sukunimi",
+          "country": "Maa",
+          "region": "Alue",
+          "city": "Kaupunki",
+          "address1": "Osoiterivi 1",
+          "address2": "Osoiterivi 2",
+          "zip-code": "Postinumero",
+          "email": "Sähköposti",
+          "phone": "Puhelin",
+          "description": "Kuvaus"
+        },
+        "placeholders": {
+          "address-type": "Valitse osoitteen tyyppi...",
+          "first-name": "Syötä etunimi...",
+          "middle-name": "Syötä toinen nimi...",
+          "last-name": "Syötä sukunimi...",
+          "country": "Valitse maa...",
+          "region": "Valitse alue...",
+          "city": "Syötä kaupunki...",
+          "address1": "Syötä osoiterivi 1...",
+          "address2": "Syötä osoiterivi 2...",
+          "zip-code": "Syötä postinumero...",
+          "email": "Syötä sähköposti...",
+          "phone": "Syötä puhelin...",
+          "description": "Syötä kuvaus..."
+        },
+        "commands": {
+          "default": "Aseta oletukseksi"
+        }
+      },
+      "address-list": {
+        "labels": {
+          "no-addresses": "Ei osoitteita vielä"
+        }
+      },
+      "shared": {
+        "labels": {
+          "status": "Tila",
+          "progress": "Edistyminen"
+        },
+        "placeholders": {
+          "status": "Valitse arvo"
+        }
+      }
+    },
+    "widgets": {
+      "address-list": {
+        "title": "Osoitteet",
+        "blade-subtitle": "Hallitse osoitteita"
+      },
+      "member-emails-list": {
+        "title": "Sähköpostit",
+        "blade-subtitle": "Hallitse sähköposteja"
+      },
+      "member-phones-list": {
+        "title": "Puhelinnumerot",
+        "blade-subtitle": "Hallitse puhelinnumeroita"
+      },
+      "customer-accounts-list": {
+        "title": "Tilit",
+        "blade-subtitle": "Hallitse asiakastilejä"
+      },
+      "member-icon": {
+        "title": "Kuvake"
+      },
+      "organization-assets": {
+        "title": "Omaisuus"
+      },
+      "account-contact": {
+        "no-contact": "Ei yhteystietoa",
+        "show-contact": "Näytä yhteystieto"
+      }
+    },
+    "dialogs": {
+      "members-delete": {
+        "title": "Vahvista poisto",
+        "message": "Oletko varma, että haluat poistaa valitut yritykset tai yhteystiedot?"
+      },
+      "unknown-member-type": {
+        "title": "Virhe",
+        "message": "Ei voida muokata tuntemattoman tyypin jäsentä: '{{memberType}}'"
+      },
+      "confirm-account-link": {
+        "title": "Vahvista linkitys",
+        "message": "Valittu tili on jo liitetty '{{memberName}}'. Haluatko jatkaa?"
+      },
+      "confirm-account-unlink": {
+        "title": "Vahvista linkityksen poisto",
+        "message": "Oletko varma, että haluat poistaa linkityksen valituista tileistä?"
+      },
+      "member-save": {
+        "title": "Tallenna muutokset",
+        "message": "Tätä yhteystietoa on muokattu. Haluatko tallentaa muutokset?"
+      },
+      "email-save": {
+        "title": "Tallenna muutokset",
+        "message": "Sähköpostia on muokattu. Haluatko tallentaa muutokset?"
+      },
+      "phone-number-save": {
+        "title": "Tallenna muutokset",
+        "message": "Puhelinnumeroa on muokattu. Haluatko tallentaa muutokset?"
+      },
+      "address-delete": {
+        "title": "Vahvista poisto",
+        "message": "Oletko varma, että haluat poistaa tämän osoitteen?"
+      },
+      "address-save": {
+        "title": "Tallenna muutokset",
+        "message": "Osoitetta on muokattu. Haluatko tallentaa muutokset?"
+      }
+    }
+  },
+  "permissions": {
+    "customer:access": "Avaa asiakasvalikko",
+    "customer:create": "Luo asiakastietoja",
+    "customer:read": "Näytä asiakastietoja",
+    "customer:update": "Päivitä asiakastietoja",
+    "customer:delete": "Poista asiakastietoja"
+  },
+  "settings": {
+    "Customer": {
+      "MemberGroups": {
+        "title": "Jäsenryhmäsanakirja",
+        "description": "Kaikki saatavilla olevat jäsenryhmäarvot"
+      },
+      "ExportImport.PageSize": {
+        "title": "Sivukoko vientiin/tuontiin",
+        "description": "Huomio: Suuret arvot voivat johtaa heikentyneeseen suorituskykyyn"
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "Ota käyttöön tapahtumapohjainen indeksointi asiakasolioille (uudelleenkäynnistys vaaditaan)",
+            "description": "Mikä tahansa muutos asiakasolioon käynnistää taustatehtävän, joka soveltaa nämä muutokset hakemistoon"
+          }
+        }
+      },
+      "OrganizationStatuses": {
+        "title": "Yritysten tilat",
+        "description": "Muokkaa yritysten tiloja"
+      },
+      "VendorStatuses": {
+        "title": "Toimittajien tilat",
+        "description": "Muokkaa toimittajien tiloja"
+      },
+      "EmployeeStatuses": {
+        "title": "Työntekijöiden tilat",
+        "description": "Muokkaa työntekijöiden tiloja"
+      },
+      "ContactStatuses": {
+        "title": "Yhteystietojen tilat",
+        "description": "Muokkaa yhteystietojen tiloja"
+      },
+      "OrganizationDefaultStatus": {
+        "title": "Yrityksen oletustila",
+        "description": "Tämä tila määritetään äskettäin rekisteröidylle yritykselle"
+      },
+      "ContactDefaultStatus": {
+        "title": "Yhteystiedon oletustila",
+        "description": "Tämä tila määritetään äskettäin rekisteröidyn yrityksen omistajalle"
+      }
+    },
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Member": {
+              "title": "Jäsenten indeksointipäivä ja -aika",
+              "description": "Päivä ja aika, jolloin jäsenten indeksointitehtävä aloitetaan"
+            }
+          }
+        }
+      }
+    }
+  },
+  "module": {
+    "VirtoCommerce.Customer": {
+      "description": "Vie tai tuo yhteystietoja ja yrityksiä"
+    }
+  },
+  "notificationTypes": {
+    "RegisterCompanyEmailNotification": {
+      "displayName": "Yrityksen rekisteröintisähköposti-ilmoitus",
+      "description": "Asiakas saa sähköposti-ilmoituksen, kun hänen yrityksensä on rekisteröity"
+    }
+  }
+}
