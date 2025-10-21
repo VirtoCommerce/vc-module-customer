@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using OpenIddict.Abstractions;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Security.Extensions;
 using VirtoCommerce.Platform.Security.OpenIddict;
 using static VirtoCommerce.CustomerModule.Core.ModuleConstants.Security;
@@ -48,8 +49,25 @@ public class OrganizationIdClaimProvider(IMemberService memberService) : ITokenC
 
         return member switch
         {
-            IHasOrganizations contact => contact.CurrentOrganizationId ?? contact.DefaultOrganizationId ?? contact.Organizations?.FirstOrDefault(),
+            IHasOrganizations contact => GetContactOrganizationId(contact),
             _ => null,
         };
+    }
+
+    private static string GetContactOrganizationId(IHasOrganizations contact)
+    {
+        var organizations = contact.Organizations ?? [];
+
+        if (!contact.CurrentOrganizationId.IsNullOrEmpty() && organizations.Any(x => x == contact.CurrentOrganizationId))
+        {
+            return contact.CurrentOrganizationId;
+        }
+
+        if (!contact.DefaultOrganizationId.IsNullOrEmpty() && organizations.Any(x => x == contact.DefaultOrganizationId))
+        {
+            return contact.DefaultOrganizationId;
+        }
+
+        return organizations.FirstOrDefault();
     }
 }

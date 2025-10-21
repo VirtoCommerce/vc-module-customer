@@ -166,7 +166,11 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                     {
                         throw new OperationCanceledException($"Unable to update an member with type {dataTargetMember.MemberType} by an member with type {dataSourceMember.MemberType} because they aren't in the inheritance hierarchy");
                     }
-                    changedEntries.Add(new GenericChangedEntry<Member>(member, dataTargetMember.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(member.MemberType)), EntryState.Modified));
+
+                    var oldMember = dataTargetMember.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(member.MemberType));
+                    ResetCurrentOrganizationId(member, dataSourceMember, oldMember, dataTargetMember);
+
+                    changedEntries.Add(new GenericChangedEntry<Member>(member, oldMember, EntryState.Modified));
                     dataSourceMember.Patch(dataTargetMember);
                 }
                 else
@@ -317,6 +321,26 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                     {
                         var regions = await _countriesService.GetCountryRegionsAsync(address.CountryCode);
                         address.RegionName = regions.FirstOrDefault(x => x.Id == address.RegionId)?.Name;
+                    }
+                }
+            }
+        }
+
+        private void ResetCurrentOrganizationId(Member newMember, MemberEntity newEntity, Member oldMember, MemberEntity oldEntity)
+        {
+            if (newMember is IHasOrganizations newMemberOrganizations && oldMember is IHasOrganizations oldMemberOrganizations)
+            {
+                var newOrganizations = newMemberOrganizations.Organizations ?? [];
+                var oldOrganizations = oldMemberOrganizations.Organizations ?? [];
+
+                if (!oldMemberOrganizations.CurrentOrganizationId.IsNullOrEmpty() &&
+                    (!newOrganizations.Contains(oldMemberOrganizations.CurrentOrganizationId) || newMemberOrganizations.DefaultOrganizationId != oldMemberOrganizations.DefaultOrganizationId))
+                {
+                    newMemberOrganizations.CurrentOrganizationId = null;
+
+                    if (newEntity is IHasOrganizationsEntity organizationsEntity)
+                    {
+                        organizationsEntity.CurrentOrganizationId = null;
                     }
                 }
             }

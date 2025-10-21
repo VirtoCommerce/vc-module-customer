@@ -7,7 +7,7 @@ using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CustomerModule.Data.Model
 {
-    public class ContactEntity : MemberEntity
+    public class ContactEntity : MemberEntity, IHasOrganizationsEntity
     {
         public ContactEntity()
         {
