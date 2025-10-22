@@ -168,7 +168,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                     }
 
                     var oldMember = dataTargetMember.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(member.MemberType));
-                    ResetCurrentOrganizationId(member, dataSourceMember, oldMember, dataTargetMember);
+                    ResetCurrentOrganizationId(member, dataSourceMember, oldMember);
 
                     changedEntries.Add(new GenericChangedEntry<Member>(member, oldMember, EntryState.Modified));
                     dataSourceMember.Patch(dataTargetMember);
@@ -326,12 +326,11 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             }
         }
 
-        private void ResetCurrentOrganizationId(Member newMember, MemberEntity newEntity, Member oldMember, MemberEntity oldEntity)
+        private static void ResetCurrentOrganizationId(Member newMember, MemberEntity newEntity, Member oldMember)
         {
             if (newMember is IHasOrganizations newMemberOrganizations && oldMember is IHasOrganizations oldMemberOrganizations)
             {
                 var newOrganizations = newMemberOrganizations.Organizations ?? [];
-                var oldOrganizations = oldMemberOrganizations.Organizations ?? [];
 
                 if (!oldMemberOrganizations.CurrentOrganizationId.IsNullOrEmpty() &&
                     (!newOrganizations.Contains(oldMemberOrganizations.CurrentOrganizationId) || newMemberOrganizations.DefaultOrganizationId != oldMemberOrganizations.DefaultOrganizationId))
