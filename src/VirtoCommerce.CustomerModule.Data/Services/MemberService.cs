@@ -138,6 +138,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
             FillContactFullName(members);
             await FillAddressNames(members);
+            ResetOrganizationIds(members);
 
             var pkMap = new PrimaryKeyResolvingMap();
             var changedEntries = new List<GenericChangedEntry<Member>>();
@@ -166,6 +167,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                     {
                         throw new OperationCanceledException($"Unable to update an member with type {dataTargetMember.MemberType} by an member with type {dataSourceMember.MemberType} because they aren't in the inheritance hierarchy");
                     }
+
                     changedEntries.Add(new GenericChangedEntry<Member>(member, dataTargetMember.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(member.MemberType)), EntryState.Modified));
                     dataSourceMember.Patch(dataTargetMember);
                 }
@@ -318,6 +320,27 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                         var regions = await _countriesService.GetCountryRegionsAsync(address.CountryCode);
                         address.RegionName = regions.FirstOrDefault(x => x.Id == address.RegionId)?.Name;
                     }
+                }
+            }
+        }
+
+        protected virtual void ResetOrganizationIds(IList<Member> members)
+        {
+            foreach (var member in members.OfType<IHasOrganizations>())
+            {
+                if (member.Organizations == null)
+                {
+                    continue;
+                }
+
+                if (!member.CurrentOrganizationId.IsNullOrEmpty() && !member.Organizations.ContainsIgnoreCase(member.CurrentOrganizationId))
+                {
+                    member.CurrentOrganizationId = null;
+                }
+
+                if (!member.DefaultOrganizationId.IsNullOrEmpty() && !member.Organizations.ContainsIgnoreCase(member.DefaultOrganizationId))
+                {
+                    member.DefaultOrganizationId = null;
                 }
             }
         }
