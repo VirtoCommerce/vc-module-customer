@@ -7,7 +7,7 @@ using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.CustomerModule.Data.Model
 {
-    public class EmployeeEntity : MemberEntity, IHasOrganizationsEntity
+    public class EmployeeEntity : MemberEntity
     {
         [StringLength(64)]
         public string Type { get; set; }

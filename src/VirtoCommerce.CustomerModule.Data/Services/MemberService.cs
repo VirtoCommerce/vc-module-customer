@@ -138,6 +138,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
             FillContactFullName(members);
             await FillAddressNames(members);
+            ResetOrganizationIds(members);
 
             var pkMap = new PrimaryKeyResolvingMap();
             var changedEntries = new List<GenericChangedEntry<Member>>();
@@ -167,10 +168,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                         throw new OperationCanceledException($"Unable to update an member with type {dataTargetMember.MemberType} by an member with type {dataSourceMember.MemberType} because they aren't in the inheritance hierarchy");
                     }
 
-                    var oldMember = dataTargetMember.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(member.MemberType));
-                    ResetCurrentOrganizationId(member, dataSourceMember, oldMember);
-
-                    changedEntries.Add(new GenericChangedEntry<Member>(member, oldMember, EntryState.Modified));
+                    changedEntries.Add(new GenericChangedEntry<Member>(member, dataTargetMember.ToModel(AbstractTypeFactory<Member>.TryCreateInstance(member.MemberType)), EntryState.Modified));
                     dataSourceMember.Patch(dataTargetMember);
                 }
                 else
@@ -326,21 +324,23 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             }
         }
 
-        private static void ResetCurrentOrganizationId(Member newMember, MemberEntity newEntity, Member oldMember)
+        protected virtual void ResetOrganizationIds(IList<Member> members)
         {
-            if (newMember is IHasOrganizations newMemberOrganizations && oldMember is IHasOrganizations oldMemberOrganizations)
+            foreach (var member in members.OfType<IHasOrganizations>())
             {
-                var newOrganizations = newMemberOrganizations.Organizations ?? [];
-
-                if (!oldMemberOrganizations.CurrentOrganizationId.IsNullOrEmpty() &&
-                    (!newOrganizations.Contains(oldMemberOrganizations.CurrentOrganizationId) || newMemberOrganizations.DefaultOrganizationId != oldMemberOrganizations.DefaultOrganizationId))
+                if (member.Organizations == null)
                 {
-                    newMemberOrganizations.CurrentOrganizationId = null;
+                    continue;
+                }
 
-                    if (newEntity is IHasOrganizationsEntity organizationsEntity)
-                    {
-                        organizationsEntity.CurrentOrganizationId = null;
-                    }
+                if (!member.CurrentOrganizationId.IsNullOrEmpty() && !member.Organizations.Contains(member.CurrentOrganizationId))
+                {
+                    member.CurrentOrganizationId = null;
+                }
+
+                if (!member.DefaultOrganizationId.IsNullOrEmpty() && !member.Organizations.Contains(member.DefaultOrganizationId))
+                {
+                    member.DefaultOrganizationId = null;
                 }
             }
         }
