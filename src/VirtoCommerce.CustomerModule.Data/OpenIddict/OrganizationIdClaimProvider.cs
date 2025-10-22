@@ -58,12 +58,12 @@ public class OrganizationIdClaimProvider(IMemberService memberService) : ITokenC
     {
         var organizations = contact.Organizations ?? [];
 
-        if (!contact.CurrentOrganizationId.IsNullOrEmpty() && organizations.Any(x => x == contact.CurrentOrganizationId))
+        if (!contact.CurrentOrganizationId.IsNullOrEmpty() && organizations.ContainsIgnoreCase(contact.CurrentOrganizationId))
         {
             return contact.CurrentOrganizationId;
         }
 
-        if (!contact.DefaultOrganizationId.IsNullOrEmpty() && organizations.Any(x => x == contact.DefaultOrganizationId))
+        if (!contact.DefaultOrganizationId.IsNullOrEmpty() && organizations.ContainsIgnoreCase(contact.DefaultOrganizationId))
         {
             return contact.DefaultOrganizationId;
         }

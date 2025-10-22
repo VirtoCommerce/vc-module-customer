@@ -333,12 +333,12 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                     continue;
                 }
 
-                if (!member.CurrentOrganizationId.IsNullOrEmpty() && !member.Organizations.Contains(member.CurrentOrganizationId))
+                if (!member.CurrentOrganizationId.IsNullOrEmpty() && !member.Organizations.ContainsIgnoreCase(member.CurrentOrganizationId))
                 {
                     member.CurrentOrganizationId = null;
                 }
 
-                if (!member.DefaultOrganizationId.IsNullOrEmpty() && !member.Organizations.Contains(member.DefaultOrganizationId))
+                if (!member.DefaultOrganizationId.IsNullOrEmpty() && !member.Organizations.ContainsIgnoreCase(member.DefaultOrganizationId))
                 {
                     member.DefaultOrganizationId = null;
                 }
