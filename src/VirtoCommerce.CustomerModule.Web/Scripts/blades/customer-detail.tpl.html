@@ -89,12 +89,20 @@
   </ui-scroll-drop-down>
 </script>
 <script type="text/ng-template" id="birthDate.html">
-    <div class="form-input __calendar">
-        <input type="text" class="form-control" ng-model="blade.currentEntity.birthDate" datepicker-popup name="bd" is-open="blade.datepickers.bd" max-date="blade.today" placeholder="{{'customer.blades.contact-detail.placeholders.birthday' | translate}}" />
-        <button class="btn" type="button" ng-click="blade.open($event,'bd')">
-            <i class="btn-ico fa fa-calendar"></i>
-        </button>
-    </div>
+  <div class="form-input __calendar">
+      <input type="text"
+             class="form-control"
+             ng-model="blade.currentEntity.birthDate"
+             ng-model-options="{ timezone: 'UTC' }"
+             datepicker-popup="mediumDate"
+             name="bd"
+             is-open="blade.datepickers.bd"
+             max-date="blade.today"
+             placeholder="{{'customer.blades.contact-detail.placeholders.birthday' | translate}}" />
+      <button class="btn" type="button" ng-click="blade.open($event,'bd')">
+          <i class="btn-ico fa fa-calendar"></i>
+      </button>
+  </div>
 </script>
 <script type="text/ng-template" id="timeZone.html">
     <div class="form-input">
