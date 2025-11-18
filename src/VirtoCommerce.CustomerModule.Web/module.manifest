@@ -4,13 +4,13 @@
   <version>3.846.0</version>
   <version-tag />
 
-  <platformVersion>3.909.0</platformVersion>
+  <platformVersion>3.916.0-alpha.13164-vcst-4203-cleanup</platformVersion>
   <dependencies>
-    <dependency id="VirtoCommerce.Core" version="3.821.0" />
-    <dependency id="VirtoCommerce.Notifications" version="3.809.0" />
-    <dependency id="VirtoCommerce.Search" version="3.804.0" />
-    <dependency id="VirtoCommerce.Seo" version="3.801.0" />
-    <dependency id="VirtoCommerce.Store" version="3.818.0" />
+    <dependency id="VirtoCommerce.Core" version="3.823.0-alpha.1666-vcst-4203-cleanup" />
+    <dependency id="VirtoCommerce.Notifications" version="3.828.0-alpha.429-vcst-4203-cleanup" />
+    <dependency id="VirtoCommerce.Search" version="3.820.0-alpha.795-vcst-4203-cleanup" />
+    <dependency id="VirtoCommerce.Seo" version="3.811.0-alpha.56-vcst-4203-cleanup" />
+    <dependency id="VirtoCommerce.Store" version="3.823.0-alpha.751-vcst-4203-cleanup" />
   </dependencies>
 
   <title>Companies and Contacts</title>

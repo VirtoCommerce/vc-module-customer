@@ -15,7 +15,7 @@
     <None Remove="node_modules\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="VirtoCommerce.StoreModule.Core" Version="3.818.0" />
+    <PackageReference Include="VirtoCommerce.StoreModule.Core" Version="3.823.0-alpha.751-vcst-4203-cleanup" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.CustomerModule.Core\VirtoCommerce.CustomerModule.Core.csproj" />

@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
-using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.SearchModule.Core.Extensions;
@@ -160,9 +158,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                 IndexVendor(document, vendor);
             }
 
-#pragma warning disable VC0005 // Type or member is obsolete
-            await IndexDynamicProperties(member, document);
-#pragma warning restore VC0005 // Type or member is obsolete
+            await document.AddDynamicProperties(_dynamicPropertySearchService, member);
 
             return document;
         }
@@ -270,26 +266,6 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 
             document.AddFilterableCollection("AssociatedOrganizations", nonEmptyValues);
             document.AddFilterableBoolean("HasAssociatedOrganizations", nonEmptyValues?.Any() ?? false);
-        }
-
-        [Obsolete("Use IndexDocument.AddDynamicProperties() extension method", DiagnosticId = "VC0005", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions/")]
-        protected virtual async Task IndexDynamicProperties(Member member, IndexDocument document)
-        {
-            var properties = await _dynamicPropertySearchService.GetAllDynamicProperties(member.ObjectType);
-
-            foreach (var property in properties)
-            {
-                var objectProperty = member.DynamicProperties?.FirstOrDefault(x => x.Id == property.Id) ??
-                    member.DynamicProperties?.FirstOrDefault(x => x.Name.EqualsInvariant(property.Name) && x.HasValuesOfType(property.ValueType));
-
-                IndexDynamicProperty(document, property, objectProperty);
-            }
-        }
-
-        [Obsolete("Use IndexDocument.AddDynamicProperty() extension method", DiagnosticId = "VC0005", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions/")]
-        protected virtual void IndexDynamicProperty(IndexDocument document, DynamicProperty property, DynamicObjectProperty objectProperty)
-        {
-            document.AddDynamicProperty(property, objectProperty);
         }
     }
 }
