@@ -35,10 +35,6 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(64)]
         public string CountryCode { get; set; }
 
-        [Obsolete("Not being called. Use either `RegionId` or `RegionName` property.", DiagnosticId = "VC0008", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions/")]
-        [StringLength(128)]
-        public string StateProvince { get; set; }
-
         [StringLength(128)]
         public string CountryName { get; set; }
 

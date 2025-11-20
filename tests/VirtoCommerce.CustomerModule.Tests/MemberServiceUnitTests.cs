@@ -13,7 +13,6 @@ using VirtoCommerce.CustomerModule.Data.Repositories;
 using VirtoCommerce.CustomerModule.Data.Services;
 using VirtoCommerce.CustomerModule.Data.Validation;
 using VirtoCommerce.Platform.Caching;
-using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Domain;
 using VirtoCommerce.Platform.Core.Events;
@@ -29,7 +28,6 @@ namespace VirtoCommerce.CustomerModule.Tests
         private readonly Func<IMemberRepository> _repositoryFactory;
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly Mock<IEventPublisher> _eventPublisherMock;
-        private readonly Mock<IPlatformMemoryCache> _platformMemoryCacheMock;
         private readonly Mock<IUserSearchService> _userSearchServiceMock;
         private readonly Mock<ICacheEntry> _cacheEntryMock;
         private readonly PrimaryKeyResolvingMap _primaryKeyResolvingMap;
@@ -39,9 +37,6 @@ namespace VirtoCommerce.CustomerModule.Tests
             _repositoryMock = new Mock<IMemberRepository>();
             _repositoryFactory = () => _repositoryMock.Object;
             _eventPublisherMock = new Mock<IEventPublisher>();
-            _platformMemoryCacheMock = new Mock<IPlatformMemoryCache>();
-            _platformMemoryCacheMock.Setup(x => x.GetDefaultCacheEntryOptions()).Returns(() => new MemoryCacheEntryOptions());
-
             _userSearchServiceMock = new Mock<IUserSearchService>();
             _mockUnitOfWork = new Mock<IUnitOfWork>();
             _repositoryMock.Setup(ss => ss.UnitOfWork).Returns(_mockUnitOfWork.Object);
@@ -80,12 +75,6 @@ namespace VirtoCommerce.CustomerModule.Tests
             _repositoryMock.Setup(n => n.GetMembersByIdsAsync(new[] { organizationEntity.Id }, null, It.IsAny<string[]>()))
                 .ReturnsAsync(new[] { organizationEntity });
 
-            var cacheKey = CacheKey.With(service.GetType(), nameof(service.GetByIdsAsync), string.Join("-", new[] { contactEntity.Id }), null, null);
-            _platformMemoryCacheMock.Setup(pmc => pmc.CreateEntry(cacheKey)).Returns(_cacheEntryMock.Object);
-
-            var cacheKeyOrg = CacheKey.With(service.GetType(), nameof(service.GetByIdsAsync), string.Join("-", new[] { organizationEntity.Id }), null, null);
-            _platformMemoryCacheMock.Setup(pmc => pmc.CreateEntry(cacheKeyOrg)).Returns(_cacheEntryMock.Object);
-
             _repositoryMock.Setup(x => x.RemoveMembersByIdsAsync(new[] { organizationEntity.Id }, null))
                 .Callback(() =>
                 {
@@ -118,7 +107,7 @@ namespace VirtoCommerce.CustomerModule.Tests
                 Name = "some contact",
             };
             var newContactEntity = AbstractTypeFactory<ContactEntity>.TryCreateInstance().FromModel(newContact, new PrimaryKeyResolvingMap());
-            var service = GetMemberServiceWithPlatformMemoryCache();
+            var service = GetMemberService();
             _repositoryMock.Setup(x => x.Add(newContactEntity))
                 .Callback(() =>
                 {
@@ -166,24 +155,8 @@ namespace VirtoCommerce.CustomerModule.Tests
             _userSearchServiceMock.Setup(x => x.SearchUsersAsync(It.IsAny<UserSearchCriteria>()))
                 .ReturnsAsync(new UserSearchResult());
 
-            return GetMemberService(_platformMemoryCacheMock.Object);
-        }
-
-        private MemberService GetMemberServiceWithPlatformMemoryCache()
-        {
-            _userSearchServiceMock.Setup(x => x.SearchUsersAsync(It.IsAny<UserSearchCriteria>()))
-                .ReturnsAsync(new UserSearchResult());
-
             var memoryCache = new MemoryCache(Options.Create(new MemoryCacheOptions()));
             var platformMemoryCache = new PlatformMemoryCache(memoryCache, Options.Create(new CachingOptions()), new Mock<ILogger<PlatformMemoryCache>>().Object);
-
-            return GetMemberService(platformMemoryCache);
-        }
-
-        private MemberService GetMemberService(IPlatformMemoryCache platformMemoryCache)
-        {
-            _userSearchServiceMock.Setup(x => x.SearchUsersAsync(It.IsAny<UserSearchCriteria>()))
-                .ReturnsAsync(new UserSearchResult());
 
             return new MemberService(_repositoryFactory, _userSearchServiceMock.Object, _eventPublisherMock.Object, platformMemoryCache, new MemberValidator(), null);
         }
