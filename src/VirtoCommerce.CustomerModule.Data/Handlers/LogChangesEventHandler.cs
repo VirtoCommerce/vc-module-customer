@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
@@ -20,11 +19,15 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
             _changeLogService = changeLogService;
         }
 
-        public virtual Task Handle(MemberChangedEvent @event)
+        public virtual Task Handle(MemberChangedEvent message)
         {
-#pragma warning disable VC0005 // Type or member is obsolete
-            InnerHandle(@event);
-#pragma warning restore VC0005 // Type or member is obsolete
+            // ObjectType has to be 'Member' as MemberDocumentChangesProvider uses it to get all changed members in 1 request.
+            var logOperations = message.ChangedEntries
+                .Select(x => AbstractTypeFactory<OperationLog>.TryCreateInstance().FromChangedEntry(x, nameof(Member)))
+                .ToArray();
+
+            InnerHandle(logOperations);
+
             return Task.CompletedTask;
         }
 
@@ -65,15 +68,6 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
             return _changeLogService.SaveChangesAsync(operationLogs);
         }
 
-
-        [Obsolete("Use InnerHandle(params OperationLog[] operationLogs) instead", DiagnosticId = "VC0005", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions/")]
-        protected virtual void InnerHandle<T>(GenericChangedEntryEvent<T> @event) where T : IEntity
-        {
-            // ObjectType has to be 'Member' as MemberDocumentChangesProvider uses it to get all changed members in 1 request.
-            var logOperations = @event.ChangedEntries.Select(x => AbstractTypeFactory<OperationLog>.TryCreateInstance().FromChangedEntry(x, nameof(Member))).ToArray();
-            //Background task is used here for performance reasons
-            InnerHandle(logOperations);
-        }
 
         protected virtual void InnerHandle(params OperationLog[] operationLogs)
         {
