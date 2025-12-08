@@ -26,19 +26,21 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         private readonly IAuthorizationService _authorizationService;
         private readonly IMemberService _memberService;
         private readonly IMemberSearchService _memberSearchService;
+        private readonly IInviteCustomerService _inviteCustomerService;
         private readonly SignInManager<ApplicationUser> _signInManager;
-
 
         private UserManager<ApplicationUser> UserManager => _signInManager.UserManager;
 
         public CustomerModuleController(IAuthorizationService authorizationService,
             IMemberService memberService,
             IMemberSearchService memberSearchService,
+            IInviteCustomerService inviteCustomerService,
             SignInManager<ApplicationUser> signInManager)
         {
             _authorizationService = authorizationService;
             _memberService = memberService;
             _memberSearchService = memberSearchService;
+            _inviteCustomerService = inviteCustomerService;
             _signInManager = signInManager;
         }
 
@@ -330,6 +332,19 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             await _memberService.SaveChangesAsync([member]);
 
             return NoContent();
+        }
+
+        [HttpPost]
+        [Route("members/customers/invite")]
+        public async Task<ActionResult<InviteCustomerResult>> InviteCustomers([FromBody] InviteCustomerRequest request)
+        {
+            var result = await _inviteCustomerService.InviteCustomerAsyc(request);
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
         }
 
         #region Special members for storefront C# API client  (because it not support polymorph types)
