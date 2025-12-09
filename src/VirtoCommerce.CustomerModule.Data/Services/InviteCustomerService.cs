@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Pipelines.Sockets.Unofficial.Arenas;
 using VirtoCommerce.CustomerModule.Core.Extensions;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
@@ -25,6 +27,7 @@ public class InviteCustomerService : IInviteCustomerService
 {
     public virtual string InitialUserType => "Customer";
     public virtual string InitialContactStatus => "Invited";
+    public virtual string[] DefaultRoleIds => new[] { "org-employee", "purchasing-agent", "org-maintainer" };
 
     private readonly IMemberService _memberService;
     private readonly IStoreService _storeService;
@@ -105,6 +108,17 @@ public class InviteCustomerService : IInviteCustomerService
                 }
             }
         }
+
+        return result;
+    }
+
+    public async Task<IList<Role>> GetInviteRolesAsync()
+    {
+        using var roleManager = _roleManagerFactory();
+
+        var roles = roleManager.Roles.Where(x => DefaultRoleIds.Contains(x.Id));
+
+        var result = await roles.ToListAsync();
 
         return result;
     }
@@ -225,5 +239,4 @@ public class InviteCustomerService : IInviteCustomerService
             Description = error.Description,
         };
     }
-
 }

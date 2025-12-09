@@ -33,6 +33,10 @@ angular.module('virtoCommerce.customerModule')
                 invite: {
                     method: 'POST',
                     url: 'api/members/customers/invite',
+                },
+                availableRoles: {
+                    method: 'GET',
+                    url: 'api/members/customers/invite/roles',
                 }
             });
     }]);

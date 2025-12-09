@@ -83,10 +83,12 @@ angular.module(moduleName, [])
         '$rootScope', '$state', 'platformWebApp.mainMenuService', 'platformWebApp.authService', 'platformWebApp.permissionScopeResolver',
         'platformWebApp.widgetService', 'platformWebApp.settings', 'platformWebApp.userProfileIconService', 'platformWebApp.metaFormsService',
         'virtoCommerce.customerModule.memberTypesResolverService', 'virtoCommerce.customerModule.predefinedSearchFilters', 'virtoCommerce.customerModule.members',
+        'platformWebApp.toolbarService', 'platformWebApp.bladeNavigationService',
         function (
             $rootScope, $state, mainMenuService, authService, scopeResolver,
             widgetService, settings, userProfileIconService, metaFormsService,
-            memberTypesResolverService, predefinedSearchFilters, membersApi) {
+            memberTypesResolverService, predefinedSearchFilters, membersApi,
+            toolbarService, bladeNavigationService) {
             //Register module in main menu
             var menuItem = {
                 path: 'browse/member',
@@ -534,6 +536,65 @@ angular.module(moduleName, [])
                     priority: 12
                 }
             ]);
+
+            // invite customer metaform
+            metaFormsService.registerMetaFields('inviteCustomerDetails', [
+                {
+                    title: "customer.blades.invite-customers.labels.store",
+                    templateUrl: 'invite-stores.html',
+                },
+                {
+                    title: "customer.blades.invite-customers.labels.language",
+                    templateUrl: 'invite-languages.html',
+                },
+                {
+                    title: "customer.blades.invite-customers.labels.organization",
+                    templateUrl: 'invite-organizations.html',
+                },
+                {
+                    title: "customer.blades.invite-customers.labels.role",
+                    templateUrl: 'invite-roles.html',
+                },
+                {
+                    name: 'emailsString',
+                    title: "customer.blades.invite-customers.labels.emails",
+                    placeholder: "customer.blades.invite-customers.placeholders.emails",
+                    spanAllColumns: true,
+                    isRequired: true,
+                    valueType: "LongText"
+                }, 
+                {
+                    name: 'message',
+                    title: "customer.blades.invite-customers.labels.message",
+                    placeholder: "customer.blades.invite-customers.placeholders.message",
+                    spanAllColumns: true,
+                    valueType: "LongText"
+                }           
+            ]);
+
+            // invite customers toolbar button
+            toolbarService.register({
+                name: "customer.commands.invite-customers",
+                icon: 'fa fa-cubes',
+                executeMethod: function (blade) {
+                    var selectedStore = blade.currentEntity;
+
+                    var newBlade = {
+                        id: 'inviteCustomers',
+                        selectedStore: selectedStore,
+                        controller: 'virtoCommerce.customerModule.inviteCustomersController',
+                        template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/invite-customers.html'
+                    };
+
+                    bladeNavigationService.showBlade(newBlade);
+
+                },
+                canExecuteMethod: function () {
+                    return true;
+                },
+                permission: 'customer:invite',
+                index: 10
+            }, 'virtoCommerce.storeModule.storeDetailController');
 
             const lastTimeModificationDate = 1583235535540;
             // predefine search filters for customer search

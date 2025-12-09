@@ -1,0 +1,40 @@
+<div class="blade-content">
+  <div class="blade-inner">
+    <div class="inner-block clearfix">
+      <form class="form" name="detailForm" >
+        <va-metaform registered-inputs="blade.metaFields" blade="blade" column-count="1" ng-init="setForm(detailForm)"></va-metaform>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script type="text/ng-template" id="invite-stores.html">
+  <ui-scroll-drop-down required
+                       ng-model="blade.currentEntity.storeId"
+                       data="blade.fetchStores(criteria)"
+                       on-select="blade.selectStore(item)"
+                       placeholder="'customer.blades.invite-customers.placeholders.store'">
+  </ui-scroll-drop-down>
+</script>
+
+<script type="text/ng-template" id="invite-languages.html">
+  <ui-scroll-drop-down ng-if="blade.languagesReloaded"
+                       ng-model="blade.currentEntity.cultureName"
+                       data="blade.fetchStoreLanguages()"
+                       placeholder="'customer.blades.invite-customers.placeholders.language'">
+  </ui-scroll-drop-down>
+</script>
+
+<script type="text/ng-template" id="invite-organizations.html">
+  <ui-scroll-drop-down ng-model="blade.currentEntity.organizationId"
+                       data="blade.fetchOrganizations(criteria)"
+                       placeholder="'customer.blades.invite-customers.placeholders.organization'">
+  </ui-scroll-drop-down>
+</script>
+
+<script type="text/ng-template" id="invite-roles.html">
+  <ui-scroll-drop-down ng-model="blade.currentEntity.roleId"
+                       data="blade.fetchRoles(criteria)"
+                       placeholder="'customer.blades.invite-customers.placeholders.role'">
+  </ui-scroll-drop-down>
+</script>

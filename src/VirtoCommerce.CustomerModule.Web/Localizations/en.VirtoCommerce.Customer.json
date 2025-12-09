@@ -263,6 +263,27 @@
         "placeholders": {
           "status": "Please select a value"
         }
+      },
+      "invite-customers": {
+        "title": "Invite customers",
+        "labels": {
+          "store": "Store",
+          "language": "Language",
+          "organization": "Organization",
+          "role": "Role",
+          "emails": "Emails",
+          "message": "Message"
+        },
+        "placeholders": {
+          "store": "Select store",
+          "language": "Select language",
+          "organization": "Select organization",
+          "role": "Select role",
+          "emails": "Use commas, semicolons or line breaks to separate multiple entries",
+          "subject": "Enter email subject",
+          "message": "Enter invite message",
+          "send-to": "Select customers"
+        }
       }
     },
     "widgets": {
@@ -330,7 +351,10 @@
         "title": "Save changes",
         "message": "The address has been modified. Do you want to save changes?"
       }
-    }
+    },
+    "commands": {
+      "invite-customers": "Invite customers"
+    } 
   },
   "permissions": {
     "customer:access": "Open customer menu",

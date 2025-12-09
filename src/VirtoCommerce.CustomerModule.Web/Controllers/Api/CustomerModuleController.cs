@@ -14,6 +14,7 @@ using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Web.Authorization;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Security;
+using VirtoCommerce.Platform.Core.Security.Search;
 using Address = VirtoCommerce.CustomerModule.Core.Model.Address;
 
 namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
@@ -335,6 +336,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         [HttpPost]
+        [Authorize(ModuleConstants.Security.Permissions.Invite)]
         [Route("members/customers/invite")]
         public async Task<ActionResult<InviteCustomerResult>> InviteCustomers([FromBody] InviteCustomerRequest request)
         {
@@ -345,6 +347,20 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             }
 
             return BadRequest(result);
+        }
+
+        [HttpGet]
+        [Authorize(ModuleConstants.Security.Permissions.Invite)]
+        [Route("members/customers/invite/roles")]
+        public async Task<ActionResult<RoleSearchResult>> GetInviteRoles()
+        {
+            var roles = await _inviteCustomerService.GetInviteRolesAsync();
+
+            var result = AbstractTypeFactory<RoleSearchResult>.TryCreateInstance();
+            result.TotalCount = roles.Count;
+            result.Results = roles;
+
+            return Ok(result);
         }
 
         #region Special members for storefront C# API client  (because it not support polymorph types)

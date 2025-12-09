@@ -191,6 +191,27 @@ angular.module('virtoCommerce.customerModule')
                         return $scope.gridApi && _.any($scope.gridApi.selection.getSelectedRows());
                     },
                     permission: 'customer:delete'
+                },
+                {
+                    name: "customer.commands.invite-customers", icon: 'fa fa-cubes',
+                    executeMethod: function () {
+                        var selectedOrganization = blade.currentEntity && blade.currentEntity.memberType === 'Organization' ? blade.currentEntity : null;
+
+                        var newBlade = {
+                            id: 'inviteCustomers',
+                            selectedOrganization: selectedOrganization,
+                            controller: 'virtoCommerce.customerModule.inviteCustomersController',
+                            template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/invite-customers.html'
+                        };
+
+                        bladeNavigationService.showBlade(newBlade, blade);
+
+                    },
+                    canExecuteMethod: function () {
+                        return true;
+                    },
+                    permission: 'customer:invite',
+                    index: 10
                 }
             ];
 
