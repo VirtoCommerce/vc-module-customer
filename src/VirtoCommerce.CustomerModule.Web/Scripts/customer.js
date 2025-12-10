@@ -575,18 +575,16 @@ angular.module(moduleName, [])
             // invite customers toolbar button
             toolbarService.register({
                 name: "customer.commands.invite-customers",
-                icon: 'fa fa-cubes',
+                icon: 'fa fa-paper-plane',
                 executeMethod: function (blade) {
-                    var selectedStore = blade.currentEntity;
-
                     var newBlade = {
                         id: 'inviteCustomers',
-                        selectedStore: selectedStore,
+                        selectedStore: blade.currentEntity,
                         controller: 'virtoCommerce.customerModule.inviteCustomersController',
                         template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/invite-customers.html'
                     };
 
-                    bladeNavigationService.showBlade(newBlade);
+                    bladeNavigationService.showBlade(newBlade, blade);
 
                 },
                 canExecuteMethod: function () {

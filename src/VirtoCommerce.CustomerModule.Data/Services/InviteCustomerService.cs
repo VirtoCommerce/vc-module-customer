@@ -59,7 +59,7 @@ public class InviteCustomerService : IInviteCustomerService
     {
         var result = new InviteCustomerResult
         {
-            Errors = new List<CustomIdentityError>(),
+            Errors = new List<InviteCustomerError>(),
         };
 
         using var userManager = _userManagerFactory();
@@ -96,7 +96,7 @@ public class InviteCustomerService : IInviteCustomerService
                 }
             }
 
-            result.Errors.AddRange(identityResult.Errors.Select(MapCustomIdentityError));
+            result.Errors.AddRange(identityResult.Errors.Select(MapInviteCustomerErrorError));
 
             if (!identityResult.Succeeded)
             {
@@ -112,15 +112,15 @@ public class InviteCustomerService : IInviteCustomerService
         return result;
     }
 
-    public async Task<IList<Role>> GetInviteRolesAsync()
+    public async Task<IList<CustomerRole>> GetInviteRolesAsync()
     {
         using var roleManager = _roleManagerFactory();
 
-        var roles = roleManager.Roles.Where(x => DefaultRoleIds.Contains(x.Id));
+        var rolesQuery = roleManager.Roles.Where(x => DefaultRoleIds.Contains(x.Id));
+        var roles = await rolesQuery.ToListAsync();
 
-        var result = await roles.ToListAsync();
-
-        return result;
+        var customerRoles = roles.Select(MapCustomerRole).ToList();
+        return customerRoles;
     }
 
     protected virtual Contact CreateContact(InviteCustomerRequest request, string email)
@@ -155,9 +155,9 @@ public class InviteCustomerService : IInviteCustomerService
         return user;
     }
 
-    protected virtual async Task<List<CustomIdentityError>> AssignUserRoles(ApplicationUser user, string[] roleIds)
+    protected virtual async Task<List<InviteCustomerError>> AssignUserRoles(ApplicationUser user, string[] roleIds)
     {
-        var errors = new List<CustomIdentityError>();
+        var errors = new List<InviteCustomerError>();
         var roles = new List<Role>();
 
         if (roleIds.IsNullOrEmpty())
@@ -177,12 +177,12 @@ public class InviteCustomerService : IInviteCustomerService
             }
             else
             {
-                errors.Add(new CustomIdentityError { Code = "Role not found", Description = $"Role '{roleId}' not found", Parameter = roleId });
+                errors.Add(new InviteCustomerError { Code = "Role not found", Description = $"Role '{roleId}' not found", Parameter = roleId });
             }
         }
 
         var assignResult = await userManager.AddToRolesAsync(user, roles.Select(x => x.NormalizedName).ToArray());
-        errors.AddRange(assignResult.Errors.Select(MapCustomIdentityError));
+        errors.AddRange(assignResult.Errors.Select(MapInviteCustomerErrorError));
 
         return errors;
     }
@@ -206,6 +206,7 @@ public class InviteCustomerService : IInviteCustomerService
         notification.Message = request.Message;
         notification.To = user.Email;
         notification.From = store.Email;
+        notification.LanguageCode = request.CultureName ?? store.DefaultLanguage;
 
         await _notificationSender.ScheduleSendNotificationAsync(notification);
     }
@@ -226,17 +227,29 @@ public class InviteCustomerService : IInviteCustomerService
         }
     }
 
-    protected virtual CustomIdentityError MapCustomIdentityError(IdentityError error)
+    protected virtual InviteCustomerError MapInviteCustomerErrorError(IdentityError error)
     {
+        var result = AbstractTypeFactory<InviteCustomerError>.TryCreateInstance();
+
         if (error is CustomIdentityError customIdentityError)
         {
-            return customIdentityError;
+            result.Parameter = customIdentityError.Parameter?.ToString();
         }
 
-        return new CustomIdentityError
-        {
-            Code = error.Code,
-            Description = error.Description,
-        };
+        result.Code = error.Code;
+        result.Description = error.Description;
+
+        return result;
+    }
+
+    protected virtual CustomerRole MapCustomerRole(Role role)
+    {
+        var customerRole = AbstractTypeFactory<CustomerRole>.TryCreateInstance();
+
+        customerRole.Id = role.Id;
+        customerRole.Name = role.Name;
+        customerRole.Description = role.Description;
+
+        return customerRole;
     }
 }

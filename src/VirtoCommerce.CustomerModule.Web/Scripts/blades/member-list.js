@@ -193,7 +193,7 @@ angular.module('virtoCommerce.customerModule')
                     permission: 'customer:delete'
                 },
                 {
-                    name: "customer.commands.invite-customers", icon: 'fa fa-cubes',
+                    name: "customer.commands.invite-customers", icon: 'fa fa-paper-plane',
                     executeMethod: function () {
                         var selectedOrganization = blade.currentEntity && blade.currentEntity.memberType === 'Organization' ? blade.currentEntity : null;
 

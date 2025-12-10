@@ -19,6 +19,7 @@
 
 <script type="text/ng-template" id="invite-languages.html">
   <ui-scroll-drop-down ng-if="blade.languagesReloaded"
+                       disabled="!blade.currentEntity.storeId"
                        ng-model="blade.currentEntity.cultureName"
                        data="blade.fetchStoreLanguages()"
                        placeholder="'customer.blades.invite-customers.placeholders.language'">
@@ -33,7 +34,8 @@
 </script>
 
 <script type="text/ng-template" id="invite-roles.html">
-  <ui-scroll-drop-down ng-model="blade.currentEntity.roleId"
+  <ui-scroll-drop-down required
+                       ng-model="blade.currentEntity.roleId"
                        data="blade.fetchRoles(criteria)"
                        placeholder="'customer.blades.invite-customers.placeholders.role'">
   </ui-scroll-drop-down>

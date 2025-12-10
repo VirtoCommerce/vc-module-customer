@@ -14,13 +14,14 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
         function initializeBlade() {
             blade.currentEntity = {
                 message: null,
-                emails: []
+                emails: [],
+                roleIds: []
             };
 
-            if (blade.selectStore) {
-                blade.storeId = blade.selectStore.id;
+            if (blade.selectedStore) {
+                blade.currentEntity.storeId = blade.selectedStore.id;
 
-                reloadLanguages();
+                blade.selectStore(blade.selectedStore);
             }
 
             if (blade.selectedOrganization) {
@@ -44,7 +45,24 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
         }
 
         blade.fetchRoles = function () {
-            return customers.availableRoles();
+            let promise = customers.availableRoles().$promise.then(function (response) {
+                var results = response.results;
+
+                if (results.length && !blade.currentEntity.roleId) {
+                    blade.currentEntity.roleId = results[0].id;
+                }
+
+                var result = {
+                    totalCount: response.totalCount,
+                    results: results
+                };
+
+                return result;
+            });
+
+            return {
+                $promise: promise
+            };
         }
 
         blade.selectStore = function (item) {
@@ -79,8 +97,8 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
 
         blade.toolbarCommands = [
             {
-                name: "platform.commands.save",
-                icon: 'fas fa-save',
+                name: "customer.blades.invite-customers.commands.send-invitations",
+                icon: 'fas fa-paper-plane',
                 executeMethod: function () {
                     blade.isLoading = true;
 
@@ -90,13 +108,28 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                             .filter(e => e.length);
                     }
 
+                    if (blade.currentEntity.roleId) {
+                        blade.currentEntity.roleIds = [blade.currentEntity.roleId];
+                    }
+
                     customers.invite(blade.currentEntity,
                         function (data) {
                             blade.isLoading = false;
                             $scope.bladeClose();
                         },
                         function (error) {
-                            bladeNavigationService.setError('Error ' + error.status, blade);
+                            let errorData = error;
+                            if (error.status === 400) {
+                                errorData = {
+                                    status: error.status,
+                                    statusText: error.statusText,
+                                    data: {
+                                        errors: error.data.errors.map(err => err.description)
+                                    }
+                                };
+                            }
+
+                            bladeNavigationService.setError(errorData, blade);
                         })
                 },
                 canExecuteMethod: canSave

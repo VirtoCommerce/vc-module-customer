@@ -283,8 +283,11 @@
           "subject": "Enter email subject",
           "message": "Enter invite message",
           "send-to": "Select customers"
+        },
+        "commands": {
+          "send-invitations": "Send invitations"
+          }
         }
-      }
     },
     "widgets": {
       "address-list": {

@@ -14,7 +14,6 @@ using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Web.Authorization;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Security;
-using VirtoCommerce.Platform.Core.Security.Search;
 using Address = VirtoCommerce.CustomerModule.Core.Model.Address;
 
 namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
@@ -352,11 +351,11 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [HttpGet]
         [Authorize(ModuleConstants.Security.Permissions.Invite)]
         [Route("members/customers/invite/roles")]
-        public async Task<ActionResult<RoleSearchResult>> GetInviteRoles()
+        public async Task<ActionResult<CustomerRoleSearchResult>> GetInviteRoles()
         {
             var roles = await _inviteCustomerService.GetInviteRolesAsync();
 
-            var result = AbstractTypeFactory<RoleSearchResult>.TryCreateInstance();
+            var result = AbstractTypeFactory<CustomerRoleSearchResult>.TryCreateInstance();
             result.TotalCount = roles.Count;
             result.Results = roles;
 
