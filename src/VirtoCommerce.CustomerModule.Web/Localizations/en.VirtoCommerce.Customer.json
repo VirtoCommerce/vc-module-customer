@@ -279,7 +279,7 @@
           "language": "Select language",
           "organization": "Select organization",
           "role": "Select role",
-          "emails": "Use commas, semicolons or line breaks to separate multiple entries",
+          "emails": "Enter or paste the emails",
           "subject": "Enter email subject",
           "message": "Enter invite message",
           "send-to": "Select customers"

@@ -1,7 +1,7 @@
 <div class="blade-content">
   <div class="blade-inner">
     <div class="inner-block clearfix">
-      <form class="form" name="detailForm" >
+      <form class="form" name="detailForm">
         <va-metaform registered-inputs="blade.metaFields" blade="blade" column-count="1" ng-init="setForm(detailForm)"></va-metaform>
       </form>
     </div>
@@ -40,3 +40,14 @@
                        placeholder="'customer.blades.invite-customers.placeholders.role'">
   </ui-scroll-drop-down>
 </script>
+
+<script type="text/ng-template" id="invite-emails.html">
+  <tags-input ng-model="blade.currentEntity.emailObjects" ng-required="true"
+
+              add-on-enter="true"
+              on-tag-adding="blade.emailAdding($tag)"
+              on-tag-added="blade.emailAdded($tag)"
+              placeholder="{{'customer.blades.invite-customers.placeholders.emails' | translate}}">
+  </tags-input>
+</script>
+

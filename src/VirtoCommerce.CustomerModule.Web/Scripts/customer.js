@@ -556,13 +556,9 @@ angular.module(moduleName, [])
                     templateUrl: 'invite-roles.html',
                 },
                 {
-                    name: 'emailsString',
                     title: "customer.blades.invite-customers.labels.emails",
-                    placeholder: "customer.blades.invite-customers.placeholders.emails",
-                    spanAllColumns: true,
-                    isRequired: true,
-                    valueType: "LongText"
-                }, 
+                    templateUrl: 'invite-emails.html',
+                },
                 {
                     name: 'message',
                     title: "customer.blades.invite-customers.labels.message",

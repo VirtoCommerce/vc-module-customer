@@ -15,6 +15,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
             blade.currentEntity = {
                 message: null,
                 emails: [],
+                emailObjects: [],
                 roleIds: []
             };
 
@@ -65,6 +66,97 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
             };
         }
 
+        blade.emailAdding = function (tag) {
+
+            if (tag.text) {
+                // collect all possible emails from the text
+                let possibleEmails = tag.text.match(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b/g);
+
+                if (possibleEmails && possibleEmails.length) {
+                    // create a sting of emails separated by semicolon and pass to the tag text
+                    tag.text = possibleEmails.join(';');
+                    console.log("OUTPUT: " + tag.text);
+                }
+
+                // this will trigger the separation by semicolon and add multiple tags to the tag-input
+                return true;
+
+                /* alternative approach
+                // remove already existing emails in blade.currentEntity.emailObjects from the possible emails
+                if (possibleEmails) {
+                    // tags-input can delete the binding object 
+                    if (!blade.currentEntity.emailObjects) {
+                        blade.currentEntity.emailObjects = [];
+                    }
+
+                    possibleEmails = possibleEmails.filter(email => !blade.currentEntity.emailObjects.some(eo => eo.text.toLowerCase() === email.toLowerCase()));
+
+                    if (!possibleEmails.length) {
+                        return false;
+                    }
+
+                    // create a sting of emails separated by semicolon and pass to the tag text
+                    tag.text = possibleEmails.join(';');
+                    console.log("OUTPUT: " + tag.text);
+
+                    // this will trigger the separation by semicolon and add multiple tags to the tag-input
+                    return true;
+                }
+
+                return false;
+                */
+            }
+
+            return false;
+        }
+
+        blade.emailAdded = function (tag) {
+            console.log("INPUT: " + tag.text);
+
+            // tags-input can delete the binding object, for some reason 
+            if (!blade.currentEntity.emailObjects) {
+                blade.currentEntity.emailObjects = [];
+            }
+
+            // force remove the original emails if present
+            let index = _.findIndex(blade.currentEntity.emailObjects, function (obj) {
+                return obj.text === tag.text;
+            })
+
+            if (index >= 0) {
+                blade.currentEntity.emailObjects.splice(index, 1);
+            }
+
+            // check if email is email by regexp
+            const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+            // tag.text is either a single email or multiple emails separated by semicolon
+            // remove already existing emails in blade.currentEntity.emailObjects from the possible emails
+            let emails = tag.text
+                .split(';')
+                .map(e => e.trim())
+                .filter(e => e.length)
+                .filter(e => re.test(e))
+                .filter(e => !blade.currentEntity.emailObjects.some(eo => eo.text.toLowerCase() === e.toLowerCase()));
+
+            if (emails.length) {
+                emails.forEach(email => {
+                    let index = _.findIndex(blade.currentEntity.emailObjects, function (obj) {
+                        return obj.text === email;
+                    })
+
+                    if (index >= 0) {
+                        blade.currentEntity.emailObjects.splice(index, 1);
+                    }
+                });
+
+                // add multiple tags for each email
+                emails.forEach(email => {
+                    blade.currentEntity.emailObjects.push({ text: email });
+                });
+            }
+        }
+
         blade.selectStore = function (item) {
             blade.storeLanguages = [];
 
@@ -102,9 +194,9 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                 executeMethod: function () {
                     blade.isLoading = true;
 
-                    if (blade.currentEntity.emailsString) {
-                        blade.currentEntity.emails = blade.currentEntity.emailsString.split(/[\s,;]+/)
-                            .map(e => e.trim())
+                    if (blade.currentEntity.emailsObjects) {
+                        blade.currentEntity.emails = blade.currentEntity.emailsObjects
+                            .map(e => e.text.trim())
                             .filter(e => e.length);
                     }
 
@@ -135,12 +227,6 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                 canExecuteMethod: canSave
             }
         ];
-
-        $scope.sendInvites = function () {
-            blade.isLoading = true;
-
-
-        }
 
         initializeBlade();
     }]);
