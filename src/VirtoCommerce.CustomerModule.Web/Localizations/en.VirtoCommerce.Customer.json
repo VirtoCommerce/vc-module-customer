@@ -353,6 +353,10 @@
       "address-save": {
         "title": "Save changes",
         "message": "The address has been modified. Do you want to save changes?"
+      },
+      "invite-customers-success": {
+        "title": "Invite customers",
+        "message": "Invitation notifications have been queqed successfuly"
       }
     },
     "commands": {

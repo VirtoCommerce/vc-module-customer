@@ -20,7 +20,7 @@
 <script type="text/ng-template" id="invite-languages.html">
   <ui-scroll-drop-down ng-if="blade.languagesReloaded"
                        disabled="!blade.currentEntity.storeId"
-                       ng-model="blade.currentEntity.cultureName"
+                       ng-model="blade.currentEntity.language"
                        data="blade.fetchStoreLanguages()"
                        placeholder="'customer.blades.invite-customers.placeholders.language'">
   </ui-scroll-drop-down>
@@ -42,8 +42,8 @@
 </script>
 
 <script type="text/ng-template" id="invite-emails.html">
-  <tags-input ng-model="blade.currentEntity.emailObjects" ng-required="true"
-
+  <tags-input ng-model="blade.currentEntity.emailObjects"
+              ng-required="true"
               add-on-enter="true"
               on-tag-adding="blade.emailAdding($tag)"
               on-tag-added="blade.emailAdded($tag)"

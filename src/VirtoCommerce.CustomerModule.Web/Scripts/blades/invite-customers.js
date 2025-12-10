@@ -1,8 +1,8 @@
 angular.module('virtoCommerce.customerModule').controller('virtoCommerce.customerModule.inviteCustomersController', [
     '$scope', '$timeout',
-    'platformWebApp.bladeNavigationService', 'platformWebApp.metaFormsService',
+    'platformWebApp.bladeNavigationService', 'platformWebApp.metaFormsService', 'platformWebApp.dialogService',
     'virtoCommerce.customerModule.organizations', 'virtoCommerce.storeModule.stores', 'virtoCommerce.customerModule.customers',
-    function ($scope, $timeout, bladeNavigationService, metaFormsService, organizations, stores, customers) {
+    function ($scope, $timeout, bladeNavigationService, metaFormsService, dialogService, organizations, stores, customers) {
         var blade = $scope.blade;
         blade.title = 'customer.blades.invite-customers.title';
 
@@ -75,44 +75,16 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                 if (possibleEmails && possibleEmails.length) {
                     // create a sting of emails separated by semicolon and pass to the tag text
                     tag.text = possibleEmails.join(';');
-                    console.log("OUTPUT: " + tag.text);
                 }
 
                 // this will trigger the separation by semicolon and add multiple tags to the tag-input
                 return true;
-
-                /* alternative approach
-                // remove already existing emails in blade.currentEntity.emailObjects from the possible emails
-                if (possibleEmails) {
-                    // tags-input can delete the binding object 
-                    if (!blade.currentEntity.emailObjects) {
-                        blade.currentEntity.emailObjects = [];
-                    }
-
-                    possibleEmails = possibleEmails.filter(email => !blade.currentEntity.emailObjects.some(eo => eo.text.toLowerCase() === email.toLowerCase()));
-
-                    if (!possibleEmails.length) {
-                        return false;
-                    }
-
-                    // create a sting of emails separated by semicolon and pass to the tag text
-                    tag.text = possibleEmails.join(';');
-                    console.log("OUTPUT: " + tag.text);
-
-                    // this will trigger the separation by semicolon and add multiple tags to the tag-input
-                    return true;
-                }
-
-                return false;
-                */
             }
 
             return false;
         }
 
         blade.emailAdded = function (tag) {
-            console.log("INPUT: " + tag.text);
-
             // tags-input can delete the binding object, for some reason 
             if (!blade.currentEntity.emailObjects) {
                 blade.currentEntity.emailObjects = [];
@@ -165,7 +137,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
             });
 
             if (item.defaultLanguage) {
-                blade.currentEntity.cultureName = _.findWhere(blade.storeLanguages, { id: item.defaultLanguage });
+                blade.currentEntity.language = _.findWhere(blade.storeLanguages, { id: item.defaultLanguage });
             }
 
             reloadLanguages();
@@ -194,8 +166,8 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                 executeMethod: function () {
                     blade.isLoading = true;
 
-                    if (blade.currentEntity.emailsObjects) {
-                        blade.currentEntity.emails = blade.currentEntity.emailsObjects
+                    if (blade.currentEntity.emailObjects) {
+                        blade.currentEntity.emails = blade.currentEntity.emailObjects
                             .map(e => e.text.trim())
                             .filter(e => e.length);
                     }
@@ -204,10 +176,31 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                         blade.currentEntity.roleIds = [blade.currentEntity.roleId];
                     }
 
-                    customers.invite(blade.currentEntity,
+                    if (blade.currentEntity.language) {
+                        blade.currentEntity.cultureName = blade.currentEntity.language.id;     
+                    }
+
+                    blade.inviteEntity = angular.copy(blade.currentEntity);
+
+                    // clear exces properties
+                    delete blade.inviteEntity.emailObjects;
+                    delete blade.inviteEntity.roleId;
+                    delete blade.inviteEntity.language;
+
+                    customers.invite(blade.inviteEntity,
                         function (data) {
                             blade.isLoading = false;
-                            $scope.bladeClose();
+
+                            var successDialog = {
+                                id: 'successInviteCustomers',
+                                title: 'customer.dialogs.invite-customers-success.title',
+                                message: 'customer.dialogs.invite-customers-success.message',
+                                callback: function () {
+                                    blade.currentEntity.emailObjects = [];
+                                    blade.currentEntity.emails = [];
+                                }
+                            };
+                            dialogService.showSuccessDialog(successDialog);
                         },
                         function (error) {
                             let errorData = error;
