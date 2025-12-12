@@ -130,10 +130,6 @@ namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("StateProvince")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
                     b.Property<string>("Type")
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
