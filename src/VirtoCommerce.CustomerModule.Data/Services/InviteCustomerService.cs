@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
-using Pipelines.Sockets.Unofficial.Arenas;
 using VirtoCommerce.CustomerModule.Core.Extensions;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
@@ -222,12 +221,9 @@ public class InviteCustomerService : IInviteCustomerService
             return;
         }
 
-        foreach (var param in request.AdditionalParameters)
+        foreach (var param in request.AdditionalParameters.Where(param => !param.Value.IsNullOrEmpty()))
         {
-            if (!param.Value.IsNullOrEmpty())
-            {
-                notification.InviteUrl = $"{notification.InviteUrl}&{param.Key}={param.Value}";
-            }
+            notification.InviteUrl = $"{notification.InviteUrl}&{HttpUtility.UrlEncode(param.Key)}={HttpUtility.UrlEncode(param.Value)}";
         }
     }
 

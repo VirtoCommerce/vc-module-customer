@@ -565,7 +565,7 @@ angular.module(moduleName, [])
                     placeholder: "customer.blades.invite-customers.placeholders.message",
                     spanAllColumns: true,
                     valueType: "LongText"
-                }           
+                }
             ]);
 
             // invite customers toolbar button

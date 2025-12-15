@@ -6,7 +6,7 @@ public static class UrlExtensions
 {
     public static string TrimLastSlash(this string url)
     {
-        var result = url.EndsWith("/") ? url[..^1] : url;
+        var result = url.EndsWith('/') ? url[..^1] : url;
 
         return result;
     }
@@ -16,16 +16,21 @@ public static class UrlExtensions
     /// </summary>
     public static string NormalizeUrlSuffix(this string urlSuffix)
     {
+        if (urlSuffix == "/")
+        {
+            return urlSuffix;
+        }
+
         var result = new StringBuilder(urlSuffix);
 
         if (!string.IsNullOrEmpty(urlSuffix))
         {
-            if (!urlSuffix.StartsWith("/"))
+            if (!urlSuffix.StartsWith('/'))
             {
-                result.Insert(0, "/");
+                result.Insert(0, '/');
             }
 
-            if (urlSuffix.EndsWith("/"))
+            if (urlSuffix.EndsWith('/'))
             {
                 result.Remove(result.Length - 1, 1);
             }

@@ -46,19 +46,17 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
         }
 
         blade.fetchRoles = function () {
-            let promise = customers.availableRoles().$promise.then(function (response) {
+            const promise = customers.availableRoles().$promise.then(function (response) {
                 var results = response.results;
 
                 if (results.length && !blade.currentEntity.roleId) {
                     blade.currentEntity.roleId = results[0].id;
                 }
 
-                var result = {
+                return {
                     totalCount: response.totalCount,
                     results: results
                 };
-
-                return result;
             });
 
             return {
@@ -70,7 +68,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
 
             if (tag.text) {
                 // collect all possible emails from the text
-                let possibleEmails = tag.text.match(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b/g);
+                const possibleEmails = tag.text.match(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b/g);
 
                 if (possibleEmails && possibleEmails.length) {
                     // create a sting of emails separated by semicolon and pass to the tag text
@@ -91,12 +89,12 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
             }
 
             // force remove the original emails if present
-            let index = _.findIndex(blade.currentEntity.emailObjects, function (obj) {
+            const tagIndex = _.findIndex(blade.currentEntity.emailObjects, function (obj) {
                 return obj.text === tag.text;
             })
 
-            if (index >= 0) {
-                blade.currentEntity.emailObjects.splice(index, 1);
+            if (tagIndex >= 0) {
+                blade.currentEntity.emailObjects.splice(tagIndex, 1);
             }
 
             // check if email is email by regexp
@@ -104,7 +102,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
 
             // tag.text is either a single email or multiple emails separated by semicolon
             // remove already existing emails in blade.currentEntity.emailObjects from the possible emails
-            let emails = tag.text
+            const emails = tag.text
                 .split(';')
                 .map(e => e.trim())
                 .filter(e => e.length)
@@ -113,12 +111,12 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
 
             if (emails.length) {
                 emails.forEach(email => {
-                    let index = _.findIndex(blade.currentEntity.emailObjects, function (obj) {
+                    const emailIndex = _.findIndex(blade.currentEntity.emailObjects, function (obj) {
                         return obj.text === email;
                     })
 
-                    if (index >= 0) {
-                        blade.currentEntity.emailObjects.splice(index, 1);
+                    if (emailIndex >= 0) {
+                        blade.currentEntity.emailObjects.splice(emailIndex, 1);
                     }
                 });
 
@@ -177,7 +175,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                     }
 
                     if (blade.currentEntity.language) {
-                        blade.currentEntity.cultureName = blade.currentEntity.language.id;     
+                        blade.currentEntity.cultureName = blade.currentEntity.language.id;
                     }
 
                     blade.inviteEntity = angular.copy(blade.currentEntity);
