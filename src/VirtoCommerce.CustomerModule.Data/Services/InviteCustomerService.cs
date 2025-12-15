@@ -63,7 +63,7 @@ public class InviteCustomerService : IInviteCustomerService
             Errors = new List<InviteCustomerError>(),
         };
 
-        if (request == null || request.Emails.IsNullOrEmpty() == true)
+        if (request == null || request.Emails.IsNullOrEmpty())
         {
             return result;
         }
