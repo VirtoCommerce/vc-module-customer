@@ -83,7 +83,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
         }
 
         blade.emailAdded = function (tag) {
-            // tags-input can delete the binding object, for some reason 
+            // tags-input can delete the binding object, for some reason
             if (!blade.currentEntity.emailObjects) {
                 blade.currentEntity.emailObjects = [];
             }

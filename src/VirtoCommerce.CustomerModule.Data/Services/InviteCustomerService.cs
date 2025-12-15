@@ -98,6 +98,7 @@ public class InviteCustomerService : IInviteCustomerService
             }
 
             result.Errors.AddRange(identityResult.Errors.Select(MapInviteCustomerErrorError));
+            result.Succeeded |= identityResult.Succeeded;
 
             if (!identityResult.Succeeded)
             {
