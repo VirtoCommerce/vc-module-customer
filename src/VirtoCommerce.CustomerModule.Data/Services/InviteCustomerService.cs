@@ -63,7 +63,7 @@ public class InviteCustomerService : IInviteCustomerService
             Errors = new List<InviteCustomerError>(),
         };
 
-        if (request.Emails.IsNullOrEmpty())
+        if (request?.Emails.IsNullOrEmpty() == true)
         {
             return result;
         }
@@ -107,7 +107,7 @@ public class InviteCustomerService : IInviteCustomerService
 
             if (!identityResult.Succeeded)
             {
-                await _memberService.DeleteAsync(new[] { contact.Id });
+                await _memberService.DeleteAsync([contact.Id]);
 
                 if (user.Id != null)
                 {
