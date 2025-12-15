@@ -63,6 +63,11 @@ public class InviteCustomerService : IInviteCustomerService
             Errors = new List<InviteCustomerError>(),
         };
 
+        if (request.Emails.IsNullOrEmpty())
+        {
+            return result;
+        }
+
         using var userManager = _userManagerFactory();
 
         foreach (var email in request.Emails.Distinct())
