@@ -29,6 +29,8 @@ public class InviteCustomerService : IInviteCustomerService
     public virtual string InitialContactStatus => "Invited";
     public virtual string[] DefaultRoleIds => new[] { "org-employee", "purchasing-agent", "org-maintainer" };
 
+    public virtual string InvitationUrlSuffix => "/confirm-invitation";
+
     private readonly IMemberService _memberService;
     private readonly IStoreService _storeService;
     private readonly INotificationSearchService _notificationSearchService;
@@ -199,7 +201,9 @@ public class InviteCustomerService : IInviteCustomerService
             ? await _notificationSearchService.GetNotificationAsync<RegistrationInvitationEmailNotification>(new TenantIdentity(store.Id, nameof(Store)))
             : await _notificationSearchService.GetNotificationAsync<RegistrationInvitationCustomerEmailNotification>(new TenantIdentity(store.Id, nameof(Store)));
 
-        notification.InviteUrl = $"{store.Url.TrimLastSlash()}{request.UrlSuffix.NormalizeUrlSuffix()}?userId={user.Id}&email={HttpUtility.UrlEncode(user.Email)}&token={Uri.EscapeDataString(token)}";
+        var urlSuffix = string.IsNullOrEmpty(request.UrlSuffix) ? InvitationUrlSuffix : request.UrlSuffix;
+
+        notification.InviteUrl = $"{store.Url.TrimLastSlash()}{urlSuffix.NormalizeUrlSuffix()}?userId={user.Id}&email={HttpUtility.UrlEncode(user.Email)}&token={Uri.EscapeDataString(token)}";
 
         AddAdditionalParams(request, notification);
 
