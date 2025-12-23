@@ -1,25 +1,19 @@
+# Generate Migrations
 
-## Package manager 
-Add-Migration Initial -Context VirtoCommerce.CustomerModule.Data.Repositories.CustomerDbContext  -Verbose -OutputDir Migrations -Project VirtoCommerce.CustomerModule.Data.SqlServer -StartupProject VirtoCommerce.CustomerModule.Data.SqlServer  -Debug
-
-
-
-### Entity Framework Core Commands
+## Install CLI tools for Entity Framework Core
+```cmd
+dotnet tool install --global dotnet-ef --version 8.0.0
 ```
 
-dotnet tool install --global dotnet-ef --version 6.*
+or update
+
+```cmd
+dotnet tool update --global dotnet-ef --version 8.0.0
 ```
 
-**Generate Migrations**
+## Add Migration
+Select Data.<Provider> folder and run following command for each provider:
 
+```cmd
+dotnet ef migrations add <migration-name>
 ```
-dotnet ef migrations add Initial -- "{connection string}"
-dotnet ef migrations add Update1 -- "{connection string}"
-dotnet ef migrations add Update2 -- "{connection string}"
-```
-
-etc..
-
-**Apply Migrations**
-
-`dotnet ef database update -- "{connection string}"`
