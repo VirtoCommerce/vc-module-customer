@@ -97,7 +97,7 @@ public class InviteCustomerService : IInviteCustomerService
                     else
                     {
                         result.Errors.AddRange(await AssignUserRoles(user, request.RoleIds));
-                        await SendNotificationAsync(request, store, email);
+                        result.Errors.AddRange(await SendNotificationAsync(request, store, email));
                     }
                 }
             }
@@ -194,8 +194,10 @@ public class InviteCustomerService : IInviteCustomerService
         return errors;
     }
 
-    protected virtual async Task SendNotificationAsync(InviteCustomerRequest request, Store store, string email)
+    protected virtual async Task<List<InviteCustomerError>> SendNotificationAsync(InviteCustomerRequest request, Store store, string email)
     {
+        var errors = new List<InviteCustomerError>();
+
         using var userManager = _userManagerFactory();
 
         var user = await userManager.FindByEmailAsync(email);
@@ -205,6 +207,11 @@ public class InviteCustomerService : IInviteCustomerService
         RegistrationInvitationNotificationBase notification = !string.IsNullOrEmpty(request.OrganizationId)
             ? await _notificationSearchService.GetNotificationAsync<RegistrationInvitationEmailNotification>(new TenantIdentity(store.Id, nameof(Store)))
             : await _notificationSearchService.GetNotificationAsync<RegistrationInvitationCustomerEmailNotification>(new TenantIdentity(store.Id, nameof(Store)));
+
+        if (notification == null)
+        {
+            errors.Add(new InviteCustomerError { Code = "NotificationNotFound", Description = "Notification not found" });
+        }
 
         var urlSuffix = string.IsNullOrEmpty(request.UrlSuffix) ? InvitationUrlSuffix : request.UrlSuffix;
 
@@ -218,6 +225,8 @@ public class InviteCustomerService : IInviteCustomerService
         notification.LanguageCode = request.CultureName ?? store.DefaultLanguage;
 
         await _notificationSender.ScheduleSendNotificationAsync(notification);
+
+        return errors;
     }
 
     protected virtual void AddAdditionalParams(InviteCustomerRequest request, RegistrationInvitationNotificationBase notification)
