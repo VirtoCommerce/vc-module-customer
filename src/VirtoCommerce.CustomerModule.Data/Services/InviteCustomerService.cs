@@ -211,6 +211,7 @@ public class InviteCustomerService : IInviteCustomerService
         if (notification == null)
         {
             errors.Add(new InviteCustomerError { Code = "NotificationNotFound", Description = "Notification not found" });
+            return;
         }
 
         var urlSuffix = string.IsNullOrEmpty(request.UrlSuffix) ? InvitationUrlSuffix : request.UrlSuffix;
