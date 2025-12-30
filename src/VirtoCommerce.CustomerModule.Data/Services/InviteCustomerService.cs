@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.CustomerModule.Core.Extensions;
@@ -33,7 +32,6 @@ public class InviteCustomerService : IInviteCustomerService
     private readonly IStoreService _storeService;
     private readonly INotificationSearchService _notificationSearchService;
     private readonly INotificationSender _notificationSender;
-    private readonly IWebHostEnvironment _environment;
     private readonly Func<UserManager<ApplicationUser>> _userManagerFactory;
     private readonly Func<RoleManager<Role>> _roleManagerFactory;
 
@@ -42,7 +40,6 @@ public class InviteCustomerService : IInviteCustomerService
         IStoreService storeService,
         INotificationSearchService notificationSearchService,
         INotificationSender notificationSender,
-        IWebHostEnvironment environment,
         Func<UserManager<ApplicationUser>> userManagerFactory,
         Func<RoleManager<Role>> roleManagerFactory)
     {
@@ -50,7 +47,6 @@ public class InviteCustomerService : IInviteCustomerService
         _storeService = storeService;
         _notificationSearchService = notificationSearchService;
         _notificationSender = notificationSender;
-        _environment = environment;
         _userManagerFactory = userManagerFactory;
         _roleManagerFactory = roleManagerFactory;
     }
@@ -64,6 +60,11 @@ public class InviteCustomerService : IInviteCustomerService
 
         if (request == null || request.Emails.IsNullOrEmpty())
         {
+            result.Errors.Add(new InviteCustomerError
+            {
+                Code = "InvalidRequest",
+                Description = "Request or Emails list is empty",
+            });
             return result;
         }
 
