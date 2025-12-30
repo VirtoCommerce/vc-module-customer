@@ -190,7 +190,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                             blade.isLoading = false;
 
                             if (data.errors && data.errors.length) {
-                                let errorData = {
+                                const errorData = {
                                     status: $translate.instant('customer.blades.invite-customers.title'),
                                     statusText: $translate.instant('customer.blades.invite-customers.labels.error'),
                                     data: {
