@@ -75,29 +75,15 @@ public class InviteCustomerService : IInviteCustomerService
         }
 
         // store validation
-        var store = await _storeService.GetByIdAsync(request.StoreId);
-        if (store == null)
+        var storeResult = await GetStoreAsync(request.StoreId);
+        if (storeResult.Errors.Count != 0)
         {
-            result.Errors.Add(new InviteCustomerError
-            {
-                Code = "StoreNotFound",
-                Description = $"Store '{request.StoreId}' not found",
-                Parameter = request.StoreId,
-            });
+            result.Errors.AddRange(storeResult.Errors);
 
             return result;
         }
-        else if (string.IsNullOrEmpty(store.Url) || string.IsNullOrEmpty(store.Email))
-        {
-            result.Errors.Add(new InviteCustomerError
-            {
-                Code = "StoreNotConfigured",
-                Description = $"Store '{request.StoreId}' has invalid URL or email",
-                Parameter = request.StoreId,
-            });
 
-            return result;
-        }
+        var store = storeResult.Store;
 
         // roles validation
         var rolesResult = await GetRolesAsync(request.RoleIds);
@@ -107,8 +93,6 @@ public class InviteCustomerService : IInviteCustomerService
 
             return result;
         }
-
-        var roleNames = rolesResult.Roles.Select(x => x.NormalizedName).ToArray();
 
         // notification validation
         var notificationResult = await TryGetNotification(request, store);
@@ -211,6 +195,39 @@ public class InviteCustomerService : IInviteCustomerService
         user.Roles = roles.ToList();
 
         return user;
+    }
+
+    protected virtual async Task<StoreResult> GetStoreAsync(string storeId)
+    {
+        var result = new StoreResult();
+
+        var store = await _storeService.GetByIdAsync(storeId);
+        if (store == null)
+        {
+            result.Errors.Add(new InviteCustomerError
+            {
+                Code = "StoreNotFound",
+                Description = $"Store 'storeId' not found",
+                Parameter = storeId,
+            });
+
+            return result;
+        }
+        else if (string.IsNullOrEmpty(store.Url) || string.IsNullOrEmpty(store.Email))
+        {
+            result.Errors.Add(new InviteCustomerError
+            {
+                Code = "StoreNotConfigured",
+                Description = $"Store '{storeId}' has invalid URL or email",
+                Parameter = storeId,
+            });
+
+            return result;
+        }
+
+        result.Store = store;
+
+        return result;
     }
 
     protected virtual async Task<RolesResult> GetRolesAsync(string[] roleIds)
@@ -372,6 +389,12 @@ public class InviteCustomerService : IInviteCustomerService
         customerRole.Description = role.Description;
 
         return customerRole;
+    }
+
+    protected class StoreResult
+    {
+        public Store Store { get; set; }
+        public List<InviteCustomerError> Errors { get; set; } = [];
     }
 
     protected class RolesResult
