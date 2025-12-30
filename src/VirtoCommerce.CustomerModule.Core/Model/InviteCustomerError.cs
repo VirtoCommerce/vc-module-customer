@@ -1,4 +1,4 @@
-﻿namespace VirtoCommerce.CustomerModule.Core.Model;
+namespace VirtoCommerce.CustomerModule.Core.Model;
 
 public class InviteCustomerError
 {
@@ -8,14 +8,5 @@ public class InviteCustomerError
 
     public string Parameter { get; set; }
 
-    public InviteCustomerError()
-    {
-    }
-
-    public InviteCustomerError(string code, string description, string parameter)
-    {
-        Code = code;
-        Description = description;
-        Parameter = parameter;
-    }
+    public string Email { get; set; }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using VirtoCommerce.CustomerModule.Core.Extensions;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
@@ -34,6 +35,7 @@ public class InviteCustomerService : IInviteCustomerService
     private readonly INotificationSender _notificationSender;
     private readonly Func<UserManager<ApplicationUser>> _userManagerFactory;
     private readonly Func<RoleManager<Role>> _roleManagerFactory;
+    private readonly ILogger<InviteCustomerService> _logger;
 
     public InviteCustomerService(
         IMemberService memberService,
@@ -41,7 +43,8 @@ public class InviteCustomerService : IInviteCustomerService
         INotificationSearchService notificationSearchService,
         INotificationSender notificationSender,
         Func<UserManager<ApplicationUser>> userManagerFactory,
-        Func<RoleManager<Role>> roleManagerFactory)
+        Func<RoleManager<Role>> roleManagerFactory,
+        ILogger<InviteCustomerService> logger)
     {
         _memberService = memberService;
         _storeService = storeService;
@@ -49,6 +52,7 @@ public class InviteCustomerService : IInviteCustomerService
         _notificationSender = notificationSender;
         _userManagerFactory = userManagerFactory;
         _roleManagerFactory = roleManagerFactory;
+        _logger = logger;
     }
 
     public async Task<InviteCustomerResult> InviteCustomerAsyc(InviteCustomerRequest request, CancellationToken cancellationToken = default)
@@ -58,6 +62,7 @@ public class InviteCustomerService : IInviteCustomerService
             Errors = new List<InviteCustomerError>(),
         };
 
+        // request validation
         if (request == null || request.Emails.IsNullOrEmpty())
         {
             result.Errors.Add(new InviteCustomerError
@@ -65,58 +70,89 @@ public class InviteCustomerService : IInviteCustomerService
                 Code = "InvalidRequest",
                 Description = "Request or Emails list is empty",
             });
+
+            return result;
+        }
+
+        // store validation
+        var store = await _storeService.GetByIdAsync(request.StoreId);
+        if (store == null)
+        {
+            result.Errors.Add(new InviteCustomerError
+            {
+                Code = "StoreNotFound",
+                Description = $"Store '{request.StoreId}' not found",
+                Parameter = request.StoreId,
+            });
+
+            return result;
+        }
+        else if (string.IsNullOrEmpty(store.Url) || string.IsNullOrEmpty(store.Email))
+        {
+            result.Errors.Add(new InviteCustomerError
+            {
+                Code = "StoreNotConfigured",
+                Description = $"Store '{request.StoreId}' has invalid URL or email",
+                Parameter = request.StoreId,
+            });
+
+            return result;
+        }
+
+        // roles validation
+        var rolesResult = await GetRolesAsync(request.RoleIds);
+        if (rolesResult.Errors.Count != 0)
+        {
+            result.Errors.AddRange(rolesResult.Errors);
+
+            return result;
+        }
+
+        var roleNames = rolesResult.Roles.Select(x => x.NormalizedName).ToArray();
+
+        // notification validation
+        var notificationResult = await TryGetNotification(request, store);
+        if (notificationResult.Errors.Count != 0)
+        {
+            result.Errors.AddRange(notificationResult.Errors);
+
             return result;
         }
 
         using var userManager = _userManagerFactory();
-
         foreach (var email in request.Emails.Distinct())
         {
-            var contact = CreateContact(request, email);
+            var existingUser = await userManager.FindByEmailAsync(email) ?? await userManager.FindByNameAsync(email);
+            if (existingUser != null)
+            {
+                result.Errors.Add(new InviteCustomerError
+                {
+                    Code = "UserAlreadyExists",
+                    Description = $"User with email '{email}' already exists",
+                    Parameter = email,
+                    Email = email,
+                });
 
+                continue;
+            }
+
+            var contact = CreateContact(request, email);
             await _memberService.SaveChangesAsync([contact]);
 
-            var user = CreateUser(request, contact, email);
+            var user = CreateUser(request, contact, email, rolesResult.Roles);
             var identityResult = await userManager.CreateAsync(user);
 
             if (identityResult.Succeeded)
             {
-                var store = await _storeService.GetByIdAsync(user.StoreId);
-                if (store == null)
+                var notificationErrors = await SendNotificationAsync(notificationResult.Notification, userManager, user, request, store);
+                if (notificationErrors.Count != 0)
                 {
-                    var error = new InviteCustomerError
-                    {
-                        Code = "StoreNotFound",
-                        Description = $"Store '{user.StoreId}' not found",
-                        Parameter = user.StoreId,
-                    };
-
-                    result.Errors.Add(error);
                     identityResult = IdentityResult.Failed();
-                }
-                else
-                {
-                    if (string.IsNullOrEmpty(store.Url) || string.IsNullOrEmpty(store.Email))
-                    {
-                        var error = new InviteCustomerError
-                        {
-                            Code = "StoreNotConfigured",
-                            Description = $"Store '{user.StoreId}' has invalid URL or email",
-                            Parameter = user.StoreId,
-                        };
-
-                        result.Errors.Add(error);
-                        identityResult = IdentityResult.Failed();
-                    }
-                    else
-                    {
-                        result.Errors.AddRange(await AssignUserRoles(user, request.RoleIds));
-                        result.Errors.AddRange(await SendNotificationAsync(request, store, email));
-                    }
+                    result.Errors.AddRange(notificationErrors);
                 }
             }
 
-            result.Errors.AddRange(identityResult.Errors.Select(MapInviteCustomerErrorError));
+            result.Errors.AddRange(identityResult.Errors.Select(x => MapInviteCustomerErrorError(x, user.UserName)));
             result.Succeeded |= identityResult.Succeeded;
 
             if (!identityResult.Succeeded)
@@ -129,12 +165,6 @@ public class InviteCustomerService : IInviteCustomerService
                 }
             }
         }
-
-        // remove duplicate errors by code and parameter
-        result.Errors = result.Errors
-            .GroupBy(e => (e.Code, e.Parameter))
-            .Select(g => g.First())
-            .ToList();
 
         return result;
     }
@@ -168,7 +198,7 @@ public class InviteCustomerService : IInviteCustomerService
         return contact;
     }
 
-    protected virtual ApplicationUser CreateUser(InviteCustomerRequest request, Contact contact, string email)
+    protected virtual ApplicationUser CreateUser(InviteCustomerRequest request, Contact contact, string email, List<Role> roles)
     {
         var user = AbstractTypeFactory<ApplicationUser>.TryCreateInstance();
 
@@ -178,83 +208,130 @@ public class InviteCustomerService : IInviteCustomerService
         user.StoreId = request.StoreId;
         user.UserType = InitialUserType;
         user.LockoutEnd = DateTimeOffset.MaxValue;
+        user.Roles = roles.ToList();
 
         return user;
     }
 
-    protected virtual async Task<List<InviteCustomerError>> AssignUserRoles(ApplicationUser user, string[] roleIds)
+    protected virtual async Task<RolesResult> GetRolesAsync(string[] roleIds)
     {
-        var errors = new List<InviteCustomerError>();
-        var roles = new List<Role>();
+        var result = new RolesResult();
 
         if (roleIds.IsNullOrEmpty())
         {
-            return errors;
+            return result;
         }
 
         using var roleManager = _roleManagerFactory();
-        using var userManager = _userManagerFactory();
 
         foreach (var roleId in roleIds)
         {
             var role = await roleManager.FindByIdAsync(roleId) ?? await roleManager.FindByNameAsync(roleId);
             if (role != null)
             {
-                roles.Add(role);
+
+                result.Roles.Add(role);
             }
             else
             {
-                errors.Add(new InviteCustomerError { Code = "Role not found", Description = $"Role '{roleId}' not found", Parameter = roleId });
+                result.Errors.Add(new InviteCustomerError
+                {
+                    Code = "Role not found",
+                    Description = $"Role '{roleId}' not found",
+                    Parameter = roleId,
+                    Email = "Common",
+                });
+
+                return result;
             }
         }
 
-        var assignResult = await userManager.AddToRolesAsync(user, roles.Select(x => x.NormalizedName).ToArray());
-        errors.AddRange(assignResult.Errors.Select(MapInviteCustomerErrorError));
+        return result;
+    }
+
+    protected virtual async Task<List<InviteCustomerError>> AssignUserRoles(UserManager<ApplicationUser> userManager, ApplicationUser user, string[] roleNames)
+    {
+        var errors = new List<InviteCustomerError>();
+
+        if (roleNames.IsNullOrEmpty())
+        {
+            return errors;
+        }
+
+        var assignResult = await userManager.AddToRolesAsync(user, roleNames);
+
+        errors.AddRange(assignResult.Errors.Select(x => MapInviteCustomerErrorError(x, user.UserName)));
 
         return errors;
     }
 
-    protected virtual async Task<List<InviteCustomerError>> SendNotificationAsync(InviteCustomerRequest request, Store store, string email)
+    protected virtual async Task<NotificationResult> TryGetNotification(InviteCustomerRequest request, Store store)
     {
-        var errors = new List<InviteCustomerError>();
-
-        using var userManager = _userManagerFactory();
-
-        var user = await userManager.FindByEmailAsync(email);
-        var token = await userManager.GeneratePasswordResetTokenAsync(user);
+        var result = new NotificationResult();
 
         // take notification
         var notificationType = !string.IsNullOrEmpty(request.OrganizationId)
             ? typeof(RegistrationInvitationEmailNotification).Name
             : typeof(RegistrationInvitationCustomerEmailNotification).Name;
 
-        var notification = await _notificationSearchService.GetNotificationAsync(notificationType, new TenantIdentity(store.Id, nameof(Store))) as RegistrationInvitationNotificationBase;
+        var notification = await _notificationSearchService.GetNotificationAsync(notificationType, new TenantIdentity(store.Id, nameof(Store)));
+        var registrationNotification = notification?.Clone() as RegistrationInvitationNotificationBase;
 
-        if (notification == null)
+        if (registrationNotification == null)
         {
-            errors.Add(new InviteCustomerError
+            result.Errors.Add(new InviteCustomerError
             {
                 Code = "NotificationNotFound",
                 Description = "Notification not found",
                 Parameter = notificationType,
             });
-            return errors;
+            return result;
         }
 
-        var urlSuffix = string.IsNullOrEmpty(request.UrlSuffix) ? InvitationUrlSuffix : request.UrlSuffix;
+        result.Notification = registrationNotification;
 
-        notification.InviteUrl = $"{store.Url.TrimLastSlash()}{urlSuffix.NormalizeUrlSuffix()}?userId={user.Id}&email={HttpUtility.UrlEncode(user.Email)}&token={Uri.EscapeDataString(token)}";
+        return result;
+    }
 
-        AddAdditionalParams(request, notification);
+    protected virtual async Task<List<InviteCustomerError>> SendNotificationAsync(RegistrationInvitationNotificationBase notification,
+        UserManager<ApplicationUser> userManager,
+        ApplicationUser user,
+        InviteCustomerRequest request,
+        Store store)
+    {
+        try
+        {
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
 
-        notification.Message = request.Message;
-        notification.To = user.Email;
-        notification.From = store.Email;
-        notification.LanguageCode = request.CultureName ?? store.DefaultLanguage;
+            var urlSuffix = string.IsNullOrEmpty(request.UrlSuffix) ? InvitationUrlSuffix : request.UrlSuffix;
 
-        await _notificationSender.ScheduleSendNotificationAsync(notification);
+            notification.InviteUrl = $"{store.Url.TrimLastSlash()}{urlSuffix.NormalizeUrlSuffix()}?userId={user.Id}&email={HttpUtility.UrlEncode(user.Email)}&token={Uri.EscapeDataString(token)}";
 
-        return errors;
+            AddAdditionalParams(request, notification);
+
+            notification.Message = request.Message;
+            notification.To = user.Email;
+            notification.From = store.Email;
+            notification.LanguageCode = request.CultureName ?? store.DefaultLanguage;
+
+            await _notificationSender.ScheduleSendNotificationAsync(notification);
+
+            return [];
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending invitation notification to '{email}'", user.Email);
+
+            return
+            [
+                new InviteCustomerError
+                {
+                    Code = "NotificationSendError",
+                    Description = $"Error sending invitation notification to '{user.Email}'. Check Notification Feed.",
+                    Email = user.Email,
+                }
+            ];
+        }
     }
 
     protected virtual void AddAdditionalParams(InviteCustomerRequest request, RegistrationInvitationNotificationBase notification)
@@ -270,17 +347,18 @@ public class InviteCustomerService : IInviteCustomerService
         }
     }
 
-    protected virtual InviteCustomerError MapInviteCustomerErrorError(IdentityError error)
+    protected virtual InviteCustomerError MapInviteCustomerErrorError(IdentityError error, string email = null)
     {
         var result = AbstractTypeFactory<InviteCustomerError>.TryCreateInstance();
+
+        result.Code = error.Code;
+        result.Description = error.Description;
+        result.Email = email;
 
         if (error is CustomIdentityError customIdentityError)
         {
             result.Parameter = customIdentityError.Parameter?.ToString();
         }
-
-        result.Code = error.Code;
-        result.Description = error.Description;
 
         return result;
     }
@@ -294,5 +372,17 @@ public class InviteCustomerService : IInviteCustomerService
         customerRole.Description = role.Description;
 
         return customerRole;
+    }
+
+    protected class RolesResult
+    {
+        public List<Role> Roles { get; set; } = [];
+        public List<InviteCustomerError> Errors { get; set; } = [];
+    }
+
+    protected class NotificationResult
+    {
+        public RegistrationInvitationNotificationBase Notification { get; set; }
+        public List<InviteCustomerError> Errors { get; set; } = [];
     }
 }

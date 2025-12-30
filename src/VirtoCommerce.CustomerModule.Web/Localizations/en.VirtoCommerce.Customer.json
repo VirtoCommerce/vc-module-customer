@@ -272,7 +272,8 @@
           "organization": "Organization",
           "role": "Role",
           "emails": "Emails",
-          "message": "Message"
+          "message": "Message",
+          "error": "Invite error"
         },
         "placeholders": {
           "store": "Select store",
@@ -357,6 +358,10 @@
       "invite-customers-success": {
         "title": "Invite customers",
         "message": "Invitation notifications have been queqed successfuly"
+      },
+      "invite-customers-error": {
+        "title": "Invite customers",
+        "message": "Some invitations were not sent due to errors. View blade errors for details."
       }
     },
     "commands": {

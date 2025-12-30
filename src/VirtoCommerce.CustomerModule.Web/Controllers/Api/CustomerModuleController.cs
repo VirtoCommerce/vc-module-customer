@@ -340,12 +340,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         public async Task<ActionResult<InviteCustomerResult>> InviteCustomers([FromBody] InviteCustomerRequest request)
         {
             var result = await _inviteCustomerService.InviteCustomerAsyc(request);
-            if (result.Succeeded)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
+            return Ok(result);
         }
 
         [HttpGet]

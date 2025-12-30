@@ -1,8 +1,8 @@
 angular.module('virtoCommerce.customerModule').controller('virtoCommerce.customerModule.inviteCustomersController', [
-    '$scope', '$timeout',
+    '$scope', '$timeout', '$translate',
     'platformWebApp.bladeNavigationService', 'platformWebApp.metaFormsService', 'platformWebApp.dialogService',
     'virtoCommerce.customerModule.organizations', 'virtoCommerce.storeModule.stores', 'virtoCommerce.customerModule.customers',
-    function ($scope, $timeout, bladeNavigationService, metaFormsService, dialogService, organizations, stores, customers) {
+    function ($scope, $timeout, $translate, bladeNavigationService, metaFormsService, dialogService, organizations, stores, customers) {
         var blade = $scope.blade;
         blade.title = 'customer.blades.invite-customers.title';
 
@@ -189,34 +189,42 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                         function (data) {
                             blade.isLoading = false;
 
-                            var successDialog = {
-                                id: 'successInviteCustomers',
-                                title: 'customer.dialogs.invite-customers-success.title',
-                                message: 'customer.dialogs.invite-customers-success.message',
-                                callback: function () {
-                                    blade.currentEntity.emailObjects = [];
-                                    blade.currentEntity.emails = [];
-                                }
-                            };
-                            dialogService.showSuccessDialog(successDialog);
-                        },
-                        function (error) {
-                            let errorData = error;
-                            if (error.status === 400) {
+                            if (data.errors) {
                                 errorData = {
-                                    status: error.status,
-                                    statusText: error.statusText,
+                                    status: $translate.instant('customer.blades.invite-customers.title'),
+                                    statusText: $translate.instant('customer.blades.invite-customers.labels.error'),
                                     data: {
                                         errors: []
                                     }
                                 };
 
-                                if (error.data && Array.isArray(error.data.errors)) {
-                                   errorData.data.errors = error.data.errors.map(err => err.description);
+                                if (Array.isArray(data.errors)) {
+                                    errorData.data.errors = data.errors.map(err => err.description);
                                 }
-                            }
+                                bladeNavigationService.setError(errorData, blade);
 
-                            bladeNavigationService.setError(errorData, blade);
+                                var errorDialog = {
+                                    id: 'errosInviteCustomers',
+                                    title: 'customer.dialogs.invite-customers-error.title',
+                                    message: 'customer.dialogs.invite-customers-error.message'
+                                };
+                                dialogService.showErrorDialog(errorDialog);
+                            }
+                            else {
+                                var successDialog = {
+                                    id: 'successInviteCustomers',
+                                    title: 'customer.dialogs.invite-customers-success.title',
+                                    message: 'customer.dialogs.invite-customers-success.message',
+                                    callback: function () {
+                                        blade.currentEntity.emailObjects = [];
+                                        blade.currentEntity.emails = [];
+                                    }
+                                };
+                                dialogService.showSuccessDialog(successDialog);
+                            }
+                        },
+                        function (error) {
+                            bladeNavigationService.setError(error, blade);
                         })
                 },
                 canExecuteMethod: canSave
