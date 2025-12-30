@@ -207,9 +207,13 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                                     status: error.status,
                                     statusText: error.statusText,
                                     data: {
-                                        errors: error.data.errors.map(err => err.description)
+                                        errors: []
                                     }
                                 };
+
+                                if (error.data && Array.isArray(error.data.errors)) {
+                                   errorData.data.errors = error.data.errors.map(err => err.description);
+                                }
                             }
 
                             bladeNavigationService.setError(errorData, blade);

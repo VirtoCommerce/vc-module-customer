@@ -7,7 +7,6 @@ using System.Web;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using VirtoCommerce.CustomerModule.Core.Extensions;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
@@ -84,15 +83,29 @@ public class InviteCustomerService : IInviteCustomerService
                 var store = await _storeService.GetByIdAsync(user.StoreId);
                 if (store == null)
                 {
-                    var errors = _environment.IsDevelopment() ? new[] { new IdentityError { Code = "StoreNotFound", Description = "Store not found" } } : null;
-                    identityResult = IdentityResult.Failed(errors);
+                    var error = new InviteCustomerError
+                    {
+                        Code = "StoreNotFound",
+                        Description = $"Store '{user.StoreId}' not found",
+                        Parameter = user.StoreId,
+                    };
+
+                    result.Errors.Add(error);
+                    identityResult = IdentityResult.Failed();
                 }
                 else
                 {
                     if (string.IsNullOrEmpty(store.Url) || string.IsNullOrEmpty(store.Email))
                     {
-                        var errors = _environment.IsDevelopment() ? new[] { new IdentityError { Code = "StoreNotConfigured", Description = "Store has invalid URL or email" } } : null;
-                        identityResult = IdentityResult.Failed(errors);
+                        var error = new InviteCustomerError
+                        {
+                            Code = "StoreNotConfigured",
+                            Description = $"Store '{user.StoreId}' has invalid URL or email",
+                            Parameter = user.StoreId,
+                        };
+
+                        result.Errors.Add(error);
+                        identityResult = IdentityResult.Failed();
                     }
                     else
                     {
@@ -115,6 +128,12 @@ public class InviteCustomerService : IInviteCustomerService
                 }
             }
         }
+
+        // remove duplicate errors by code and parameter
+        result.Errors = result.Errors
+            .GroupBy(e => (e.Code, e.Parameter))
+            .Select(g => g.First())
+            .ToList();
 
         return result;
     }
@@ -204,13 +223,20 @@ public class InviteCustomerService : IInviteCustomerService
         var token = await userManager.GeneratePasswordResetTokenAsync(user);
 
         // take notification
-        RegistrationInvitationNotificationBase notification = !string.IsNullOrEmpty(request.OrganizationId)
-            ? await _notificationSearchService.GetNotificationAsync<RegistrationInvitationEmailNotification>(new TenantIdentity(store.Id, nameof(Store)))
-            : await _notificationSearchService.GetNotificationAsync<RegistrationInvitationCustomerEmailNotification>(new TenantIdentity(store.Id, nameof(Store)));
+        var notificationType = !string.IsNullOrEmpty(request.OrganizationId)
+            ? typeof(RegistrationInvitationEmailNotification).Name
+            : typeof(RegistrationInvitationCustomerEmailNotification).Name;
+
+        var notification = await _notificationSearchService.GetNotificationAsync(notificationType, new TenantIdentity(store.Id, nameof(Store))) as RegistrationInvitationNotificationBase;
 
         if (notification == null)
         {
-            errors.Add(new InviteCustomerError { Code = "NotificationNotFound", Description = "Notification not found" });
+            errors.Add(new InviteCustomerError
+            {
+                Code = "NotificationNotFound",
+                Description = "Notification not found",
+                Parameter = notificationType,
+            });
             return errors;
         }
 
