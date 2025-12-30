@@ -207,7 +207,7 @@ public class InviteCustomerService : IInviteCustomerService
             result.Errors.Add(new InviteCustomerError
             {
                 Code = "StoreNotFound",
-                Description = $"Store 'storeId' not found",
+                Description = $"Store '{storeId}' not found",
                 Parameter = storeId,
             });
 
