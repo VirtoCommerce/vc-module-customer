@@ -263,6 +263,31 @@
         "placeholders": {
           "status": "Välj ett värde"
         }
+      },
+      "invite-customers": {
+        "title": "Bjud in kunder",
+        "labels": {
+          "store": "Butik",
+          "language": "Språk",
+          "organization": "Organisation",
+          "role": "Roll",
+          "emails": "E-postadresser",
+          "message": "Meddelande",
+          "error": "Inbjudningsfel"
+        },
+        "placeholders": {
+          "store": "Välj butik",
+          "language": "Välj språk",
+          "organization": "Välj organisation",
+          "role": "Välj roll",
+          "emails": "Ange eller klistra in e-postadresser",
+          "subject": "Ange e-postämne",
+          "message": "Ange inbjudningsmeddelande",
+          "send-to": "Välj kunder"
+        },
+        "commands": {
+          "send-invitations": "Skicka inbjudningar"
+        }
       }
     },
     "widgets": {
@@ -329,7 +354,18 @@
       "address-save": {
         "title": "Spara ändringar",
         "message": "Adressen har ändrats. Vill du spara ändringarna?"
+      },
+      "invite-customers-success": {
+        "title": "Bjud in kunder",
+        "message": "Inbjudningsaviseringar har lagts i kö"
+      },
+      "invite-customers-error": {
+        "title": "Bjud in kunder",
+        "message": "Vissa inbjudningar skickades inte på grund av fel. Visa felinformation för detaljer."
       }
+    },
+    "commands": {
+      "invite-customers": "Bjud in kunder"
     }
   },
   "permissions": {

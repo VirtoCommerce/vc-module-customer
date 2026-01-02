@@ -117,6 +117,8 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<ICustomerPreferenceCrudService, CustomerPreferenceCrudService>();
             serviceCollection.AddTransient<ICustomerPreferenceSearchService, CustomerPreferenceSearchService>();
             serviceCollection.AddTransient<ICustomerPreferenceService, CustomerPreferenceService>();
+
+            serviceCollection.AddTransient<IInviteCustomerService, InviteCustomerService>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)

@@ -263,7 +263,32 @@
         "placeholders": {
           "status": "Please select a value"
         }
-      }
+      },
+      "invite-customers": {
+        "title": "Invite customers",
+        "labels": {
+          "store": "Store",
+          "language": "Language",
+          "organization": "Organization",
+          "role": "Role",
+          "emails": "Emails",
+          "message": "Message",
+          "error": "Invite error"
+        },
+        "placeholders": {
+          "store": "Select store",
+          "language": "Select language",
+          "organization": "Select organization",
+          "role": "Select role",
+          "emails": "Enter or paste the emails",
+          "subject": "Enter email subject",
+          "message": "Enter invite message",
+          "send-to": "Select customers"
+        },
+        "commands": {
+          "send-invitations": "Send invitations"
+          }
+        }
     },
     "widgets": {
       "address-list": {
@@ -329,8 +354,19 @@
       "address-save": {
         "title": "Save changes",
         "message": "The address has been modified. Do you want to save changes?"
+      },
+      "invite-customers-success": {
+        "title": "Invite customers",
+        "message": "Invitation notifications have been queqed successfuly"
+      },
+      "invite-customers-error": {
+        "title": "Invite customers",
+        "message": "Some invitations were not sent due to errors"
       }
-    }
+    },
+    "commands": {
+      "invite-customers": "Invite customers"
+    } 
   },
   "permissions": {
     "customer:access": "Open customer menu",

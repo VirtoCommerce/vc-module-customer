@@ -263,6 +263,31 @@
         "placeholders": {
           "status": "Por favor seleccione un valor"
         }
+      },
+      "invite-customers": {
+        "title": "Invitar clientes",
+        "labels": {
+          "store": "Tienda",
+          "language": "Idioma",
+          "organization": "Organización",
+          "role": "Rol",
+          "emails": "Correos electrónicos",
+          "message": "Mensaje",
+          "error": "Error de invitación"
+        },
+        "placeholders": {
+          "store": "Seleccionar tienda",
+          "language": "Seleccionar idioma",
+          "organization": "Seleccionar organización",
+          "role": "Seleccionar rol",
+          "emails": "Introducir o pegar los correos electrónicos",
+          "subject": "Introducir asunto del correo",
+          "message": "Introducir mensaje de invitación",
+          "send-to": "Seleccionar clientes"
+        },
+        "commands": {
+          "send-invitations": "Enviar invitaciones"
+        }
       }
     },
     "widgets": {
@@ -329,7 +354,18 @@
       "address-save": {
         "title": "Guardar cambios",
         "message": "La dirección ha sido modificada. ¿Desea guardar los cambios?"
+      },
+      "invite-customers-success": {
+        "title": "Invitar clientes",
+        "message": "Las notificaciones de invitación se han puesto en cola correctamente"
+      },
+      "invite-customers-error": {
+        "title": "Invitar clientes",
+        "message": "Algunas invitaciones no se enviaron debido a errores"
       }
+    },
+    "commands": {
+      "invite-customers": "Invitar clientes"
     }
   },
   "permissions": {

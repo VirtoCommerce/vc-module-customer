@@ -263,6 +263,31 @@
         "placeholders": {
           "status": "Wybierz wartość"
         }
+      },
+      "invite-customers": {
+        "title": "Zaproś klientów",
+        "labels": {
+          "store": "Sklep",
+          "language": "Język",
+          "organization": "Organizacja",
+          "role": "Rola",
+          "emails": "Adresy e-mail",
+          "message": "Wiadomość",
+          "error": "Błąd zaproszenia"
+        },
+        "placeholders": {
+          "store": "Wybierz sklep",
+          "language": "Wybierz język",
+          "organization": "Wybierz organizację",
+          "role": "Wybierz rolę",
+          "emails": "Wprowadź lub wklej adresy e-mail",
+          "subject": "Wprowadź temat e-maila",
+          "message": "Wprowadź wiadomość zaproszenia",
+          "send-to": "Wybierz klientów"
+        },
+        "commands": {
+          "send-invitations": "Wyślij zaproszenia"
+        }
       }
     },
     "widgets": {
@@ -329,7 +354,18 @@
       "address-save": {
         "title": "Zapisz zmiany",
         "message": "Adres został zmodyfikowany. Czy chcesz zapisać zmiany?"
+      },
+      "invite-customers-success": {
+        "title": "Zaproś klientów",
+        "message": "Powiadomienia o zaproszeniach zostały pomyślnie dodane do kolejki"
+      },
+      "invite-customers-error": {
+        "title": "Zaproś klientów",
+        "message": "Niektóre zaproszenia nie zostały wysłane z powodu błędów"
       }
+    },
+    "commands": {
+      "invite-customers": "Zaproś klientów"
     }
   },
   "permissions": {
