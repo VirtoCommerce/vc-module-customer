@@ -263,6 +263,31 @@
         "placeholders": {
           "status": "値を選択してください"
         }
+      },
+      "invite-customers": {
+        "title": "顧客を招待",
+        "labels": {
+          "store": "店舗",
+          "language": "言語",
+          "organization": "組織",
+          "role": "役割",
+          "emails": "メールアドレス",
+          "message": "メッセージ",
+          "error": "招待エラー"
+        },
+        "placeholders": {
+          "store": "店舗を選択",
+          "language": "言語を選択",
+          "organization": "組織を選択",
+          "role": "役割を選択",
+          "emails": "メールアドレスを入力または貼り付け",
+          "subject": "メール件名を入力",
+          "message": "招待メッセージを入力",
+          "send-to": "顧客を選択"
+        },
+        "commands": {
+          "send-invitations": "招待を送信"
+        }
       }
     },
     "widgets": {
@@ -329,7 +354,18 @@
       "address-save": {
         "title": "変更を保存",
         "message": "住所が変更されました。変更を保存しますか？"
+      },
+      "invite-customers-success": {
+        "title": "顧客を招待",
+        "message": "招待通知は正常にキューに追加されました"
+      },
+      "invite-customers-error": {
+        "title": "顧客を招待",
+        "message": "エラーのため、一部の招待が送信されませんでした"
       }
+    },
+    "commands": {
+      "invite-customers": "顧客を招待"
     }
   },
   "permissions": {

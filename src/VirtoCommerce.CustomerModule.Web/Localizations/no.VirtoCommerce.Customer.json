@@ -263,6 +263,31 @@
         "placeholders": {
           "status": "Velg en verdi"
         }
+      },
+      "invite-customers": {
+        "title": "Inviter kunder",
+        "labels": {
+          "store": "Butikk",
+          "language": "Språk",
+          "organization": "Organisasjon",
+          "role": "Rolle",
+          "emails": "E-poster",
+          "message": "Melding",
+          "error": "Invitasjonsfeil"
+        },
+        "placeholders": {
+          "store": "Velg butikk",
+          "language": "Velg språk",
+          "organization": "Velg organisasjon",
+          "role": "Velg rolle",
+          "emails": "Skriv inn eller lim inn e-postadresser",
+          "subject": "Skriv inn e-postemne",
+          "message": "Skriv inn invitasjonsmelding",
+          "send-to": "Velg kunder"
+        },
+        "commands": {
+          "send-invitations": "Send invitasjoner"
+        }
       }
     },
     "widgets": {
@@ -329,7 +354,18 @@
       "address-save": {
         "title": "Lagre endringer",
         "message": "Adressen har blitt endret. Vil du lagre endringene?"
+      },
+      "invite-customers-success": {
+        "title": "Inviter kunder",
+        "message": "Invitasjonsvarsler er lagt i kø"
+      },
+      "invite-customers-error": {
+        "title": "Inviter kunder",
+        "message": "Noen invitasjoner ble ikke sendt på grunn av feil"
       }
+    },
+    "commands": {
+      "invite-customers": "Inviter kunder"
     }
   },
   "permissions": {

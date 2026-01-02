@@ -263,6 +263,31 @@
         "placeholders": {
           "status": "Bitte wählen Sie einen Wert"
         }
+      },
+      "invite-customers": {
+        "title": "Kunden einladen",
+        "labels": {
+          "store": "Shop",
+          "language": "Sprache",
+          "organization": "Organisation",
+          "role": "Rolle",
+          "emails": "E-Mails",
+          "message": "Nachricht",
+          "error": "Fehler beim Einladen"
+        },
+        "placeholders": {
+          "store": "Shop auswählen",
+          "language": "Sprache auswählen",
+          "organization": "Organisation auswählen",
+          "role": "Rolle auswählen",
+          "emails": "E-Mail-Adressen eingeben oder einfügen",
+          "subject": "E-Mail-Betreff eingeben",
+          "message": "Einladungsnachricht eingeben",
+          "send-to": "Kunden auswählen"
+        },
+        "commands": {
+          "send-invitations": "Einladungen senden"
+        }
       }
     },
     "widgets": {
@@ -329,7 +354,18 @@
       "address-save": {
         "title": "Änderungen speichern",
         "message": "Die Adresse wurde geändert. Möchten Sie die Änderungen speichern?"
+      },
+      "invite-customers-success": {
+        "title": "Kunden einladen",
+        "message": "Einladungsbenachrichtigungen wurden erfolgreich in die Warteschlange gestellt"
+      },
+      "invite-customers-error": {
+        "title": "Kunden einladen",
+        "message": "Einige Einladungen konnten aufgrund von Fehlern nicht gesendet werden"
       }
+    },
+    "commands": {
+      "invite-customers": "Kunden einladen"
     }
   },
   "permissions": {

@@ -263,6 +263,31 @@
         "placeholders": {
           "status": "Por favor, selecione um valor"
         }
+      },
+      "invite-customers": {
+        "title": "Convidar clientes",
+        "labels": {
+          "store": "Loja",
+          "language": "Idioma",
+          "organization": "Organização",
+          "role": "Função",
+          "emails": "E-mails",
+          "message": "Mensagem",
+          "error": "Erro de convite"
+        },
+        "placeholders": {
+          "store": "Selecionar loja",
+          "language": "Selecionar idioma",
+          "organization": "Selecionar organização",
+          "role": "Selecionar função",
+          "emails": "Inserir ou colar os e-mails",
+          "subject": "Inserir assunto do e-mail",
+          "message": "Inserir mensagem de convite",
+          "send-to": "Selecionar clientes"
+        },
+        "commands": {
+          "send-invitations": "Enviar convites"
+        }
       }
     },
     "widgets": {
@@ -329,6 +354,17 @@
       "address-save": {
         "title": "Salvar alterações",
         "message": "O endereço foi modificado. Deseja salvar as alterações?"
+      },
+      "invite-customers-success": {
+        "title": "Convidar clientes",
+        "message": "As notificações de convite foram enfileiradas com sucesso"
+      },
+      "invite-customers-error": {
+        "title": "Convidar clientes",
+        "message": "Alguns convites não foram enviados devido a erros"
+      },
+      "commands": {
+        "invite-customers": "Convidar clientes"
       }
     }
   },

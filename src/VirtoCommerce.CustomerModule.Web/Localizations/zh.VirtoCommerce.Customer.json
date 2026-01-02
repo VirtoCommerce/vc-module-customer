@@ -263,6 +263,31 @@
         "placeholders": {
           "status": "请选择一个值"
         }
+      },
+      "invite-customers": {
+        "title": "邀请客户",
+        "labels": {
+          "store": "商店",
+          "language": "语言",
+          "organization": "组织",
+          "role": "角色",
+          "emails": "电子邮件",
+          "message": "消息",
+          "error": "邀请错误"
+        },
+        "placeholders": {
+          "store": "选择商店",
+          "language": "选择语言",
+          "organization": "选择组织",
+          "role": "选择角色",
+          "emails": "输入或粘贴电子邮件",
+          "subject": "输入邮件主题",
+          "message": "输入邀请消息",
+          "send-to": "选择客户"
+        },
+        "commands": {
+          "send-invitations": "发送邀请"
+        }
       }
     },
     "widgets": {
@@ -329,7 +354,18 @@
       "address-save": {
         "title": "保存更改",
         "message": "地址已被修改。您想保存更改吗？"
+      },
+      "invite-customers-success": {
+        "title": "邀请客户",
+        "message": "邀请通知已成功加入队列"
+      },
+      "invite-customers-error": {
+        "title": "邀请客户",
+        "message": "由于错误，部分邀请未能发送"
       }
+    },
+    "commands": {
+      "invite-customers": "邀请客户"
     }
   },
   "permissions": {
