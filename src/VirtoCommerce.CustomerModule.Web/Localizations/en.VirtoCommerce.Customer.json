@@ -361,7 +361,7 @@
       },
       "invite-customers-error": {
         "title": "Invite customers",
-        "message": "Some invitations were not sent due to errors. View blade errors for details."
+        "message": "Some invitations were not sent due to errors"
       }
     },
     "commands": {

@@ -263,6 +263,31 @@
         "placeholders": {
           "status": "Veuillez sélectionner une valeur"
         }
+      },
+      "invite-customers": {
+        "title": "Inviter des clients",
+        "labels": {
+          "store": "Boutique",
+          "language": "Langue",
+          "organization": "Organisation",
+          "role": "Rôle",
+          "emails": "E-mails",
+          "message": "Message",
+          "error": "Erreur d’invitation"
+        },
+        "placeholders": {
+          "store": "Sélectionner une boutique",
+          "language": "Sélectionner une langue",
+          "organization": "Sélectionner une organisation",
+          "role": "Sélectionner un rôle",
+          "emails": "Saisir ou coller les e-mails",
+          "subject": "Saisir l’objet de l’e-mail",
+          "message": "Saisir le message d’invitation",
+          "send-to": "Sélectionner des clients"
+        },
+        "commands": {
+          "send-invitations": "Envoyer les invitations"
+        }
       }
     },
     "widgets": {
@@ -329,7 +354,18 @@
       "address-save": {
         "title": "Enregistrer les modifications",
         "message": "L'adresse a été modifiée. Voulez-vous enregistrer les modifications ?"
+      },
+      "invite-customers-success": {
+        "title": "Inviter des clients",
+        "message": "Les notifications d’invitation ont été mises en file d’attente avec succès"
+      },
+      "invite-customers-error": {
+        "title": "Inviter des clients",
+        "message": "Certaines invitations n’ont pas été envoyées en raison d’erreurs"
       }
+    },
+    "commands": {
+      "invite-customers": "Inviter des clients"
     }
   },
   "permissions": {

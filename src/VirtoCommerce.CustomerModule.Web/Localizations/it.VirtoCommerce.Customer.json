@@ -263,6 +263,31 @@
         "placeholders": {
           "status": "Seleziona un valore"
         }
+      },
+      "invite-customers": {
+        "title": "Invita clienti",
+        "labels": {
+          "store": "Negozio",
+          "language": "Lingua",
+          "organization": "Organizzazione",
+          "role": "Ruolo",
+          "emails": "Email",
+          "message": "Messaggio",
+          "error": "Errore di invito"
+        },
+        "placeholders": {
+          "store": "Seleziona negozio",
+          "language": "Seleziona lingua",
+          "organization": "Seleziona organizzazione",
+          "role": "Seleziona ruolo",
+          "emails": "Inserisci o incolla le email",
+          "subject": "Inserisci oggetto dell’email",
+          "message": "Inserisci messaggio di invito",
+          "send-to": "Seleziona clienti"
+        },
+        "commands": {
+          "send-invitations": "Invia inviti"
+        }
       }
     },
     "widgets": {
@@ -329,7 +354,18 @@
       "address-save": {
         "title": "Salva modifiche",
         "message": "L'indirizzo è stato modificato. Vuoi salvare le modifiche?"
+      },
+      "invite-customers-success": {
+        "title": "Invita clienti",
+        "message": "Le notifiche di invito sono state messe in coda con successo"
+      },
+      "invite-customers-error": {
+        "title": "Invita clienti",
+        "message": "Alcuni inviti non sono stati inviati a causa di errori"
       }
+    },
+    "commands": {
+      "invite-customers": "Invita clienti"
     }
   },
   "permissions": {

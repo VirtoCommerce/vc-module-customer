@@ -263,6 +263,31 @@
         "placeholders": {
           "status": "Valitse arvo"
         }
+      },
+      "invite-customers": {
+        "title": "Kutsu asiakkaita",
+        "labels": {
+          "store": "Myymälä",
+          "language": "Kieli",
+          "organization": "Organisaatio",
+          "role": "Rooli",
+          "emails": "Sähköpostit",
+          "message": "Viesti",
+          "error": "Kutsuvirhe"
+        },
+        "placeholders": {
+          "store": "Valitse myymälä",
+          "language": "Valitse kieli",
+          "organization": "Valitse organisaatio",
+          "role": "Valitse rooli",
+          "emails": "Syötä tai liitä sähköpostiosoitteet",
+          "subject": "Syötä sähköpostin aihe",
+          "message": "Syötä kutsuviesti",
+          "send-to": "Valitse asiakkaat"
+        },
+        "commands": {
+          "send-invitations": "Lähetä kutsut"
+        }
       }
     },
     "widgets": {
@@ -329,7 +354,18 @@
       "address-save": {
         "title": "Tallenna muutokset",
         "message": "Osoitetta on muokattu. Haluatko tallentaa muutokset?"
+      },
+      "invite-customers-success": {
+        "title": "Kutsu asiakkaita",
+        "message": "Kutsuilmoitukset on lisätty jonoon onnistuneesti"
+      },
+      "invite-customers-error": {
+        "title": "Kutsu asiakkaita",
+        "message": "Osa kutsuista ei lähetetty virheiden vuoksi. Katso lisätietoja virheistä."
       }
+    },
+    "commands": {
+      "invite-customers": "Kutsu asiakkaita"
     }
   },
   "permissions": {
