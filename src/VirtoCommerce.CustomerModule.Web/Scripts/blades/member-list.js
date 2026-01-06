@@ -100,10 +100,12 @@ angular.module('virtoCommerce.customerModule')
             };
 
             function deleteList(selection) {
+                console.log(selection);
                 var dialog = {
                     id: "confirmDeleteItem",
                     title: "customer.dialogs.members-delete.title",
                     message: "customer.dialogs.members-delete.message",
+                    data: selection,
                     callback: function (remove) {
                         if (remove) {
                             bladeNavigationService.closeChildrenBlades(blade, function () {
@@ -126,7 +128,8 @@ angular.module('virtoCommerce.customerModule')
                         }
                     }
                 };
-                dialogService.showConfirmationDialog(dialog);
+                dialogService.showDialog(dialog, 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/confirm-remove-bunch.html', 'platformWebApp.confirmDialogController', 'cssClass');
+                //dialogService.showConfirmationDialog(dialog);
             }
 
             blade.setSelectedNode = function (listItem) {
