@@ -106,11 +106,10 @@ angular.module('virtoCommerce.customerModule')
                     map.set(memberType, (map.get(memberType) ?? 0) + 1);
                 }
 
-                const stat = Array.from(map, ([memberType, count]) => ({
+                return Array.from(map, ([memberType, count]) => ({
                     memberType,
                     count
                 }));
-                return stat;
             }
 
             function deleteList(data) {
