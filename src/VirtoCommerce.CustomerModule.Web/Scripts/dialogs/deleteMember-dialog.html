@@ -26,7 +26,7 @@
   </div>
 
   <div class="modal-window__footer">
-    <button class="modal-window__footer-button modal-window__footer-button--primary-outline" ng-disabled="enteredText !== 'yes'" ng-click="yes()">{{ 'platform.commands.confirm' | translate }}</button>
+    <button class="modal-window__footer-button modal-window__footer-button--primary-outline" ng-disabled="enteredText !== 'yes'" ng-class="{'__disabled': 'yes' !== enteredText}" ng-click="yes()">{{ 'platform.commands.confirm' | translate }}</button>
     <button class="modal-window__footer-button modal-window__footer-button--primary" ng-click="cancel()">{{ 'platform.commands.cancel' | translate }}</button>
   </div>
 </div>
