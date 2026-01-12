@@ -323,10 +323,10 @@
         "title": "Bekräfta radering",
         "warning": "VARNING: Denna ändring är permanent och kan inte ångras. Att tillämpa denna ändring kan leda till dataförlust.",
         "message": "Följande data kommer att tas bort:",
-        "Vendor": "{{count}} leverantörer",
-        "Contact": "{{count}} kontakter",
-        "Employee": "{{count}} anställda",
-        "Organization": "{{count}} organisationer",
+        "Vendor": "{{count}} leverantör(er)",
+        "Contact": "{{count}} kontakt(er)",
+        "Employee": "{{count}} anställd(a)",
+        "Organization": "{{count}} organisation(er)",
         "instruction": "Skriv \"yes\" för att ta bort:"
       },
       "unknown-member-type": {

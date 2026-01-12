@@ -323,10 +323,10 @@
         "title": "Potwierdź usunięcie",
         "warning": "OSTRZEŻENIE: Ta zmiana jest trwała i nie można jej cofnąć. Zastosowanie tej zmiany może spowodować utratę danych.",
         "message": "Następujące dane zostaną usunięte:",
-        "Vendor": "{{count}} dostawców",
-        "Contact": "{{count}} kontakty",
-        "Employee": "{{count}} pracowników",
-        "Organization": "{{count}} organizacji",
+        "Vendor": "{{count}} dostawca(ów)",
+        "Contact": "{{count}} kontakt(y)",
+        "Employee": "{{count}} pracownik(ów)",
+        "Organization": "{{count}} organizacja(e)",
         "instruction": "Wpisz „yes”, aby usunąć:"
       },
       "unknown-member-type": {

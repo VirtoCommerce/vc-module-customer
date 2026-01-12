@@ -323,10 +323,10 @@
         "title": "Bekreft sletting",
         "warning": "ADVARSEL: Denne endringen er permanent og kan ikke angres. Å bruke denne endringen kan føre til tap av data.",
         "message": "Følgende data vil bli slettet:",
-        "Vendor": "{{count}} leverandører",
-        "Contact": "{{count}} kontakter",
-        "Employee": "{{count}} ansatte",
-        "Organization": "{{count}} organisasjoner",
+        "Vendor": "{{count}} leverandør(er)",
+        "Contact": "{{count}} kontakt(er)",
+        "Employee": "{{count}} ansatt(e)",
+        "Organization": "{{count}} organisasjon(er)",
         "instruction": "Skriv \"yes\" for å slette:"
       },
       "unknown-member-type": {

@@ -323,10 +323,10 @@
         "title": "Vahvista poisto",
         "warning": "VAROITUS: Tämä muutos on pysyvä eikä sitä voi perua. Muutoksen toteuttaminen voi johtaa tietojen menetykseen.",
         "message": "Seuraavat tiedot poistetaan:",
-        "Vendor": "{{count}} toimittajaa",
-        "Contact": "{{count}} yhteystietoa",
-        "Employee": "{{count}} työntekijää",
-        "Organization": "{{count}} organisaatiota",
+        "Vendor": "{{count}} toimittaja(a)",
+        "Contact": "{{count}} yhteystieto(a)",
+        "Employee": "{{count}} työntekijä(ä)",
+        "Organization": "{{count}} organisaatio(ta)",
         "instruction": "Kirjoita 'yes' poistaaksesi:"
       },
       "unknown-member-type": {

@@ -323,10 +323,10 @@
         "title": "Confirmer la suppression",
         "warning": "AVERTISSEMENT : Cette modification est permanente et ne peut pas être annulée. L’application de cette modification peut entraîner une perte de données.",
         "message": "Les données suivantes seront supprimées :",
-        "Vendor": "{{count}} fournisseurs",
-        "Contact": "{{count}} contacts",
-        "Employee": "{{count}} employés",
-        "Organization": "{{count}} organisations",
+        "Vendor": "{{count}} fournisseur(s)",
+        "Contact": "{{count}} contact(s)",
+        "Employee": "{{count}} employé(s)",
+        "Organization": "{{count}} organisation(s)",
         "instruction": "Tapez « yes » pour supprimer :"
       },
       "unknown-member-type": {

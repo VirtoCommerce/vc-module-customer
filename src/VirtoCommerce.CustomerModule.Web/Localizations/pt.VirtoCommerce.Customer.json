@@ -323,10 +323,10 @@
         "title": "Confirmar exclusão",
         "warning": "AVISO: Esta alteração é permanente e não pode ser desfeita. A aplicação desta alteração pode resultar na perda de dados.",
         "message": "Os seguintes dados serão eliminados:",
-        "Vendor": "{{count}} fornecedores",
-        "Contact": "{{count}} contactos",
-        "Employee": "{{count}} colaboradores",
-        "Organization": "{{count}} organizações",
+        "Vendor": "{{count}} fornecedor(es)",
+        "Contact": "{{count}} contacto(s)",
+        "Employee": "{{count}} colaborador(es)",
+        "Organization": "{{count}} organização(ões)",
         "instruction": "Escreva \"yes\" para eliminar:"
       },
       "unknown-member-type": {

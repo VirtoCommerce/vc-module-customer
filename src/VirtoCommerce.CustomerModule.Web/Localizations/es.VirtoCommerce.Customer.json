@@ -323,10 +323,10 @@
         "title": "Confirmar eliminación",
         "warning": "ADVERTENCIA: Este cambio es permanente y no se puede deshacer. Aplicar este cambio puede provocar la pérdida de datos.",
         "message": "Se eliminarán los siguientes datos:",
-        "Vendor": "{{count}} proveedores",
-        "Contact": "{{count}} contactos",
-        "Employee": "{{count}} empleados",
-        "Organization": "{{count}} organizaciones",
+        "Vendor": "{{count}} proveedor(es)",
+        "Contact": "{{count}} contacto(s)",
+        "Employee": "{{count}} empleado(s)",
+        "Organization": "{{count}} organización(es)",
         "instruction": "Escriba 'yes' para eliminar:"
       },
       "unknown-member-type": {
