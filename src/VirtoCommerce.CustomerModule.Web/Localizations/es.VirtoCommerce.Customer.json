@@ -296,7 +296,13 @@
     "dialogs": {
       "members-delete": {
         "title": "Confirmar eliminación",
-        "message": "¿Está seguro de que desea eliminar la(s) empresa(s) o contacto(s) seleccionados?"
+        "warning": "ADVERTENCIA: Este cambio es permanente y no se puede deshacer. Aplicar este cambio puede provocar la pérdida de datos.",
+        "message": "Se eliminarán los siguientes datos:",
+        "Vendor": "{{count}} proveedores",
+        "Contact": "{{count}} contactos",
+        "Employee": "{{count}} empleados",
+        "Organization": "{{count}} organizaciones",
+        "instruction": "Escriba 'yes' para eliminar:"
       },
       "unknown-member-type": {
         "title": "Error",

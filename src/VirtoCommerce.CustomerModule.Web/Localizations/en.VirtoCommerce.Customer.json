@@ -296,7 +296,13 @@
     "dialogs": {
       "members-delete": {
         "title": "Confirm delete",
-        "message": "Are you sure you want to delete the selected company(ies) or contact(s)?"
+        "warning": "WARNING: This change is permanent and cannot be undone. Applying this change may result in data loss",
+        "message": "The following data will be deleted:",
+        "Vendor": "{{count}} vendors",
+        "Contact": "{{count}} contacts",
+        "Employee": "{{count}} employees",
+        "Organization": "{{count}} organizations",
+        "instruction": "Type 'yes' to delete:"
       },
       "unknown-member-type": {
         "title": "Error",

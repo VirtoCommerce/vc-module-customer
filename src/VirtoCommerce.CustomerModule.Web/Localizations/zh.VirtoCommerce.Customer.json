@@ -296,7 +296,13 @@
     "dialogs": {
       "members-delete": {
         "title": "确认删除",
-        "message": "您确定要删除所选的公司或联系人吗？"
+        "warning": "警告：此更改是永久性的，无法撤销。应用此更改可能会导致数据丢失。",
+        "message": "以下数据将被删除：",
+        "Vendor": "{{count}} 个供应商",
+        "Contact": "{{count}} 个联系人",
+        "Employee": "{{count}} 名员工",
+        "Organization": "{{count}} 个组织",
+        "instruction": "请输入“yes”以删除："
       },
       "unknown-member-type": {
         "title": "错误",

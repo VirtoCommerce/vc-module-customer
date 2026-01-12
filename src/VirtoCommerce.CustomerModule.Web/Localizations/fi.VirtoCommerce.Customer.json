@@ -296,7 +296,13 @@
     "dialogs": {
       "members-delete": {
         "title": "Vahvista poisto",
-        "message": "Oletko varma, että haluat poistaa valitut yritykset tai yhteystiedot?"
+        "warning": "VAROITUS: Tämä muutos on pysyvä eikä sitä voi perua. Muutoksen toteuttaminen voi johtaa tietojen menetykseen.",
+        "message": "Seuraavat tiedot poistetaan:",
+        "Vendor": "{{count}} toimittajaa",
+        "Contact": "{{count}} yhteystietoa",
+        "Employee": "{{count}} työntekijää",
+        "Organization": "{{count}} organisaatiota",
+        "instruction": "Kirjoita 'yes' poistaaksesi:"
       },
       "unknown-member-type": {
         "title": "Virhe",

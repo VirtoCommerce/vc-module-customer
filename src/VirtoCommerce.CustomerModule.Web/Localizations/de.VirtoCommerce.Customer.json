@@ -296,7 +296,13 @@
     "dialogs": {
       "members-delete": {
         "title": "Löschen bestätigen",
-        "message": "Sind Sie sicher, dass Sie die ausgewählten Unternehmen oder Kontakte löschen möchten?"
+        "warning": "WARNUNG: Diese Änderung ist dauerhaft und kann nicht rückgängig gemacht werden. Das Anwenden dieser Änderung kann zu Datenverlust führen.",
+        "message": "Die folgenden Daten werden gelöscht:",
+        "Vendor": "{{count}} Anbieter",
+        "Contact": "{{count}} Kontakte",
+        "Employee": "{{count}} Mitarbeiter",
+        "Organization": "{{count}} Organisationen",
+        "instruction": "Geben Sie 'yes' ein, um zu löschen:"
       },
       "unknown-member-type": {
         "title": "Fehler",

@@ -296,7 +296,13 @@
     "dialogs": {
       "members-delete": {
         "title": "Potwierdź usunięcie",
-        "message": "Czy na pewno chcesz usunąć wybraną firmę lub kontakt?"
+        "warning": "OSTRZEŻENIE: Ta zmiana jest trwała i nie można jej cofnąć. Zastosowanie tej zmiany może spowodować utratę danych.",
+        "message": "Następujące dane zostaną usunięte:",
+        "Vendor": "{{count}} dostawców",
+        "Contact": "{{count}} kontakty",
+        "Employee": "{{count}} pracowników",
+        "Organization": "{{count}} organizacji",
+        "instruction": "Wpisz „yes”, aby usunąć:"
       },
       "unknown-member-type": {
         "title": "Błąd",

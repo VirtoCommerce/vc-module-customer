@@ -99,18 +99,30 @@ angular.module('virtoCommerce.customerModule')
                 deleteList([data]);
             };
 
-            function deleteList(selection) {
-                console.log(selection);
+            function getStat(data) {
+                const map = new Map();
+
+                for (const { memberType } of data) {
+                    map.set(memberType, (map.get(memberType) ?? 0) + 1);
+                }
+
+                const stat = Array.from(map, ([memberType, count]) => ({
+                    memberType,
+                    count
+                }));
+                return stat;
+            }
+
+            function deleteList(data) {
+                const stat = getStat(data);
                 var dialog = {
                     id: "confirmDeleteItem",
-                    title: "customer.dialogs.members-delete.title",
-                    message: "customer.dialogs.members-delete.message",
-                    data: selection,
+                    stat: stat,
                     callback: function (remove) {
                         if (remove) {
                             bladeNavigationService.closeChildrenBlades(blade, function () {
                                 blade.isLoading = true;
-                                var memberIds = _.pluck(selection, 'id');
+                                var memberIds = _.pluck(data, 'id');
 
                                 if (($scope.gridApi != undefined) && $scope.gridApi.selection.getSelectAllState()) {
                                     var searchCriteria = getSearchCriteria();
@@ -128,8 +140,9 @@ angular.module('virtoCommerce.customerModule')
                         }
                     }
                 };
-                dialogService.showDialog(dialog, 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/confirm-remove-bunch.html', 'platformWebApp.confirmDialogController', 'cssClass');
-                //dialogService.showConfirmationDialog(dialog);
+                dialogService.showDialog(dialog,
+                    'Modules/$(VirtoCommerce.Customer)/Scripts/dialogs/deleteMember-dialog.html',
+                    'platformWebApp.confirmDialogController');
             }
 
             blade.setSelectedNode = function (listItem) {
