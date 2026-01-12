@@ -17,8 +17,9 @@ namespace VirtoCommerce.CustomerModule.Core
                 public const string Access = "customer:access";
                 public const string Update = "customer:update";
                 public const string Delete = "customer:delete";
+                public const string Invite = "customer:invite";
 
-                public static string[] AllPermissions { get; } = { Read, Create, Access, Update, Delete };
+                public static string[] AllPermissions { get; } = { Read, Create, Access, Update, Delete, Invite };
             }
 
             public static class Claims
