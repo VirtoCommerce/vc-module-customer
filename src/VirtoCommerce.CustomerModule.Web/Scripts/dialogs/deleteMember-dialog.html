@@ -15,7 +15,7 @@
       <div class="modal-window__dialog-message">{{ 'customer.dialogs.members-delete.message' | translate }}</div>
       <div class="modal-window__dialog-message">
         <ul>
-          <li ng-repeat="item in stat">{{'customer.dialogs.members-delete.' + item.memberType | translate: { count: (item.count | number:0) } }}</li>
+          <li ng-repeat="item in data">{{'customer.dialogs.members-delete.' + item.memberType | translate: { count: (item.count | number:0) } }}</li>
         </ul>
       </div>
       <div class="modal-window__dialog-message">{{ 'customer.dialogs.members-delete.instruction' | translate }}</div>

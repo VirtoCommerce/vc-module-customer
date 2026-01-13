@@ -99,7 +99,7 @@ angular.module('virtoCommerce.customerModule')
                 deleteList([data]);
             };
 
-            function getStat(data) {
+            function getDeleteItemsInfo(data) {
                 const map = new Map();
 
                 for (const { memberType } of data) {
@@ -113,10 +113,10 @@ angular.module('virtoCommerce.customerModule')
             }
 
             function deleteList(data) {
-                const stat = getStat(data);
+                const deleteItemsInfo = getDeleteItemsInfo(data);
                 var dialog = {
                     id: "confirmDeleteItem",
-                    stat: stat,
+                    data: deleteItemsInfo,
                     callback: function (remove) {
                         if (remove) {
                             bladeNavigationService.closeChildrenBlades(blade, function () {
