@@ -321,7 +321,13 @@
     "dialogs": {
       "members-delete": {
         "title": "Bekräfta radering",
-        "message": "Är du säker på att du vill radera de valda företagen eller kontakterna?"
+        "warning": "VARNING: Denna ändring är permanent och kan inte ångras. Att tillämpa denna ändring kan leda till dataförlust.",
+        "message": "Följande data kommer att tas bort:",
+        "Vendor": "{{count}} leverantör(er)",
+        "Contact": "{{count}} kontakt(er)",
+        "Employee": "{{count}} anställd(a)",
+        "Organization": "{{count}} organisation(er) och allt innehåll som finns i dem",
+        "instruction": "Skriv \"yes\" för att ta bort:"
       },
       "unknown-member-type": {
         "title": "Fel",
