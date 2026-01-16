@@ -321,7 +321,13 @@
     "dialogs": {
       "members-delete": {
         "title": "Conferma eliminazione",
-        "message": "Sei sicuro di voler eliminare l'azienda o il contatto selezionato?"
+        "warning": "AVVISO: Questa modifica è permanente e non può essere annullata. L’applicazione di questa modifica può comportare la perdita di dati.",
+        "message": "I seguenti dati verranno eliminati:",
+        "Vendor": "{{count}} fornitore(i)",
+        "Contact": "{{count}} contatto(i)",
+        "Employee": "{{count}} dipendente(i)",
+        "Organization": "{{count}} organizzazione(i) e tutto il contenuto in esse contenuto",
+        "instruction": "Digita \"yes\" per eliminare:"
       },
       "unknown-member-type": {
         "title": "Errore",

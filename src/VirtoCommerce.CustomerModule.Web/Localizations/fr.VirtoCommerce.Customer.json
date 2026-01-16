@@ -321,7 +321,13 @@
     "dialogs": {
       "members-delete": {
         "title": "Confirmer la suppression",
-        "message": "Êtes-vous sûr de vouloir supprimer l'entreprise ou le contact sélectionné ?"
+        "warning": "AVERTISSEMENT : Cette modification est permanente et ne peut pas être annulée. L’application de cette modification peut entraîner une perte de données.",
+        "message": "Les données suivantes seront supprimées :",
+        "Vendor": "{{count}} fournisseur(s)",
+        "Contact": "{{count}} contact(s)",
+        "Employee": "{{count}} employé(s)",
+        "Organization": "{{count}} organisation(s) ainsi que tout le contenu qu’elles contiennent",
+        "instruction": "Tapez « yes » pour supprimer :"
       },
       "unknown-member-type": {
         "title": "Erreur",
