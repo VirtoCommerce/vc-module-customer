@@ -1,0 +1,32 @@
+<div class="modal-window">
+  <div class="modal-window__header modal-window__header--error">
+    <div class="modal-window__title">{{ 'customer.dialogs.members-delete.title' | translate: titleValues}}</div>
+    <button class="modal-window__header-button modal-window__header-button--no-bg" ng-click="cancel()" title="{{ 'platform.commands.cancel' | translate }}">
+      <span class="fa fa-times" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <div class="modal-window__body">
+    <div class="modal-window__icon-container">
+      <img class="modal-window__dialog-icon" src="/images/dialogs/icon-error.svg" alt="">
+    </div>
+    <div class="modal-window__message-container">
+      <div class="modal-window__dialog-message"><b>{{ 'customer.dialogs.members-delete.warning' | translate }}</b></div>
+      <div class="modal-window__dialog-message">{{ 'customer.dialogs.members-delete.message' | translate }}</div>
+      <div class="modal-window__dialog-message">
+        <ul>
+          <li ng-repeat="item in data">{{'customer.dialogs.members-delete.' + item.memberType | translate: { count: (item.count | number:0) } }}</li>
+        </ul>
+      </div>
+      <div class="modal-window__dialog-message">{{ 'customer.dialogs.members-delete.instruction' | translate }}</div>
+      <div class="form-input __mini">
+        <input ng-model="enteredText" ng-keyup="$event.which === 13 && 'yes' === enteredText && yes()" ng-trim="false" />
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-window__footer">
+    <button class="modal-window__footer-button modal-window__footer-button--primary-outline" ng-disabled="enteredText !== 'yes'" ng-class="{'__disabled': 'yes' !== enteredText}" ng-click="yes()">{{ 'platform.commands.confirm' | translate }}</button>
+    <button class="modal-window__footer-button modal-window__footer-button--primary" ng-click="cancel()">{{ 'platform.commands.cancel' | translate }}</button>
+  </div>
+</div>
