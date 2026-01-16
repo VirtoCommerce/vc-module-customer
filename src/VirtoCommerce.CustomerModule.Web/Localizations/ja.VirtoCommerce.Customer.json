@@ -326,7 +326,7 @@
         "Vendor": "{{count}} 件のベンダー",
         "Contact": "{{count}} 件の連絡先",
         "Employee": "{{count}} 人の従業員",
-        "Organization": "{{count}} 件の組織",
+        "Organization": "{{count}} 件の組織およびそれらに含まれるすべてのコンテンツ",
         "instruction": "削除するには「yes」と入力してください:"
       },
       "unknown-member-type": {

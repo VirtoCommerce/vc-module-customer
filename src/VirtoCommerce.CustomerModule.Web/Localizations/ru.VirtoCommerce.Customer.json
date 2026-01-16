@@ -326,7 +326,7 @@
         "Vendor": "{{count}} поставщик(ов)",
         "Contact": "{{count}} контакт(ов)",
         "Employee": "{{count}} сотрудник(ов)",
-        "Organization": "{{count}} организация(й)",
+        "Organization": "{{count}} организация(й) и всё содержимое внутри",
         "instruction": "Введите «yes», чтобы удалить:"
       },
       "unknown-member-type": {

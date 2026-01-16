@@ -326,7 +326,7 @@
         "Vendor": "{{count}} leverantör(er)",
         "Contact": "{{count}} kontakt(er)",
         "Employee": "{{count}} anställd(a)",
-        "Organization": "{{count}} organisation(er)",
+        "Organization": "{{count}} organisation(er) och allt innehåll som finns i dem",
         "instruction": "Skriv \"yes\" för att ta bort:"
       },
       "unknown-member-type": {

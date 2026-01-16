@@ -326,7 +326,7 @@
         "Vendor": "{{count}} Anbieter(in)",
         "Contact": "{{count}} Kontakt(e)",
         "Employee": "{{count}} Mitarbeiter(in)",
-        "Organization": "{{count}} Organisation(en)",
+        "Organization": "{{count}} Organisation(en) und sämtliche darin enthaltenen Inhalte",
         "instruction": "Geben Sie 'yes' ein, um zu löschen:"
       },
       "unknown-member-type": {

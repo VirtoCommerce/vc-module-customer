@@ -326,7 +326,7 @@
         "Vendor": "{{count}} 个供应商",
         "Contact": "{{count}} 个联系人",
         "Employee": "{{count}} 名员工",
-        "Organization": "{{count}} 个组织",
+        "Organization": "{{count}} 个组织及其包含的所有内容",
         "instruction": "请输入“yes”以删除："
       },
       "unknown-member-type": {

@@ -326,7 +326,7 @@
         "Vendor": "{{count}} dostawca(ów)",
         "Contact": "{{count}} kontakt(y)",
         "Employee": "{{count}} pracownik(ów)",
-        "Organization": "{{count}} organizacja(e)",
+        "Organization": "{{count}} organizacja(e) oraz cała zawartość w nich zawarta",
         "instruction": "Wpisz „yes”, aby usunąć:"
       },
       "unknown-member-type": {

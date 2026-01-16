@@ -326,7 +326,7 @@
         "Vendor": "{{count}} toimittaja(a)",
         "Contact": "{{count}} yhteystieto(a)",
         "Employee": "{{count}} työntekijä(ä)",
-        "Organization": "{{count}} organisaatio(ta)",
+        "Organization": "{{count}} organisaatio(ta) ja kaikki niihin sisältyvä sisältö",
         "instruction": "Kirjoita 'yes' poistaaksesi:"
       },
       "unknown-member-type": {
