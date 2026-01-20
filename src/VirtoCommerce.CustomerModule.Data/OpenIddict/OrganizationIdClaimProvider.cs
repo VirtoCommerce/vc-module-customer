@@ -22,7 +22,7 @@ public class OrganizationIdClaimProvider(IMemberService memberService) : ITokenC
 
     private async Task<string> GetOrganizationId(TokenRequestContext context)
     {
-        var organizationId = context.Request.GetParameter(Parameters.OrganizationId)?.Value?.ToString();
+        var organizationId = context.Request.GetParameter(Parameters.OrganizationId)?.ToString();
         if (!string.IsNullOrEmpty(organizationId))
         {
             return organizationId;
