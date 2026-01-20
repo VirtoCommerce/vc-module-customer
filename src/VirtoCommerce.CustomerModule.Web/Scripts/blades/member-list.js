@@ -99,16 +99,29 @@ angular.module('virtoCommerce.customerModule')
                 deleteList([data]);
             };
 
-            function deleteList(selection) {
+            function getDeleteItemsInfo(data) {
+                const map = new Map();
+
+                for (const { memberType } of data) {
+                    map.set(memberType, (map.get(memberType) ?? 0) + 1);
+                }
+
+                return Array.from(map, ([memberType, count]) => ({
+                    memberType,
+                    count
+                }));
+            }
+
+            function deleteList(data) {
+                const deleteItemsInfo = getDeleteItemsInfo(data);
                 var dialog = {
                     id: "confirmDeleteItem",
-                    title: "customer.dialogs.members-delete.title",
-                    message: "customer.dialogs.members-delete.message",
+                    data: deleteItemsInfo,
                     callback: function (remove) {
                         if (remove) {
                             bladeNavigationService.closeChildrenBlades(blade, function () {
                                 blade.isLoading = true;
-                                var memberIds = _.pluck(selection, 'id');
+                                var memberIds = _.pluck(data, 'id');
 
                                 if (($scope.gridApi != undefined) && $scope.gridApi.selection.getSelectAllState()) {
                                     var searchCriteria = getSearchCriteria();
@@ -126,7 +139,9 @@ angular.module('virtoCommerce.customerModule')
                         }
                     }
                 };
-                dialogService.showConfirmationDialog(dialog);
+                dialogService.showDialog(dialog,
+                    'Modules/$(VirtoCommerce.Customer)/Scripts/dialogs/deleteMember-dialog.html',
+                    'platformWebApp.confirmDialogController');
             }
 
             blade.setSelectedNode = function (listItem) {
