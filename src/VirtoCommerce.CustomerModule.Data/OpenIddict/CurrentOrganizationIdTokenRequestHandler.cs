@@ -19,7 +19,7 @@ public class CurrentOrganizationIdTokenRequestHandler(IMemberService memberServi
             return;
         }
 
-        var organizationId = context.Request.GetParameter(Parameters.OrganizationId)?.Value?.ToString();
+        var organizationId = context.Request.GetParameter(Parameters.OrganizationId)?.ToString();
         if (string.IsNullOrEmpty(organizationId))
         {
             return;
