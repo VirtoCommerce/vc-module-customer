@@ -10,7 +10,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="VirtoCommerce.Platform.Data.SqlServer" Version="3.825.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Data.SqlServer" Version="3.832.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\VirtoCommerce.CustomerModule.Core\VirtoCommerce.CustomerModule.Core.csproj" />
