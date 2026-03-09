@@ -2,11 +2,12 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Domain;
 using Address = VirtoCommerce.CustomerModule.Core.Model.Address;
 
 namespace VirtoCommerce.CustomerModule.Data.Model
 {
-    public class AddressEntity : AuditableEntity, IHasOuterId
+    public class AddressEntity : AuditableEntity, IHasOuterId, IDataEntity<AddressEntity, Address>
     {
         [StringLength(2048)]
         public string Name { get; set; }
@@ -118,7 +119,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         public virtual AddressEntity FromModel(Address address)
         {
             if (address == null)
+            {
                 throw new ArgumentNullException(nameof(address));
+            }
 
             CountryCode = address.CountryCode;
             CountryName = address.CountryName;
@@ -142,6 +145,11 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             Description = address.Description;
 
             return this;
+        }
+
+        public AddressEntity FromModel(Address model, PrimaryKeyResolvingMap pkMap)
+        {
+            return FromModel(model);
         }
 
         public virtual void Patch(AddressEntity target)

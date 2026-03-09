@@ -142,6 +142,18 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             return Task.CompletedTask;
         }
 
+        public virtual async Task<IList<AddressEntity>> GetAddresssByIdsAsync(IList<string> ids, string responseGroup)
+        {
+            if (ids.IsNullOrEmpty())
+            {
+                return [];
+            }
+
+            return ids.Count == 1
+                ? await Addresses.Where(x => x.Id == ids.First()).ToListAsync()
+                : await Addresses.Where(x => ids.Contains(x.Id)).ToListAsync();
+        }
+
         protected virtual IQueryable<T> GetMembersQuery<T>(string[] ids, string responseGroup = null)
             where T : MemberEntity
         {

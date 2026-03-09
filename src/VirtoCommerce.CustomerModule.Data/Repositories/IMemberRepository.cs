@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VirtoCommerce.CustomerModule.Data.Model;
@@ -17,5 +18,6 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
 
         Task<MemberEntity[]> GetMembersByIdsAsync(string[] ids, string responseGroup = null, string[] memberTypes = null);
         Task RemoveMembersByIdsAsync(string[] ids, string[] memberTypes = null);
+        Task<IList<AddressEntity>> GetAddresssByIdsAsync(IList<string> ids, string responseGroup);
     }
 }
