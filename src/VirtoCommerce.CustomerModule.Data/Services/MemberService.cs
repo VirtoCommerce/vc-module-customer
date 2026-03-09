@@ -181,7 +181,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             await _eventPublisher.Publish(new MemberChangingEvent(changedEntries));
             await repository.UnitOfWork.CommitAsync();
             pkMap.ResolvePrimaryKeys();
-            ClearCache(members);
+            await ClearCacheAsync(members);
 
             await _eventPublisher.Publish(new MemberChangedEvent(changedEntries));
         }
@@ -198,7 +198,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
                 await repository.RemoveMembersByIdsAsync(members.Select(m => m.Id).ToArray());
                 await repository.UnitOfWork.CommitAsync();
-                ClearCache(members);
+                await ClearCacheAsync(members);
 
                 await _eventPublisher.Publish(new MemberChangedEvent(changedEntries));
             }
@@ -225,6 +225,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             cacheOptions.AddExpirationToken(CustomerCacheRegion.CreateChangeToken(descendantIds));
         }
 
+        [Obsolete("Use ClearCacheAsync instead")]
         protected virtual void ClearCache(IEnumerable<Member> members)
         {
             var models = members as Member[] ?? members.ToArray();
@@ -233,6 +234,25 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             foreach (var member in models.Where(x => !x.IsTransient()))
             {
                 CustomerCacheRegion.ExpireMemberById(member.Id);
+            }
+        }
+
+        protected virtual async Task ClearCacheAsync(IEnumerable<Member> members)
+        {
+            var models = members as Member[] ?? members.ToArray();
+            ClearSearchCache(models);
+
+            foreach (var member in models.Where(x => !x.IsTransient()))
+            {
+                CustomerCacheRegion.ExpireMemberById(member.Id);
+            }
+
+            // because of MemberResolver implementation we also have to clear the cache for user id
+            var users = await _userSearchService.SearchUsersAsync(new UserSearchCriteria { MemberIds = models.Select(x => x.Id).ToList() });
+
+            foreach (var user in users.Results)
+            {
+                CustomerCacheRegion.ExpireMemberById(user.Id);
             }
         }
 
