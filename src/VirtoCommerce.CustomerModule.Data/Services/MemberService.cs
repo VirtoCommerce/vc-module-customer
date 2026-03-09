@@ -248,7 +248,11 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             }
 
             // because of MemberResolver implementation we also have to clear the cache for user id
-            var users = await _userSearchService.SearchUsersAsync(new UserSearchCriteria { MemberIds = models.Select(x => x.Id).ToList() });
+            var users = await _userSearchService.SearchUsersAsync(new UserSearchCriteria
+            {
+                MemberIds = models.Select(x => x.Id).ToList(),
+                Take = int.MaxValue,
+            });
 
             foreach (var user in users.Results)
             {
