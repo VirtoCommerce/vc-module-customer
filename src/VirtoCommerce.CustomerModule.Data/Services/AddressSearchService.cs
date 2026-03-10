@@ -26,6 +26,19 @@ public class AddressSearchService(
     {
         var query = ((IMemberRepository)repository).Addresses;
 
+        if (!criteria.Keyword.IsNullOrEmpty())
+        {
+            query = query.Where(x => x.Name.Contains(criteria.Keyword) ||
+                x.Description.Contains(criteria.Keyword) ||
+                x.FirstName.Contains(criteria.Keyword) ||
+                x.LastName.Contains(criteria.Keyword) ||
+                x.Line1.Contains(criteria.Keyword) ||
+                x.Line2.Contains(criteria.Keyword) ||
+                x.City.Contains(criteria.Keyword) ||
+                x.CountryName.Contains(criteria.Keyword) ||
+                x.PostalCode.Contains(criteria.Keyword));
+        }
+
         if (!criteria.MembersIds.IsNullOrEmpty())
         {
             query = query.Where(x => criteria.MembersIds.Contains(x.MemberId));
