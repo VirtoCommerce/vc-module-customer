@@ -30,4 +30,9 @@ public class AddressService(
     {
         throw new NotImplementedException("This service is read-only. Save addresses via the Member entity.");
     }
+
+    public override Task DeleteAsync(IList<string> ids, bool softDelete = false)
+    {
+        throw new NotImplementedException("This service is read-only. Delete addresses via the Member entity.");
+    }
 }
