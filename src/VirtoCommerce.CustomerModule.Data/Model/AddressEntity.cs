@@ -147,6 +147,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         public AddressEntity FromModel(Address model, PrimaryKeyResolvingMap pkMap)
         {
+            pkMap?.AddPair(model, this);
             return FromModel(model);
         }
 
