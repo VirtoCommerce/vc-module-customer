@@ -31,6 +31,21 @@ public class AddressSearchService(
             query = query.Where(x => criteria.MembersIds.Contains(x.MemberId));
         }
 
+        if (!criteria.CountryCodes.IsNullOrEmpty())
+        {
+            query = query.Where(x => criteria.CountryCodes.Contains(x.CountryCode));
+        }
+
+        if (!criteria.RegionIds.IsNullOrEmpty())
+        {
+            query = query.Where(x => criteria.RegionIds.Contains(x.RegionId));
+        }
+
+        if (!criteria.Cities.IsNullOrEmpty())
+        {
+            query = query.Where(x => criteria.Cities.Contains(x.City));
+        }
+
         return query;
     }
 
