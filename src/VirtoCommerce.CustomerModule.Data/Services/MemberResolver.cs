@@ -24,7 +24,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             _platformMemoryCache = platformMemoryCache;
         }
 
-        public Task<Member> ResolveMemberByIdAsync(string userId)
+        public virtual async Task<Member> ResolveMemberByIdAsync(string userId)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -33,10 +33,11 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
             // Try to find contact
             var cacheKey = CacheKey.With(GetType(), nameof(ResolveMemberByIdAsync), userId);
-            return _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, cacheOptions =>
+            return await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheOptions =>
             {
-                cacheOptions.AddExpirationToken(CreateCacheToken(userId));
-                return ResolveMemberByIdNoCacheAsync(userId);
+                var member = await ResolveMemberByIdNoCacheAsync(userId);
+                cacheOptions.AddExpirationToken(CreateCacheToken(member?.Id ?? userId));
+                return member;
             });
         }
 
