@@ -239,7 +239,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                 GenericSearchCachingRegion<Address>.ExpireTokenForKey(member.Id);
                 if (member.Addresses != null)
                 {
-                    foreach (var address in member.Addresses.Where(x => x != null))
+                    foreach (var address in member.Addresses.Where(x => x.Id != null))
                     {
                         GenericCachingRegion<Address>.ExpireTokenForKey(address.Id);
                     }

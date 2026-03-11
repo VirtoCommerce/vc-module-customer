@@ -28,11 +28,11 @@ public class AddressService(
 
     public override Task SaveChangesAsync(IList<Address> models)
     {
-        throw new NotImplementedException("This service is read-only. Save addresses via the Member entity.");
+        throw new NotSupportedException("This service is read-only. Save addresses via the Member entity.");
     }
 
     public override Task DeleteAsync(IList<string> ids, bool softDelete = false)
     {
-        throw new NotImplementedException("This service is read-only. Delete addresses via the Member entity.");
+        throw new NotSupportedException("This service is read-only. Delete addresses via the Member entity.");
     }
 }
