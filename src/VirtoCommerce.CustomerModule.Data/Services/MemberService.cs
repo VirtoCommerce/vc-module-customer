@@ -237,6 +237,13 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
                 // clear addresses cache
                 GenericSearchCachingRegion<Address>.ExpireTokenForKey(member.Id);
+                if (member.Addresses != null)
+                {
+                    foreach (var address in member.Addresses.Where(x => x != null))
+                    {
+                        GenericCachingRegion<Address>.ExpireTokenForKey(address.Id);
+                    }
+                }
             }
         }
 
@@ -244,7 +251,6 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         {
             CustomerSearchCacheRegion.ExpireRegion();
             GenericSearchCachingRegion<Address>.ExpireTokenForKey(string.Empty);
-
         }
 
         protected virtual IList<Member> ProcessModels(IList<MemberEntity> entities, string responseGroup)
