@@ -10,6 +10,7 @@ using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Data.Caching;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.Repositories;
+using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
@@ -233,12 +234,17 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             foreach (var member in models.Where(x => !x.IsTransient()))
             {
                 CustomerCacheRegion.ExpireMemberById(member.Id);
+
+                // clear addresses cache
+                GenericSearchCachingRegion<Address>.ExpireTokenForKey(member.Id);
             }
         }
 
         protected virtual void ClearSearchCache(IList<Member> models)
         {
             CustomerSearchCacheRegion.ExpireRegion();
+            GenericSearchCachingRegion<Address>.ExpireTokenForKey(string.Empty);
+
         }
 
         protected virtual IList<Member> ProcessModels(IList<MemberEntity> entities, string responseGroup)

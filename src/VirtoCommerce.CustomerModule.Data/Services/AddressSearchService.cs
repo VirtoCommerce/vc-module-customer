@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using VirtoCommerce.CustomerModule.Core.Model;
+using VirtoCommerce.CustomerModule.Core.Model.Search;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.Repositories;
+using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.GenericCrud;
@@ -39,9 +42,9 @@ public class AddressSearchService(
                 x.PostalCode.Contains(criteria.Keyword));
         }
 
-        if (!criteria.MembersIds.IsNullOrEmpty())
+        if (!criteria.MemberId.IsNullOrEmpty())
         {
-            query = query.Where(x => criteria.MembersIds.Contains(x.MemberId));
+            query = query.Where(x => criteria.MemberId == x.MemberId);
         }
 
         if (!criteria.CountryCodes.IsNullOrEmpty())
@@ -59,7 +62,18 @@ public class AddressSearchService(
             query = query.Where(x => criteria.Cities.Contains(x.City));
         }
 
+        if (!criteria.ObjectIds.IsNullOrEmpty())
+        {
+            query = query.Where(x => criteria.ObjectIds.Contains(x.Id));
+        }
+
         return query;
+    }
+
+    protected override IChangeToken CreateCacheToken(AddressSearchCriteria criteria)
+    {
+        var memberKey = criteria.MemberId ?? string.Empty;
+        return GenericSearchCachingRegion<Address>.CreateChangeTokenForKey(memberKey);
     }
 
     protected override IList<SortInfo> BuildSortExpression(AddressSearchCriteria criteria)

@@ -121,6 +121,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         {
             ArgumentNullException.ThrowIfNull(address);
 
+            Id = address.Id ?? address.Key;
             CountryCode = address.CountryCode;
             CountryName = address.CountryName;
             PostalCode = address.PostalCode;
@@ -134,7 +135,6 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             LastName = address.LastName;
             Line1 = address.Line1;
             Line2 = address.Line2;
-            Id = address.Key;
             DaytimePhoneNumber = address.Phone;
             Organization = address.Organization;
             Type = address.AddressType.ToString();
@@ -145,8 +145,10 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             return this;
         }
 
-        public AddressEntity FromModel(Address model, PrimaryKeyResolvingMap pkMap)
+        public virtual AddressEntity FromModel(Address model, PrimaryKeyResolvingMap pkMap)
         {
+            pkMap.AddPair(model, this);
+
             return FromModel(model);
         }
 
