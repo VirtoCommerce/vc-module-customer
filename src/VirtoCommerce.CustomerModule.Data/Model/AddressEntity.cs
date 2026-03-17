@@ -93,8 +93,6 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
         public virtual Address ToModel(Address address)
         {
-            address.Id = Id;
-            address.Key = Id;
             address.CountryCode = CountryCode;
             address.CountryName = CountryName;
             address.PostalCode = PostalCode;
@@ -108,6 +106,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             address.LastName = LastName;
             address.Line1 = Line1;
             address.Line2 = Line2;
+            address.Key = Id;
             address.Phone = DaytimePhoneNumber;
             address.Organization = Organization;
             address.AddressType = EnumUtility.SafeParseFlags(Type, AddressType.BillingAndShipping);
@@ -121,7 +120,6 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         {
             ArgumentNullException.ThrowIfNull(address);
 
-            Id = address.Id ?? address.Key;
             CountryCode = address.CountryCode;
             CountryName = address.CountryName;
             PostalCode = address.PostalCode;
@@ -135,6 +133,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
             LastName = address.LastName;
             Line1 = address.Line1;
             Line2 = address.Line2;
+            Id = address.Key;
             DaytimePhoneNumber = address.Phone;
             Organization = address.Organization;
             Type = address.AddressType.ToString();
