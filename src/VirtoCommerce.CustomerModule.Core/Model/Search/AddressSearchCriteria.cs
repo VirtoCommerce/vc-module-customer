@@ -12,4 +12,9 @@ public class AddressSearchCriteria : SearchCriteriaBase
     public IList<string> RegionIds { get; set; }
 
     public IList<string> Cities { get; set; }
+
+    /// <summary>
+    /// For sorting by "IsFavorite"
+    /// </summary>
+    public IList<string> FavoriteAddressesIds { get; set; }
 }
