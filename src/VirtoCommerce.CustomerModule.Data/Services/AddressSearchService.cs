@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using VirtoCommerce.CustomerModule.Core.Model;
@@ -29,86 +28,6 @@ public class AddressSearchService(
         IAddressSearchService
 {
     private const string IsFavoriteSortColumn = "IsFavorite";
-
-    protected override async Task<GenericSearchResult<string>> SearchIdsNoCacheAsync(AddressSearchCriteria criteria)
-    {
-        var result = AbstractTypeFactory<GenericSearchResult<string>>.TryCreateInstance();
-        result.Results = Array.Empty<string>();
-
-        using var repository = repositoryFactory();
-        var query = BuildQuery(repository, criteria);
-        var needExecuteCount = criteria.Take == 0;
-
-        if (criteria.Take > 0)
-        {
-            IOrderedQueryable<AddressEntity> orderedQuery;
-            var sortInfos = BuildSortExpression(criteria);
-            var isFavoriteSortInfo = sortInfos.FirstOrDefault(x => x.SortColumn.EqualsIgnoreCase(IsFavoriteSortColumn));
-            if (isFavoriteSortInfo != null)
-            {
-                orderedQuery = await BuildQueryOrderedByFavoritesAsync(criteria, query, sortInfos, isFavoriteSortInfo);
-            }
-            else
-            {
-                orderedQuery = query
-                    .OrderBySortInfos(sortInfos)
-                    .ThenBy(x => x.Id);
-            }
-
-            result.Results = await orderedQuery
-                .Select(x => x.Id)
-                .Skip(criteria.Skip)
-                .Take(criteria.Take)
-                .ToListAsync();
-
-            result.TotalCount = result.Results.Count;
-
-            // This reduces a load of a relational database by skipping count query in case of:
-            // - First page is reading (Skip is 0)
-            // - Count in reading result less than Take value.
-            if (criteria.Skip > 0 || result.TotalCount == criteria.Take)
-            {
-                needExecuteCount = true;
-            }
-        }
-
-        if (needExecuteCount)
-        {
-            result.TotalCount = await query.CountAsync();
-        }
-
-        return result;
-    }
-
-    private async Task<IOrderedQueryable<AddressEntity>> BuildQueryOrderedByFavoritesAsync(AddressSearchCriteria criteria, IQueryable<AddressEntity> query, IList<SortInfo> sortInfos, SortInfo isFavoriteSortInfo)
-    {
-        var favoriteAddressIds = await favoriteAddressService.GetFavoriteAddressIdsAsync(criteria.UserId);
-
-        var basicSortInfos = GetBasicSortInfos(sortInfos, isFavoriteSortInfo);
-
-        IOrderedQueryable<AddressEntity> orderedQuery;
-        if (isFavoriteSortInfo.SortDirection == SortDirection.Descending)
-        {
-            orderedQuery = query
-                .OrderByDescending(x => favoriteAddressIds.Contains(x.Id));
-        }
-        else
-        {
-            orderedQuery = query
-                .OrderBy(x => favoriteAddressIds.Contains(x.Id));
-        }
-
-        orderedQuery = orderedQuery.ThenBySortInfos(basicSortInfos).ThenBy(x => x.Id);
-
-        return orderedQuery;
-    }
-
-    private static SortInfo[] GetBasicSortInfos(IList<SortInfo> sortInfos, SortInfo isFavoriteSortInfo)
-    {
-        var basicSortInfos = sortInfos.ToList();
-        basicSortInfos.Remove(isFavoriteSortInfo);
-        return basicSortInfos.ToArray();
-    }
 
     protected override IQueryable<AddressEntity> BuildQuery(IRepository repository, AddressSearchCriteria criteria)
     {
@@ -174,5 +93,54 @@ public class AddressSearchService(
         }
 
         return sortInfos;
+    }
+
+    protected override async Task<IOrderedQueryable<AddressEntity>> GetOrderedQueryAsync(IQueryable<AddressEntity> query, AddressSearchCriteria criteria)
+    {
+        IOrderedQueryable<AddressEntity> orderedQuery;
+
+        var sortInfos = BuildSortExpression(criteria);
+        var isFavoriteSortInfo = sortInfos.FirstOrDefault(x => x.SortColumn.EqualsIgnoreCase(IsFavoriteSortColumn));
+        if (isFavoriteSortInfo != null)
+        {
+            orderedQuery = await BuildQueryOrderedByFavoritesAsync(criteria, query, sortInfos, isFavoriteSortInfo);
+        }
+        else
+        {
+            orderedQuery = await base.GetOrderedQueryAsync(query, criteria);
+        }
+
+        return orderedQuery;
+    }
+
+    private async Task<IOrderedQueryable<AddressEntity>> BuildQueryOrderedByFavoritesAsync(AddressSearchCriteria criteria, IQueryable<AddressEntity> query, IList<SortInfo> sortInfos, SortInfo isFavoriteSortInfo)
+    {
+        var favoriteAddressIds = await favoriteAddressService.GetFavoriteAddressIdsAsync(criteria.UserId);
+
+        IOrderedQueryable<AddressEntity> orderedQuery;
+
+        if (isFavoriteSortInfo.SortDirection == SortDirection.Descending)
+        {
+            orderedQuery = query.OrderByDescending(x => favoriteAddressIds.Contains(x.Id));
+        }
+        else
+        {
+            orderedQuery = query.OrderBy(x => favoriteAddressIds.Contains(x.Id));
+        }
+
+        var basicSortInfos = GetBasicSortInfos(sortInfos, isFavoriteSortInfo);
+
+        orderedQuery = orderedQuery
+            .ThenBySortInfos(basicSortInfos)
+            .ThenBy(x => x.Id);
+
+        return orderedQuery;
+    }
+
+    private static SortInfo[] GetBasicSortInfos(IList<SortInfo> sortInfos, SortInfo isFavoriteSortInfo)
+    {
+        var basicSortInfos = sortInfos.ToList();
+        basicSortInfos.Remove(isFavoriteSortInfo);
+        return basicSortInfos.ToArray();
     }
 }
