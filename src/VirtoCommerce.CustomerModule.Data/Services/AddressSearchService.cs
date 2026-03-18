@@ -41,13 +41,12 @@ public class AddressSearchService(
 
         if (criteria.Take > 0)
         {
-            IOrderedQueryable<AddressEntity> orderedQuery = null;
-
+            IOrderedQueryable<AddressEntity> orderedQuery;
             var sortInfos = BuildSortExpression(criteria);
             var isFavoriteSortInfo = sortInfos.FirstOrDefault(x => x.SortColumn.EqualsIgnoreCase(IsFavoriteSortColumn));
             if (isFavoriteSortInfo != null)
             {
-                orderedQuery = await BuildQueryOrderedByFavoritesAsync(criteria, query, orderedQuery, sortInfos, isFavoriteSortInfo);
+                orderedQuery = await BuildQueryOrderedByFavoritesAsync(criteria, query, sortInfos, isFavoriteSortInfo);
             }
             else
             {
@@ -81,12 +80,13 @@ public class AddressSearchService(
         return result;
     }
 
-    private async Task<IOrderedQueryable<AddressEntity>> BuildQueryOrderedByFavoritesAsync(AddressSearchCriteria criteria, IQueryable<AddressEntity> query, IOrderedQueryable<AddressEntity> orderedQuery, IList<SortInfo> sortInfos, SortInfo isFavoriteSortInfo)
+    private async Task<IOrderedQueryable<AddressEntity>> BuildQueryOrderedByFavoritesAsync(AddressSearchCriteria criteria, IQueryable<AddressEntity> query, IList<SortInfo> sortInfos, SortInfo isFavoriteSortInfo)
     {
         var favoriteAddressIds = await favoriteAddressService.GetFavoriteAddressIdsAsync(criteria.UserId);
 
         var basicSortInfos = GetBasicSortInfos(sortInfos, isFavoriteSortInfo);
 
+        IOrderedQueryable<AddressEntity> orderedQuery;
         if (isFavoriteSortInfo.SortDirection == SortDirection.Descending)
         {
             orderedQuery = query
