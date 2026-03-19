@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using VirtoCommerce.CustomerModule.Core.Model;
@@ -14,6 +16,7 @@ using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.Platform.Data.GenericCrud;
+using VirtoCommerce.SearchModule.Core.Model;
 
 namespace VirtoCommerce.CustomerModule.Data.Services;
 
@@ -33,9 +36,15 @@ public class AddressSearchService(
     {
         var query = ((IMemberRepository)repository).Addresses;
 
+        return ApplyFilters(query, criteria);
+    }
+
+    protected virtual IQueryable<AddressEntity> ApplyFilters(IQueryable<AddressEntity> query, AddressSearchCriteria criteria, string excludeFacet = null)
+    {
         if (!criteria.Keyword.IsNullOrEmpty())
         {
-            query = query.Where(x => x.Name.Contains(criteria.Keyword) ||
+            query = query.Where(x =>
+                x.Name.Contains(criteria.Keyword) ||
                 x.Description.Contains(criteria.Keyword) ||
                 x.FirstName.Contains(criteria.Keyword) ||
                 x.LastName.Contains(criteria.Keyword) ||
@@ -48,20 +57,20 @@ public class AddressSearchService(
 
         if (!criteria.MemberId.IsNullOrEmpty())
         {
-            query = query.Where(x => criteria.MemberId == x.MemberId);
+            query = query.Where(x => x.MemberId == criteria.MemberId);
         }
 
-        if (!criteria.CountryCodes.IsNullOrEmpty())
+        if (excludeFacet != "CountryCode" && !criteria.CountryCodes.IsNullOrEmpty())
         {
             query = query.Where(x => criteria.CountryCodes.Contains(x.CountryCode));
         }
 
-        if (!criteria.RegionIds.IsNullOrEmpty())
+        if (excludeFacet != "RegionId" && !criteria.RegionIds.IsNullOrEmpty())
         {
             query = query.Where(x => criteria.RegionIds.Contains(x.RegionId));
         }
 
-        if (!criteria.Cities.IsNullOrEmpty())
+        if (excludeFacet != "City" && !criteria.Cities.IsNullOrEmpty())
         {
             query = query.Where(x => criteria.Cities.Contains(x.City));
         }
@@ -72,6 +81,57 @@ public class AddressSearchService(
         }
 
         return query;
+    }
+
+    protected override async Task<AddressSearchResult> ProcessSearchResultAsync(AddressSearchResult result, AddressSearchCriteria criteria)
+    {
+        using var memberRepository = repositoryFactory();
+
+        var baseQuery = memberRepository.Addresses.AsQueryable();
+
+        result.Facets = new AddressFacetResult
+        {
+            Country = await BuildFacetsAsync(baseQuery, criteria, x => x.CountryCode, nameof(AddressEntity.CountryCode), criteria.CountryCodes),
+            Region = await BuildFacetsAsync(baseQuery, criteria, x => x.RegionId, nameof(AddressEntity.RegionId), criteria.RegionIds),
+            City = await BuildFacetsAsync(baseQuery, criteria, x => x.City, nameof(AddressEntity.City), criteria.Cities),
+        };
+
+        return await base.ProcessSearchResultAsync(result, criteria);
+    }
+
+    private async Task<Aggregation> BuildFacetsAsync(IQueryable<AddressEntity> source, AddressSearchCriteria criteria, Expression<Func<AddressEntity, string>> fieldSelector, string fieldName, IList<string> values)
+    {
+        var query = ApplyFilters(source, criteria, excludeFacet: fieldName);
+
+        var buckets = await query
+            .GroupBy(fieldSelector)
+            .Where(g => g.Key != null && g.Key != "")
+            .Select(g => new AggregationResponseValue
+            {
+                Id = g.Key,
+                Count = g.Count()
+            })
+            .OrderBy(x => x.Id)
+            .ToListAsync();
+
+        var result = new Aggregation
+        {
+            AggregationType = "Attribute",
+            Field = fieldName,
+        };
+
+        var applied = new HashSet<string>(values ?? [], StringComparer.OrdinalIgnoreCase);
+
+        result.Items = buckets
+            .Select(x => new AggregationItem
+            {
+                Value = x.Id,
+                Count = (int)x.Count,
+                IsApplied = applied.Contains(x.Id)
+            })
+            .ToList();
+
+        return result;
     }
 
     protected override IChangeToken CreateCacheToken(AddressSearchCriteria criteria)
