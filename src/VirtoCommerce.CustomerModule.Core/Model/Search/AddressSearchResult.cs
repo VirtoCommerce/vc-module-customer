@@ -8,6 +8,14 @@ public class AddressSearchResult : GenericSearchResult<Address>
     public AddressFacetResult Facets { get; set; } = new();
 }
 
+public class AddressFacetItem
+{
+    public string Value { get; set; }
+    public string Label { get; set; }
+    public int Count { get; set; }
+    public bool IsApplied { get; set; }
+}
+
 public class AddressFacetResult
 {
     public Aggregation Country { get; set; }

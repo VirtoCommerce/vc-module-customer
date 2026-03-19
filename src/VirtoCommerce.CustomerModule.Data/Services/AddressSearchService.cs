@@ -91,33 +91,41 @@ public class AddressSearchService(
 
         result.Facets = new AddressFacetResult
         {
-            Country = await BuildFacetsAsync(baseQuery, criteria, x => x.CountryCode, nameof(AddressEntity.CountryCode), criteria.CountryCodes),
-            Region = await BuildFacetsAsync(baseQuery, criteria, x => x.RegionId, nameof(AddressEntity.RegionId), criteria.RegionIds),
-            City = await BuildFacetsAsync(baseQuery, criteria, x => x.City, nameof(AddressEntity.City), criteria.Cities),
+            Country = await BuildFacetsAsync(baseQuery, criteria, x => x.CountryCode, x => x.CountryName, nameof(AddressEntity.CountryCode), nameof(AddressEntity.CountryName), criteria.CountryCodes),
+            Region = await BuildFacetsAsync(baseQuery, criteria, x => x.RegionId, x => x.RegionName, nameof(AddressEntity.RegionId), nameof(AddressEntity.RegionName), criteria.RegionIds),
+            City = await BuildFacetsAsync(baseQuery, criteria, x => x.City, x => x.City, nameof(AddressEntity.City), nameof(AddressEntity.City), criteria.Cities),
         };
 
         return await base.ProcessSearchResultAsync(result, criteria);
     }
 
-    private async Task<Aggregation> BuildFacetsAsync(IQueryable<AddressEntity> source, AddressSearchCriteria criteria, Expression<Func<AddressEntity, string>> fieldSelector, string fieldName, IList<string> values)
+    private async Task<Aggregation> BuildFacetsAsync(IQueryable<AddressEntity> source,
+        AddressSearchCriteria criteria,
+        Expression<Func<AddressEntity, string>> keySelector,
+        Func<AddressEntity, string> labelSelector,
+        string fieldName,
+        string fieldLabel,
+        IList<string> values)
     {
         var query = ApplyFilters(source, criteria, excludeFacet: fieldName);
 
         var buckets = await query
-            .GroupBy(fieldSelector)
+            .GroupBy(keySelector)
             .Where(g => g.Key != null && g.Key != "")
-            .Select(g => new AggregationResponseValue
+            .Select(g => new AddressFacetItem
             {
-                Id = g.Key,
+                Value = g.Key,
+                Label = labelSelector(g.First()),
                 Count = g.Count()
             })
-            .OrderBy(x => x.Id)
+            .OrderBy(x => x.Value)
             .ToListAsync();
 
         var result = new Aggregation
         {
             AggregationType = "Attribute",
             Field = fieldName,
+            Labels = [new AggregationLabel { Label = fieldLabel }]
         };
 
         var applied = new HashSet<string>(values ?? [], StringComparer.OrdinalIgnoreCase);
@@ -125,9 +133,10 @@ public class AddressSearchService(
         result.Items = buckets
             .Select(x => new AggregationItem
             {
-                Value = x.Id,
-                Count = (int)x.Count,
-                IsApplied = applied.Contains(x.Id)
+                Value = x.Value,
+                Count = x.Count,
+                Labels = [new AggregationLabel { Label = x.Label }],
+                IsApplied = applied.Contains(x.Value),
             })
             .ToList();
 
