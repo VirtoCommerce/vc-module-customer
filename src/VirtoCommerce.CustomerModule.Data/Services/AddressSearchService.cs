@@ -16,7 +16,6 @@ using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.Platform.Data.GenericCrud;
-using VirtoCommerce.SearchModule.Core.Model;
 
 namespace VirtoCommerce.CustomerModule.Data.Services;
 
@@ -91,11 +90,6 @@ public class AddressSearchService(
 
         result.Facets = new AddressFacetResult
         {
-            Country = await BuildFacetsAsync(baseQuery, criteria, x => x.CountryCode, x => x.CountryName, nameof(AddressEntity.CountryCode), nameof(AddressEntity.CountryName), criteria.CountryCodes),
-            Region = await BuildFacetsAsync(baseQuery, criteria, x => x.RegionId, x => x.RegionName, nameof(AddressEntity.RegionId), nameof(AddressEntity.RegionName), criteria.RegionIds),
-            City = await BuildFacetsAsync(baseQuery, criteria, x => x.City, x => x.City, nameof(AddressEntity.City), nameof(AddressEntity.City), criteria.Cities),
-
-            // new facet resolve logic (work in progress)
             Countries = await BuildFacetItemsAsync(
                     nameof(AddressEntity.CountryCode),
                     baseQuery,
@@ -107,6 +101,7 @@ public class AddressSearchService(
                     {
                         Value = g.Key,
                         Count = g.Count(),
+                        CountryCode = g.Key,
                     }),
 
             Regions = await BuildFacetItemsAsync(
@@ -121,6 +116,7 @@ public class AddressSearchService(
                         Value = g.Key.RegionId,
                         Count = g.Count(),
                         CountryCode = g.Key.CountryCode,
+                        RegionId = g.Key.RegionId,
                     }),
 
             Cities = await BuildFacetItemsAsync(
@@ -134,14 +130,14 @@ public class AddressSearchService(
                     {
                         Value = g.Key,
                         Label = g.Key,
-                        Count = g.Count()
+                        Count = g.Count(),
                     }),
         };
 
         return await base.ProcessSearchResultAsync(result, criteria);
     }
 
-    private async Task<IList<AddressFacetItem>> BuildFacetItemsAsync<TKey>(
+    protected virtual async Task<IList<AddressFacetItem>> BuildFacetItemsAsync<TKey>(
             string fieldName,
             IQueryable<AddressEntity> source,
             AddressSearchCriteria criteria,
@@ -167,50 +163,6 @@ public class AddressSearchService(
         }
 
         return facetItems;
-    }
-
-    private async Task<Aggregation> BuildFacetsAsync(IQueryable<AddressEntity> source,
-        AddressSearchCriteria criteria,
-        Expression<Func<AddressEntity, string>> keySelector,
-        Func<AddressEntity, string> labelSelector,
-        string fieldName,
-        string fieldLabel,
-        IList<string> values)
-    {
-        var query = ApplyFilters(source, criteria, excludeFacet: fieldName);
-
-        var buckets = await query
-            .GroupBy(keySelector)
-            .Where(g => g.Key != null && g.Key != "")
-            .Select(g => new AddressFacetItem
-            {
-                Value = g.Key,
-                Label = labelSelector(g.First()),
-                Count = g.Count()
-            })
-            .OrderBy(x => x.Value)
-            .ToListAsync();
-
-        var result = new Aggregation
-        {
-            AggregationType = "Attribute",
-            Field = fieldName,
-            Labels = [new AggregationLabel { Label = fieldLabel }]
-        };
-
-        var applied = new HashSet<string>(values ?? [], StringComparer.OrdinalIgnoreCase);
-
-        result.Items = buckets
-            .Select(x => new AggregationItem
-            {
-                Value = x.Value,
-                Count = x.Count,
-                Labels = [new AggregationLabel { Label = x.Label }],
-                IsApplied = applied.Contains(x.Value),
-            })
-            .ToList();
-
-        return result;
     }
 
     protected override IChangeToken CreateCacheToken(AddressSearchCriteria criteria)

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.SearchModule.Core.Model;
 
 namespace VirtoCommerce.CustomerModule.Core.Model.Search;
 
@@ -21,16 +20,9 @@ public class AddressFacetItem
 
 public class AddressFacetResult
 {
-    public Aggregation Country { get; set; }
-
-    public Aggregation Region { get; set; }
-
-    public Aggregation City { get; set; }
-
     public IList<AddressFacetItem> Countries { get; set; }
 
     public IList<AddressFacetItem> Regions { get; set; }
 
     public IList<AddressFacetItem> Cities { get; set; }
-
 }
