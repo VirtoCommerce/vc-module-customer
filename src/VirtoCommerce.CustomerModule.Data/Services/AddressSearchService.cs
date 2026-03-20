@@ -94,9 +94,79 @@ public class AddressSearchService(
             Country = await BuildFacetsAsync(baseQuery, criteria, x => x.CountryCode, x => x.CountryName, nameof(AddressEntity.CountryCode), nameof(AddressEntity.CountryName), criteria.CountryCodes),
             Region = await BuildFacetsAsync(baseQuery, criteria, x => x.RegionId, x => x.RegionName, nameof(AddressEntity.RegionId), nameof(AddressEntity.RegionName), criteria.RegionIds),
             City = await BuildFacetsAsync(baseQuery, criteria, x => x.City, x => x.City, nameof(AddressEntity.City), nameof(AddressEntity.City), criteria.Cities),
+
+            // new facet resolve logic (work in progress)
+            Countries = await BuildFacetItemsAsync(
+                    nameof(AddressEntity.CountryCode),
+                    baseQuery,
+                    criteria,
+                    criteria.CountryCodes,
+                    x => !string.IsNullOrEmpty(x.CountryCode),
+                    x => x.CountryCode,
+                    g => new AddressFacetItem
+                    {
+                        Value = g.Key,
+                        Count = g.Count(),
+                    }),
+
+            Regions = await BuildFacetItemsAsync(
+                    nameof(AddressEntity.RegionId),
+                    baseQuery,
+                    criteria,
+                    criteria.RegionIds,
+                    x => !string.IsNullOrEmpty(x.RegionId),
+                    x => new { x.CountryCode, x.RegionId },
+                    g => new AddressFacetItem
+                    {
+                        Value = g.Key.RegionId,
+                        Count = g.Count(),
+                        CountryCode = g.Key.CountryCode,
+                    }),
+
+            Cities = await BuildFacetItemsAsync(
+                    nameof(AddressEntity.City),
+                    baseQuery,
+                    criteria,
+                    criteria.Cities,
+                    x => !string.IsNullOrEmpty(x.City),
+                    x => x.City,
+                    g => new AddressFacetItem
+                    {
+                        Value = g.Key,
+                        Label = g.Key,
+                        Count = g.Count()
+                    }),
         };
 
         return await base.ProcessSearchResultAsync(result, criteria);
+    }
+
+    private async Task<IList<AddressFacetItem>> BuildFacetItemsAsync<TKey>(
+            string fieldName,
+            IQueryable<AddressEntity> source,
+            AddressSearchCriteria criteria,
+            IList<string> appliedValues,
+            Expression<Func<AddressEntity, bool>> keyFilter,
+            Expression<Func<AddressEntity, TKey>> keySelector,
+            Expression<Func<IGrouping<TKey, AddressEntity>, AddressFacetItem>> itemsSelector)
+    {
+        var query = ApplyFilters(source, criteria, excludeFacet: fieldName);
+
+        var facetItems = await query
+            .Where(keyFilter)
+            .GroupBy(keySelector)
+            .Select(itemsSelector)
+            .OrderBy(x => x.Value)
+            .ToListAsync();
+
+        var applied = new HashSet<string>(appliedValues ?? [], StringComparer.OrdinalIgnoreCase);
+
+        foreach (var item in facetItems)
+        {
+            item.IsApplied = applied.Contains(item.Value);
+        }
+
+        return facetItems;
     }
 
     private async Task<Aggregation> BuildFacetsAsync(IQueryable<AddressEntity> source,
