@@ -321,13 +321,10 @@
     "dialogs": {
       "members-delete": {
         "title": "Conferma eliminazione",
-        "warning": "AVVISO: Questa modifica è permanente e non può essere annullata. L’applicazione di questa modifica può comportare la perdita di dati.",
-        "message": "I seguenti dati verranno eliminati:",
         "Vendor": "{{count}} fornitore(i)",
         "Contact": "{{count}} contatto(i)",
         "Employee": "{{count}} dipendente(i)",
-        "Organization": "{{count}} organizzazione(i) e tutto il contenuto in esse contenuto",
-        "instruction": "Digita \"yes\" per eliminare:"
+        "Organization": "{{count}} organizzazione(i) e tutto il contenuto in esse contenuto"
       },
       "unknown-member-type": {
         "title": "Errore",

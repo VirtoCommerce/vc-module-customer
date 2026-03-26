@@ -321,13 +321,10 @@
     "dialogs": {
       "members-delete": {
         "title": "削除を確認",
-        "warning": "警告: この変更は永久的で、元に戻すことはできません。この変更を適用すると、データが失われる可能性があります。",
-        "message": "次のデータが削除されます:",
         "Vendor": "{{count}} 件のベンダー",
         "Contact": "{{count}} 件の連絡先",
         "Employee": "{{count}} 人の従業員",
-        "Organization": "{{count}} 件の組織およびそれらに含まれるすべてのコンテンツ",
-        "instruction": "削除するには「yes」と入力してください:"
+        "Organization": "{{count}} 件の組織およびそれらに含まれるすべてのコンテンツ"
       },
       "unknown-member-type": {
         "title": "エラー",
