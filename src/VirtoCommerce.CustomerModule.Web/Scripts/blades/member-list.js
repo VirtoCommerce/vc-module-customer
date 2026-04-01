@@ -117,7 +117,7 @@ angular.module('virtoCommerce.customerModule')
                 var dialog = {
                     id: "confirmDeleteItem",
                     title: "customer.dialogs.members-delete.title",
-                    data: deleteItemsInfo.map(function (item) {
+                    items: deleteItemsInfo.map(function (item) {
                         return { key: 'customer.dialogs.members-delete.' + item.memberType, count: item.count };
                     }),
                     callback: function (remove) {
