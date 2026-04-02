@@ -321,13 +321,10 @@
     "dialogs": {
       "members-delete": {
         "title": "Bekräfta radering",
-        "warning": "VARNING: Denna ändring är permanent och kan inte ångras. Att tillämpa denna ändring kan leda till dataförlust.",
-        "message": "Följande data kommer att tas bort:",
         "Vendor": "{{count}} leverantör(er)",
         "Contact": "{{count}} kontakt(er)",
         "Employee": "{{count}} anställd(a)",
-        "Organization": "{{count}} organisation(er) och allt innehåll som finns i dem",
-        "instruction": "Skriv \"yes\" för att ta bort:"
+        "Organization": "{{count}} organisation(er) och allt innehåll som finns i dem"
       },
       "unknown-member-type": {
         "title": "Fel",
