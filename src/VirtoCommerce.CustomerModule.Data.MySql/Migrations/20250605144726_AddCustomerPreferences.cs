@@ -36,11 +36,11 @@ namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_CustomerPreference_UserId_Name",
-                table: "CustomerPreference",
-                columns: new[] { "UserId", "Name" },
-                unique: true);
+            // MySQL InnoDB max index key length is 3072 bytes with utf8mb4 (4 bytes/char).
+            // UserId(128) + Name(1024) = 1152 chars * 4 = 4608 bytes — exceeds limit.
+            // Use a 640-char prefix on Name: (128+640) * 4 = 3072 bytes — fits exactly.
+            migrationBuilder.Sql(@"CREATE UNIQUE INDEX `IX_CustomerPreference_UserId_Name`
+                ON `CustomerPreference` (`UserId`, `Name`(640));");
         }
 
         /// <inheritdoc />
