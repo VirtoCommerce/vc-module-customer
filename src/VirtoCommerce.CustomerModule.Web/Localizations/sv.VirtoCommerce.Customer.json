@@ -296,7 +296,10 @@
     "dialogs": {
       "members-delete": {
         "title": "Bekräfta radering",
-        "message": "Är du säker på att du vill radera de valda företagen eller kontakterna?"
+        "Vendor": "{{count}} leverantör(er)",
+        "Contact": "{{count}} kontakt(er)",
+        "Employee": "{{count}} anställd(a)",
+        "Organization": "{{count}} organisation(er) och allt innehåll som finns i dem"
       },
       "unknown-member-type": {
         "title": "Fel",

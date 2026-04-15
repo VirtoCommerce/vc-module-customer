@@ -103,7 +103,9 @@ angular.module('virtoCommerce.customerModule')
                 var dialog = {
                     id: "confirmDeleteItem",
                     title: "customer.dialogs.members-delete.title",
-                    message: "customer.dialogs.members-delete.message",
+                    items: deleteItemsInfo.map(function (item) {
+                        return { key: 'customer.dialogs.members-delete.' + item.memberType, count: item.count };
+                    }),
                     callback: function (remove) {
                         if (remove) {
                             bladeNavigationService.closeChildrenBlades(blade, function () {
@@ -126,7 +128,7 @@ angular.module('virtoCommerce.customerModule')
                         }
                     }
                 };
-                dialogService.showConfirmationDialog(dialog);
+                dialogService.showDeleteConfirmationDialog(dialog);
             }
 
             blade.setSelectedNode = function (listItem) {

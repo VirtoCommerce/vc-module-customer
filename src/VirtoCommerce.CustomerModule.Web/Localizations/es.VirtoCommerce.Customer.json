@@ -296,7 +296,10 @@
     "dialogs": {
       "members-delete": {
         "title": "Confirmar eliminación",
-        "message": "¿Está seguro de que desea eliminar la(s) empresa(s) o contacto(s) seleccionados?"
+        "Vendor": "{{count}} proveedor(es)",
+        "Contact": "{{count}} contacto(s)",
+        "Employee": "{{count}} empleado(s)",
+        "Organization": "{{count}} organización(es) y todo el contenido que contienen"
       },
       "unknown-member-type": {
         "title": "Error",

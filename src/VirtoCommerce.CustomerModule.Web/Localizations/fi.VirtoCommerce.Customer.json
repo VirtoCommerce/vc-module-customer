@@ -296,7 +296,10 @@
     "dialogs": {
       "members-delete": {
         "title": "Vahvista poisto",
-        "message": "Oletko varma, että haluat poistaa valitut yritykset tai yhteystiedot?"
+        "Vendor": "{{count}} toimittaja(a)",
+        "Contact": "{{count}} yhteystieto(a)",
+        "Employee": "{{count}} työntekijä(ä)",
+        "Organization": "{{count}} organisaatio(ta) ja kaikki niihin sisältyvä sisältö"
       },
       "unknown-member-type": {
         "title": "Virhe",

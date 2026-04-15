@@ -296,7 +296,10 @@
     "dialogs": {
       "members-delete": {
         "title": "Bekreft sletting",
-        "message": "Er du sikker på at du vil slette de valgte selskapene eller kontaktene?"
+        "Vendor": "{{count}} leverandør(er)",
+        "Contact": "{{count}} kontakt(er)",
+        "Employee": "{{count}} ansatt(e)",
+        "Organization": "{{count}} organisasjon(er) og alt innhold som finnes i dem"
       },
       "unknown-member-type": {
         "title": "Feil",

@@ -296,7 +296,10 @@
     "dialogs": {
       "members-delete": {
         "title": "削除を確認",
-        "message": "選択した会社または連絡先を削除してもよろしいですか？"
+        "Vendor": "{{count}} 件のベンダー",
+        "Contact": "{{count}} 件の連絡先",
+        "Employee": "{{count}} 人の従業員",
+        "Organization": "{{count}} 件の組織およびそれらに含まれるすべてのコンテンツ"
       },
       "unknown-member-type": {
         "title": "エラー",

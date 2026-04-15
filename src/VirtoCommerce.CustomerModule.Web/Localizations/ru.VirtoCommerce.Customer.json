@@ -296,7 +296,10 @@
     "dialogs": {
       "members-delete": {
         "title": "Подтвердите удаление",
-        "message": "Вы уверены, что хотите удалить выбранные компании или контакты?"
+        "Vendor": "{{count}} поставщик(ов)",
+        "Contact": "{{count}} контакт(ов)",
+        "Employee": "{{count}} сотрудник(ов)",
+        "Organization": "{{count}} организация(й) и всё содержимое внутри"
       },
       "unknown-member-type": {
         "title": "Ошибка",
