@@ -263,31 +263,6 @@
         "placeholders": {
           "status": "Wybierz wartość"
         }
-      },
-      "invite-customers": {
-        "title": "Zaproś klientów",
-        "labels": {
-          "store": "Sklep",
-          "language": "Język",
-          "organization": "Organizacja",
-          "role": "Rola",
-          "emails": "Adresy e-mail",
-          "message": "Wiadomość",
-          "error": "Błąd zaproszenia"
-        },
-        "placeholders": {
-          "store": "Wybierz sklep",
-          "language": "Wybierz język",
-          "organization": "Wybierz organizację",
-          "role": "Wybierz rolę",
-          "emails": "Wprowadź lub wklej adresy e-mail",
-          "subject": "Wprowadź temat e-maila",
-          "message": "Wprowadź wiadomość zaproszenia",
-          "send-to": "Wybierz klientów"
-        },
-        "commands": {
-          "send-invitations": "Wyślij zaproszenia"
-        }
       }
     },
     "widgets": {
@@ -321,13 +296,10 @@
     "dialogs": {
       "members-delete": {
         "title": "Potwierdź usunięcie",
-        "warning": "OSTRZEŻENIE: Ta zmiana jest trwała i nie można jej cofnąć. Zastosowanie tej zmiany może spowodować utratę danych.",
-        "message": "Następujące dane zostaną usunięte:",
         "Vendor": "{{count}} dostawca(ów)",
         "Contact": "{{count}} kontakt(y)",
         "Employee": "{{count}} pracownik(ów)",
-        "Organization": "{{count}} organizacja(e) oraz cała zawartość w nich zawarta",
-        "instruction": "Wpisz „yes”, aby usunąć:"
+        "Organization": "{{count}} organizacja(e) oraz cała zawartość w nich zawarta"
       },
       "unknown-member-type": {
         "title": "Błąd",
@@ -360,18 +332,7 @@
       "address-save": {
         "title": "Zapisz zmiany",
         "message": "Adres został zmodyfikowany. Czy chcesz zapisać zmiany?"
-      },
-      "invite-customers-success": {
-        "title": "Zaproś klientów",
-        "message": "Powiadomienia o zaproszeniach zostały pomyślnie dodane do kolejki"
-      },
-      "invite-customers-error": {
-        "title": "Zaproś klientów",
-        "message": "Niektóre zaproszenia nie zostały wysłane z powodu błędów"
       }
-    },
-    "commands": {
-      "invite-customers": "Zaproś klientów"
     }
   },
   "permissions": {

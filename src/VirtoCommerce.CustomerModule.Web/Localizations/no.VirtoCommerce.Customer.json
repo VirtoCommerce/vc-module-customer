@@ -263,31 +263,6 @@
         "placeholders": {
           "status": "Velg en verdi"
         }
-      },
-      "invite-customers": {
-        "title": "Inviter kunder",
-        "labels": {
-          "store": "Butikk",
-          "language": "Språk",
-          "organization": "Organisasjon",
-          "role": "Rolle",
-          "emails": "E-poster",
-          "message": "Melding",
-          "error": "Invitasjonsfeil"
-        },
-        "placeholders": {
-          "store": "Velg butikk",
-          "language": "Velg språk",
-          "organization": "Velg organisasjon",
-          "role": "Velg rolle",
-          "emails": "Skriv inn eller lim inn e-postadresser",
-          "subject": "Skriv inn e-postemne",
-          "message": "Skriv inn invitasjonsmelding",
-          "send-to": "Velg kunder"
-        },
-        "commands": {
-          "send-invitations": "Send invitasjoner"
-        }
       }
     },
     "widgets": {
@@ -321,13 +296,10 @@
     "dialogs": {
       "members-delete": {
         "title": "Bekreft sletting",
-        "warning": "ADVARSEL: Denne endringen er permanent og kan ikke angres. Å bruke denne endringen kan føre til tap av data.",
-        "message": "Følgende data vil bli slettet:",
         "Vendor": "{{count}} leverandør(er)",
         "Contact": "{{count}} kontakt(er)",
         "Employee": "{{count}} ansatt(e)",
-        "Organization": "{{count}} organisasjon(er) og alt innhold som finnes i dem",
-        "instruction": "Skriv \"yes\" for å slette:"
+        "Organization": "{{count}} organisasjon(er) og alt innhold som finnes i dem"
       },
       "unknown-member-type": {
         "title": "Feil",
@@ -360,18 +332,7 @@
       "address-save": {
         "title": "Lagre endringer",
         "message": "Adressen har blitt endret. Vil du lagre endringene?"
-      },
-      "invite-customers-success": {
-        "title": "Inviter kunder",
-        "message": "Invitasjonsvarsler er lagt i kø"
-      },
-      "invite-customers-error": {
-        "title": "Inviter kunder",
-        "message": "Noen invitasjoner ble ikke sendt på grunn av feil"
       }
-    },
-    "commands": {
-      "invite-customers": "Inviter kunder"
     }
   },
   "permissions": {
