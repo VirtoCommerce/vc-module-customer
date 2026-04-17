@@ -249,8 +249,11 @@ angular.module('virtoCommerce.customerModule')
                 filter[p + 'CustomRangeApplied'] = false;
             });
 
-            // registered member types come from the resolver service (same source as member-add.js)
-            filter.memberTypes = memberTypesResolverService.objects;
+            // registered member types come from the resolver service (same source as member-add.js);
+            // prepend a synthetic "All" entry so the empty ng-model matches an actual option
+            // on first render — an inline <option value=""> would otherwise render blank until
+            // the digest cycle catches up with angular-translate.
+            filter.memberTypes = [{ memberType: '' }].concat(memberTypesResolverService.objects);
 
             filter.dateRanges = [
                 { value: null, label: 'customer.blades.member-list.labels.filter-date-any' },
@@ -262,7 +265,9 @@ angular.module('virtoCommerce.customerModule')
             ];
 
             filter.formatDate = function (d) {
-                if (!d) return '';
+                if (!d) {
+                    return '';
+                }
                 var dt = d instanceof Date ? d : new Date(d);
                 var y = dt.getFullYear();
                 var m = ('0' + (dt.getMonth() + 1)).slice(-2);
@@ -347,9 +352,13 @@ angular.module('virtoCommerce.customerModule')
             // typing free text → reset column sort so backend relevance ranking applies;
             // clearing the keyword or changing filter panel values leaves the sort alone.
             $scope.$watch('blade.filter.keyword', function (newVal, oldVal) {
-                if (newVal === oldVal) return;
+                if (newVal === oldVal) {
+                    return;
+                }
                 if (newVal && $scope.gridApi) {
-                    _.each($scope.gridApi.grid.columns, function (col) { col.sort = {}; });
+                    _.each($scope.gridApi.grid.columns, function (col) {
+                        col.sort = {};
+                    });
                 }
                 filter.criteriaChanged();
             });
@@ -370,18 +379,28 @@ angular.module('virtoCommerce.customerModule')
             };
 
             function dateRangeToken(field, start, end) {
-                if (!start && !end) return '';
+                if (!start && !end) {
+                    return '';
+                }
                 return field + ':[' + filter.formatDate(start) + ' TO ' + filter.formatDate(end) + ']';
             }
 
             function getSearchCriteria() {
                 var tokens = [];
-                if (filter.keyword) tokens.push(filter.keyword);
-                if (filter.memberType) tokens.push('membertype:' + filter.memberType);
+                if (filter.keyword) {
+                    tokens.push(filter.keyword);
+                }
+                if (filter.memberType) {
+                    tokens.push('membertype:' + filter.memberType);
+                }
                 var createdToken = dateRangeToken('createddate', filter.createdStartDate, filter.createdEndDate);
-                if (createdToken) tokens.push(createdToken);
+                if (createdToken) {
+                    tokens.push(createdToken);
+                }
                 var modifiedToken = dateRangeToken('modifieddate', filter.modifiedStartDate, filter.modifiedEndDate);
-                if (modifiedToken) tokens.push(modifiedToken);
+                if (modifiedToken) {
+                    tokens.push(modifiedToken);
+                }
                 var composedKeyword = tokens.join(' ');
 
                 return {

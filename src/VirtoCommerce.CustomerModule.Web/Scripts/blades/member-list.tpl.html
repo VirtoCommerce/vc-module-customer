@@ -12,8 +12,7 @@
                 <select class="va-filter-panel__select"
                         ng-model="blade.filter.memberType"
                         ng-change="blade.filter.criteriaChanged()"
-                        ng-options="t.memberType as (t.memberType | translate) for t in blade.filter.memberTypes">
-                    <option value="">{{ 'customer.blades.member-list.labels.member-type-all' | translate }}</option>
+                        ng-options="t.memberType as ((t.memberType || 'customer.blades.member-list.labels.member-type-all') | translate) for t in blade.filter.memberTypes">
                 </select>
             </div>
 
