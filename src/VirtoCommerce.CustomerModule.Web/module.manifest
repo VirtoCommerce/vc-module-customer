@@ -6,10 +6,10 @@
 
   <platformVersion>3.1016.0</platformVersion>
   <dependencies>
-    <dependency id="VirtoCommerce.Core" version="3.1003.0-alpha.1690-vcst-4516" />
+    <dependency id="VirtoCommerce.Core" version="3.1003.0" />
     <dependency id="VirtoCommerce.Notifications" version="3.1000.0" />
     <dependency id="VirtoCommerce.Search" version="3.1000.0" />
-    <dependency id="VirtoCommerce.Seo" version="3.1002.0-alpha.74-vcst-4516" />
+    <dependency id="VirtoCommerce.Seo" version="3.1002.0" />
     <dependency id="VirtoCommerce.Store" version="3.1000.0" />
   </dependencies>
 
