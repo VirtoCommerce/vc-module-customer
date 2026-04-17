@@ -159,7 +159,22 @@
           "filter-contact": "Yhteystiedot",
           "filter-organization": "Yritykset",
           "copy-id": "Kopioi tunnus",
-          "copy-name": "Kopioi nimi"
+          "copy-name": "Kopioi nimi",
+          "filter-button-hint": "Suodattimet",
+          "filter-member-type": "Jäsentyyppi",
+          "filter-created-date": "Luontipäivä",
+          "filter-modified-date": "Muokkauspäivä",
+          "filter-date-any": "Mikä tahansa",
+          "filter-date-today": "Tänään",
+          "filter-date-last24h": "Viimeiset 24 tuntia",
+          "filter-date-last7d": "Viimeiset 7 päivää",
+          "filter-date-last30d": "Viimeiset 30 päivää",
+          "filter-date-custom": "Mukautettu alue",
+          "filter-from": "Alkaen",
+          "filter-to": "Asti",
+          "filter-apply": "Käytä",
+          "filter-edit": "Muokkaa",
+          "member-type-all": "Kaikki"
         },
         "placeholders": {
           "select-filter": "Valitse suodatin"
