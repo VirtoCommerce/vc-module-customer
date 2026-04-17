@@ -83,12 +83,12 @@ angular.module(moduleName, [])
         '$rootScope', '$state', 'platformWebApp.mainMenuService', 'platformWebApp.authService', 'platformWebApp.permissionScopeResolver',
         'platformWebApp.widgetService', 'platformWebApp.settings', 'platformWebApp.userProfileIconService', 'platformWebApp.metaFormsService',
         'virtoCommerce.customerModule.memberTypesResolverService', 'virtoCommerce.customerModule.predefinedSearchFilters', 'virtoCommerce.customerModule.members',
-        'platformWebApp.toolbarService', 'platformWebApp.bladeNavigationService',
+        'platformWebApp.toolbarService', 'platformWebApp.bladeNavigationService', 'virtoCommerce.storeModule.stores',
         function (
             $rootScope, $state, mainMenuService, authService, scopeResolver,
             widgetService, settings, userProfileIconService, metaFormsService,
             memberTypesResolverService, predefinedSearchFilters, membersApi,
-            toolbarService, bladeNavigationService) {
+            toolbarService, bladeNavigationService, storesApi) {
             //Register module in main menu
             var menuItem = {
                 path: 'browse/member',
@@ -127,13 +127,14 @@ angular.module(moduleName, [])
                 isVisible: function (blade) { return !blade.isNew && authService.checkPermission('platform:dynamic_properties:read'); }
             };
             var vendorSeoWidget = {
-                controller: 'virtoCommerce.coreModule.seo.seoWidgetController',
-                template: 'Modules/$(VirtoCommerce.Core)/Scripts/SEO/widgets/seoWidget.tpl.html',
+                controller: 'virtoCommerce.seo.seoWidgetController',
+                template: 'Modules/$(VirtoCommerce.Seo)/Scripts/widgets/seo-widget.html',
                 objectType: 'Vendor',
                 getDefaultContainerId: function (blade) { return undefined; },
                 getLanguages: function (blade) {
                     return settings.getValues({ id: 'VirtoCommerce.Core.General.Languages' });
                 },
+                getStoreDataSource: function () { return function (criteria) { return storesApi.search(criteria); }; },
                 isVisible: function (blade) { return !blade.isNew; }
             };
             var iconWidget = {
