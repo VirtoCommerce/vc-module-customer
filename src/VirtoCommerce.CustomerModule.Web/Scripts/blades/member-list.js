@@ -270,9 +270,9 @@ angular.module('virtoCommerce.customerModule')
                 }
                 var dt = d instanceof Date ? d : new Date(d);
                 var y = dt.getFullYear();
-                var m = ('0' + (dt.getMonth() + 1)).slice(-2);
-                var day = ('0' + dt.getDate()).slice(-2);
-                return y + '-' + m + '-' + day;
+                var m = `0${dt.getMonth() + 1}`.slice(-2);
+                var day = `0${dt.getDate()}`.slice(-2);
+                return `${y}-${m}-${day}`;
             };
 
             function applyPreset(prefix, preset) {
@@ -382,7 +382,7 @@ angular.module('virtoCommerce.customerModule')
                 if (!start && !end) {
                     return '';
                 }
-                return field + ':[' + filter.formatDate(start) + ' TO ' + filter.formatDate(end) + ']';
+                return `${field}:[${filter.formatDate(start)} TO ${filter.formatDate(end)}]`;
             }
 
             function getSearchCriteria() {
