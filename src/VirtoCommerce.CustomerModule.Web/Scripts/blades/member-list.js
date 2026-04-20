@@ -264,6 +264,17 @@ angular.module('virtoCommerce.customerModule')
                 { value: 'custom', label: 'customer.blades.member-list.labels.filter-date-custom' }
             ];
 
+            filter.formatDateForRangeToken = function (d, endOfTheDay = false) {
+                if (!d) {
+                    return '';
+                }
+                var dt = d instanceof Date ? d : new Date(d);
+                var y = dt.getFullYear();
+                var m = `0${dt.getMonth() + 1}`.slice(-2);
+                var day = `0${dt.getDate()}`.slice(-2);
+                return endOfTheDay ? `"${y}-${m}-${day}T23:59:59"` : `"${y}-${m}-${day}T00:00:00"`;
+            };
+
             filter.formatDate = function (d) {
                 if (!d) {
                     return '';
@@ -382,7 +393,7 @@ angular.module('virtoCommerce.customerModule')
                 if (!start && !end) {
                     return '';
                 }
-                return `${field}:[${filter.formatDate(start)} TO ${filter.formatDate(end)}]`;
+                return `${field}:[${filter.formatDateForRangeToken(start)} TO ${filter.formatDateForRangeToken(end, true)}]`;
             }
 
             function getSearchCriteria() {
