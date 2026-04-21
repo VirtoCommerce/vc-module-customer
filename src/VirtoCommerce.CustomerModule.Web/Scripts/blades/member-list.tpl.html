@@ -1,7 +1,86 @@
 <div class="blade-static" ng-class="{'__expanded': blade.breadcrumbs.length > 0}">
     <va-breadcrumb ng-model="blade.breadcrumbs" blade-id="blade.id" blade-maximized="blade.isMaximized" ng-if="blade.breadcrumbs.length"></va-breadcrumb>
-    <div class="form-group">
-        <vc-customer-search blade="blade"></vc-customer-search>
+    <div class="form-group" style="display: flex; align-items: center;">
+        <va-filter-panel
+            has-active-filters="blade.filter.hasActiveFilters()"
+            on-clear-filters="blade.filter.clearFilters()"
+            search-text="blade.filter.keyword"
+            filter-title="{{ 'customer.blades.member-list.labels.filter-button-hint' | translate }}">
+
+            <div class="va-filter-panel__row">
+                <span class="va-filter-panel__label">{{ 'customer.blades.member-list.labels.filter-member-type' | translate }}</span>
+                <select class="va-filter-panel__select"
+                        ng-model="blade.filter.memberType"
+                        ng-change="blade.filter.criteriaChanged()"
+                        ng-options="t.memberType as ((t.memberType || 'customer.blades.member-list.labels.member-type-all') | translate) for t in blade.filter.memberTypes">
+                </select>
+            </div>
+
+            <div class="va-filter-panel__row">
+                <span class="va-filter-panel__label">{{ 'customer.blades.member-list.labels.filter-created-date' | translate }}</span>
+                <select class="va-filter-panel__select"
+                        ng-model="blade.filter.createdDateRange"
+                        ng-change="blade.filter.dateRangeChanged('created')"
+                        ng-options="r.value as (r.label | translate) for r in blade.filter.dateRanges">
+                </select>
+            </div>
+            <div ng-if="blade.filter.createdShowCustomInputs" class="va-filter-panel__row" style="flex-direction: column; align-items: stretch;">
+                <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                    <span class="va-filter-panel__label">{{ 'customer.blades.member-list.labels.filter-from' | translate }}</span>
+                    <input type="date" class="va-filter-panel__date-input" ng-model="blade.filter.createdCustomStartDate" />
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                    <span class="va-filter-panel__label">{{ 'customer.blades.member-list.labels.filter-to' | translate }}</span>
+                    <input type="date" class="va-filter-panel__date-input" ng-model="blade.filter.createdCustomEndDate" />
+                </div>
+                <button class="btn __primary" style="width: 100%; margin-top: 8px;"
+                        ng-click="blade.filter.applyCustomRange('created')"
+                        ng-disabled="!blade.filter.createdCustomStartDate && !blade.filter.createdCustomEndDate">
+                    {{ 'customer.blades.member-list.labels.filter-apply' | translate }}
+                </button>
+            </div>
+            <div ng-if="blade.filter.createdCustomRangeApplied && !blade.filter.createdShowCustomInputs" class="va-filter-panel__row">
+                <span class="va-filter-panel__label">
+                    {{blade.filter.formatDate(blade.filter.createdStartDate)}} &mdash; {{blade.filter.formatDate(blade.filter.createdEndDate)}}
+                </span>
+                <a href="" ng-click="blade.filter.editCustomRange('created')">
+                    {{ 'customer.blades.member-list.labels.filter-edit' | translate }}
+                </a>
+            </div>
+
+            <div class="va-filter-panel__row">
+                <span class="va-filter-panel__label">{{ 'customer.blades.member-list.labels.filter-modified-date' | translate }}</span>
+                <select class="va-filter-panel__select"
+                        ng-model="blade.filter.modifiedDateRange"
+                        ng-change="blade.filter.dateRangeChanged('modified')"
+                        ng-options="r.value as (r.label | translate) for r in blade.filter.dateRanges">
+                </select>
+            </div>
+            <div ng-if="blade.filter.modifiedShowCustomInputs" class="va-filter-panel__row" style="flex-direction: column; align-items: stretch;">
+                <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                    <span class="va-filter-panel__label">{{ 'customer.blades.member-list.labels.filter-from' | translate }}</span>
+                    <input type="date" class="va-filter-panel__date-input" ng-model="blade.filter.modifiedCustomStartDate" />
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                    <span class="va-filter-panel__label">{{ 'customer.blades.member-list.labels.filter-to' | translate }}</span>
+                    <input type="date" class="va-filter-panel__date-input" ng-model="blade.filter.modifiedCustomEndDate" />
+                </div>
+                <button class="btn __primary" style="width: 100%; margin-top: 8px;"
+                        ng-click="blade.filter.applyCustomRange('modified')"
+                        ng-disabled="!blade.filter.modifiedCustomStartDate && !blade.filter.modifiedCustomEndDate">
+                    {{ 'customer.blades.member-list.labels.filter-apply' | translate }}
+                </button>
+            </div>
+            <div ng-if="blade.filter.modifiedCustomRangeApplied && !blade.filter.modifiedShowCustomInputs" class="va-filter-panel__row">
+                <span class="va-filter-panel__label">
+                    {{blade.filter.formatDate(blade.filter.modifiedStartDate)}} &mdash; {{blade.filter.formatDate(blade.filter.modifiedEndDate)}}
+                </span>
+                <a href="" ng-click="blade.filter.editCustomRange('modified')">
+                    {{ 'customer.blades.member-list.labels.filter-edit' | translate }}
+                </a>
+            </div>
+
+        </va-filter-panel>
     </div>
 </div>
 <div class="blade-static __bottom" ng-if="pageSettings.itemsPerPageCount < pageSettings.totalItems" ng-include="'pagerTemplate.html'"></div>

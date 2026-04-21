@@ -159,7 +159,22 @@
           "filter-contact": "Contacts",
           "filter-organization": "Companies",
           "copy-id": "Copy ID",
-          "copy-name": "Copy name"
+          "copy-name": "Copy name",
+          "filter-button-hint": "Filters",
+          "filter-member-type": "Member type",
+          "filter-created-date": "Created date",
+          "filter-modified-date": "Modified date",
+          "filter-date-any": "Any time",
+          "filter-date-today": "Today",
+          "filter-date-last24h": "Last 24 hours",
+          "filter-date-last7d": "Last 7 days",
+          "filter-date-last30d": "Last 30 days",
+          "filter-date-custom": "Custom range",
+          "filter-from": "From",
+          "filter-to": "To",
+          "filter-apply": "Apply",
+          "filter-edit": "Edit",
+          "member-type-all": "All"
         },
         "placeholders": {
           "select-filter": "Select filter"

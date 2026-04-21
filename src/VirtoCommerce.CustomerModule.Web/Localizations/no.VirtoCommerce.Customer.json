@@ -159,7 +159,22 @@
           "filter-contact": "Kontakter",
           "filter-organization": "Selskaper",
           "copy-id": "Kopier ID",
-          "copy-name": "Kopier navn"
+          "copy-name": "Kopier navn",
+          "filter-button-hint": "Filtre",
+          "filter-member-type": "Medlemstype",
+          "filter-created-date": "Opprettet dato",
+          "filter-modified-date": "Endret dato",
+          "filter-date-any": "Når som helst",
+          "filter-date-today": "I dag",
+          "filter-date-last24h": "Siste 24 timer",
+          "filter-date-last7d": "Siste 7 dager",
+          "filter-date-last30d": "Siste 30 dager",
+          "filter-date-custom": "Egendefinert område",
+          "filter-from": "Fra",
+          "filter-to": "Til",
+          "filter-apply": "Bruk",
+          "filter-edit": "Rediger",
+          "member-type-all": "Alle"
         },
         "placeholders": {
           "select-filter": "Velg filter"

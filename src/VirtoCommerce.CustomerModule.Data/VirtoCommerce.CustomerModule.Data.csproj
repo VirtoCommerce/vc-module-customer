@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <noWarn>1591</noWarn>
@@ -10,9 +10,9 @@
   </PropertyGroup>
   <ItemGroup>
     
-    <PackageReference Include="VirtoCommerce.Platform.Data" Version="3.1002.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Hangfire" Version="3.1002.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Security" Version="3.1002.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Data" Version="3.1007.7" />
+    <PackageReference Include="VirtoCommerce.Platform.Hangfire" Version="3.1007.7" />
+    <PackageReference Include="VirtoCommerce.Platform.Security" Version="3.1007.7" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.CustomerModule.Core\VirtoCommerce.CustomerModule.Core.csproj" />
