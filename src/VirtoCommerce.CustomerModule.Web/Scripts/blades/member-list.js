@@ -232,24 +232,147 @@ angular.module('virtoCommerce.customerModule')
             ];
 
 
-            // simple and advanced filtering
-            var filter = blade.filter = { keyword: null };
+            // filter state for <va-filter-panel>
+            var filter = blade.filter = {
+                keyword: '',
+                memberType: ''
+            };
 
-            filter.filterByKeyword = function () {
-                filter.ignoreSortingForRelevance = uiGridHelper.getSortExpression($scope);
+            var dateFieldPrefixes = ['created', 'modified'];
+            _.each(dateFieldPrefixes, function (p) {
+                filter[p + 'DateRange'] = null;
+                filter[p + 'StartDate'] = null;
+                filter[p + 'EndDate'] = null;
+                filter[p + 'ShowCustomInputs'] = false;
+                filter[p + 'CustomStartDate'] = null;
+                filter[p + 'CustomEndDate'] = null;
+                filter[p + 'CustomRangeApplied'] = false;
+            });
+
+            // registered member types come from the resolver service (same source as member-add.js);
+            // prepend a synthetic "All" entry so the empty ng-model matches an actual option
+            // on first render — an inline <option value=""> would otherwise render blank until
+            // the digest cycle catches up with angular-translate.
+            filter.memberTypes = [{ memberType: '' }].concat(memberTypesResolverService.objects);
+
+            filter.dateRanges = [
+                { value: null, label: 'customer.blades.member-list.labels.filter-date-any' },
+                { value: 'today', label: 'customer.blades.member-list.labels.filter-date-today' },
+                { value: 'last24h', label: 'customer.blades.member-list.labels.filter-date-last24h' },
+                { value: 'last7d', label: 'customer.blades.member-list.labels.filter-date-last7d' },
+                { value: 'last30d', label: 'customer.blades.member-list.labels.filter-date-last30d' },
+                { value: 'custom', label: 'customer.blades.member-list.labels.filter-date-custom' }
+            ];
+
+            filter.formatDateForRangeToken = function (d, endOfTheDay = false) {
+                if (!d) {
+                    return '';
+                }
+                var dt = d instanceof Date ? d : new Date(d);
+                var y = dt.getFullYear();
+                var m = `0${dt.getMonth() + 1}`.slice(-2);
+                var day = `0${dt.getDate()}`.slice(-2);
+                return endOfTheDay ? `"${y}-${m}-${day}T23:59:59"` : `"${y}-${m}-${day}T00:00:00"`;
+            };
+
+            filter.formatDate = function (d) {
+                if (!d) {
+                    return '';
+                }
+                var dt = d instanceof Date ? d : new Date(d);
+                var y = dt.getFullYear();
+                var m = `0${dt.getMonth() + 1}`.slice(-2);
+                var day = `0${dt.getDate()}`.slice(-2);
+                return `${y}-${m}-${day}`;
+            };
+
+            function applyPreset(prefix, preset) {
+                var now = new Date();
+                var start = null;
+                var end = null;
+                switch (preset) {
+                    case 'today':
+                        start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                        break;
+                    case 'last24h':
+                        start = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                        break;
+                    case 'last7d':
+                        start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                        break;
+                    case 'last30d':
+                        start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                        break;
+                }
+                filter[prefix + 'StartDate'] = start;
+                filter[prefix + 'EndDate'] = end;
+                filter[prefix + 'ShowCustomInputs'] = false;
+                filter[prefix + 'CustomRangeApplied'] = false;
+            }
+
+            filter.dateRangeChanged = function (prefix) {
+                var preset = filter[prefix + 'DateRange'];
+                if (preset === 'custom') {
+                    filter[prefix + 'ShowCustomInputs'] = true;
+                    return;
+                }
+                applyPreset(prefix, preset);
+                filter.criteriaChanged();
+            };
+
+            filter.applyCustomRange = function (prefix) {
+                filter[prefix + 'StartDate'] = filter[prefix + 'CustomStartDate'];
+                filter[prefix + 'EndDate'] = filter[prefix + 'CustomEndDate'];
+                filter[prefix + 'CustomRangeApplied'] = !!(filter[prefix + 'StartDate'] || filter[prefix + 'EndDate']);
+                filter[prefix + 'ShowCustomInputs'] = false;
+                filter.criteriaChanged();
+            };
+
+            filter.editCustomRange = function (prefix) {
+                filter[prefix + 'ShowCustomInputs'] = true;
+            };
+
+            filter.hasActiveFilters = function () {
+                return !!filter.memberType
+                    || !!filter.createdStartDate || !!filter.createdEndDate
+                    || !!filter.modifiedStartDate || !!filter.modifiedEndDate;
+            };
+
+            filter.clearFilters = function () {
+                filter.memberType = '';
+                _.each(dateFieldPrefixes, function (p) {
+                    filter[p + 'DateRange'] = null;
+                    filter[p + 'StartDate'] = null;
+                    filter[p + 'EndDate'] = null;
+                    filter[p + 'ShowCustomInputs'] = false;
+                    filter[p + 'CustomStartDate'] = null;
+                    filter[p + 'CustomEndDate'] = null;
+                    filter[p + 'CustomRangeApplied'] = false;
+                });
                 filter.criteriaChanged();
             };
 
             filter.criteriaChanged = function () {
-                if (filter.keyword === null) {
-                    blade.memberType = undefined;
-                }
                 if ($scope.pageSettings.currentPage > 1) {
                     $scope.pageSettings.currentPage = 1;
                 } else {
                     blade.refresh();
                 }
             };
+
+            // typing free text → reset column sort so backend relevance ranking applies;
+            // clearing the keyword or changing filter panel values leaves the sort alone.
+            $scope.$watch('blade.filter.keyword', function (newVal, oldVal) {
+                if (newVal === oldVal) {
+                    return;
+                }
+                if (newVal && $scope.gridApi) {
+                    _.each($scope.gridApi.grid.columns, function (col) {
+                        col.sort = {};
+                    });
+                }
+                filter.criteriaChanged();
+            });
 
             // ui-grid
             $scope.setGridOptions = function (gridId, gridOptions) {
@@ -266,20 +389,41 @@ angular.module('virtoCommerce.customerModule')
                 bladeUtils.initializePagination($scope);
             };
 
-            function getSearchCriteria() {
-                var sortCriteria = uiGridHelper.getSortExpression($scope);
+            function dateRangeToken(field, start, end) {
+                if (!start && !end) {
+                    return '';
+                }
+                return `${field}:[${filter.formatDateForRangeToken(start)} TO ${filter.formatDateForRangeToken(end, true)}]`;
+            }
 
-                var searchCriteria = {
+            function getSearchCriteria() {
+                var tokens = [];
+                if (filter.keyword) {
+                    tokens.push(filter.keyword);
+                }
+                if (filter.memberType) {
+                    tokens.push('membertype:' + filter.memberType);
+                }
+                var createdToken = dateRangeToken('createddate', filter.createdStartDate, filter.createdEndDate);
+                if (createdToken) {
+                    tokens.push(createdToken);
+                }
+                var modifiedToken = dateRangeToken('modifieddate', filter.modifiedStartDate, filter.modifiedEndDate);
+                if (modifiedToken) {
+                    tokens.push(modifiedToken);
+                }
+                var composedKeyword = tokens.join(' ');
+
+                return {
                     memberType: blade.memberType,
                     memberId: blade.currentEntity.id,
-                    keyword: filter.keyword ? filter.keyword : undefined,
-                    deepSearch: filter.keyword ? true : false,
-                    sort: filter.keyword && filter.ignoreSortingForRelevance == sortCriteria ? '' : sortCriteria,
+                    keyword: composedKeyword || undefined,
+                    deepSearch: !!composedKeyword,
+                    sort: uiGridHelper.getSortExpression($scope),
                     skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
                     take: $scope.pageSettings.itemsPerPageCount,
                     objectType: 'Member'
                 };
-                return searchCriteria;
             }
 
 

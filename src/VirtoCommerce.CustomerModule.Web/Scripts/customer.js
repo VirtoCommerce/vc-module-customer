@@ -56,38 +56,15 @@ angular.module(moduleName, [])
                 });
         }]
     )
-    // define search filters to be accessible platform-wide
-    .factory('virtoCommerce.customerModule.predefinedSearchFilters', ['$localStorage', function ($localStorage) {
-        $localStorage.customerSearchFilters = $localStorage.customerSearchFilters || [];
-
-        return {
-            register: function (currentFiltersUpdateTime, currentFiltersStorageKey, newFilters) {
-                _.each(newFilters, function (newFilter) {
-                    var found = _.find($localStorage.customerSearchFilters, function (x) {
-                        return x.id == newFilter.id;
-                    });
-                    if (found) {
-                        if (!found.lastUpdateTime || found.lastUpdateTime < currentFiltersUpdateTime) {
-                            angular.copy(newFilter, found);
-                        }
-                    } else if (!$localStorage[currentFiltersStorageKey] || $localStorage[currentFiltersStorageKey] < currentFiltersUpdateTime) {
-                        $localStorage.customerSearchFilters.splice(0, 0, newFilter);
-                    }
-                });
-
-                $localStorage[currentFiltersStorageKey] = currentFiltersUpdateTime;
-            }
-        };
-    }])
     .run([
         '$rootScope', '$state', 'platformWebApp.mainMenuService', 'platformWebApp.authService', 'platformWebApp.permissionScopeResolver',
         'platformWebApp.widgetService', 'platformWebApp.settings', 'platformWebApp.userProfileIconService', 'platformWebApp.metaFormsService',
-        'virtoCommerce.customerModule.memberTypesResolverService', 'virtoCommerce.customerModule.predefinedSearchFilters', 'virtoCommerce.customerModule.members',
+        'virtoCommerce.customerModule.memberTypesResolverService', 'virtoCommerce.customerModule.members',
         'platformWebApp.toolbarService', 'platformWebApp.bladeNavigationService', 'virtoCommerce.storeModule.stores',
         function (
             $rootScope, $state, mainMenuService, authService, scopeResolver,
             widgetService, settings, userProfileIconService, metaFormsService,
-            memberTypesResolverService, predefinedSearchFilters, membersApi,
+            memberTypesResolverService, membersApi,
             toolbarService, bladeNavigationService, storesApi) {
             //Register module in main menu
             var menuItem = {
@@ -590,15 +567,6 @@ angular.module(moduleName, [])
                 permission: 'customer:invite',
                 index: 10
             }, 'virtoCommerce.storeModule.storeDetailController');
-
-            const lastTimeModificationDate = 1583235535540;
-            // predefine search filters for customer search
-            predefinedSearchFilters.register(lastTimeModificationDate, 'customerSearchFiltersDate', [
-                { name: 'customer.blades.member-list.labels.filter-new' },
-                { keyword: 'membertype:Vendor', id: 3, name: 'customer.blades.member-list.labels.filter-vendor' },
-                { keyword: 'membertype:Contact', id: 2, name: 'customer.blades.member-list.labels.filter-contact' },
-                { keyword: 'membertype:Organization', id: 1, name: 'customer.blades.member-list.labels.filter-organization' }
-            ]);
 
             // Register permission scopes
             var associatedOrganizationsOnlyScope = {
