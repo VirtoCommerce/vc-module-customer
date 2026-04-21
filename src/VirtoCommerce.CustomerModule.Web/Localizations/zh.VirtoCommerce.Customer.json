@@ -159,7 +159,22 @@
           "filter-contact": "联系人",
           "filter-organization": "公司",
           "copy-id": "复制ID",
-          "copy-name": "复制名称"
+          "copy-name": "复制名称",
+          "filter-button-hint": "筛选器",
+          "filter-member-type": "成员类型",
+          "filter-created-date": "创建日期",
+          "filter-modified-date": "修改日期",
+          "filter-date-any": "任何时间",
+          "filter-date-today": "今天",
+          "filter-date-last24h": "最近24小时",
+          "filter-date-last7d": "最近7天",
+          "filter-date-last30d": "最近30天",
+          "filter-date-custom": "自定义范围",
+          "filter-from": "从",
+          "filter-to": "到",
+          "filter-apply": "应用",
+          "filter-edit": "编辑",
+          "member-type-all": "全部"
         },
         "placeholders": {
           "select-filter": "选择过滤器"
