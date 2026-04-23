@@ -159,7 +159,22 @@
           "filter-contact": "Contatti",
           "filter-organization": "Aziende",
           "copy-id": "Copia ID",
-          "copy-name": "Copia nome"
+          "copy-name": "Copia nome",
+          "filter-button-hint": "Filtri",
+          "filter-member-type": "Tipo di membro",
+          "filter-created-date": "Data di creazione",
+          "filter-modified-date": "Data di modifica",
+          "filter-date-any": "In qualsiasi momento",
+          "filter-date-today": "Oggi",
+          "filter-date-last24h": "Ultime 24 ore",
+          "filter-date-last7d": "Ultimi 7 giorni",
+          "filter-date-last30d": "Ultimi 30 giorni",
+          "filter-date-custom": "Intervallo personalizzato",
+          "filter-from": "Da",
+          "filter-to": "A",
+          "filter-apply": "Applica",
+          "filter-edit": "Modifica",
+          "member-type-all": "Tutti"
         },
         "placeholders": {
           "select-filter": "Seleziona filtro"
@@ -321,13 +336,10 @@
     "dialogs": {
       "members-delete": {
         "title": "Conferma eliminazione",
-        "warning": "AVVISO: Questa modifica è permanente e non può essere annullata. L’applicazione di questa modifica può comportare la perdita di dati.",
-        "message": "I seguenti dati verranno eliminati:",
         "Vendor": "{{count}} fornitore(i)",
         "Contact": "{{count}} contatto(i)",
         "Employee": "{{count}} dipendente(i)",
-        "Organization": "{{count}} organizzazione(i) e tutto il contenuto in esse contenuto",
-        "instruction": "Digita \"yes\" per eliminare:"
+        "Organization": "{{count}} organizzazione(i) e tutto il contenuto in esse contenuto"
       },
       "unknown-member-type": {
         "title": "Errore",

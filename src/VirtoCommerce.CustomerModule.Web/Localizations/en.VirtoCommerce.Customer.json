@@ -159,7 +159,22 @@
           "filter-contact": "Contacts",
           "filter-organization": "Companies",
           "copy-id": "Copy ID",
-          "copy-name": "Copy name"
+          "copy-name": "Copy name",
+          "filter-button-hint": "Filters",
+          "filter-member-type": "Member type",
+          "filter-created-date": "Created date",
+          "filter-modified-date": "Modified date",
+          "filter-date-any": "Any time",
+          "filter-date-today": "Today",
+          "filter-date-last24h": "Last 24 hours",
+          "filter-date-last7d": "Last 7 days",
+          "filter-date-last30d": "Last 30 days",
+          "filter-date-custom": "Custom range",
+          "filter-from": "From",
+          "filter-to": "To",
+          "filter-apply": "Apply",
+          "filter-edit": "Edit",
+          "member-type-all": "All"
         },
         "placeholders": {
           "select-filter": "Select filter"
@@ -321,13 +336,10 @@
     "dialogs": {
       "members-delete": {
         "title": "Confirm delete",
-        "warning": "WARNING: This change is permanent and cannot be undone. Applying this change may result in data loss",
-        "message": "The following data will be deleted:",
         "Vendor": "{{count}} vendor(s)",
         "Contact": "{{count}} contact(s)",
         "Employee": "{{count}} employee(s)",
-        "Organization": "{{count}} organization(s) and any content within",
-        "instruction": "Type 'yes' to delete:"
+        "Organization": "{{count}} organization(s) and any content within"
       },
       "unknown-member-type": {
         "title": "Error",

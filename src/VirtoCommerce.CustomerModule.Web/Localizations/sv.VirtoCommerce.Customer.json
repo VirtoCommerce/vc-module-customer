@@ -159,7 +159,22 @@
           "filter-contact": "Kontakter",
           "filter-organization": "Företag",
           "copy-id": "Kopiera ID",
-          "copy-name": "Kopiera namn"
+          "copy-name": "Kopiera namn",
+          "filter-button-hint": "Filter",
+          "filter-member-type": "Medlemstyp",
+          "filter-created-date": "Skapat datum",
+          "filter-modified-date": "Ändrat datum",
+          "filter-date-any": "När som helst",
+          "filter-date-today": "Idag",
+          "filter-date-last24h": "Senaste 24 timmarna",
+          "filter-date-last7d": "Senaste 7 dagarna",
+          "filter-date-last30d": "Senaste 30 dagarna",
+          "filter-date-custom": "Anpassat intervall",
+          "filter-from": "Från",
+          "filter-to": "Till",
+          "filter-apply": "Tillämpa",
+          "filter-edit": "Redigera",
+          "member-type-all": "Alla"
         },
         "placeholders": {
           "select-filter": "Välj filter"
@@ -321,13 +336,10 @@
     "dialogs": {
       "members-delete": {
         "title": "Bekräfta radering",
-        "warning": "VARNING: Denna ändring är permanent och kan inte ångras. Att tillämpa denna ändring kan leda till dataförlust.",
-        "message": "Följande data kommer att tas bort:",
         "Vendor": "{{count}} leverantör(er)",
         "Contact": "{{count}} kontakt(er)",
         "Employee": "{{count}} anställd(a)",
-        "Organization": "{{count}} organisation(er) och allt innehåll som finns i dem",
-        "instruction": "Skriv \"yes\" för att ta bort:"
+        "Organization": "{{count}} organisation(er) och allt innehåll som finns i dem"
       },
       "unknown-member-type": {
         "title": "Fel",

@@ -159,7 +159,22 @@
           "filter-contact": "Kontakty",
           "filter-organization": "Firmy",
           "copy-id": "Kopiuj ID",
-          "copy-name": "Kopiuj nazwę"
+          "copy-name": "Kopiuj nazwę",
+          "filter-button-hint": "Filtry",
+          "filter-member-type": "Typ członka",
+          "filter-created-date": "Data utworzenia",
+          "filter-modified-date": "Data modyfikacji",
+          "filter-date-any": "Dowolny czas",
+          "filter-date-today": "Dzisiaj",
+          "filter-date-last24h": "Ostatnie 24 godziny",
+          "filter-date-last7d": "Ostatnie 7 dni",
+          "filter-date-last30d": "Ostatnie 30 dni",
+          "filter-date-custom": "Niestandardowy zakres",
+          "filter-from": "Od",
+          "filter-to": "Do",
+          "filter-apply": "Zastosuj",
+          "filter-edit": "Edytuj",
+          "member-type-all": "Wszystkie"
         },
         "placeholders": {
           "select-filter": "Wybierz filtr"
@@ -321,13 +336,10 @@
     "dialogs": {
       "members-delete": {
         "title": "Potwierdź usunięcie",
-        "warning": "OSTRZEŻENIE: Ta zmiana jest trwała i nie można jej cofnąć. Zastosowanie tej zmiany może spowodować utratę danych.",
-        "message": "Następujące dane zostaną usunięte:",
         "Vendor": "{{count}} dostawca(ów)",
         "Contact": "{{count}} kontakt(y)",
         "Employee": "{{count}} pracownik(ów)",
-        "Organization": "{{count}} organizacja(e) oraz cała zawartość w nich zawarta",
-        "instruction": "Wpisz „yes”, aby usunąć:"
+        "Organization": "{{count}} organizacja(e) oraz cała zawartość w nich zawarta"
       },
       "unknown-member-type": {
         "title": "Błąd",

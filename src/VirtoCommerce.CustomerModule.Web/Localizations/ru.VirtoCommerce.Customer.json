@@ -159,7 +159,22 @@
           "filter-contact": "Контакты",
           "filter-organization": "Компании",
           "copy-id": "Скопировать ID",
-          "copy-name": "Скопировать имя"
+          "copy-name": "Скопировать имя",
+          "filter-button-hint": "Фильтры",
+          "filter-member-type": "Тип участника",
+          "filter-created-date": "Дата создания",
+          "filter-modified-date": "Дата изменения",
+          "filter-date-any": "Любое время",
+          "filter-date-today": "Сегодня",
+          "filter-date-last24h": "Последние 24 часа",
+          "filter-date-last7d": "Последние 7 дней",
+          "filter-date-last30d": "Последние 30 дней",
+          "filter-date-custom": "Произвольный диапазон",
+          "filter-from": "С",
+          "filter-to": "По",
+          "filter-apply": "Применить",
+          "filter-edit": "Изменить",
+          "member-type-all": "Все"
         },
         "placeholders": {
           "select-filter": "Выберите фильтр"
@@ -321,13 +336,10 @@
     "dialogs": {
       "members-delete": {
         "title": "Подтвердите удаление",
-        "warning": "ПРЕДУПРЕЖДЕНИЕ: Это действие является необратимым и не может быть отменено. Применение этого действия может привести к потере данных.",
-        "message": "Будут удалены следующие данные:",
         "Vendor": "{{count}} поставщик(ов)",
         "Contact": "{{count}} контакт(ов)",
         "Employee": "{{count}} сотрудник(ов)",
-        "Organization": "{{count}} организация(й) и всё содержимое внутри",
-        "instruction": "Введите «yes», чтобы удалить:"
+        "Organization": "{{count}} организация(й) и всё содержимое внутри"
       },
       "unknown-member-type": {
         "title": "Ошибка",

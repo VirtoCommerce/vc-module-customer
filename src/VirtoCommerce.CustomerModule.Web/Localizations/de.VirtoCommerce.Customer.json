@@ -159,7 +159,22 @@
           "filter-contact": "Kontakte",
           "filter-organization": "Unternehmen",
           "copy-id": "ID kopieren",
-          "copy-name": "Name kopieren"
+          "copy-name": "Name kopieren",
+          "filter-button-hint": "Filter",
+          "filter-member-type": "Mitgliedertyp",
+          "filter-created-date": "Erstellungsdatum",
+          "filter-modified-date": "Änderungsdatum",
+          "filter-date-any": "Jederzeit",
+          "filter-date-today": "Heute",
+          "filter-date-last24h": "Letzte 24 Stunden",
+          "filter-date-last7d": "Letzte 7 Tage",
+          "filter-date-last30d": "Letzte 30 Tage",
+          "filter-date-custom": "Benutzerdefinierter Zeitraum",
+          "filter-from": "Von",
+          "filter-to": "Bis",
+          "filter-apply": "Anwenden",
+          "filter-edit": "Bearbeiten",
+          "member-type-all": "Alle"
         },
         "placeholders": {
           "select-filter": "Filter auswählen"
@@ -321,13 +336,10 @@
     "dialogs": {
       "members-delete": {
         "title": "Löschen bestätigen",
-        "warning": "WARNUNG: Diese Änderung ist dauerhaft und kann nicht rückgängig gemacht werden. Das Anwenden dieser Änderung kann zu Datenverlust führen.",
-        "message": "Die folgenden Daten werden gelöscht:",
         "Vendor": "{{count}} Anbieter(in)",
         "Contact": "{{count}} Kontakt(e)",
         "Employee": "{{count}} Mitarbeiter(in)",
-        "Organization": "{{count}} Organisation(en) und sämtliche darin enthaltenen Inhalte",
-        "instruction": "Geben Sie 'yes' ein, um zu löschen:"
+        "Organization": "{{count}} Organisation(en) und sämtliche darin enthaltenen Inhalte"
       },
       "unknown-member-type": {
         "title": "Fehler",

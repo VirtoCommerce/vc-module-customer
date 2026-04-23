@@ -159,7 +159,22 @@
           "filter-contact": "連絡先",
           "filter-organization": "会社",
           "copy-id": "IDをコピー",
-          "copy-name": "名前をコピー"
+          "copy-name": "名前をコピー",
+          "filter-button-hint": "フィルター",
+          "filter-member-type": "メンバータイプ",
+          "filter-created-date": "作成日",
+          "filter-modified-date": "更新日",
+          "filter-date-any": "すべて",
+          "filter-date-today": "今日",
+          "filter-date-last24h": "過去24時間",
+          "filter-date-last7d": "過去7日間",
+          "filter-date-last30d": "過去30日間",
+          "filter-date-custom": "カスタム範囲",
+          "filter-from": "開始",
+          "filter-to": "終了",
+          "filter-apply": "適用",
+          "filter-edit": "編集",
+          "member-type-all": "すべて"
         },
         "placeholders": {
           "select-filter": "フィルターを選択"
@@ -321,13 +336,10 @@
     "dialogs": {
       "members-delete": {
         "title": "削除を確認",
-        "warning": "警告: この変更は永久的で、元に戻すことはできません。この変更を適用すると、データが失われる可能性があります。",
-        "message": "次のデータが削除されます:",
         "Vendor": "{{count}} 件のベンダー",
         "Contact": "{{count}} 件の連絡先",
         "Employee": "{{count}} 人の従業員",
-        "Organization": "{{count}} 件の組織およびそれらに含まれるすべてのコンテンツ",
-        "instruction": "削除するには「yes」と入力してください:"
+        "Organization": "{{count}} 件の組織およびそれらに含まれるすべてのコンテンツ"
       },
       "unknown-member-type": {
         "title": "エラー",
