@@ -168,7 +168,16 @@ public class AddressSearchService(
     protected override IChangeToken CreateCacheToken(AddressSearchCriteria criteria)
     {
         var memberKey = criteria.MemberId ?? string.Empty;
-        return GenericSearchCachingRegion<Address>.CreateChangeTokenForKey(memberKey);
+        var memberToken = GenericSearchCachingRegion<Address>.CreateChangeTokenForKey(memberKey);
+
+        if (criteria.UserId.IsNullOrEmpty())
+        {
+            return memberToken;
+        }
+
+        var userToken = GenericSearchCachingRegion<Address>.CreateChangeTokenForKey(criteria.UserId);
+
+        return new CompositeChangeToken([memberToken, userToken]);
     }
 
     protected override IList<SortInfo> BuildSortExpression(AddressSearchCriteria criteria)
