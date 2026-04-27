@@ -23,7 +23,7 @@ public class AddressService(
 {
     protected override Task<IList<AddressEntity>> LoadEntities(IRepository repository, IList<string> ids, string responseGroup)
     {
-        return ((IMemberRepository)repository).GetAddresssByIdsAsync(ids, responseGroup);
+        return ((IMemberRepository)repository).GetAddressesByIdsAsync(ids, responseGroup);
     }
 
     public override Task SaveChangesAsync(IList<Address> models)

@@ -142,7 +142,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             return Task.CompletedTask;
         }
 
-        public virtual async Task<IList<AddressEntity>> GetAddresssByIdsAsync(IList<string> ids, string responseGroup)
+        public virtual async Task<IList<AddressEntity>> GetAddressesByIdsAsync(IList<string> ids, string responseGroup)
         {
             if (ids.IsNullOrEmpty())
             {
