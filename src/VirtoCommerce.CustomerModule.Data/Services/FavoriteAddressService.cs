@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Primitives;
+using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Data.Caching;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.Repositories;
+using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 
@@ -93,5 +95,6 @@ public class FavoriteAddressService : IFavoriteAddressService
     protected virtual void ClearCache(string userId)
     {
         FavoriteAddressCacheRegion.ExpireTokenForKey(userId);
+        GenericSearchCachingRegion<Address>.ExpireTokenForKey(userId);
     }
 }
