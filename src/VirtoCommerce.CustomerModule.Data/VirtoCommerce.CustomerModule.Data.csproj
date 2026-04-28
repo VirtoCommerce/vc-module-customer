@@ -9,10 +9,9 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
   <ItemGroup>
-    
-    <PackageReference Include="VirtoCommerce.Platform.Data" Version="3.1016.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Hangfire" Version="3.1016.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Security" Version="3.1016.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Data" Version="3.1025.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Hangfire" Version="3.1025.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Security" Version="3.1025.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.CustomerModule.Core\VirtoCommerce.CustomerModule.Core.csproj" />
