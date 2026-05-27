@@ -10,10 +10,10 @@ angular.module('virtoCommerce.customerModule')
                     throw new Error('memberListFilterExtensionService.register: descriptor.id is required');
                 }
                 if (!descriptor.templateUrl) {
-                    throw new Error('memberListFilterExtensionService.register: descriptor.templateUrl is required (id=' + descriptor.id + ')');
+                    throw new Error(`memberListFilterExtensionService.register: descriptor.templateUrl is required (id=${descriptor.id})`);
                 }
                 if (_.findWhere(extensions, { id: descriptor.id })) {
-                    throw new Error('memberListFilterExtensionService.register: duplicate id ' + descriptor.id);
+                    throw new Error(`memberListFilterExtensionService.register: duplicate id ${descriptor.id}`);
                 }
                 descriptor.priority = _.isNumber(descriptor.priority) ? descriptor.priority : 100;
                 extensions.push(descriptor);

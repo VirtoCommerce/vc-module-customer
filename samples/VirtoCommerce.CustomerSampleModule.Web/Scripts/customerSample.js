@@ -61,7 +61,7 @@ angular.module(moduleName, [])
                 },
                 appendKeywordTokens: function (filter, tokens) {
                     if (filter.sampleJobTitle) {
-                        tokens.push('jobtitle:"' + filter.sampleJobTitle + '"');
+                        tokens.push(`jobtitle:"${filter.sampleJobTitle}"`);
                     }
                 }
             });
