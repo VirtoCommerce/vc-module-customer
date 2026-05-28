@@ -270,9 +270,9 @@ angular.module('virtoCommerce.customerModule')
             ];
 
             blade.filterExtensions = memberListFilterExtensionService.getFilters();
-            _.each(blade.filterExtensions, function (ext) {
-                if (typeof ext.init === 'function') {
-                    ext.init(filter);
+            _.each(blade.filterExtensions, function (extension) {
+                if (typeof extension.init === 'function') {
+                    extension.init(filter);
                 }
             });
 
@@ -350,8 +350,8 @@ angular.module('virtoCommerce.customerModule')
                     || filter.modifiedStartDate || filter.modifiedEndDate) {
                     return true;
                 }
-                return _.any(blade.filterExtensions, function (ext) {
-                    return typeof ext.hasActiveFilter === 'function' && ext.hasActiveFilter(filter);
+                return _.any(blade.filterExtensions, function (extension) {
+                    return typeof extension.hasActiveFilter === 'function' && extension.hasActiveFilter(filter);
                 });
             };
 
@@ -366,9 +366,9 @@ angular.module('virtoCommerce.customerModule')
                     filter[p + 'CustomEndDate'] = null;
                     filter[p + 'CustomRangeApplied'] = false;
                 });
-                _.each(blade.filterExtensions, function (ext) {
-                    if (typeof ext.clear === 'function') {
-                        ext.clear(filter);
+                _.each(blade.filterExtensions, function (extension) {
+                    if (typeof extension.clear === 'function') {
+                        extension.clear(filter);
                     }
                 });
                 filter.criteriaChanged();
@@ -434,9 +434,9 @@ angular.module('virtoCommerce.customerModule')
                 if (modifiedToken) {
                     tokens.push(modifiedToken);
                 }
-                _.each(blade.filterExtensions, function (ext) {
-                    if (typeof ext.appendKeywordTokens === 'function') {
-                        ext.appendKeywordTokens(filter, tokens);
+                _.each(blade.filterExtensions, function (extension) {
+                    if (typeof extension.appendKeywordTokens === 'function') {
+                        extension.appendKeywordTokens(filter, tokens);
                     }
                 });
                 var composedKeyword = tokens.join(' ');

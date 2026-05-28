@@ -31,7 +31,7 @@ angular.module(moduleName, [])
                 fullTypeName: 'virtoCommerce.customerSampleModule.Web.Model.Supplier',
                 icon: 'fa fa-truck',
                 detailBlade: {
-                    template: 'Modules/$(VirtoCommerce.customerSample)/Scripts/blades/supplier-detail.tpl.html',
+                    template: 'Modules/$(VirtoCommerce.customerSample)/Scripts/blades/supplier-detail.html',
                     metaFields: [{
                         name: 'contractNumber',
                         title: "Contract Number",
@@ -49,7 +49,7 @@ angular.module(moduleName, [])
             memberListFilterExtensionService.register({
                 id: 'sample-job-title',
                 priority: 110,
-                templateUrl: 'Modules/$(VirtoCommerce.customerSample)/Scripts/blades/filters/job-title-filter.tpl.html',
+                templateUrl: 'Modules/$(VirtoCommerce.customerSample)/Scripts/blades/filters/job-title-filter.html',
                 init: function (filter) {
                     filter.sampleJobTitle = '';
                 },
