@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VirtoCommerce.CustomerModule.Core.Model;
@@ -26,6 +27,9 @@ namespace VirtoCommerce.CustomerSampleModule.Web
             serviceCollection.AddDbContext<CustomerSampleDbContext>((provider, options) =>
             {
                 var configuration = provider.GetRequiredService<IConfiguration>();
+                // Suppress PendingModelChangesWarning so platform-side model updates
+                // in the base DbContext do not throw at startup in derived modules.
+                options.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
                 options.UseSqlServer(configuration.GetConnectionString(ModuleInfo.Id) ?? configuration.GetConnectionString("VirtoCommerce.Customer") ?? configuration.GetConnectionString("VirtoCommerce"));
             });
 
