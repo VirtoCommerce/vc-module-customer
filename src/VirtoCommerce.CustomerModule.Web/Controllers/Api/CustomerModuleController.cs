@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,6 +29,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         private readonly IMemberSearchService _memberSearchService;
         private readonly IInviteCustomerService _inviteCustomerService;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IOrganizationMembershipService _organizationMembershipService;
 
         private UserManager<ApplicationUser> UserManager => _signInManager.UserManager;
 
@@ -35,13 +37,15 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             IMemberService memberService,
             IMemberSearchService memberSearchService,
             IInviteCustomerService inviteCustomerService,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            IOrganizationMembershipService organizationMembershipService)
         {
             _authorizationService = authorizationService;
             _memberService = memberService;
             _memberSearchService = memberSearchService;
             _inviteCustomerService = inviteCustomerService;
             _signInManager = signInManager;
+            _organizationMembershipService = organizationMembershipService;
         }
 
         /// <summary>
@@ -861,6 +865,19 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                 {
                     organizationsIds = employee.Organizations?.ToList() ?? organizationsIds;
                 }
+            }
+
+            var userId = UserManager.GetUserId(User);
+
+            if (!string.IsNullOrEmpty(userId) && organizationsIds.Count > 0)
+            {
+                var memberships = await _organizationMembershipService.GetByUserIdAsync(userId);
+                var lockedOrgIds = memberships
+                    .Where(m => m.IsLocked && (m.LockoutEnd == null || m.LockoutEnd > DateTime.UtcNow))
+                    .Select(m => m.OrganizationId)
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+                organizationsIds = organizationsIds.Where(orgId => !lockedOrgIds.Contains(orgId)).ToList();
             }
 
             return await GetOrganizationsByIds([.. organizationsIds]);

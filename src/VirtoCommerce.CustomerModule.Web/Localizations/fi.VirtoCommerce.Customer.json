@@ -279,6 +279,38 @@
           "status": "Valitse arvo"
         }
       },
+      "organization-memberships-list": {
+        "title": "Organisaatiojäsenyydet",
+        "subtitle": "Hallitse organisaatiojäsenyyksiä",
+        "labels": {
+          "type": "Tyyppi",
+          "organization": "Organisaatio",
+          "roles": "Roolit",
+          "status": "Tila",
+          "lockout-end": "Lukittu asti"
+        },
+        "type-org": "Organisaatio",
+        "type-global": "Globaali",
+        "status-locked": "Lukittu",
+        "status-active": "Aktiivinen"
+      },
+      "organization-membership-detail": {
+        "title-global": "Globaali jäsenyys",
+        "title-new": "Uusi jäsenyys",
+        "subtitle": "Jäsenyyden tiedot",
+        "labels": {
+          "organization": "Organisaatio",
+          "type": "Tyyppi",
+          "roles": "Roolit",
+          "status": "Tila",
+          "lockout-end": "Lukittu asti"
+        },
+        "placeholders": {
+          "organization": "Valitse organisaatio",
+          "roles": "Valitse roolit",
+          "lockout-end": "Valitse päivämäärä"
+        }
+      },
       "invite-customers": {
         "title": "Kutsu asiakkaita",
         "labels": {
@@ -331,6 +363,10 @@
       "account-contact": {
         "no-contact": "Ei yhteystietoa",
         "show-contact": "Näytä yhteystieto"
+      },
+      "organization-memberships": {
+        "title": "Organisaatiojäsenyydet",
+        "blade-subtitle": "Hallitse organisaatiojäsenyyksiä"
       }
     },
     "dialogs": {
@@ -380,10 +416,31 @@
       "invite-customers-error": {
         "title": "Kutsu asiakkaita",
         "message": "Osa kutsuista ei lähetetty virheiden vuoksi. Katso lisätietoja virheistä."
+      },
+      "membership-delete": {
+        "title": "Vahvista poisto",
+        "message": "Haluatko varmasti poistaa valitun jäsenyyden/valitut jäsenyydet?"
+      },
+      "membership-duplicate": {
+        "title": "Päällekkäinen jäsenyys",
+        "message": "Jäsenyys tälle käyttäjälle ja organisaatiolle on jo olemassa."
+      },
+      "no-security-account": {
+        "title": "Ei tiliä",
+        "message": "Tällä jäsenellä ei ole linkitettyä suojaustiliä."
+      },
+      "no-org-membership": {
+        "title": "Ei löydy",
+        "message": "Tälle jäsenelle ei löydy organisaatiojäsenyyden tietuetta."
       }
     },
     "commands": {
-      "invite-customers": "Kutsu asiakkaita"
+      "invite-customers": "Kutsu asiakkaita",
+      "lock-in-org": "Lukitse organisaatiossa",
+      "unlock-in-org": "Avaa lukitus organisaatiossa",
+      "change-role-in-org": "Muuta rooleja",
+      "lock": "Lukitse",
+      "unlock": "Avaa lukitus"
     }
   },
   "permissions": {

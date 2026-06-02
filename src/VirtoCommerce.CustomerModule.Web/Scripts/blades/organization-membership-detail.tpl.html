@@ -1,0 +1,82 @@
+<div class="blade-content">
+    <div class="blade-inner">
+        <div class="inner-block">
+            <form class="form" name="detailForm">
+                <div ng-init="setForm(detailForm)"></div>
+
+                <!-- Organisation (read-only for existing, editable for new) -->
+                <div class="form-group" ng-if="!blade.isGlobal">
+                    <label class="form-label">{{'customer.blades.organization-membership-detail.labels.organization' | translate}}</label>
+                    <div class="form-input" ng-if="blade.isNew">
+                        <ui-scroll-drop-down
+                            ng-model="blade.currentEntity.organizationId"
+                            data="blade.fetchOrganizations(criteria)"
+                            value-field="id"
+                            display-field="name"
+                            required
+                            placeholder="'customer.blades.organization-membership-detail.placeholders.organization'">
+                        </ui-scroll-drop-down>
+                    </div>
+                    <div class="form-input" ng-if="!blade.isNew">
+                        <span>{{ blade.currentEntity.organizationName || blade.currentEntity.organizationId }}</span>
+                    </div>
+                </div>
+
+                <!-- Global badge -->
+                <div class="form-group" ng-if="blade.isGlobal">
+                    <label class="form-label">{{'customer.blades.organization-membership-detail.labels.type' | translate}}</label>
+                    <div class="form-input">
+                        <span class="label label-info">{{ 'customer.blades.organization-memberships-list.type-global' | translate }}</span>
+                    </div>
+                </div>
+
+                <!-- Roles -->
+                <div class="form-group">
+                    <label class="form-label">{{'customer.blades.organization-membership-detail.labels.roles' | translate}}</label>
+                    <div class="form-input">
+                        <ui-select multiple
+                                   ng-model="blade.currentEntity.roles"
+                                   required>
+                            <ui-select-match placeholder="{{'customer.blades.organization-membership-detail.placeholders.roles' | translate}}">
+                                {{ $item.roleName || $item.name }}
+                            </ui-select-match>
+                            <ui-select-choices repeat="r in blade.availableRoles | filter: isRoleAvailable track by r.id"
+                                               refresh="blade.refreshRoles($select.search)"
+                                               refresh-delay="200">
+                                <span ng-bind-html="r.name | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+
+                <!-- Lock status -->
+                <div class="form-group">
+                    <label class="form-label">{{'customer.blades.organization-membership-detail.labels.status' | translate}}</label>
+                    <div class="form-input">
+                        {{ (blade.currentEntity.isLocked ? 'customer.blades.organization-memberships-list.status-locked' : 'customer.blades.organization-memberships-list.status-active') | translate }}
+                    </div>
+                </div>
+
+                <!-- LockoutEnd (visible only when locked) -->
+                <div class="form-group" ng-if="blade.currentEntity.isLocked">
+                    <label class="form-label">{{'customer.blades.organization-membership-detail.labels.lockout-end' | translate}}</label>
+                    <div class="form-input __calendar">
+                        <input type="text"
+                               class="form-control"
+                               ng-model="blade.currentEntity.lockoutEnd"
+                               ng-model-options="{ timezone: 'UTC' }"
+                               datepicker-popup="mediumDate"
+                               enable-time="false"
+                               is-open="blade.datepickers.lockoutEnd"
+                               placeholder="{{'customer.blades.organization-membership-detail.placeholders.lockout-end' | translate}}" />
+                        <button class="btn" type="button"
+                                ng-click="blade.datepickers = blade.datepickers || {}; blade.datepickers.lockoutEnd = !blade.datepickers.lockoutEnd">
+                            <i class="btn-ico fa fa-calendar"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

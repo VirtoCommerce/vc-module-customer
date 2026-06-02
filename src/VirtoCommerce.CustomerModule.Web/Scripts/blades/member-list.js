@@ -1,6 +1,6 @@
 angular.module('virtoCommerce.customerModule')
-    .controller('virtoCommerce.customerModule.memberListController', ['$scope', '$location', 'virtoCommerce.customerModule.members', 'platformWebApp.dialogService', 'platformWebApp.bladeUtils', 'platformWebApp.uiGridHelper', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.ui-grid.extension',
-        function ($scope, $location, members, dialogService, bladeUtils, uiGridHelper, memberTypesResolverService, gridOptionExtension) {
+    .controller('virtoCommerce.customerModule.memberListController', ['$scope', '$location', 'virtoCommerce.customerModule.members', 'platformWebApp.dialogService', 'platformWebApp.bladeUtils', 'platformWebApp.uiGridHelper', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.ui-grid.extension', 'virtoCommerce.customerModule.organizationMemberships',
+        function ($scope, $location, members, dialogService, bladeUtils, uiGridHelper, memberTypesResolverService, gridOptionExtension, organizationMemberships) {
             $scope.uiGridConstants = uiGridHelper.uiGridConstants;
 
             var blade = $scope.blade;
@@ -228,8 +228,93 @@ angular.module('virtoCommerce.customerModule')
                     },
                     permission: 'customer:invite',
                     index: 10
+                },
+                {
+                    name: 'customer.commands.lock-in-org',
+                    icon: 'fas fa-lock',
+                    executeMethod: function () {
+                        var selected = $scope.gridApi.selection.getSelectedRows()[0];
+                        resolveOrgMembership(selected, function (membership) {
+                            organizationMemberships.lock({ id: membership.id }, {}, function () {
+                                blade.refresh();
+                            });
+                        });
+                    },
+                    canExecuteMethod: function () {
+                        // Only show when browsing inside an organization context
+                        return blade.currentEntity && blade.currentEntity.memberType === 'Organization'
+                            && $scope.gridApi && $scope.gridApi.selection.getSelectedRows().length === 1;
+                    },
+                    permission: 'platform:security:update'
+                },
+                {
+                    name: 'customer.commands.unlock-in-org',
+                    icon: 'fas fa-lock-open',
+                    executeMethod: function () {
+                        var selected = $scope.gridApi.selection.getSelectedRows()[0];
+                        resolveOrgMembership(selected, function (membership) {
+                            organizationMemberships.unlock({ id: membership.id }, {}, function () {
+                                blade.refresh();
+                            });
+                        });
+                    },
+                    canExecuteMethod: function () {
+                        return blade.currentEntity && blade.currentEntity.memberType === 'Organization'
+                            && $scope.gridApi && $scope.gridApi.selection.getSelectedRows().length === 1;
+                    },
+                    permission: 'platform:security:update'
+                },
+                {
+                    name: 'customer.commands.change-role-in-org',
+                    icon: 'fas fa-user-tag',
+                    executeMethod: function () {
+                        var selected = $scope.gridApi.selection.getSelectedRows()[0];
+                        resolveOrgMembership(selected, function (membership) {
+                            var newBlade = {
+                                id: 'organizationMembershipDetail',
+                                userId: membership.userId,
+                                currentEntity: angular.copy(membership),
+                                isGlobal: false,
+                                title: membership.organizationName,
+                                subtitle: 'customer.blades.organization-membership-detail.subtitle',
+                                controller: 'virtoCommerce.customerModule.organizationMembershipDetailController',
+                                template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/organization-membership-detail.tpl.html'
+                            };
+                            bladeNavigationService.showBlade(newBlade, blade);
+                        });
+                    },
+                    canExecuteMethod: function () {
+                        return blade.currentEntity && blade.currentEntity.memberType === 'Organization'
+                            && $scope.gridApi && $scope.gridApi.selection.getSelectedRows().length === 1;
+                    },
+                    permission: 'platform:security:update'
                 }
             ];
+
+            function resolveOrgMembership(member, callback) {
+                members.get({ id: member.id }, function (fullMember) {
+                    if (!fullMember.securityAccounts || !fullMember.securityAccounts.length) {
+                        dialogService.showNotificationDialog({
+                            id: 'noAccount',
+                            title: 'customer.dialogs.no-security-account.title',
+                            message: 'customer.dialogs.no-security-account.message'
+                        });
+                        return;
+                    }
+                    var userId = fullMember.securityAccounts[0].id;
+                    organizationMemberships.getByUserAndOrg(
+                        { userId: userId, organizationId: blade.currentEntity.id },
+                        function (membership) { callback(membership); },
+                        function () {
+                            dialogService.showNotificationDialog({
+                                id: 'noMembership',
+                                title: 'customer.dialogs.no-org-membership.title',
+                                message: 'customer.dialogs.no-org-membership.message'
+                            });
+                        }
+                    );
+                });
+            }
 
 
             // filter state for <va-filter-panel>

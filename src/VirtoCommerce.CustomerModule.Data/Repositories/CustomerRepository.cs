@@ -18,6 +18,8 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
         public IQueryable<EmployeeEntity> Employees => DbContext.Set<EmployeeEntity>();
         public IQueryable<VendorEntity> Vendors => DbContext.Set<VendorEntity>();
         public IQueryable<CustomerPreferenceEntity> CustomerPreferences => DbContext.Set<CustomerPreferenceEntity>();
+        public IQueryable<OrganizationMembershipEntity> OrganizationMemberships => DbContext.Set<OrganizationMembershipEntity>();
+        public IQueryable<OrganizationMembershipRoleEntity> OrganizationMembershipRoles => DbContext.Set<OrganizationMembershipRoleEntity>();
 
         public virtual async Task<IList<CustomerPreferenceEntity>> GetCustomerPreferencesByIdsAsync(IList<string> ids, string responseGroup)
         {
