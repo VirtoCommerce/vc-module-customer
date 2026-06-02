@@ -76,7 +76,11 @@ angular.module('virtoCommerce.customerModule')
                         var deletable = _.filter(selected, function (x) {
                             return x.organizationId !== null && x.organizationId !== undefined;
                         });
-                        if (!deletable.length) { return; }
+
+                        if (!deletable.length) {
+                            return;
+                        }
+
                         var dialog = {
                             id: 'confirmDeleteMembership',
                             title: 'customer.dialogs.membership-delete.title',
@@ -98,7 +102,10 @@ angular.module('virtoCommerce.customerModule')
                         dialogService.showConfirmationDialog(dialog);
                     },
                     canExecuteMethod: function () {
-                        if (!$scope.gridApi) { return false; }
+                        if (!$scope.gridApi) {
+                            return false;
+                        }
+
                         var sel = $scope.gridApi.selection.getSelectedRows();
                         return _.some(sel, function (x) {
                             return x.organizationId !== null && x.organizationId !== undefined;
@@ -112,16 +119,43 @@ angular.module('virtoCommerce.customerModule')
                 useExternalSorting: false,
                 rowTemplate: 'org-memberships-list.row.html',
                 columnDefs: [
-                    { name: 'organizationName', displayName: 'customer.blades.organization-memberships-list.labels.organization', minWidth: 200 },
-                    { name: 'roles', displayName: 'customer.blades.organization-memberships-list.labels.roles', cellTemplate: 'org-memberships-roles.cell.html', enableSorting: false },
-                    { name: 'status', displayName: 'customer.blades.organization-memberships-list.labels.status', cellTemplate: 'org-memberships-status.cell.html', width: 90, enableSorting: false },
-                    { name: 'type', displayName: 'customer.blades.organization-memberships-list.labels.type', cellTemplate: 'org-memberships-type.cell.html', width: 110, enableSorting: false, visible: false },
-                    { name: 'lockoutEnd', displayName: 'customer.blades.organization-memberships-list.labels.lockout-end', cellFilter: 'date:"mediumDate"', width: 140, visible: false }
+                    {
+                        name: 'organizationName',
+                        displayName: 'customer.blades.organization-memberships-list.labels.organization',
+                        minWidth: 200
+                    },
+                    {
+                        name: 'roles',
+                        displayName: 'customer.blades.organization-memberships-list.labels.roles',
+                        cellTemplate: 'org-memberships-roles.cell.html',
+                        enableSorting: false
+                    },
+                    {
+                        name: 'status',
+                        displayName: 'customer.blades.organization-memberships-list.labels.status',
+                        cellTemplate: 'org-memberships-status.cell.html',
+                        width: 90, enableSorting: false
+                    },
+                    {
+                        name: 'type',
+                        displayName: 'customer.blades.organization-memberships-list.labels.type',
+                        cellTemplate: 'org-memberships-type.cell.html',
+                        width: 110, enableSorting: false, visible: false
+                    },
+                    {
+                        name: 'lockoutEnd',
+                        displayName: 'customer.blades.organization-memberships-list.labels.lockout-end',
+                        cellFilter: 'date:"mediumDate"',
+                        width: 140, visible: false
+                    }
                 ]
             }, function (gridApi) { });
 
             $scope.formatRoles = function (roles) {
-                if (!roles || !roles.length) { return '-'; }
+                if (!roles || !roles.length) {
+                    return '-';
+                }
+
                 return _.pluck(roles, 'roleName').filter(Boolean).join(', ') || '-';
             };
 

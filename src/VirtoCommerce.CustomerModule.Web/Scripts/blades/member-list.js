@@ -1,9 +1,16 @@
 angular.module('virtoCommerce.customerModule')
-    .controller('virtoCommerce.customerModule.memberListController', ['$scope', '$location', 'virtoCommerce.customerModule.members', 'platformWebApp.dialogService', 'platformWebApp.bladeUtils', 'platformWebApp.uiGridHelper', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.ui-grid.extension', 'virtoCommerce.customerModule.organizationMemberships',
-        function ($scope, $location, members, dialogService, bladeUtils, uiGridHelper, memberTypesResolverService, gridOptionExtension, organizationMemberships) {
+    .controller('virtoCommerce.customerModule.memberListController', [
+        '$scope', '$location',
+        'virtoCommerce.customerModule.members', 'platformWebApp.dialogService',
+        'platformWebApp.bladeUtils', 'platformWebApp.uiGridHelper',
+        'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.ui-grid.extension',
+        'virtoCommerce.customerModule.organizationMemberships',
+        function ($scope, $location, members, dialogService, bladeUtils, uiGridHelper,
+                  memberTypesResolverService, gridOptionExtension, organizationMemberships) {
             $scope.uiGridConstants = uiGridHelper.uiGridConstants;
 
             var blade = $scope.blade;
+            var orgActionPermission = 'platform:security:update';
             blade.title = 'customer.blades.member-list.title';
             var bladeNavigationService = bladeUtils.bladeNavigationService;
 
@@ -245,7 +252,7 @@ angular.module('virtoCommerce.customerModule')
                         return blade.currentEntity && blade.currentEntity.memberType === 'Organization'
                             && $scope.gridApi && $scope.gridApi.selection.getSelectedRows().length === 1;
                     },
-                    permission: 'platform:security:update'
+                    permission: orgActionPermission
                 },
                 {
                     name: 'customer.commands.unlock-in-org',
@@ -262,7 +269,7 @@ angular.module('virtoCommerce.customerModule')
                         return blade.currentEntity && blade.currentEntity.memberType === 'Organization'
                             && $scope.gridApi && $scope.gridApi.selection.getSelectedRows().length === 1;
                     },
-                    permission: 'platform:security:update'
+                    permission: orgActionPermission
                 },
                 {
                     name: 'customer.commands.change-role-in-org',
@@ -287,7 +294,7 @@ angular.module('virtoCommerce.customerModule')
                         return blade.currentEntity && blade.currentEntity.memberType === 'Organization'
                             && $scope.gridApi && $scope.gridApi.selection.getSelectedRows().length === 1;
                     },
-                    permission: 'platform:security:update'
+                    permission: orgActionPermission
                 }
             ];
 
@@ -299,6 +306,7 @@ angular.module('virtoCommerce.customerModule')
                             title: 'customer.dialogs.no-security-account.title',
                             message: 'customer.dialogs.no-security-account.message'
                         });
+
                         return;
                     }
                     var userId = fullMember.securityAccounts[0].id;
@@ -353,10 +361,12 @@ angular.module('virtoCommerce.customerModule')
                 if (!d) {
                     return '';
                 }
+
                 var dt = d instanceof Date ? d : new Date(d);
                 var y = dt.getFullYear();
                 var m = `0${dt.getMonth() + 1}`.slice(-2);
                 var day = `0${dt.getDate()}`.slice(-2);
+
                 return endOfTheDay ? `"${y}-${m}-${day}T23:59:59"` : `"${y}-${m}-${day}T00:00:00"`;
             };
 
@@ -364,10 +374,12 @@ angular.module('virtoCommerce.customerModule')
                 if (!d) {
                     return '';
                 }
+
                 var dt = d instanceof Date ? d : new Date(d);
                 var y = dt.getFullYear();
                 var m = `0${dt.getMonth() + 1}`.slice(-2);
                 var day = `0${dt.getDate()}`.slice(-2);
+
                 return `${y}-${m}-${day}`;
             };
 
@@ -478,6 +490,7 @@ angular.module('virtoCommerce.customerModule')
                 if (!start && !end) {
                     return '';
                 }
+
                 return `${field}:[${filter.formatDateForRangeToken(start)} TO ${filter.formatDateForRangeToken(end, true)}]`;
             }
 

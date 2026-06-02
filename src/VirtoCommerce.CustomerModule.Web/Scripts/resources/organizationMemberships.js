@@ -1,44 +1,45 @@
 angular.module('virtoCommerce.customerModule')
     .factory('virtoCommerce.customerModule.organizationMemberships', ['$resource', function ($resource) {
-        return $resource('api/customer/organization-memberships/:id', {}, {
+        var baseUrl = 'api/customer/organization-memberships';
+        return $resource(baseUrl + '/:id', {}, {
             getByUserId: {
                 method: 'GET',
-                url: 'api/customer/organization-memberships/user/:userId',
+                url: baseUrl + '/user/:userId',
                 isArray: true,
                 params: { userId: '@userId' }
             },
             getByUserAndOrg: {
                 method: 'GET',
-                url: 'api/customer/organization-memberships/user/:userId/org/:organizationId',
+                url: baseUrl + '/user/:userId/org/:organizationId',
                 params: { userId: '@userId', organizationId: '@organizationId' }
             },
             getById: {
                 method: 'GET',
-                url: 'api/customer/organization-memberships/:id',
+                url: baseUrl + '/:id',
                 params: { id: '@id' }
             },
             create: {
                 method: 'POST',
-                url: 'api/customer/organization-memberships'
+                url: baseUrl
             },
             update: {
                 method: 'PUT',
-                url: 'api/customer/organization-memberships/:id',
+                url: baseUrl + '/:id',
                 params: { id: '@id' }
             },
             delete: {
                 method: 'DELETE',
-                url: 'api/customer/organization-memberships',
+                url: baseUrl,
                 isArray: false
             },
             lock: {
                 method: 'POST',
-                url: 'api/customer/organization-memberships/:id/lock',
+                url: baseUrl + '/:id/lock',
                 params: { id: '@id' }
             },
             unlock: {
                 method: 'POST',
-                url: 'api/customer/organization-memberships/:id/unlock',
+                url: baseUrl + '/:id/unlock',
                 params: { id: '@id' }
             }
         });

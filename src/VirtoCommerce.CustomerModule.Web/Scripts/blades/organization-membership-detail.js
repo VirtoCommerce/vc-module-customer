@@ -15,6 +15,7 @@ angular.module('virtoCommerce.customerModule')
                 if (blade.isNew) {
                     blade.origEntity = {};
                     blade.isLoading = false;
+
                     return;
                 }
                 blade.isLoading = true;
@@ -35,7 +36,10 @@ angular.module('virtoCommerce.customerModule')
             };
 
             $scope.isRoleAvailable = function (role) {
-                var selectedIds = (blade.currentEntity.roles || []).map(function (r) { return r.roleId || r.id; });
+                var selectedIds = (blade.currentEntity.roles || []).map(function (r) {
+                    return r.roleId || r.id;
+                });
+
                 return selectedIds.indexOf(role.id) === -1;
             };
 
@@ -43,6 +47,7 @@ angular.module('virtoCommerce.customerModule')
             blade.fetchOrganizations = function (criteria) {
                 criteria = criteria || {};
                 criteria.take = criteria.take || 20;
+
                 return organizations.search(criteria);
             };
 
@@ -86,6 +91,7 @@ angular.module('virtoCommerce.customerModule')
                             title: 'customer.dialogs.membership-duplicate.title',
                             message: 'customer.dialogs.membership-duplicate.message'
                         });
+
                         return;
                     }
                 }
