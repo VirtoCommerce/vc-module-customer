@@ -79,32 +79,85 @@ public class OrganizationMembershipService(
         });
     }
 
-    public async Task<IList<OrganizationMembership>> GetByUserIdAsync(string userId)
+    public async Task<IReadOnlyCollection<string>> GetLockedOrganizationIdsAsync(string userId)
     {
         if (string.IsNullOrEmpty(userId))
         {
             return [];
         }
 
-        var cacheKey = CacheKey.With(GetType(), nameof(GetByUserIdAsync), userId);
+        var cacheKey = CacheKey.With(GetType(), nameof(GetLockedOrganizationIdsAsync), userId);
+
+        return await platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async (cacheEntry) =>
+        {
+            cacheEntry.AddExpirationToken(OrganizationMembershipCacheRegion.CreateChangeTokenForUser(userId));
+
+            var now = DateTime.UtcNow;
+            using var repository = repositoryFactory();
+
+            return (IReadOnlyCollection<string>)await repository.OrganizationMemberships
+                .Where(x => x.UserId == userId
+                         && x.IsLocked
+                         && (x.LockoutEnd == null || x.LockoutEnd > now))
+                .Select(x => x.OrganizationId)
+                .ToListAsync();
+        });
+    }
+
+    public async Task<int> CountByUserIdAsync(string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            return 0;
+        }
+
+        var cacheKey = CacheKey.With(GetType(), nameof(CountByUserIdAsync), userId);
 
         return await platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async (cacheEntry) =>
         {
             cacheEntry.AddExpirationToken(OrganizationMembershipCacheRegion.CreateChangeTokenForUser(userId));
 
             using var repository = repositoryFactory();
-            var entities = await repository.OrganizationMemberships
+
+            return await repository.OrganizationMemberships.CountAsync(x => x.UserId == userId);
+        });
+    }
+
+    public async Task<OrganizationMembershipSearchResult> SearchByUserIdAsync(string userId, int skip = 0, int take = 20)
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            return new OrganizationMembershipSearchResult();
+        }
+
+        var cacheKey = CacheKey.With(GetType(), nameof(SearchByUserIdAsync), userId, skip.ToString(), take.ToString());
+
+        return await platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async (cacheEntry) =>
+        {
+            cacheEntry.AddExpirationToken(OrganizationMembershipCacheRegion.CreateChangeTokenForUser(userId));
+
+            using var repository = repositoryFactory();
+            var query = repository.OrganizationMemberships.Where(x => x.UserId == userId);
+
+            var result = new OrganizationMembershipSearchResult
+            {
+                TotalCount = await query.CountAsync()
+            };
+
+            var entities = await query
                 .Include(x => x.Roles)
-                .Where(x => x.UserId == userId)
+                .OrderBy(x => x.CreatedDate)
+                .Skip(skip)
+                .Take(take)
                 .ToListAsync();
 
-            var models = entities
+            result.Results = entities
                 .Select(e => e.ToModel(new OrganizationMembership()))
                 .ToList();
 
-            await ResolveOrganizationNamesAsync(repository, models);
+            await ResolveOrganizationNamesAsync(repository, result.Results);
 
-            return (IList<OrganizationMembership>)models;
+            return result;
         });
     }
 

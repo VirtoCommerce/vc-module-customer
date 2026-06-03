@@ -9,11 +9,10 @@ angular.module('virtoCommerce.customerModule')
                     $scope.count = 0;
                     return;
                 }
-                // Use the first linked security account to load memberships
+
                 var userId = blade.currentEntity.securityAccounts[0].id;
-                organizationMemberships.getByUserId({ userId: userId }, function (data) {
-                    $scope.memberships = data;
-                    $scope.count = data ? data.length : 0;
+                organizationMemberships.count({ userId: userId }, function (data) {
+                    $scope.count = data.count || 0;
                 });
             }
 

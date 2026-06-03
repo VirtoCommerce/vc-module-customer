@@ -2,10 +2,14 @@ angular.module('virtoCommerce.customerModule')
     .factory('virtoCommerce.customerModule.organizationMemberships', ['$resource', function ($resource) {
         var baseUrl = 'api/customer/organization-memberships';
         return $resource(baseUrl + '/:id', {}, {
-            getByUserId: {
+            count: {
                 method: 'GET',
-                url: baseUrl + '/user/:userId',
-                isArray: true,
+                url: baseUrl + '/user/:userId/count',
+                params: { userId: '@userId' }
+            },
+            search: {
+                method: 'GET',
+                url: baseUrl + '/user/:userId/search',
                 params: { userId: '@userId' }
             },
             getByUserAndOrg: {

@@ -46,7 +46,6 @@ public class OrganizationIdRequestValidator(
             return [ErrorDescriber.InvalidOrganizationId(organizationId)];
         }
 
-        // Check org-level lockout via OrganizationMembership
         if (context.User != null)
         {
             var membership = await organizationMembershipService.GetByUserAndOrgAsync(context.User.Id, organizationId);

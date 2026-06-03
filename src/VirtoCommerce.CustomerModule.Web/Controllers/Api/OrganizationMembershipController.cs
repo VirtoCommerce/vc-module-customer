@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -13,12 +12,26 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api;
 [Route("api/customer/organization-memberships")]
 public class OrganizationMembershipController(IOrganizationMembershipService membershipService) : Controller
 {
-    /// <summary>Returns all organization memberships for a user.</summary>
-    [HttpGet("user/{userId}")]
+    /// <summary>Returns the count of organization memberships for a user (lightweight — for widget counters).</summary>
+    [HttpGet("user/{userId}/count")]
     [Authorize(Permissions.Read)]
-    public async Task<ActionResult<IList<OrganizationMembership>>> GetByUserId([FromRoute] string userId)
+    public async Task<ActionResult> CountByUserId([FromRoute] string userId)
     {
-        var result = await membershipService.GetByUserIdAsync(userId);
+        var count = await membershipService.CountByUserIdAsync(userId);
+
+        return Ok(new { count });
+    }
+
+    /// <summary>Returns paginated organization memberships for a user.</summary>
+    [HttpGet("user/{userId}/search")]
+    [Authorize(Permissions.Read)]
+    public async Task<ActionResult> SearchByUserId(
+        [FromRoute] string userId,
+        [FromQuery] int skip = 0,
+        [FromQuery] int take = 20)
+    {
+        var result = await membershipService.SearchByUserIdAsync(userId, skip, take);
+
         return Ok(result);
     }
 
@@ -59,7 +72,9 @@ public class OrganizationMembershipController(IOrganizationMembershipService mem
     {
         membership.Id = null;
         await membershipService.SaveChangesAsync([membership]);
-        return Ok(membership);
+        var result = await membershipService.GetByIdAsync(membership.Id);
+
+        return Ok(result);
     }
 
     /// <summary>Updates an existing organization membership.</summary>
@@ -71,6 +86,7 @@ public class OrganizationMembershipController(IOrganizationMembershipService mem
     {
         membership.Id = id;
         await membershipService.SaveChangesAsync([membership]);
+
         return Ok(membership);
     }
 
@@ -83,6 +99,7 @@ public class OrganizationMembershipController(IOrganizationMembershipService mem
     {
         await membershipService.LockAsync(id, request?.LockoutEnd);
         var result = await membershipService.GetByIdAsync(id);
+
         return Ok(result);
     }
 
@@ -93,6 +110,7 @@ public class OrganizationMembershipController(IOrganizationMembershipService mem
     {
         await membershipService.UnlockAsync(id);
         var result = await membershipService.GetByIdAsync(id);
+
         return Ok(result);
     }
 
@@ -103,6 +121,7 @@ public class OrganizationMembershipController(IOrganizationMembershipService mem
     public async Task<ActionResult> Delete([FromQuery] string[] ids)
     {
         await membershipService.DeleteAsync(ids);
+
         return NoContent();
     }
 }

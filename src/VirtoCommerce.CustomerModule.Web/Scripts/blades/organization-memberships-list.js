@@ -8,18 +8,34 @@ angular.module('virtoCommerce.customerModule')
 
             $scope.uiGridConstants = uiGridHelper.uiGridConstants;
 
+            $scope.pageSettings = blade.pageSettings = {
+                currentPage: 1,
+                itemsPerPageCount: 20,
+                totalItems: 0,
+                numPages: 1
+            };
+
+            $scope.$watch('pageSettings.currentPage', function (newPage, oldPage) {
+                if (newPage !== oldPage) {
+                    blade.refresh();
+                }
+            });
+
             blade.refresh = function () {
                 blade.isLoading = true;
-                organizationMemberships.getByUserId({ userId: blade.userId }, function (data) {
-                    blade.currentEntities = data || [];
-                    blade.isLoading = false;
-                    // Keep contact blade (and widget counter) in sync
-                    if (blade.parentBlade && blade.parentBlade.refresh) {
-                        blade.parentBlade.refresh();
+                var skip = (blade.pageSettings.currentPage - 1) * blade.pageSettings.itemsPerPageCount;
+                organizationMemberships.search(
+                    { userId: blade.userId, skip: skip, take: blade.pageSettings.itemsPerPageCount },
+                    function (data) {
+                        blade.currentEntities = data.results || [];
+                        blade.pageSettings.totalItems = data.totalCount || 0;
+                        blade.pageSettings.numPages = Math.ceil(blade.pageSettings.totalItems / blade.pageSettings.itemsPerPageCount);
+                        blade.isLoading = false;
+                    },
+                    function () {
+                        blade.isLoading = false;
                     }
-                }, function () {
-                    blade.isLoading = false;
-                });
+                );
             };
 
             $scope.selectNode = function (item) {
@@ -72,7 +88,6 @@ angular.module('virtoCommerce.customerModule')
                     icon: 'fas fa-trash-alt',
                     executeMethod: function () {
                         var selected = $scope.gridApi.selection.getSelectedRows();
-                        // Filter out global memberships — cannot be deleted
                         var deletable = _.filter(selected, function (x) {
                             return x.organizationId !== null && x.organizationId !== undefined;
                         });
@@ -87,14 +102,16 @@ angular.module('virtoCommerce.customerModule')
                             message: 'customer.dialogs.membership-delete.message',
                             callback: function (confirmed) {
                                 if (confirmed) {
-                                    bladeNavigationService.closeChildrenBlades(blade, function () {
-                                        blade.isLoading = true;
-                                        var ids = _.pluck(deletable, 'id');
-                                        organizationMemberships.delete({ ids: ids }, function () {
-                                            blade.refresh();
-                                        }, function () {
-                                            blade.isLoading = false;
-                                        });
+                                    blade.isLoading = true;
+                                    var ids = _.pluck(deletable, 'id');
+                                    organizationMemberships.delete({ ids: ids }, function () {
+                                        blade.refresh();
+
+                                        if (blade.parentBlade && blade.parentBlade.refresh) {
+                                            blade.parentBlade.refresh();
+                                        }
+                                    }, function () {
+                                        blade.isLoading = false;
                                     });
                                 }
                             }
@@ -117,6 +134,7 @@ angular.module('virtoCommerce.customerModule')
 
             uiGridHelper.initialize($scope, {
                 useExternalSorting: false,
+                useExternalPagination: false,
                 rowTemplate: 'org-memberships-list.row.html',
                 columnDefs: [
                     {
@@ -134,19 +152,23 @@ angular.module('virtoCommerce.customerModule')
                         name: 'status',
                         displayName: 'customer.blades.organization-memberships-list.labels.status',
                         cellTemplate: 'org-memberships-status.cell.html',
-                        width: 90, enableSorting: false
+                        width: 90,
+                        enableSorting: false
                     },
                     {
                         name: 'type',
                         displayName: 'customer.blades.organization-memberships-list.labels.type',
                         cellTemplate: 'org-memberships-type.cell.html',
-                        width: 110, enableSorting: false, visible: false
+                        width: 110,
+                        enableSorting: false,
+                        visible: false
                     },
                     {
                         name: 'lockoutEnd',
                         displayName: 'customer.blades.organization-memberships-list.labels.lockout-end',
                         cellFilter: 'date:"mediumDate"',
-                        width: 140, visible: false
+                        width: 140,
+                        visible: false
                     }
                 ]
             }, function (gridApi) { });

@@ -8,8 +8,27 @@ angular.module('virtoCommerce.customerModule')
             var blade = $scope.blade;
             blade.updatePermission = 'customer:update';
 
-            // Available roles loaded into array so ui-select can bind synchronously
+            blade.metaFields = [
+                {
+                    name: 'organizationId',
+                    templateUrl: 'orgMembership.organization.html'
+                },
+                {
+                    name: 'roles',
+                    templateUrl: 'orgMembership.roles.html'
+                },
+                {
+                    name: 'status',
+                    templateUrl: 'orgMembership.status.html'
+                },
+                {
+                    name: 'lockoutEnd',
+                    templateUrl: 'orgMembership.lockoutEnd.html'
+                }
+            ];
+
             blade.availableRoles = [];
+            blade.datepickers = {};
 
             blade.refresh = function () {
                 if (blade.isNew) {
@@ -21,21 +40,20 @@ angular.module('virtoCommerce.customerModule')
                 blade.isLoading = true;
                 organizationMemberships.getById({ id: blade.currentEntity.id }, function (data) {
                     blade.currentEntity = angular.copy(data);
-                    blade.origEntity = data;
+                    blade.origEntity = angular.copy(data);
                     blade.isLoading = false;
                 }, function () {
                     blade.isLoading = false;
                 });
             };
 
-            // Called by ui-select refresh attribute — populates blade.availableRoles
             blade.refreshRoles = function (keyword) {
                 roles.search({ keyword: keyword || '', take: 20 }).$promise.then(function (data) {
                     blade.availableRoles = data.results || [];
                 });
             };
 
-            $scope.isRoleAvailable = function (role) {
+            blade.isRoleAvailable = function (role) {
                 var selectedIds = (blade.currentEntity.roles || []).map(function (r) {
                     return r.roleId || r.id;
                 });
@@ -43,7 +61,6 @@ angular.module('virtoCommerce.customerModule')
                 return selectedIds.indexOf(role.id) === -1;
             };
 
-            // Load available organisations for the org picker (ui-scroll-drop-down)
             blade.fetchOrganizations = function (criteria) {
                 criteria = criteria || {};
                 criteria.take = criteria.take || 20;
@@ -63,8 +80,6 @@ angular.module('virtoCommerce.customerModule')
                 return isDirty() && $scope.formScope && $scope.formScope.$valid;
             }
 
-            // Normalise roles: ui-select puts platform role objects {id, name} into the array,
-            // but the server expects {roleId, roleName}. Map both formats before saving.
             function normalisedPayload() {
                 var payload = angular.copy(blade.currentEntity);
                 payload.roles = (payload.roles || []).map(function (r) {
@@ -75,16 +90,17 @@ angular.module('virtoCommerce.customerModule')
                         roleName: r.roleName || r.name
                     };
                 });
+
                 return payload;
             }
 
             $scope.saveChanges = function () {
-                // Client-side uniqueness check — prevents duplicate user+org pairs
                 if (blade.isNew && blade.currentEntity.organizationId) {
                     var existing = blade.parentBlade.currentEntities || [];
                     var duplicate = _.some(existing, function (m) {
                         return m.organizationId === blade.currentEntity.organizationId;
                     });
+
                     if (duplicate) {
                         dialogService.showNotificationDialog({
                             id: 'duplicateMembership',
@@ -107,6 +123,10 @@ angular.module('virtoCommerce.customerModule')
                             blade.currentEntity = result;
                             blade.origEntity = angular.copy(result);
                             blade.parentBlade.refresh();
+
+                            if (blade.parentBlade.parentBlade && blade.parentBlade.parentBlade.refresh) {
+                                blade.parentBlade.parentBlade.refresh();
+                            }
                         },
                         function () { blade.isLoading = false; }
                     );

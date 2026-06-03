@@ -11,7 +11,12 @@ public interface IOrganizationMembershipService
 
     Task<OrganizationMembership> GetByUserAndOrgAsync(string userId, string organizationId);
 
-    Task<IList<OrganizationMembership>> GetByUserIdAsync(string userId);
+    /// <summary>Returns only the IDs of organizations where the user is currently locked. Lightweight — no roles loaded.</summary>
+    Task<IReadOnlyCollection<string>> GetLockedOrganizationIdsAsync(string userId);
+
+    Task<int> CountByUserIdAsync(string userId);
+
+    Task<OrganizationMembershipSearchResult> SearchByUserIdAsync(string userId, int skip = 0, int take = 20);
 
     Task SaveChangesAsync(IList<OrganizationMembership> memberships);
 

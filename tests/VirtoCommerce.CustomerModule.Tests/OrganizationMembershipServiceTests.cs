@@ -111,11 +111,124 @@ public class OrganizationMembershipServiceTests
         _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
     }
 
-    private static OrganizationMembershipEntity BuildEntity(string id, bool isLocked = false, DateTime? lockoutEnd = null) =>
+    [Fact]
+    public async Task CountByUserIdAsync_EmptyUserId_ReturnsZero()
+    {
+        var result = await GetService().CountByUserIdAsync(string.Empty);
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public async Task CountByUserIdAsync_WithEntities_ReturnsCorrectCount()
+    {
+        //Arrange
+        var entities = new[]
+        {
+            BuildEntity("id1", userId: "user1"),
+            BuildEntity("id2", userId: "user1"),
+            BuildEntity("id3", userId: "other"),
+        };
+        _repositoryMock.Setup(r => r.OrganizationMemberships)
+            .Returns(entities.AsTestAsyncQueryable());
+
+        //Act
+        var result = await GetService().CountByUserIdAsync("user1");
+
+        //Assert
+        Assert.Equal(2, result);
+    }
+
+    [Fact]
+    public async Task GetLockedOrganizationIdsAsync_EmptyUserId_ReturnsEmpty()
+    {
+        var result = await GetService().GetLockedOrganizationIdsAsync(string.Empty);
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetLockedOrganizationIdsAsync_MixedLockStates_ReturnsOnlyActive()
+    {
+        //Arrange
+        var entities = new[]
+        {
+            BuildEntity("id1", userId: "user1", orgId: "org1", isLocked: true,  lockoutEnd: null),                      // locked indefinitely → included
+            BuildEntity("id2", userId: "user1", orgId: "org2", isLocked: true,  lockoutEnd: DateTime.UtcNow.AddDays(1)), // locked future → included
+            BuildEntity("id3", userId: "user1", orgId: "org3", isLocked: true,  lockoutEnd: DateTime.UtcNow.AddDays(-1)),// locked expired → excluded
+            BuildEntity("id4", userId: "user1", orgId: "org4", isLocked: false, lockoutEnd: null),                       // not locked → excluded
+        };
+        _repositoryMock.Setup(r => r.OrganizationMemberships)
+            .Returns(entities.AsTestAsyncQueryable());
+
+        //Act
+        var result = await GetService().GetLockedOrganizationIdsAsync("user1");
+
+        //Assert
+        Assert.Equal(2, result.Count);
+        Assert.Contains("org1", result);
+        Assert.Contains("org2", result);
+    }
+
+    [Fact]
+    public async Task SearchByUserIdAsync_EmptyUserId_ReturnsEmptyResult()
+    {
+        var result = await GetService().SearchByUserIdAsync(string.Empty);
+        Assert.Equal(0, result.TotalCount);
+        Assert.Empty(result.Results);
+    }
+
+    [Fact]
+    public async Task SearchByUserIdAsync_WithPagination_ReturnsCorrectPage()
+    {
+        //Arrange
+        var entities = Enumerable.Range(1, 5)
+            .Select(i => BuildEntity($"id{i}", userId: "user1", orgId: $"org{i}"))
+            .ToArray();
+        _repositoryMock.Setup(r => r.OrganizationMemberships)
+            .Returns(entities.AsTestAsyncQueryable());
+
+        //Act
+        var result = await GetService().SearchByUserIdAsync("user1", skip: 0, take: 3);
+
+        //Assert
+        Assert.Equal(5, result.TotalCount);
+        Assert.Equal(3, result.Results.Count);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_EmptyList_DoesNotCallRepository()
+    {
+        await GetService().DeleteAsync([]);
+        _repositoryMock.Verify(r => r.Remove(It.IsAny<OrganizationMembershipEntity>()), Times.Never);
+        _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Never);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_WithIds_RemovesEntitiesAndCommits()
+    {
+        //Arrange
+        var entity = BuildEntity("id1", userId: "user1");
+        _repositoryMock.Setup(r => r.OrganizationMemberships)
+            .Returns(new[] { entity }.AsTestAsyncQueryable());
+
+        //Act
+        await GetService().DeleteAsync(["id1"]);
+
+        //Assert
+        _repositoryMock.Verify(r => r.Remove(entity), Times.Once);
+        _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
+    }
+
+    private static OrganizationMembershipEntity BuildEntity(
+        string id,
+        string userId = "user1",
+        string orgId = "org1",
+        bool isLocked = false,
+        DateTime? lockoutEnd = null) =>
         new()
         {
             Id = id,
-            UserId = "user1",
+            UserId = userId,
+            OrganizationId = orgId,
             IsLocked = isLocked,
             LockoutEnd = lockoutEnd,
             Roles = new NullCollection<OrganizationMembershipRoleEntity>()
