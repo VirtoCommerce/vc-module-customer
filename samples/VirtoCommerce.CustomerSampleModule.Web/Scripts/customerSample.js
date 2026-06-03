@@ -7,7 +7,7 @@ if (AppDependencies != undefined) {
 
 angular.module(moduleName, [])
     .run(
-        ['virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.authService', 'platformWebApp.widgetService', function (memberTypesResolverService, authService, widgetService) {
+        ['virtoCommerce.customerModule.memberTypesResolverService', 'virtoCommerce.customerModule.memberListFilterExtensionService', 'platformWebApp.authService', 'platformWebApp.widgetService', function (memberTypesResolverService, memberListFilterExtensionService, authService, widgetService) {
 
             // add JobTitle field to Contact detail blade
             var contactInfo = memberTypesResolverService.resolve("Contact");
@@ -31,12 +31,38 @@ angular.module(moduleName, [])
                 fullTypeName: 'virtoCommerce.customerSampleModule.Web.Model.Supplier',
                 icon: 'fa fa-truck',
                 detailBlade: {
-                    template: 'Modules/$(VirtoCommerce.customerSample)/Scripts/blades/supplier-detail.tpl.html',
+                    template: 'Modules/$(VirtoCommerce.customerSample)/Scripts/blades/supplier-detail.html',
                     metaFields: [{
                         name: 'contractNumber',
                         title: "Contract Number",
                         valueType: "ShortText"
                     }]
+                }
+            });
+
+            // register a custom filter row in the Members blade's <va-filter-panel>.
+            // The partial binds to blade.filter.sampleJobTitle; this descriptor wires
+            // that state into hasActiveFilters / clearFilters and contributes a
+            // Lucene-style jobtitle:"..." token to the search request, matching the
+            // jobTitle metaField added above so the filter exercises the same field
+            // it just registered on Contact.
+            memberListFilterExtensionService.register({
+                id: 'sample-job-title',
+                priority: 110,
+                templateUrl: 'Modules/$(VirtoCommerce.customerSample)/Scripts/blades/filters/job-title-filter.html',
+                init: function (filter) {
+                    filter.sampleJobTitle = '';
+                },
+                hasActiveFilter: function (filter) {
+                    return !!filter.sampleJobTitle;
+                },
+                clear: function (filter) {
+                    filter.sampleJobTitle = '';
+                },
+                appendKeywordTokens: function (filter, tokens) {
+                    if (filter.sampleJobTitle) {
+                        tokens.push(`jobtitle:"${filter.sampleJobTitle}"`);
+                    }
                 }
             });
 
