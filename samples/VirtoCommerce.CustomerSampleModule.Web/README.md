@@ -17,6 +17,7 @@ This module includes the following features:
 * Extends the Contact model by adding new properties: JobTitle and WebContactId.
 * Introduces a new entity, Supplier.
 * Demonstrates how to extend MemberService to initialize WebContactId using IUniqueNumberGenerator.
+* Demonstrates how to add a custom row to the Members blade's `<va-filter-panel>` via `memberListFilterExtensionService` — registers a **Job title** text filter (`Scripts/blades/filters/job-title-filter.tpl.html` + descriptor in `Scripts/customerSample.js`) that contributes a `jobtitle:"..."` Lucene token to the members search request.
 
 ## Screenshots
 ### Supplier Type

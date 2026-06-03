@@ -80,6 +80,10 @@
                 </a>
             </div>
 
+            <div ng-repeat="extension in blade.filterExtensions track by extension.id" class="va-filter-panel__row-host">
+                <ng-include src="extension.templateUrl"></ng-include>
+            </div>
+
         </va-filter-panel>
     </div>
 </div>

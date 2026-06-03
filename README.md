@@ -12,6 +12,7 @@ The module provides a complete back-office experience (the **Companies and conta
 
 * **Polymorphic member hierarchy** — `Contact`, `Organization`, `Employee`, `Vendor` inherit from a shared `Member` base and live in a parent/child tree (companies can contain sub-companies, employees, and contacts).
 * **Extensible member types** — additional types can be registered by downstream modules via `memberTypesResolverService.registerType(...)` on the UI side and the polymorphic JSON converter on the API side.
+* **Extensible filter panel** — downstream modules can contribute custom rows to the Members blade's `<va-filter-panel>` via `memberListFilterExtensionService.register(...)`. Each registered descriptor renders a partial inside the panel and hooks into `hasActiveFilters` / `clearFilters` / the Lucene token assembly used by `getSearchCriteria`. See [samples/VirtoCommerce.CustomerSampleModule.Web](samples/VirtoCommerce.CustomerSampleModule.Web) for a working **Job title** example.
 * **Polymorphic REST API** — a single `/api/members` surface handles search/CRUD for every type, with type-specific convenience routes (`/contacts`, `/organizations`, `/vendors`, `/employees`).
 * **Structured filter panel** — filter members by type and Created/Modified date ranges (preset + custom) using Lucene-style keyword syntax (`membertype:Organization`, `createddate:[2026-01-01 TO]`).
 * **Search indexing** — member documents are indexed through the Search module with event-driven reindexing on create/update/delete.
@@ -85,6 +86,7 @@ The module also handles `UserChangedEvent`, `UserRoleAddedEvent`, `UserRoleRemov
 
 * **Main menu** — "Contacts" entry (priority 180, permission `customer:access`).
 * **Member-type registry** — AngularJS `memberTypesResolverService` registers built-in types and exposes the list used by both `member-add` and the filter panel.
+* **Filter-panel extension** — AngularJS `memberListFilterExtensionService` exposes `register(descriptor)`, `unregister(id)`, `clear()`, `getFilters()`. A descriptor declares `id`, `priority`, `templateUrl`, and optional `init(filter)` / `hasActiveFilter(filter)` / `clear(filter)` / `appendKeywordTokens(filter, tokens)` hooks. Snapshots are captured at blade-init, so late registrations show on the next blade open.
 * **Widgets** — dynamic-properties widget on every detail blade; address/email/phone widgets; search-index widget; vendor SEO widget; account-contact widget on user-profile blade.
 * **Permission scope** — `AssociatedOrganizationsOnlyScope` registered with the platform scope resolver.
 * **Polymorphic serialisation** — `PolymorphJsonConverter` switches on `Member.MemberType`.

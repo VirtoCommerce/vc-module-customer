@@ -1,6 +1,11 @@
 angular.module('virtoCommerce.customerModule')
-    .controller('virtoCommerce.customerModule.memberListController', ['$scope', '$location', 'virtoCommerce.customerModule.members', 'platformWebApp.dialogService', 'platformWebApp.bladeUtils', 'platformWebApp.uiGridHelper', 'virtoCommerce.customerModule.memberTypesResolverService', 'platformWebApp.ui-grid.extension',
-        function ($scope, $location, members, dialogService, bladeUtils, uiGridHelper, memberTypesResolverService, gridOptionExtension) {
+    .controller('virtoCommerce.customerModule.memberListController',
+        ['$scope', '$location', 'virtoCommerce.customerModule.members', 'platformWebApp.dialogService',
+            'platformWebApp.bladeUtils', 'platformWebApp.uiGridHelper', 'virtoCommerce.customerModule.memberTypesResolverService',
+            'platformWebApp.ui-grid.extension', 'virtoCommerce.customerModule.memberListFilterExtensionService',
+            function ($scope, $location, members, dialogService,
+                bladeUtils, uiGridHelper, memberTypesResolverService,
+                gridOptionExtension, memberListFilterExtensionService) {
             $scope.uiGridConstants = uiGridHelper.uiGridConstants;
 
             var blade = $scope.blade;
@@ -264,6 +269,13 @@ angular.module('virtoCommerce.customerModule')
                 { value: 'custom', label: 'customer.blades.member-list.labels.filter-date-custom' }
             ];
 
+            blade.filterExtensions = memberListFilterExtensionService.getFilters();
+            _.each(blade.filterExtensions, function (extension) {
+                if (typeof extension.init === 'function') {
+                    extension.init(filter);
+                }
+            });
+
             filter.formatDateForRangeToken = function (d, endOfTheDay = false) {
                 if (!d) {
                     return '';
@@ -333,9 +345,14 @@ angular.module('virtoCommerce.customerModule')
             };
 
             filter.hasActiveFilters = function () {
-                return !!filter.memberType
-                    || !!filter.createdStartDate || !!filter.createdEndDate
-                    || !!filter.modifiedStartDate || !!filter.modifiedEndDate;
+                if (filter.memberType
+                    || filter.createdStartDate || filter.createdEndDate
+                    || filter.modifiedStartDate || filter.modifiedEndDate) {
+                    return true;
+                }
+                return _.any(blade.filterExtensions, function (extension) {
+                    return typeof extension.hasActiveFilter === 'function' && extension.hasActiveFilter(filter);
+                });
             };
 
             filter.clearFilters = function () {
@@ -348,6 +365,11 @@ angular.module('virtoCommerce.customerModule')
                     filter[p + 'CustomStartDate'] = null;
                     filter[p + 'CustomEndDate'] = null;
                     filter[p + 'CustomRangeApplied'] = false;
+                });
+                _.each(blade.filterExtensions, function (extension) {
+                    if (typeof extension.clear === 'function') {
+                        extension.clear(filter);
+                    }
                 });
                 filter.criteriaChanged();
             };
@@ -412,6 +434,11 @@ angular.module('virtoCommerce.customerModule')
                 if (modifiedToken) {
                     tokens.push(modifiedToken);
                 }
+                _.each(blade.filterExtensions, function (extension) {
+                    if (typeof extension.appendKeywordTokens === 'function') {
+                        extension.appendKeywordTokens(filter, tokens);
+                    }
+                });
                 var composedKeyword = tokens.join(' ');
 
                 return {

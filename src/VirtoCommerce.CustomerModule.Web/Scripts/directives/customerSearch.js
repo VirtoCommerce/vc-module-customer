@@ -1,5 +1,5 @@
 angular.module('virtoCommerce.customerModule')
-    .directive('vcCustomerSearch', ['$localStorage', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.predefinedSearchFilters', function ($localStorage, bladeNavigationService, predefinedSearchFilters) {
+    .directive('vcCustomerSearch', ['$localStorage', 'platformWebApp.bladeNavigationService', function ($localStorage, bladeNavigationService) {
         return {
             restrict: 'E',
             templateUrl: function(elem, attrs) {
