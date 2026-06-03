@@ -1,0 +1,9 @@
+<div class="va-filter-panel__row">
+    <span class="va-filter-panel__label">Job title</span>
+    <input type="text"
+           class="va-filter-panel__input"
+           ng-model="blade.filter.sampleJobTitle"
+           ng-model-options="{ debounce: 300 }"
+           ng-change="blade.filter.criteriaChanged()"
+           placeholder="contains..." />
+</div>
