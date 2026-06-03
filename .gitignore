@@ -270,3 +270,7 @@ __pycache__/
 
 # Webpack output
 dist/
+
+# AI
+*.local.*
+/.serena
