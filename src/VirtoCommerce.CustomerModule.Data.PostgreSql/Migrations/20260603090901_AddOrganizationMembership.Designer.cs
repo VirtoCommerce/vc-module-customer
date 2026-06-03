@@ -12,8 +12,8 @@ using VirtoCommerce.CustomerModule.Data.Repositories;
 namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
 {
     [DbContext(typeof(CustomerDbContext))]
-    [Migration("20260601124947_DropOrganizationMembershipName")]
-    partial class DropOrganizationMembershipName
+    [Migration("20260603090901_AddOrganizationMembership")]
+    partial class AddOrganizationMembership
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
