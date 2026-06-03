@@ -169,15 +169,15 @@ public class OrganizationMembershipServiceTests
     }
 
     [Fact]
-    public async Task SearchByUserIdAsync_EmptyUserId_ReturnsEmptyResult()
+    public async Task SearchAsync_EmptyUserId_ReturnsEmptyResult()
     {
-        var result = await GetService().SearchByUserIdAsync(string.Empty);
+        var result = await GetService().SearchAsync(new OrganizationMembershipSearchCriteria { UserId = string.Empty });
         Assert.Equal(0, result.TotalCount);
         Assert.Empty(result.Results);
     }
 
     [Fact]
-    public async Task SearchByUserIdAsync_WithPagination_ReturnsCorrectPage()
+    public async Task SearchAsync_WithPagination_ReturnsCorrectPage()
     {
         //Arrange
         var entities = Enumerable.Range(1, 5)
@@ -187,7 +187,7 @@ public class OrganizationMembershipServiceTests
             .Returns(entities.AsTestAsyncQueryable());
 
         //Act
-        var result = await GetService().SearchByUserIdAsync("user1", skip: 0, take: 3);
+        var result = await GetService().SearchAsync(new OrganizationMembershipSearchCriteria { UserId = "user1", Skip = 0, Take = 3 });
 
         //Assert
         Assert.Equal(5, result.TotalCount);

@@ -30,8 +30,13 @@ public class OrganizationMembershipController(IOrganizationMembershipService mem
         [FromQuery] int skip = 0,
         [FromQuery] int take = 20)
     {
-        var result = await membershipService.SearchByUserIdAsync(userId, skip, take);
-
+        var result = await membershipService.SearchAsync(
+            new OrganizationMembershipSearchCriteria
+            {
+                UserId = userId,
+                Skip = skip,
+                Take = take
+            });
         return Ok(result);
     }
 

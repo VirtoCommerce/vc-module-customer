@@ -16,7 +16,7 @@ public interface IOrganizationMembershipService
 
     Task<int> CountByUserIdAsync(string userId);
 
-    Task<OrganizationMembershipSearchResult> SearchByUserIdAsync(string userId, int skip = 0, int take = 20);
+    Task<OrganizationMembershipSearchResult> SearchAsync(OrganizationMembershipSearchCriteria criteria);
 
     Task SaveChangesAsync(IList<OrganizationMembership> memberships);
 

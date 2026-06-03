@@ -2,24 +2,15 @@ angular.module('virtoCommerce.customerModule')
     .controller('virtoCommerce.customerModule.organizationMembershipsListController',
         ['$scope', 'platformWebApp.bladeNavigationService', 'platformWebApp.dialogService',
          'platformWebApp.uiGridHelper', 'virtoCommerce.customerModule.organizationMemberships',
-        function ($scope, bladeNavigationService, dialogService, uiGridHelper, organizationMemberships) {
+         'platformWebApp.bladeUtils',
+        function ($scope, bladeNavigationService, dialogService, uiGridHelper, organizationMemberships, bladeUtils) {
             var blade = $scope.blade;
             blade.headIcon = 'fas fa-sitemap';
 
             $scope.uiGridConstants = uiGridHelper.uiGridConstants;
 
-            $scope.pageSettings = blade.pageSettings = {
-                currentPage: 1,
-                itemsPerPageCount: 20,
-                totalItems: 0,
-                numPages: 1
-            };
-
-            $scope.$watch('pageSettings.currentPage', function (newPage, oldPage) {
-                if (newPage !== oldPage) {
-                    blade.refresh();
-                }
-            });
+            bladeUtils.initializePagination($scope);
+            blade.pageSettings = $scope.pageSettings;
 
             blade.refresh = function () {
                 blade.isLoading = true;

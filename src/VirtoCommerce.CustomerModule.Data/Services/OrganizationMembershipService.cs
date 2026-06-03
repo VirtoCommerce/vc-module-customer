@@ -123,37 +123,33 @@ public class OrganizationMembershipService(
         });
     }
 
-    public async Task<OrganizationMembershipSearchResult> SearchByUserIdAsync(string userId, int skip = 0, int take = 20)
+    public async Task<OrganizationMembershipSearchResult> SearchAsync(OrganizationMembershipSearchCriteria criteria)
     {
-        if (string.IsNullOrEmpty(userId))
+        if (string.IsNullOrEmpty(criteria?.UserId))
         {
             return new OrganizationMembershipSearchResult();
         }
 
-        var cacheKey = CacheKey.With(GetType(), nameof(SearchByUserIdAsync), userId, skip.ToString(), take.ToString());
+        var cacheKey = CacheKey.With(GetType(), nameof(SearchAsync), criteria.UserId, criteria.Skip.ToString(), criteria.Take.ToString());
 
         return await platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async (cacheEntry) =>
         {
-            cacheEntry.AddExpirationToken(OrganizationMembershipCacheRegion.CreateChangeTokenForUser(userId));
+            cacheEntry.AddExpirationToken(OrganizationMembershipCacheRegion.CreateChangeTokenForUser(criteria.UserId));
 
             using var repository = repositoryFactory();
-            var query = repository.OrganizationMemberships.Where(x => x.UserId == userId);
+            var query = repository.OrganizationMemberships.Where(x => x.UserId == criteria.UserId);
 
             var result = new OrganizationMembershipSearchResult
             {
-                TotalCount = await query.CountAsync()
+                TotalCount = await query.CountAsync(),
+                Results = await query
+                    .Include(x => x.Roles)
+                    .OrderBy(x => x.CreatedDate)
+                    .Skip(criteria.Skip)
+                    .Take(criteria.Take)
+                    .Select(e => e.ToModel(new OrganizationMembership()))
+                    .ToListAsync()
             };
-
-            var entities = await query
-                .Include(x => x.Roles)
-                .OrderBy(x => x.CreatedDate)
-                .Skip(skip)
-                .Take(take)
-                .ToListAsync();
-
-            result.Results = entities
-                .Select(e => e.ToModel(new OrganizationMembership()))
-                .ToList();
 
             await ResolveOrganizationNamesAsync(repository, result.Results);
 
