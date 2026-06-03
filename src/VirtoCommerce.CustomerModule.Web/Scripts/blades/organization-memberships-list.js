@@ -96,11 +96,13 @@ angular.module('virtoCommerce.customerModule')
                                     blade.isLoading = true;
                                     var ids = _.pluck(deletable, 'id');
                                     organizationMemberships.delete({ ids: ids }, function () {
-                                        blade.refresh();
+                                        bladeNavigationService.closeChildrenBlades(blade, function () {
+                                            blade.refresh();
 
-                                        if (blade.parentBlade && blade.parentBlade.refresh) {
-                                            blade.parentBlade.refresh();
-                                        }
+                                            if (blade.parentBlade && blade.parentBlade.refresh) {
+                                                blade.parentBlade.refresh();
+                                            }
+                                        });
                                     }, function () {
                                         blade.isLoading = false;
                                     });

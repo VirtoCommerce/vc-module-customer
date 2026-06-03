@@ -65,7 +65,14 @@ angular.module('virtoCommerce.customerModule')
                 criteria = criteria || {};
                 criteria.take = criteria.take || 20;
 
-                return organizations.search(criteria);
+                var searchResult = organizations.search(criteria);
+                searchResult.$promise.then(function () {
+                    var usedOrgIds = _.compact(_.pluck(blade.parentBlade.currentEntities || [], 'organizationId'));
+                    searchResult.results = _.reject(searchResult.results || [], function (org) {
+                        return _.contains(usedOrgIds, org.id);
+                    });
+                });
+                return searchResult;
             };
 
             $scope.setForm = function (form) {
