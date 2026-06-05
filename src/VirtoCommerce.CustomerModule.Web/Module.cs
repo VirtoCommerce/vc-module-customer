@@ -151,6 +151,7 @@ namespace VirtoCommerce.CustomerModule.Web
 
             var permissionsRegistrar = appBuilder.ApplicationServices.GetRequiredService<IPermissionsRegistrar>();
             permissionsRegistrar.RegisterPermissions(ModuleInfo.Id, "Customer", ModuleConstants.Security.Permissions.AllPermissions);
+            permissionsRegistrar.RegisterPermissions(ModuleInfo.Id, "OrganizationMembership", ModuleConstants.Security.OrganizationMembershipPermissions.AllPermissions);
 
             AbstractTypeFactory<PermissionScope>.RegisterType<AssociatedOrganizationsOnlyScope>();
 

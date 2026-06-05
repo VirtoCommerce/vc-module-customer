@@ -8,9 +8,8 @@ angular.module('virtoCommerce.customerModule')
                 params: { userId: '@userId' }
             },
             search: {
-                method: 'GET',
-                url: baseUrl + '/user/:userId/search',
-                params: { userId: '@userId' }
+                method: 'POST',
+                url: baseUrl + '/search'
             },
             getByUserAndOrg: {
                 method: 'GET',

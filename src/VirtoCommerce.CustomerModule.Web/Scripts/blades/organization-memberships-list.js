@@ -15,7 +15,7 @@ angular.module('virtoCommerce.customerModule')
             blade.refresh = function () {
                 blade.isLoading = true;
                 var skip = (blade.pageSettings.currentPage - 1) * blade.pageSettings.itemsPerPageCount;
-                organizationMemberships.search(
+                organizationMemberships.search({},
                     { userId: blade.userId, skip: skip, take: blade.pageSettings.itemsPerPageCount },
                     function (data) {
                         blade.currentEntities = data.results || [];

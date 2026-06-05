@@ -37,10 +37,10 @@ public class OrganizationMembershipServiceTests
     }
 
     [Fact]
-    public async Task GetByIdAsync_EmptyId_ReturnsNull()
+    public async Task GetAsync_EmptyIds_ReturnsEmptyList()
     {
-        var result = await GetService().GetByIdAsync(string.Empty);
-        Assert.Null(result);
+        var result = await GetService().GetAsync([]);
+        Assert.Empty(result);
     }
 
     [Fact]
