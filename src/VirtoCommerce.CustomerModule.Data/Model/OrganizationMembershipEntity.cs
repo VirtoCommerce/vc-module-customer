@@ -59,9 +59,12 @@ public class OrganizationMembershipEntity : AuditableEntity, IDataEntity<Organiz
         if (model.Roles != null)
         {
             Roles = new ObservableCollection<OrganizationMembershipRoleEntity>(
-                model.Roles
-                    .Select(r => new OrganizationMembershipRoleEntity()
-                    .FromModel(r, pkMap)));
+                model.Roles.Select(r =>
+                {
+                    var roleEntity = new OrganizationMembershipRoleEntity().FromModel(r, pkMap);
+                    roleEntity.MembershipId = Id;
+                    return roleEntity;
+                }));
         }
 
         return this;

@@ -19,6 +19,7 @@ public class OrganizationMembershipController(IOrganizationMembershipService mem
     public async Task<ActionResult> CountByUserId([FromRoute] string userId)
     {
         var count = await membershipService.CountByUserIdAsync(userId);
+
         return Ok(new { count });
     }
 
@@ -28,6 +29,7 @@ public class OrganizationMembershipController(IOrganizationMembershipService mem
     public async Task<ActionResult<OrganizationMembershipSearchResult>> Search([FromBody] OrganizationMembershipSearchCriteria criteria)
     {
         var result = await membershipService.SearchAsync(criteria);
+
         return Ok(result);
     }
 
@@ -39,6 +41,7 @@ public class OrganizationMembershipController(IOrganizationMembershipService mem
         [FromRoute] string organizationId)
     {
         var result = await membershipService.GetByUserAndOrgAsync(userId, organizationId);
+
         return result != null ? Ok(result) : NotFound();
     }
 
@@ -48,6 +51,7 @@ public class OrganizationMembershipController(IOrganizationMembershipService mem
     public async Task<ActionResult<OrganizationMembership>> GetById([FromRoute] string id)
     {
         var result = (await membershipService.GetAsync([id])).FirstOrDefault();
+
         return result != null ? Ok(result) : NotFound();
     }
 
@@ -58,7 +62,9 @@ public class OrganizationMembershipController(IOrganizationMembershipService mem
     {
         membership.Id = null;
         await membershipService.SaveChangesAsync([membership]);
-        return Ok(membership);
+        var createdMembership = (await membershipService.GetAsync([membership.Id])).FirstOrDefault();
+
+        return Ok(createdMembership);
     }
 
     /// <summary>Updates an existing organization membership.</summary>
@@ -70,6 +76,7 @@ public class OrganizationMembershipController(IOrganizationMembershipService mem
     {
         membership.Id = id;
         await membershipService.SaveChangesAsync([membership]);
+
         return Ok(membership);
     }
 
@@ -98,6 +105,7 @@ public class OrganizationMembershipController(IOrganizationMembershipService mem
     public async Task<ActionResult> Delete([FromQuery] string[] ids)
     {
         await membershipService.DeleteAsync(ids);
+
         return NoContent();
     }
 }

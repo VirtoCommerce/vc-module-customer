@@ -1,6 +1,7 @@
 using System;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Data.Model;
+using VirtoCommerce.Platform.Core.Common;
 using Xunit;
 
 namespace VirtoCommerce.CustomerModule.Tests;
@@ -50,6 +51,29 @@ public class OrganizationMembershipTests
         Assert.Single(model.Roles);
         Assert.Equal(roleEntity.RoleId, model.Roles[0].RoleId);
         Assert.Equal(roleEntity.RoleName, model.Roles[0].RoleName);
+    }
+
+    [Fact]
+    public void OrganizationMembershipEntity_FromModel_SetsRoleMembershipId()
+    {
+        //Arrange
+        var model = new OrganizationMembership
+        {
+            Id = "membership-1",
+            UserId = "user1",
+            OrganizationId = "org1",
+            Roles =
+            [
+                new OrganizationMembershipRole { RoleId = "role1", RoleName = "Admin" },
+                new OrganizationMembershipRole { RoleId = "role2", RoleName = "Editor" }
+            ]
+        };
+
+        //Act
+        var entity = new OrganizationMembershipEntity().FromModel(model, new PrimaryKeyResolvingMap());
+
+        //Assert
+        Assert.All(entity.Roles, r => Assert.Equal(entity.Id, r.MembershipId));
     }
 
     [Fact]

@@ -75,6 +75,8 @@ public class OrganizationMembershipService
 
     protected override void ClearCache(IList<OrganizationMembership> models)
     {
+        base.ClearCache(models);
+
         foreach (var model in models)
         {
             if (!string.IsNullOrEmpty(model.Id))
