@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <id>VirtoCommerce.Customer</id>
-  <version>3.1008.0</version>
+  <version>3.1009.0</version>
   <version-tag />
 
   <platformVersion>3.1025.0</platformVersion>
@@ -23,7 +23,7 @@
     <owner>Virto Commerce</owner>
   </owners>
   <projectUrl>https://github.com/VirtoCommerce/vc-module-customer</projectUrl>
-  <iconUrl>Modules/$(VirtoCommerce.Customer)/Content/logo.png</iconUrl>
+  <iconUrl>Modules/$(VirtoCommerce.Customer)/Content/logo.svg</iconUrl>
   <requireLicenseAcceptance>false</requireLicenseAcceptance>
   <releaseNotes>First version.</releaseNotes>
   <copyright>Copyright © 2011–2026 Virto Commerce. All rights reserved</copyright>
