@@ -84,6 +84,7 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<IIndexedMemberSearchService, MemberIndexedSearchService>();
             serviceCollection.AddTransient<IMemberSearchService, MemberSearchService>();
             serviceCollection.AddTransient<IMemberService, MemberService>();
+            serviceCollection.AddSingleton<Func<IMemberService>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<IMemberService>());
             serviceCollection.AddTransient<IMemberResolver, MemberResolver>();
             serviceCollection.AddSingleton<CustomerExportImport>();
             serviceCollection.AddTransient<MemberSearchRequestBuilder>();
@@ -109,6 +110,8 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<IAuthorizationHandler, CustomerAuthorizationHandler>();
 
             serviceCollection.AddTransient<AbstractValidator<Member>, MemberValidator>();
+
+            serviceCollection.AddSingleton<IOrganizationMembershipService, OrganizationMembershipService>();
 
             serviceCollection.AddSingleton<ITokenRequestValidator, OrganizationIdRequestValidator>();
             serviceCollection.AddSingleton<ITokenClaimProvider, OrganizationIdClaimProvider>();
@@ -148,6 +151,7 @@ namespace VirtoCommerce.CustomerModule.Web
 
             var permissionsRegistrar = appBuilder.ApplicationServices.GetRequiredService<IPermissionsRegistrar>();
             permissionsRegistrar.RegisterPermissions(ModuleInfo.Id, "Customer", ModuleConstants.Security.Permissions.AllPermissions);
+            permissionsRegistrar.RegisterPermissions(ModuleInfo.Id, "OrganizationMembership", ModuleConstants.Security.OrganizationMembershipPermissions.AllPermissions);
 
             AbstractTypeFactory<PermissionScope>.RegisterType<AssociatedOrganizationsOnlyScope>();
 

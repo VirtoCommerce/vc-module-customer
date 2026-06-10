@@ -184,6 +184,31 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
                 builder.HasIndex(x => new { x.UserId, x.Name }).IsUnique();
             });
 
+            #region OrganizationMembership
+            modelBuilder.Entity<OrganizationMembershipEntity>(builder =>
+            {
+                builder.ToAuditableEntityTable("CustomerOrganizationMembership");
+                builder.Property(x => x.UserId).HasMaxLength(IdLength).IsRequired();
+                builder.Property(x => x.OrganizationId).HasMaxLength(IdLength);
+                builder.HasIndex(x => new { x.UserId, x.OrganizationId })
+                    .IsUnique()
+                    .HasDatabaseName("IX_CustomerOrganizationMembership_UserId_OrganizationId");
+            });
+
+            modelBuilder.Entity<OrganizationMembershipRoleEntity>(builder =>
+            {
+                builder.ToEntityTable("CustomerOrganizationMembershipRole");
+                builder.Property(x => x.Id).HasMaxLength(IdLength).ValueGeneratedOnAdd();
+                builder.Property(x => x.MembershipId).HasMaxLength(IdLength).IsRequired();
+                builder.Property(x => x.RoleId).HasMaxLength(IdLength);
+                builder.Property(x => x.RoleName).HasMaxLength(Length256);
+                builder.HasOne(x => x.Membership)
+                    .WithMany(x => x.Roles)
+                    .HasForeignKey(x => x.MembershipId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+            #endregion
+
             // Allows configuration for an entity type for different database types.
             // Applies configuration from all <see cref="IEntityTypeConfiguration{TEntity}" in VirtoCommerce.CustomerModule.Data.XXX project. /> 
             switch (Database.ProviderName)

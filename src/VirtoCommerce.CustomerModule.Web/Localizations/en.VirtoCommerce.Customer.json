@@ -279,6 +279,38 @@
           "status": "Please select a value"
         }
       },
+      "organization-memberships-list": {
+        "title": "Organization memberships",
+        "subtitle": "Manage organization memberships",
+        "labels": {
+          "type": "Type",
+          "organization": "Organization",
+          "roles": "Roles",
+          "status": "Status",
+          "lockout-end": "Locked until"
+        },
+        "type-org": "Organization",
+        "type-global": "Global",
+        "status-locked": "Locked",
+        "status-active": "Active"
+      },
+      "organization-membership-detail": {
+        "title-global": "Global membership",
+        "title-new": "New membership",
+        "subtitle": "Membership details",
+        "labels": {
+          "organization": "Organization",
+          "type": "Type",
+          "roles": "Roles",
+          "status": "Status",
+          "lockout-end": "Locked until"
+        },
+        "placeholders": {
+          "organization": "Select organization",
+          "roles": "Select roles",
+          "lockout-end": "Select date"
+        }
+      },
       "invite-customers": {
         "title": "Invite customers",
         "labels": {
@@ -331,6 +363,10 @@
       "account-contact": {
         "no-contact": "No contact",
         "show-contact": "Show contact"
+      },
+      "organization-memberships": {
+        "title": "Organization memberships",
+        "blade-subtitle": "Manage organization memberships"
       }
     },
     "dialogs": {
@@ -380,11 +416,32 @@
       "invite-customers-error": {
         "title": "Invite customers",
         "message": "Some invitations were not sent due to errors"
+      },
+      "membership-delete": {
+        "title": "Confirm delete",
+        "message": "Are you sure you want to delete the selected membership(s)?"
+      },
+      "membership-duplicate": {
+        "title": "Duplicate membership",
+        "message": "A membership for this user and organization already exists."
+      },
+      "no-security-account": {
+        "title": "No account",
+        "message": "This member does not have a linked security account."
+      },
+      "no-org-membership": {
+        "title": "Not found",
+        "message": "No organization membership record found for this member."
       }
     },
     "commands": {
-      "invite-customers": "Invite customers"
-    } 
+      "invite-customers": "Invite customers",
+      "lock-in-org": "Lock in organization",
+      "unlock-in-org": "Unlock in organization",
+      "change-role-in-org": "Change roles",
+      "lock": "Lock",
+      "unlock": "Unlock"
+    }
   },
   "permissions": {
     "customer:access": "Open customer menu",

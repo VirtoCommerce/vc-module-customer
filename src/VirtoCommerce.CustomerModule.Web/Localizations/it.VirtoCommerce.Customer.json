@@ -279,6 +279,38 @@
           "status": "Seleziona un valore"
         }
       },
+      "organization-memberships-list": {
+        "title": "Appartenenze all'organizzazione",
+        "subtitle": "Gestisci le appartenenze all'organizzazione",
+        "labels": {
+          "type": "Tipo",
+          "organization": "Organizzazione",
+          "roles": "Ruoli",
+          "status": "Stato",
+          "lockout-end": "Bloccato fino al"
+        },
+        "type-org": "Organizzazione",
+        "type-global": "Globale",
+        "status-locked": "Bloccato",
+        "status-active": "Attivo"
+      },
+      "organization-membership-detail": {
+        "title-global": "Appartenenza globale",
+        "title-new": "Nuova appartenenza",
+        "subtitle": "Dettagli appartenenza",
+        "labels": {
+          "organization": "Organizzazione",
+          "type": "Tipo",
+          "roles": "Ruoli",
+          "status": "Stato",
+          "lockout-end": "Bloccato fino al"
+        },
+        "placeholders": {
+          "organization": "Seleziona organizzazione",
+          "roles": "Seleziona ruoli",
+          "lockout-end": "Seleziona data"
+        }
+      },
       "invite-customers": {
         "title": "Invita clienti",
         "labels": {
@@ -331,6 +363,10 @@
       "account-contact": {
         "no-contact": "Nessun contatto",
         "show-contact": "Mostra contatto"
+      },
+      "organization-memberships": {
+        "title": "Appartenenze all'organizzazione",
+        "blade-subtitle": "Gestisci le appartenenze all'organizzazione"
       }
     },
     "dialogs": {
@@ -380,10 +416,31 @@
       "invite-customers-error": {
         "title": "Invita clienti",
         "message": "Alcuni inviti non sono stati inviati a causa di errori"
+      },
+      "membership-delete": {
+        "title": "Conferma eliminazione",
+        "message": "Sei sicuro di voler eliminare le appartenenze selezionate?"
+      },
+      "membership-duplicate": {
+        "title": "Appartenenza duplicata",
+        "message": "Esiste già un'appartenenza per questo utente e questa organizzazione."
+      },
+      "no-security-account": {
+        "title": "Nessun account",
+        "message": "Questo membro non ha un account di sicurezza collegato."
+      },
+      "no-org-membership": {
+        "title": "Non trovato",
+        "message": "Nessun record di appartenenza all'organizzazione trovato per questo membro."
       }
     },
     "commands": {
-      "invite-customers": "Invita clienti"
+      "invite-customers": "Invita clienti",
+      "lock-in-org": "Blocca nell'organizzazione",
+      "unlock-in-org": "Sblocca nell'organizzazione",
+      "change-role-in-org": "Modifica ruoli",
+      "lock": "Blocca",
+      "unlock": "Sblocca"
     }
   },
   "permissions": {

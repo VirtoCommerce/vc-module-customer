@@ -22,6 +22,16 @@ namespace VirtoCommerce.CustomerModule.Core
                 public static string[] AllPermissions { get; } = { Read, Create, Access, Update, Delete, Invite };
             }
 
+            public static class OrganizationMembershipPermissions
+            {
+                public const string Read = "customer:organization-membership:read";
+                public const string Create = "customer:organization-membership:create";
+                public const string Update = "customer:organization-membership:update";
+                public const string Delete = "customer:organization-membership:delete";
+
+                public static string[] AllPermissions { get; } = { Read, Create, Update, Delete };
+            }
+
             public static class Claims
             {
                 public const string OrganizationId = "organization_id";
