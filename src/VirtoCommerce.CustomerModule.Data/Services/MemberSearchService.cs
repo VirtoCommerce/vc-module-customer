@@ -133,14 +133,19 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                 query = query.Where(m => m.Groups.Any(g => criteria.Groups.Contains(g.Group)));
             }
 
-            if (criteria.MemberId != null)
+            var hasMemberFilter = !criteria.MemberIds.IsNullOrEmpty();
+
+            if (hasMemberFilter)
             {
                 //TODO: DeepSearch in specified member
                 query = query.Where(m => m.MemberRelations
                     .Where(x => x.RelationType == RelationType.Membership.ToString())
-                    .Any(r => r.AncestorId == criteria.MemberId));
+                    .Any(r => criteria.MemberIds.Contains(r.AncestorId)));
             }
-            else if (!criteria.DeepSearch)
+
+            // The "root members only" filter is independent of MemberId(s): when not set explicitly,
+            // fall back to the legacy behavior (root members only when no member is specified and not a deep search).
+            if (criteria.RootMembersOnly ?? (!hasMemberFilter && !criteria.DeepSearch))
             {
                 query = query.Where(m => m.MemberRelations.All(x => x.RelationType != RelationType.Membership.ToString()));
             }

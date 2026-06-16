@@ -71,12 +71,17 @@ namespace VirtoCommerce.CustomerModule.Data.Search
                 result.Add(CreateTermFilter("Groups", criteria.Groups));
             }
 
-            if (!string.IsNullOrEmpty(criteria.MemberId))
+            var hasMemberFilter = criteria.MemberIds?.Any() == true;
+
+            if (hasMemberFilter)
             {
-                result.Add(CreateTermFilter("ParentOrganizations", criteria.MemberId));
+                result.Add(CreateTermFilter("ParentOrganizations", criteria.MemberIds));
                 // TODO: criteria.DeepSearch requires something like outlines in the catalog module
             }
-            else if (!criteria.DeepSearch)
+
+            // The "root members only" filter is independent of MemberId(s): when not set explicitly,
+            // fall back to the legacy behavior (root members only when no member is specified and not a deep search).
+            if (criteria.RootMembersOnly ?? (!hasMemberFilter && !criteria.DeepSearch))
             {
                 result.Add(CreateTermFilter("HasParentOrganizations", "false"));
             }
