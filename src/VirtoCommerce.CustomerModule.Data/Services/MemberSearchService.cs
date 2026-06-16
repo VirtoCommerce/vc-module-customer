@@ -133,22 +133,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                 query = query.Where(m => m.Groups.Any(g => criteria.Groups.Contains(g.Group)));
             }
 
-            var hasMemberFilter = !criteria.MemberIds.IsNullOrEmpty();
-
-            if (hasMemberFilter)
-            {
-                //TODO: DeepSearch in specified member
-                query = query.Where(m => m.MemberRelations
-                    .Where(x => x.RelationType == RelationType.Membership.ToString())
-                    .Any(r => criteria.MemberIds.Contains(r.AncestorId)));
-            }
-
-            // The "root members only" filter is independent of MemberId(s): when not set explicitly,
-            // fall back to the legacy behavior (root members only when no member is specified and not a deep search).
-            if (criteria.RootMembersOnly ?? (!hasMemberFilter && !criteria.DeepSearch))
-            {
-                query = query.Where(m => m.MemberRelations.All(x => x.RelationType != RelationType.Membership.ToString()));
-            }
+            query = ApplyMembershipFilter(query, criteria);
 
             if (!string.IsNullOrEmpty(criteria.Keyword))
             {
@@ -159,6 +144,31 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             {
                 query = query.Where(m => criteria.OuterIds.Contains(m.OuterId));
             }
+            return query;
+        }
+
+        /// <summary>
+        /// Applies the membership-relation filters: filter by parent member(s) and/or restrict to root members.
+        /// The "root members only" filter is independent of MemberId(s): when not set explicitly,
+        /// it falls back to the legacy behavior (root members only when no member is specified and not a deep search).
+        /// </summary>
+        protected virtual IQueryable<MemberEntity> ApplyMembershipFilter(IQueryable<MemberEntity> query, MembersSearchCriteria criteria)
+        {
+            var hasMemberFilter = !criteria.MemberIds.IsNullOrEmpty();
+
+            if (hasMemberFilter)
+            {
+                //TODO: DeepSearch in specified member
+                query = query.Where(m => m.MemberRelations
+                    .Where(x => x.RelationType == RelationType.Membership.ToString())
+                    .Any(r => criteria.MemberIds.Contains(r.AncestorId)));
+            }
+
+            if (criteria.RootMembersOnly ?? (!hasMemberFilter && !criteria.DeepSearch))
+            {
+                query = query.Where(m => m.MemberRelations.All(x => x.RelationType != RelationType.Membership.ToString()));
+            }
+
             return query;
         }
 

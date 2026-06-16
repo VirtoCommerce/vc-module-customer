@@ -60,7 +60,7 @@ namespace VirtoCommerce.CustomerModule.Web.Authorization
             var currentContact = (Contact)await _memberService.GetByIdAsync(currentUser.MemberId);
             switch (context.Resource)
             {
-                case MembersSearchCriteria criteria when criteria.MemberIds?.Any() == true:
+                case MembersSearchCriteria criteria when criteria.MemberIds?.Length > 0:
                     {
                         if (criteria.MemberIds.All(x => currentContact.AssociatedOrganizations.Contains(x)))
                         {

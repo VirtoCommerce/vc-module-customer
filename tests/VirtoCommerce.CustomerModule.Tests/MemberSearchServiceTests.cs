@@ -16,13 +16,18 @@ namespace VirtoCommerce.CustomerModule.Tests
         private const string OrgAId = "org-a";
         private const string OrgBId = "org-b";
 
+        private static readonly string[] RootIds = { OrgAId, OrgBId };
+        private static readonly string[] ChildIds = { "child-a", "child-b" };
+        private static readonly string[] ChildAIds = { "child-a" };
+        private static readonly string[] AllIds = { "child-a", "child-b", OrgAId, OrgBId };
+
         private readonly Mock<IMemberRepository> _repositoryMock = new();
 
         public MemberSearchServiceTests()
         {
             // org-a and org-b are roots (no membership relations);
             // child-a -> org-a, child-b -> org-b
-            var members = new[]
+            var members = new MemberEntity[]
             {
                 Root(OrgAId),
                 Root(OrgBId),
@@ -38,7 +43,7 @@ namespace VirtoCommerce.CustomerModule.Tests
         {
             var ids = Search(new MembersSearchCriteria());
 
-            Assert.Equal(new[] { OrgAId, OrgBId }, ids.OrderBy(x => x));
+            Assert.Equal(RootIds, ids.OrderBy(x => x));
         }
 
         [Fact]
@@ -46,7 +51,7 @@ namespace VirtoCommerce.CustomerModule.Tests
         {
             var ids = Search(new MembersSearchCriteria { DeepSearch = true });
 
-            Assert.Equal(new[] { "child-a", "child-b", OrgAId, OrgBId }, ids.OrderBy(x => x));
+            Assert.Equal(AllIds, ids.OrderBy(x => x));
         }
 
         [Fact]
@@ -54,15 +59,15 @@ namespace VirtoCommerce.CustomerModule.Tests
         {
             var ids = Search(new MembersSearchCriteria { MemberId = OrgAId });
 
-            Assert.Equal(new[] { "child-a" }, ids);
+            Assert.Equal(ChildAIds, ids);
         }
 
         [Fact]
         public void BuildQuery_MultipleMemberIds_ReturnsChildrenOfAnyOfThem()
         {
-            var ids = Search(new MembersSearchCriteria { MemberIds = new[] { OrgAId, OrgBId } });
+            var ids = Search(new MembersSearchCriteria { MemberIds = RootIds });
 
-            Assert.Equal(new[] { "child-a", "child-b" }, ids.OrderBy(x => x));
+            Assert.Equal(ChildIds, ids.OrderBy(x => x));
         }
 
         [Fact]
@@ -71,7 +76,7 @@ namespace VirtoCommerce.CustomerModule.Tests
             // RootMembersOnly is decoupled from DeepSearch: explicitly true wins over a deep search.
             var ids = Search(new MembersSearchCriteria { RootMembersOnly = true, DeepSearch = true });
 
-            Assert.Equal(new[] { OrgAId, OrgBId }, ids.OrderBy(x => x));
+            Assert.Equal(RootIds, ids.OrderBy(x => x));
         }
 
         [Fact]
@@ -80,7 +85,7 @@ namespace VirtoCommerce.CustomerModule.Tests
             // RootMembersOnly is decoupled from MemberId: explicitly false disables the legacy root-only default.
             var ids = Search(new MembersSearchCriteria { RootMembersOnly = false });
 
-            Assert.Equal(new[] { "child-a", "child-b", OrgAId, OrgBId }, ids.OrderBy(x => x));
+            Assert.Equal(AllIds, ids.OrderBy(x => x));
         }
 
         private string[] Search(MembersSearchCriteria criteria)
@@ -89,11 +94,11 @@ namespace VirtoCommerce.CustomerModule.Tests
             return service.BuildQuery(_repositoryMock.Object, criteria).Select(x => x.Id).ToArray();
         }
 
-        private static MemberEntity Root(string id) =>
-            new OrganizationEntity { Id = id, MemberType = nameof(Organization) };
+        private static OrganizationEntity Root(string id) =>
+            new() { Id = id, MemberType = nameof(Organization) };
 
-        private static MemberEntity Child(string id, string parentId) =>
-            new ContactEntity
+        private static ContactEntity Child(string id, string parentId) =>
+            new()
             {
                 Id = id,
                 MemberType = nameof(Contact),
