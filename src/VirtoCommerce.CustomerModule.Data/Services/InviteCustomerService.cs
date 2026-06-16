@@ -213,18 +213,18 @@ public class InviteCustomerService : IInviteCustomerService
 
     protected virtual async Task CreateOrganizationMembershipAsync(ApplicationUser user, string organizationId, List<Role> roles)
     {
-        var membership = new OrganizationMembership
-        {
-            UserId = user.Id,
-            OrganizationId = organizationId,
-            Roles = roles
-                .Select(r => new OrganizationMembershipRole
-                {
-                    RoleId = r.Id,
-                    RoleName = r.Name,
-                })
-                .ToList(),
-        };
+        var membership = AbstractTypeFactory<OrganizationMembership>.TryCreateInstance();
+        membership.UserId = user.Id;
+        membership.OrganizationId = organizationId;
+        membership.Roles = roles
+            .Select(r =>
+            {
+                var membershipRole = AbstractTypeFactory<OrganizationMembershipRole>.TryCreateInstance();
+                membershipRole.RoleId = r.Id;
+                membershipRole.RoleName = r.Name;
+                return membershipRole;
+            })
+            .ToList();
 
         await _organizationMembershipService.SaveChangesAsync([membership]);
     }
