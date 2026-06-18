@@ -53,7 +53,7 @@ public class OrganizationIdClaimProvider(
         using var roleManager = roleManagerFactory();
         foreach (var membershipRole in membership.Roles)
         {
-            var role = await roleManager.FindByNameAsync(membershipRole.RoleName);
+            var role = await roleManager.FindByIdAsync(membershipRole.RoleId);
             if (role == null)
             {
                 continue;

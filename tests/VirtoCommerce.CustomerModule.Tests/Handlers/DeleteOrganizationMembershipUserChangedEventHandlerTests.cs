@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Moq;
+using VirtoCommerce.CustomerModule.Core.Events;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Data.Handlers;
@@ -37,7 +38,7 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
                 });
 
             //Act
-            await _handler.Handle(BuildEvent(UserId, EntryState.Deleted));
+            await _handler.Handle(BuildUserEvent(UserId, EntryState.Deleted));
 
             //Assert
             _membershipServiceMock.Verify(
@@ -54,7 +55,7 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
                 .ReturnsAsync(new OrganizationMembershipSearchResult { Results = [] });
 
             //Act
-            await _handler.Handle(BuildEvent(UserId, EntryState.Deleted));
+            await _handler.Handle(BuildUserEvent(UserId, EntryState.Deleted));
 
             //Assert
             _membershipServiceMock.Verify(s => s.DeleteAsync(It.IsAny<IList<string>>()), Times.Never);
@@ -64,7 +65,7 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
         public async Task Handle_UserModified_DoesNotDeleteMemberships()
         {
             //Act
-            await _handler.Handle(BuildEvent(UserId, EntryState.Modified));
+            await _handler.Handle(BuildUserEvent(UserId, EntryState.Modified));
 
             //Assert
             _membershipServiceMock.Verify(s => s.SearchAsync(It.IsAny<OrganizationMembershipSearchCriteria>()), Times.Never);
@@ -96,11 +97,72 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
             _membershipServiceMock.Verify(s => s.DeleteAsync(It.IsAny<IList<string>>()), Times.Exactly(2));
         }
 
-        private static UserChangedEvent BuildEvent(string userId, EntryState state)
+        [Fact]
+        public async Task Handle_ContactDeleted_DeletesMembershipsViaSecurityAccounts()
+        {
+            //Arrange
+            var contact = new Contact
+            {
+                SecurityAccounts = [new ApplicationUser { Id = UserId }]
+            };
+            _membershipServiceMock
+                .Setup(s => s.SearchAsync(It.Is<OrganizationMembershipSearchCriteria>(c => c.UserId == UserId)))
+                .ReturnsAsync(new OrganizationMembershipSearchResult
+                {
+                    Results = [new OrganizationMembership { Id = "m1" }]
+                });
+
+            //Act
+            await _handler.Handle(BuildMemberEvent(contact, EntryState.Deleted));
+
+            //Assert
+            _membershipServiceMock.Verify(
+                s => s.DeleteAsync(It.Is<IList<string>>(ids => ids.Count == 1)),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task Handle_ContactDeleted_NoSecurityAccounts_DoesNotCallDelete()
+        {
+            //Arrange
+            var contact = new Contact { SecurityAccounts = [] };
+
+            //Act
+            await _handler.Handle(BuildMemberEvent(contact, EntryState.Deleted));
+
+            //Assert
+            _membershipServiceMock.Verify(s => s.SearchAsync(It.IsAny<OrganizationMembershipSearchCriteria>()), Times.Never);
+            _membershipServiceMock.Verify(s => s.DeleteAsync(It.IsAny<IList<string>>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Handle_ContactModified_DoesNotDeleteMemberships()
+        {
+            //Arrange
+            var contact = new Contact
+            {
+                SecurityAccounts = [new ApplicationUser { Id = UserId }]
+            };
+
+            //Act
+            await _handler.Handle(BuildMemberEvent(contact, EntryState.Modified));
+
+            //Assert
+            _membershipServiceMock.Verify(s => s.SearchAsync(It.IsAny<OrganizationMembershipSearchCriteria>()), Times.Never);
+            _membershipServiceMock.Verify(s => s.DeleteAsync(It.IsAny<IList<string>>()), Times.Never);
+        }
+
+        private static UserChangedEvent BuildUserEvent(string userId, EntryState state)
         {
             var user = new ApplicationUser { Id = userId };
             return new UserChangedEvent(
                 new List<GenericChangedEntry<ApplicationUser>> { new(user, user, state) });
+        }
+
+        private static MemberChangedEvent BuildMemberEvent(Member member, EntryState state)
+        {
+            return new MemberChangedEvent(
+                new List<GenericChangedEntry<Member>> { new(member, state) });
         }
     }
 }

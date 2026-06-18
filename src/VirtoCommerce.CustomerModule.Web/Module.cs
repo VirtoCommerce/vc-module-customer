@@ -173,6 +173,7 @@ namespace VirtoCommerce.CustomerModule.Web
             appBuilder.RegisterEventHandler<UserRoleRemovedEvent, LogChangesEventHandler>();
             appBuilder.RegisterEventHandler<UserChangedEvent, SecurtityAccountChangesEventHandler>();
             appBuilder.RegisterEventHandler<UserChangedEvent, DeleteOrganizationMembershipUserChangedEventHandler>();
+            appBuilder.RegisterEventHandler<MemberChangedEvent, DeleteOrganizationMembershipUserChangedEventHandler>();
             appBuilder.RegisterEventHandler<OrganizationMembershipChangedEvent, RevokeTokenOrganizationMembershipChangedEventHandler>();
 
             var settingsManager = appBuilder.ApplicationServices.GetService<ISettingsManager>();

@@ -189,7 +189,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             foreach (var userId in userIds)
             {
                 var searchResult = await _organizationMembershipService.SearchAsync(
-                    new OrganizationMembershipSearchCriteria { UserId = userId });
+                    new OrganizationMembershipSearchCriteria { UserId = userId, Take = int.MaxValue });
 
                 var newRoles = searchResult?.Results?
                     .SelectMany(m => m.Roles ?? [])
