@@ -21,10 +21,96 @@ public class OrganizationIdRequestValidatorTests
     private readonly Mock<IOrganizationMembershipService> _membershipServiceMock = new();
 
     [Fact]
-    public async Task ValidateAsync_NoOrganizationId_ReturnsEmpty()
+    public async Task ValidateAsync_NoOrganizationId_NoUser_ReturnsEmpty()
     {
         var result = await GetValidator().ValidateAsync(BuildContext(orgId: null));
 
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task ValidateAsync_NoExplicitOrgId_AutoDetectsFromMember_ActiveMembership_ReturnsEmpty()
+    {
+        //Arrange
+        var user = new ApplicationUser
+        {
+            Id = UserId,
+            MemberId = MemberId
+        };
+
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact
+            {
+                Id = MemberId,
+                Organizations = [OrgId]
+            });
+
+        _membershipServiceMock.Setup(s => s.GetByUserAndOrgAsync(UserId, OrgId))
+            .ReturnsAsync(new OrganizationMembership
+            {
+                IsLocked = false
+            });
+
+        //Act
+        var result = await GetValidator().ValidateAsync(BuildContext(orgId: null, user: user));
+
+        //Assert
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task ValidateAsync_NoExplicitOrgId_AutoDetectsFromMember_LockedInOrg_ReturnsOrgError()
+    {
+        //Arrange
+        var user = new ApplicationUser
+        {
+            Id = UserId,
+            MemberId = MemberId
+        };
+
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact
+            {
+                Id = MemberId,
+                Organizations = [OrgId]
+            });
+
+        _membershipServiceMock.Setup(s => s.GetByUserAndOrgAsync(UserId, OrgId))
+            .ReturnsAsync(new OrganizationMembership
+            {
+                IsLocked = true,
+                LockoutEnd = null
+            });
+
+        //Act
+        var result = await GetValidator().ValidateAsync(BuildContext(orgId: null, user: user));
+
+        //Assert
+        Assert.Single(result);
+        Assert.Equal(OpenIddictConstants.Errors.InvalidGrant, result[0].Error);
+    }
+
+    [Fact]
+    public async Task ValidateAsync_NoExplicitOrgId_MemberHasNoOrganizations_ReturnsEmpty()
+    {
+        //Arrange
+        var user = new ApplicationUser
+        {
+            Id = UserId,
+            MemberId = MemberId
+        };
+
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact
+            {
+                Id = MemberId,
+                Organizations = []
+            });
+
+        //Act
+        var result = await GetValidator().ValidateAsync(BuildContext(orgId: null, user: user));
+
+        //Assert
         Assert.Empty(result);
     }
 

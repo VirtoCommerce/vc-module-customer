@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using OpenIddict.Abstractions;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Security.OpenIddict;
 using static VirtoCommerce.CustomerModule.Core.ModuleConstants.Security;
@@ -20,7 +21,7 @@ public class OrganizationIdRequestValidator(
 
     public virtual async Task<IList<TokenResponse>> ValidateAsync(TokenRequestContext context)
     {
-        var organizationId = GetOrganizationId(context);
+        var organizationId = await GetOrganizationId(context);
         if (string.IsNullOrEmpty(organizationId))
         {
             return [];
@@ -69,7 +70,7 @@ public class OrganizationIdRequestValidator(
             && user.LockoutEnd.Value > DateTimeOffset.UtcNow;
     }
 
-    private static string GetOrganizationId(TokenRequestContext context)
+    private async Task<string> GetOrganizationId(TokenRequestContext context)
     {
         var organizationId = context.Request.GetParameter(Parameters.OrganizationId)?.ToString();
         if (!string.IsNullOrEmpty(organizationId))
@@ -77,7 +78,43 @@ public class OrganizationIdRequestValidator(
             return organizationId;
         }
 
-        return context.Principal?.FindFirstValue(Claims.OrganizationId);
+        organizationId = context.Principal?.FindFirstValue(Claims.OrganizationId);
+        if (!string.IsNullOrEmpty(organizationId))
+        {
+            return organizationId;
+        }
+
+        return await GetMemberOrganizationId(context);
+    }
+
+    private async Task<string> GetMemberOrganizationId(TokenRequestContext context)
+    {
+        var memberId = context.User?.MemberId;
+        if (string.IsNullOrEmpty(memberId))
+        {
+            return null;
+        }
+
+        var member = await memberServiceFactory().GetByIdAsync(memberId);
+
+        if (member is not IHasOrganizations contact)
+        {
+            return null;
+        }
+
+        var organizations = contact.Organizations ?? [];
+
+        if (!contact.CurrentOrganizationId.IsNullOrEmpty() && organizations.ContainsIgnoreCase(contact.CurrentOrganizationId))
+        {
+            return contact.CurrentOrganizationId;
+        }
+
+        if (!contact.DefaultOrganizationId.IsNullOrEmpty() && organizations.ContainsIgnoreCase(contact.DefaultOrganizationId))
+        {
+            return contact.DefaultOrganizationId;
+        }
+
+        return organizations.FirstOrDefault();
     }
 
     private async Task<IList<string>> GetAvailableOrganizationIds(TokenRequestContext context)
