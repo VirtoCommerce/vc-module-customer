@@ -15,11 +15,16 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
     {
         private readonly IMemberService _memberService;
         private readonly IDynamicPropertySearchService _dynamicPropertySearchService;
+        private readonly IOrganizationMembershipService _organizationMembershipService;
 
-        public MemberDocumentBuilder(IMemberService memberService, IDynamicPropertySearchService dynamicPropertySearchService)
+        public MemberDocumentBuilder(
+            IMemberService memberService,
+            IDynamicPropertySearchService dynamicPropertySearchService,
+            IOrganizationMembershipService organizationMembershipService)
         {
             _memberService = memberService;
             _dynamicPropertySearchService = dynamicPropertySearchService;
+            _organizationMembershipService = organizationMembershipService;
         }
 
         public Task BuildSchemaAsync(IndexDocument schema)
@@ -144,6 +149,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             if (contact != null)
             {
                 IndexContact(document, contact);
+                await IndexOrganizationMembershipRolesAsync(document, contact);
             }
             else if (employee != null)
             {
@@ -161,6 +167,43 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             await document.AddDynamicProperties(_dynamicPropertySearchService, member);
 
             return document;
+        }
+
+        protected virtual async Task IndexOrganizationMembershipRolesAsync(IndexDocument document, Contact contact)
+        {
+            var userIds = contact.SecurityAccounts?
+                .Select(sa => sa.Id)
+                .Where(id => !string.IsNullOrEmpty(id))
+                .ToList();
+
+            if (userIds is not { Count: > 0 })
+            {
+                return;
+            }
+
+            var existingRoleIds = contact.SecurityAccounts
+                .SelectMany(sa => sa.Roles ?? [])
+                .Select(r => r.Id)
+                .ToHashSet();
+
+            foreach (var userId in userIds)
+            {
+                var searchResult = await _organizationMembershipService.SearchAsync(
+                    new OrganizationMembershipSearchCriteria { UserId = userId });
+
+                var newRoles = searchResult?.Results?
+                    .SelectMany(m => m.Roles ?? [])
+                    .Where(r => existingRoleIds.Add(r.RoleId))
+                    .ToList();
+
+                if (newRoles is not { Count: > 0 })
+                {
+                    continue;
+                }
+
+                document.AddFilterableCollection("RoleId", newRoles.Select(r => r.RoleId).ToList());
+                document.AddFilterableCollection("Role", newRoles.Select(r => r.RoleName).ToList());
+            }
         }
 
         protected virtual void IndexAddress(IndexDocument document, Address address)

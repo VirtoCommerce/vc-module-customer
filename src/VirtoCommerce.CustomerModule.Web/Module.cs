@@ -106,6 +106,8 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<LogChangesEventHandler>();
             serviceCollection.AddTransient<SecurtityAccountChangesEventHandler>();
             serviceCollection.AddTransient<IndexMemberChangedEventHandler>();
+            serviceCollection.AddTransient<RevokeTokenOrganizationMembershipChangedEventHandler>();
+            serviceCollection.AddTransient<IndexOrganizationMembershipChangedEventHandler>();
 
             serviceCollection.AddTransient<IAuthorizationHandler, CustomerAuthorizationHandler>();
 
@@ -169,6 +171,7 @@ namespace VirtoCommerce.CustomerModule.Web
             appBuilder.RegisterEventHandler<UserRoleAddedEvent, LogChangesEventHandler>();
             appBuilder.RegisterEventHandler<UserRoleRemovedEvent, LogChangesEventHandler>();
             appBuilder.RegisterEventHandler<UserChangedEvent, SecurtityAccountChangesEventHandler>();
+            appBuilder.RegisterEventHandler<OrganizationMembershipChangedEvent, RevokeTokenOrganizationMembershipChangedEventHandler>();
 
             var settingsManager = appBuilder.ApplicationServices.GetService<ISettingsManager>();
             if (settingsManager.GetValue<bool>(ModuleConstants.Settings.General.EventBasedIndexation))
@@ -177,6 +180,7 @@ namespace VirtoCommerce.CustomerModule.Web
                 appBuilder.RegisterEventHandler<UserChangedEvent, IndexMemberChangedEventHandler>();
                 appBuilder.RegisterEventHandler<UserRoleAddedEvent, IndexMemberChangedEventHandler>();
                 appBuilder.RegisterEventHandler<UserRoleRemovedEvent, IndexMemberChangedEventHandler>();
+                appBuilder.RegisterEventHandler<OrganizationMembershipChangedEvent, IndexOrganizationMembershipChangedEventHandler>();
             }
 
             var searchRequestBuilderRegistrar = appBuilder.ApplicationServices.GetService<ISearchRequestBuilderRegistrar>();
