@@ -9,11 +9,13 @@ using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Security.Events;
+using VirtoCommerce.Platform.Core.Security.Search;
 
 namespace VirtoCommerce.CustomerModule.Data.Handlers
 {
     public class DeleteOrganizationMembershipUserChangedEventHandler(
-        IOrganizationMembershipService organizationMembershipService)
+        IOrganizationMembershipService organizationMembershipService,
+        IUserSearchService userSearchService)
         : IEventHandler<UserChangedEvent>,
           IEventHandler<MemberChangedEvent>
     {
@@ -39,26 +41,26 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
         public virtual async Task Handle(MemberChangedEvent message)
         {
-            var deletedUserIds = message.ChangedEntries
+            var deletedMemberIds = message.ChangedEntries
                 ?.Where(e => e.EntryState == EntryState.Deleted)
-                .Select(e => e.OldEntry)
-                .OfType<IHasSecurityAccounts>()
-                .SelectMany(m => m.SecurityAccounts ?? [])
-                .Select(u => u.Id)
+                .Select(e => e.OldEntry.Id)
                 .Where(id => !string.IsNullOrEmpty(id))
                 .Distinct()
                 .ToList();
 
-            foreach (var userId in deletedUserIds ?? [])
+            if (deletedMemberIds is { Count: > 0 })
             {
-                await DeleteMembershipsAsync(userId);
+                var userIds = await GetUserIdsByMemberIdsAsync(deletedMemberIds);
+                foreach (var userId in userIds)
+                {
+                    await DeleteMembershipsAsync(userId);
+                }
             }
 
             foreach (var entry in message.ChangedEntries?.Where(e => e.EntryState == EntryState.Modified) ?? [])
             {
                 if (entry.OldEntry is not IHasOrganizations oldOrgs ||
-                    entry.NewEntry is not IHasOrganizations newOrgs ||
-                    entry.NewEntry is not IHasSecurityAccounts memberWithAccounts)
+                    entry.NewEntry is not IHasOrganizations newOrgs)
                 {
                     continue;
                 }
@@ -72,13 +74,8 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                     continue;
                 }
 
-                var userIds = memberWithAccounts.SecurityAccounts?
-                    .Select(u => u.Id)
-                    .Where(id => !string.IsNullOrEmpty(id))
-                    .Distinct()
-                    .ToList();
-
-                foreach (var userId in userIds ?? [])
+                var userIds = await GetUserIdsByMemberIdsAsync([entry.OldEntry.Id]);
+                foreach (var userId in userIds)
                 {
                     await DeleteMembershipsForOrgsAsync(userId, removedOrgIds);
                 }
@@ -129,6 +126,21 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
             }
 
             await organizationMembershipService.DeleteAsync(ids);
+        }
+
+        private async Task<IList<string>> GetUserIdsByMemberIdsAsync(IList<string> memberIds)
+        {
+            var result = await userSearchService.SearchUsersAsync(
+                new UserSearchCriteria
+                {
+                    MemberIds = memberIds,
+                    Take = int.MaxValue
+                });
+
+            return result?.Results?
+                .Select(u => u.Id)
+                .Where(id => !string.IsNullOrEmpty(id))
+                .ToList() ?? [];
         }
     }
 }

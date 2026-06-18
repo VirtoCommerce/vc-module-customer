@@ -9,6 +9,7 @@ using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Security.Events;
+using VirtoCommerce.Platform.Core.Security.Search;
 using Xunit;
 
 namespace VirtoCommerce.CustomerModule.Tests.Handlers
@@ -17,14 +18,18 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
     public class DeleteOrganizationMembershipUserChangedEventHandlerTests
     {
         private const string UserId = "user1";
+        private const string MemberId = "contact1";
         private const string OrgId = "org1";
 
         private readonly Mock<IOrganizationMembershipService> _membershipServiceMock = new();
+        private readonly Mock<IUserSearchService> _userSearchServiceMock = new();
         private readonly DeleteOrganizationMembershipUserChangedEventHandler _handler;
 
         public DeleteOrganizationMembershipUserChangedEventHandlerTests()
         {
-            _handler = new DeleteOrganizationMembershipUserChangedEventHandler(_membershipServiceMock.Object);
+            _handler = new DeleteOrganizationMembershipUserChangedEventHandler(
+                _membershipServiceMock.Object,
+                _userSearchServiceMock.Object);
         }
 
         [Fact]
@@ -99,13 +104,13 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
         }
 
         [Fact]
-        public async Task Handle_ContactDeleted_DeletesMembershipsViaSecurityAccounts()
+        public async Task Handle_ContactDeleted_DeletesMembershipsViaUserSearch()
         {
             //Arrange
-            var contact = new Contact
-            {
-                SecurityAccounts = [new ApplicationUser { Id = UserId }]
-            };
+            var contact = new Contact { Id = MemberId };
+            _userSearchServiceMock
+                .Setup(s => s.SearchUsersAsync(It.Is<UserSearchCriteria>(c => c.MemberIds.Contains(MemberId))))
+                .ReturnsAsync(new UserSearchResult { Results = [new ApplicationUser { Id = UserId }] });
             _membershipServiceMock
                 .Setup(s => s.SearchAsync(It.Is<OrganizationMembershipSearchCriteria>(c => c.UserId == UserId)))
                 .ReturnsAsync(new OrganizationMembershipSearchResult
@@ -123,10 +128,13 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
         }
 
         [Fact]
-        public async Task Handle_ContactDeleted_NoSecurityAccounts_DoesNotCallDelete()
+        public async Task Handle_ContactDeleted_NoUsers_DoesNotCallDelete()
         {
             //Arrange
-            var contact = new Contact { SecurityAccounts = [] };
+            var contact = new Contact { Id = MemberId };
+            _userSearchServiceMock
+                .Setup(s => s.SearchUsersAsync(It.IsAny<UserSearchCriteria>()))
+                .ReturnsAsync(new UserSearchResult { Results = [] });
 
             //Act
             await _handler.Handle(BuildMemberEvent(contact, contact, EntryState.Deleted));
@@ -140,16 +148,11 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
         public async Task Handle_ContactRemovedFromOrganization_DeletesMembershipForThatOrg()
         {
             //Arrange
-            var oldContact = new Contact
-            {
-                Organizations = [OrgId, "org2"],
-                SecurityAccounts = [new ApplicationUser { Id = UserId }]
-            };
-            var newContact = new Contact
-            {
-                Organizations = ["org2"],
-                SecurityAccounts = [new ApplicationUser { Id = UserId }]
-            };
+            var oldContact = new Contact { Id = MemberId, Organizations = [OrgId, "org2"] };
+            var newContact = new Contact { Id = MemberId, Organizations = ["org2"] };
+            _userSearchServiceMock
+                .Setup(s => s.SearchUsersAsync(It.Is<UserSearchCriteria>(c => c.MemberIds.Contains(MemberId))))
+                .ReturnsAsync(new UserSearchResult { Results = [new ApplicationUser { Id = UserId }] });
             _membershipServiceMock
                 .Setup(s => s.SearchAsync(It.Is<OrganizationMembershipSearchCriteria>(c => c.UserId == UserId)))
                 .ReturnsAsync(new OrganizationMembershipSearchResult
@@ -174,16 +177,11 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
         public async Task Handle_ContactRemovedFromOrganization_NoMembership_DoesNotCallDelete()
         {
             //Arrange
-            var oldContact = new Contact
-            {
-                Organizations = [OrgId],
-                SecurityAccounts = [new ApplicationUser { Id = UserId }]
-            };
-            var newContact = new Contact
-            {
-                Organizations = [],
-                SecurityAccounts = [new ApplicationUser { Id = UserId }]
-            };
+            var oldContact = new Contact { Id = MemberId, Organizations = [OrgId] };
+            var newContact = new Contact { Id = MemberId, Organizations = [] };
+            _userSearchServiceMock
+                .Setup(s => s.SearchUsersAsync(It.IsAny<UserSearchCriteria>()))
+                .ReturnsAsync(new UserSearchResult { Results = [new ApplicationUser { Id = UserId }] });
             _membershipServiceMock
                 .Setup(s => s.SearchAsync(It.IsAny<OrganizationMembershipSearchCriteria>()))
                 .ReturnsAsync(new OrganizationMembershipSearchResult { Results = [] });
@@ -199,17 +197,13 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
         public async Task Handle_ContactModified_OrganizationsUnchanged_DoesNotCallDelete()
         {
             //Arrange
-            var contact = new Contact
-            {
-                Organizations = [OrgId],
-                SecurityAccounts = [new ApplicationUser { Id = UserId }]
-            };
+            var contact = new Contact { Id = MemberId, Organizations = [OrgId] };
 
             //Act
             await _handler.Handle(BuildMemberEvent(contact, contact, EntryState.Modified));
 
             //Assert
-            _membershipServiceMock.Verify(s => s.SearchAsync(It.IsAny<OrganizationMembershipSearchCriteria>()), Times.Never);
+            _userSearchServiceMock.Verify(s => s.SearchUsersAsync(It.IsAny<UserSearchCriteria>()), Times.Never);
             _membershipServiceMock.Verify(s => s.DeleteAsync(It.IsAny<IList<string>>()), Times.Never);
         }
 
