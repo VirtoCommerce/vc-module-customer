@@ -108,6 +108,7 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<IndexMemberChangedEventHandler>();
             serviceCollection.AddTransient<RevokeTokenOrganizationMembershipChangedEventHandler>();
             serviceCollection.AddTransient<IndexOrganizationMembershipChangedEventHandler>();
+            serviceCollection.AddTransient<DeleteOrganizationMembershipUserChangedEventHandler>();
 
             serviceCollection.AddTransient<IAuthorizationHandler, CustomerAuthorizationHandler>();
 
@@ -171,6 +172,7 @@ namespace VirtoCommerce.CustomerModule.Web
             appBuilder.RegisterEventHandler<UserRoleAddedEvent, LogChangesEventHandler>();
             appBuilder.RegisterEventHandler<UserRoleRemovedEvent, LogChangesEventHandler>();
             appBuilder.RegisterEventHandler<UserChangedEvent, SecurtityAccountChangesEventHandler>();
+            appBuilder.RegisterEventHandler<UserChangedEvent, DeleteOrganizationMembershipUserChangedEventHandler>();
             appBuilder.RegisterEventHandler<OrganizationMembershipChangedEvent, RevokeTokenOrganizationMembershipChangedEventHandler>();
 
             var settingsManager = appBuilder.ApplicationServices.GetService<ISettingsManager>();

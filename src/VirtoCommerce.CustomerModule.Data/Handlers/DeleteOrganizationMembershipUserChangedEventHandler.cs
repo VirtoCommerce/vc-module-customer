@@ -1,0 +1,57 @@
+using System.Linq;
+using System.Threading.Tasks;
+using VirtoCommerce.CustomerModule.Core.Model;
+using VirtoCommerce.CustomerModule.Core.Services;
+using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Events;
+using VirtoCommerce.Platform.Core.Security.Events;
+
+namespace VirtoCommerce.CustomerModule.Data.Handlers
+{
+    public class DeleteOrganizationMembershipUserChangedEventHandler(
+        IOrganizationMembershipService organizationMembershipService)
+        : IEventHandler<UserChangedEvent>
+    {
+        public virtual async Task Handle(UserChangedEvent message)
+        {
+            var userIds = message.ChangedEntries
+                ?.Where(e => e.EntryState == EntryState.Deleted)
+                .Select(e => e.OldEntry.Id)
+                .Where(id => !string.IsNullOrEmpty(id))
+                .Distinct()
+                .ToList();
+
+            if (userIds is not { Count: > 0 })
+            {
+                return;
+            }
+
+            foreach (var userId in userIds)
+            {
+                await DeleteMembershipsAsync(userId);
+            }
+        }
+
+        protected virtual async Task DeleteMembershipsAsync(string userId)
+        {
+            var searchResult = await organizationMembershipService.SearchAsync(
+                new OrganizationMembershipSearchCriteria
+                {
+                    UserId = userId,
+                    Take = int.MaxValue
+                });
+
+            var ids = searchResult?.Results?
+                .Select(m => m.Id)
+                .Where(id => !string.IsNullOrEmpty(id))
+                .ToList();
+
+            if (ids is not { Count: > 0 })
+            {
+                return;
+            }
+
+            await organizationMembershipService.DeleteAsync(ids);
+        }
+    }
+}
