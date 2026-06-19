@@ -191,7 +191,7 @@ public class OrganizationIdRequestValidatorTests
     }
 
     private OrganizationIdRequestValidator GetValidator() =>
-        new(() => _memberServiceMock.Object, _membershipServiceMock.Object);
+        new(_memberServiceMock.Object, _membershipServiceMock.Object);
 
     private static TokenRequestContext BuildContext(
         string orgId,

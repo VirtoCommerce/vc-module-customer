@@ -14,7 +14,7 @@ using static VirtoCommerce.CustomerModule.Core.ModuleConstants.Security;
 namespace VirtoCommerce.CustomerModule.Data.OpenIddict;
 
 public class OrganizationIdRequestValidator(
-    Func<IMemberService> memberServiceFactory,
+    IMemberService memberService,
     IOrganizationMembershipService organizationMembershipService) : ITokenRequestValidator
 {
     public virtual int Priority { get; set; } = 50;
@@ -95,7 +95,7 @@ public class OrganizationIdRequestValidator(
             return null;
         }
 
-        var member = await memberServiceFactory().GetByIdAsync(memberId);
+        var member = await memberService.GetByIdAsync(memberId);
 
         if (member is not IHasOrganizations contact)
         {
@@ -126,7 +126,7 @@ public class OrganizationIdRequestValidator(
             return [];
         }
 
-        var member = await memberServiceFactory().GetByIdAsync(memberId);
+        var member = await memberService.GetByIdAsync(memberId);
 
         return member switch
         {

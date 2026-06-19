@@ -16,7 +16,7 @@ using static VirtoCommerce.CustomerModule.Core.ModuleConstants.Security;
 namespace VirtoCommerce.CustomerModule.Data.OpenIddict;
 
 public class OrganizationIdClaimProvider(
-    Func<IMemberService> memberServiceFactory,
+    IMemberService memberService,
     IOrganizationMembershipService organizationMembershipService,
     Func<RoleManager<Role>> roleManagerFactory) : ITokenClaimProvider
 {
@@ -104,7 +104,7 @@ public class OrganizationIdClaimProvider(
             return null;
         }
 
-        var member = await memberServiceFactory().GetByIdAsync(memberId);
+        var member = memberService.GetByIdAsync(memberId);
 
         return member switch
         {
