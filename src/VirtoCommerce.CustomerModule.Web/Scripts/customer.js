@@ -135,6 +135,12 @@ angular.module(moduleName, [])
                 isVisible: function (blade) { return !blade.isNew; }
             };
 
+            var organizationMembershipsWidget = {
+                controller: 'virtoCommerce.customerModule.organizationMembershipsWidgetController',
+                template: 'Modules/$(VirtoCommerce.Customer)/Scripts/widgets/organizationMembershipsWidget.tpl.html',
+                isVisible: function (blade) { return !blade.isNew && authService.checkPermission('platform:security:read'); }
+            };
+
             var accountContactWidget = {
                 controller: 'virtoCommerce.customerModule.accountContactWidgetController',
                 template: 'Modules/$(VirtoCommerce.Customer)/Scripts/widgets/accountContactWidget.tpl.html',
@@ -143,6 +149,7 @@ angular.module(moduleName, [])
 
             //Register widgets in customer details
             widgetService.registerWidget(accountsWidget, 'customerDetail1');
+            widgetService.registerWidget(organizationMembershipsWidget, 'customerDetail1');
             widgetService.registerWidget(addressesWidget, 'customerDetail1');
             widgetService.registerWidget(emailsWidget, 'customerDetail1');
             widgetService.registerWidget(phonesWidget, 'customerDetail2');

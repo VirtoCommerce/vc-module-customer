@@ -1,24 +1,83 @@
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
+using VirtoCommerce.Platform.Core;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Security.Extensions;
 using VirtoCommerce.Platform.Security.OpenIddict;
 using static VirtoCommerce.CustomerModule.Core.ModuleConstants.Security;
 
 namespace VirtoCommerce.CustomerModule.Data.OpenIddict;
 
-public class OrganizationIdClaimProvider(IMemberService memberService) : ITokenClaimProvider
+public class OrganizationIdClaimProvider(
+    IMemberService memberService,
+    IOrganizationMembershipService organizationMembershipService,
+    Func<RoleManager<Role>> roleManagerFactory) : ITokenClaimProvider
 {
     public virtual async Task SetClaimsAsync(ClaimsPrincipal principal, TokenRequestContext context)
     {
         var organizationId = await GetOrganizationId(context);
         principal.SetClaimWithDestinations(Claims.OrganizationId, organizationId, [OpenIddictConstants.Destinations.AccessToken]);
+
+        if (!organizationId.IsNullOrEmpty() && context.User != null)
+        {
+            await AddOrgScopedPermissionsAsync(principal, context.User.Id, organizationId);
+        }
     }
 
+    private async Task AddOrgScopedPermissionsAsync(ClaimsPrincipal principal, string userId, string organizationId)
+    {
+        var membership = await organizationMembershipService.GetByUserAndOrgAsync(userId, organizationId);
+        if (membership == null || membership.IsCurrentlyLocked || membership.Roles.Count == 0)
+        {
+            return;
+        }
+
+        if (principal.Identity is not ClaimsIdentity identity)
+        {
+            return;
+        }
+
+        // Collect permissions already present in the token (from global roles) to avoid duplicates
+        var existingPermissions = principal.Claims
+            .Where(c => c.Type == PlatformConstants.Security.Claims.PermissionClaimType)
+            .Select(c => c.Value)
+            .ToHashSet();
+
+        using var roleManager = roleManagerFactory();
+        foreach (var membershipRole in membership.Roles)
+        {
+            var role = await roleManager.FindByIdAsync(membershipRole.RoleId);
+            if (role == null)
+            {
+                continue;
+            }
+
+            var roleClaims = await roleManager.GetClaimsAsync(role);
+            foreach (var claim in roleClaims)
+            {
+                if (claim.Type != PlatformConstants.Security.Claims.PermissionClaimType)
+                {
+                    continue;
+                }
+
+                if (!existingPermissions.Add(claim.Value))
+                {
+                    continue;
+                }
+
+                identity.AddClaim(
+                    new Claim(claim.Type, claim.Value)
+                        .SetDestinations(OpenIddictConstants.Destinations.AccessToken));
+            }
+        }
+    }
 
     private async Task<string> GetOrganizationId(TokenRequestContext context)
     {

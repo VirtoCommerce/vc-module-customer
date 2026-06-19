@@ -279,6 +279,38 @@
           "status": "値を選択してください"
         }
       },
+      "organization-memberships-list": {
+        "title": "組織メンバーシップ",
+        "subtitle": "組織メンバーシップを管理",
+        "labels": {
+          "type": "タイプ",
+          "organization": "組織",
+          "roles": "役割",
+          "status": "状態",
+          "lockout-end": "ロック解除日"
+        },
+        "type-org": "組織",
+        "type-global": "グローバル",
+        "status-locked": "ロック済み",
+        "status-active": "アクティブ"
+      },
+      "organization-membership-detail": {
+        "title-global": "グローバルメンバーシップ",
+        "title-new": "新しいメンバーシップ",
+        "subtitle": "メンバーシップの詳細",
+        "labels": {
+          "organization": "組織",
+          "type": "タイプ",
+          "roles": "役割",
+          "status": "状態",
+          "lockout-end": "ロック解除日"
+        },
+        "placeholders": {
+          "organization": "組織を選択",
+          "roles": "役割を選択",
+          "lockout-end": "日付を選択"
+        }
+      },
       "invite-customers": {
         "title": "顧客を招待",
         "labels": {
@@ -331,6 +363,10 @@
       "account-contact": {
         "no-contact": "連絡先なし",
         "show-contact": "連絡先を表示"
+      },
+      "organization-memberships": {
+        "title": "組織メンバーシップ",
+        "blade-subtitle": "組織メンバーシップを管理"
       }
     },
     "dialogs": {
@@ -380,10 +416,31 @@
       "invite-customers-error": {
         "title": "顧客を招待",
         "message": "エラーのため、一部の招待が送信されませんでした"
+      },
+      "membership-delete": {
+        "title": "削除の確認",
+        "message": "選択したメンバーシップを削除してもよろしいですか？"
+      },
+      "membership-duplicate": {
+        "title": "重複したメンバーシップ",
+        "message": "このユーザーと組織のメンバーシップはすでに存在します。"
+      },
+      "no-security-account": {
+        "title": "アカウントなし",
+        "message": "このメンバーにはリンクされたセキュリティアカウントがありません。"
+      },
+      "no-org-membership": {
+        "title": "見つかりません",
+        "message": "このメンバーの組織メンバーシップレコードが見つかりません。"
       }
     },
     "commands": {
-      "invite-customers": "顧客を招待"
+      "invite-customers": "顧客を招待",
+      "lock-in-org": "組織でロック",
+      "unlock-in-org": "組織でロック解除",
+      "change-role-in-org": "役割を変更",
+      "lock": "ロック",
+      "unlock": "ロック解除"
     }
   },
   "permissions": {

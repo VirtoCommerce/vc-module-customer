@@ -17,7 +17,7 @@ namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.11")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -380,7 +380,7 @@ namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
 
                     b.ToTable("Member", (string)null);
 
-                    b.HasDiscriminator().HasValue("MemberEntity");
+                    b.HasDiscriminator<string>("Discriminator").HasValue("MemberEntity");
 
                     b.UseTphMappingStrategy();
                 });
@@ -497,6 +497,79 @@ namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
                     b.HasIndex("MemberId");
 
                     b.ToTable("Note", (string)null);
+                });
+
+            modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.OrganizationMembershipEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsLocked")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LockoutEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OrganizationId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "OrganizationId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_CustomerOrganizationMembership_UserId_OrganizationId")
+                        .HasFilter("[OrganizationId] IS NOT NULL");
+
+                    b.ToTable("CustomerOrganizationMembership", (string)null);
+                });
+
+            modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.OrganizationMembershipRoleEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("MembershipId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("RoleId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("RoleName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MembershipId");
+
+                    b.ToTable("CustomerOrganizationMembershipRole", (string)null);
                 });
 
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.PhoneEntity", b =>
@@ -896,6 +969,17 @@ namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
                     b.Navigation("Member");
                 });
 
+            modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.OrganizationMembershipRoleEntity", b =>
+                {
+                    b.HasOne("VirtoCommerce.CustomerModule.Data.Model.OrganizationMembershipEntity", "Membership")
+                        .WithMany("Roles")
+                        .HasForeignKey("MembershipId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Membership");
+                });
+
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.PhoneEntity", b =>
                 {
                     b.HasOne("VirtoCommerce.CustomerModule.Data.Model.MemberEntity", "Member")
@@ -934,6 +1018,11 @@ namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
                     b.Navigation("Phones");
 
                     b.Navigation("SeoInfos");
+                });
+
+            modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.OrganizationMembershipEntity", b =>
+                {
+                    b.Navigation("Roles");
                 });
 #pragma warning restore 612, 618
         }

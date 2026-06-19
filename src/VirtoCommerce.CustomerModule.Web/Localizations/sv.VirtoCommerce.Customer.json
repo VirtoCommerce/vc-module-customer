@@ -279,6 +279,38 @@
           "status": "Välj ett värde"
         }
       },
+      "organization-memberships-list": {
+        "title": "Organisationsmedlemskap",
+        "subtitle": "Hantera organisationsmedlemskap",
+        "labels": {
+          "type": "Typ",
+          "organization": "Organisation",
+          "roles": "Roller",
+          "status": "Status",
+          "lockout-end": "Låst till"
+        },
+        "type-org": "Organisation",
+        "type-global": "Global",
+        "status-locked": "Låst",
+        "status-active": "Aktiv"
+      },
+      "organization-membership-detail": {
+        "title-global": "Globalt medlemskap",
+        "title-new": "Nytt medlemskap",
+        "subtitle": "Medlemskapsdetaljer",
+        "labels": {
+          "organization": "Organisation",
+          "type": "Typ",
+          "roles": "Roller",
+          "status": "Status",
+          "lockout-end": "Låst till"
+        },
+        "placeholders": {
+          "organization": "Välj organisation",
+          "roles": "Välj roller",
+          "lockout-end": "Välj datum"
+        }
+      },
       "invite-customers": {
         "title": "Bjud in kunder",
         "labels": {
@@ -331,6 +363,10 @@
       "account-contact": {
         "no-contact": "Ingen kontakt",
         "show-contact": "Visa kontakt"
+      },
+      "organization-memberships": {
+        "title": "Organisationsmedlemskap",
+        "blade-subtitle": "Hantera organisationsmedlemskap"
       }
     },
     "dialogs": {
@@ -380,10 +416,31 @@
       "invite-customers-error": {
         "title": "Bjud in kunder",
         "message": "Vissa inbjudningar skickades inte på grund av fel. Visa felinformation för detaljer."
+      },
+      "membership-delete": {
+        "title": "Bekräfta borttagning",
+        "message": "Är du säker på att du vill ta bort det/de valda medlemskapet/membri?"
+      },
+      "membership-duplicate": {
+        "title": "Duplicerat medlemskap",
+        "message": "Ett medlemskap för den här användaren och organisationen finns redan."
+      },
+      "no-security-account": {
+        "title": "Inget konto",
+        "message": "Den här medlemmen har inget länkat säkerhetskonto."
+      },
+      "no-org-membership": {
+        "title": "Hittades inte",
+        "message": "Inget organisationsmedlemskapsposter hittades för den här medlemmen."
       }
     },
     "commands": {
-      "invite-customers": "Bjud in kunder"
+      "invite-customers": "Bjud in kunder",
+      "lock-in-org": "Lås i organisation",
+      "unlock-in-org": "Lås upp i organisation",
+      "change-role-in-org": "Ändra roller",
+      "lock": "Lås",
+      "unlock": "Lås upp"
     }
   },
   "permissions": {
