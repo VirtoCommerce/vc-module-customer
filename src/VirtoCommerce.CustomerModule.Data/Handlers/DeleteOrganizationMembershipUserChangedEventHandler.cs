@@ -41,6 +41,16 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
         public virtual async Task Handle(MemberChangedEvent message)
         {
+            await HandleDeletedMembersAsync(message);
+
+            foreach (var entry in message.ChangedEntries?.Where(e => e.EntryState == EntryState.Modified) ?? [])
+            {
+                await HandleMemberRemovedFromOrganizationAsync(entry);
+            }
+        }
+
+        protected virtual async Task HandleDeletedMembersAsync(MemberChangedEvent message)
+        {
             var deletedMemberIds = message.ChangedEntries
                 ?.Where(e => e.EntryState == EntryState.Deleted)
                 .Select(e => e.OldEntry.Id)
@@ -48,37 +58,39 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                 .Distinct()
                 .ToList();
 
-            if (deletedMemberIds is { Count: > 0 })
+            if (deletedMemberIds is not { Count: > 0 })
             {
-                var userIds = await GetUserIdsByMemberIdsAsync(deletedMemberIds);
-                foreach (var userId in userIds)
-                {
-                    await DeleteMembershipsAsync(userId);
-                }
+                return;
             }
 
-            foreach (var entry in message.ChangedEntries?.Where(e => e.EntryState == EntryState.Modified) ?? [])
+            var userIds = await GetUserIdsByMemberIdsAsync(deletedMemberIds);
+            foreach (var userId in userIds)
             {
-                if (entry.OldEntry is not IHasOrganizations oldOrgs ||
-                    entry.NewEntry is not IHasOrganizations newOrgs)
-                {
-                    continue;
-                }
+                await DeleteMembershipsAsync(userId);
+            }
+        }
 
-                var removedOrgIds = (oldOrgs.Organizations ?? [])
-                    .Except(newOrgs.Organizations ?? [], StringComparer.OrdinalIgnoreCase)
-                    .ToList();
+        protected virtual async Task HandleMemberRemovedFromOrganizationAsync(GenericChangedEntry<Member> entry)
+        {
+            if (entry.OldEntry is not IHasOrganizations oldOrgs ||
+                entry.NewEntry is not IHasOrganizations newOrgs)
+            {
+                return;
+            }
 
-                if (removedOrgIds.Count == 0)
-                {
-                    continue;
-                }
+            var removedOrgIds = (oldOrgs.Organizations ?? [])
+                .Except(newOrgs.Organizations ?? [], StringComparer.OrdinalIgnoreCase)
+                .ToList();
 
-                var userIds = await GetUserIdsByMemberIdsAsync([entry.OldEntry.Id]);
-                foreach (var userId in userIds)
-                {
-                    await DeleteMembershipsForOrgsAsync(userId, removedOrgIds);
-                }
+            if (removedOrgIds.Count == 0)
+            {
+                return;
+            }
+
+            var userIds = await GetUserIdsByMemberIdsAsync([entry.OldEntry.Id]);
+            foreach (var userId in userIds)
+            {
+                await DeleteMembershipsForOrgsAsync(userId, removedOrgIds);
             }
         }
 
