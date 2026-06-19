@@ -104,7 +104,7 @@ public class OrganizationIdClaimProvider(
             return null;
         }
 
-        var member = memberService.GetByIdAsync(memberId);
+        var member = await memberService.GetByIdAsync(memberId);
 
         return member switch
         {
