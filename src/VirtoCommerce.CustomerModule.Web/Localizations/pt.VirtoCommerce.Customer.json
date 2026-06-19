@@ -279,6 +279,38 @@
           "status": "Por favor, selecione um valor"
         }
       },
+      "organization-memberships-list": {
+        "title": "Associações da organização",
+        "subtitle": "Gerir associações da organização",
+        "labels": {
+          "type": "Tipo",
+          "organization": "Organização",
+          "roles": "Funções",
+          "status": "Estado",
+          "lockout-end": "Bloqueado até"
+        },
+        "type-org": "Organização",
+        "type-global": "Global",
+        "status-locked": "Bloqueado",
+        "status-active": "Ativo"
+      },
+      "organization-membership-detail": {
+        "title-global": "Associação global",
+        "title-new": "Nova associação",
+        "subtitle": "Detalhes da associação",
+        "labels": {
+          "organization": "Organização",
+          "type": "Tipo",
+          "roles": "Funções",
+          "status": "Estado",
+          "lockout-end": "Bloqueado até"
+        },
+        "placeholders": {
+          "organization": "Selecionar organização",
+          "roles": "Selecionar funções",
+          "lockout-end": "Selecionar data"
+        }
+      },
       "invite-customers": {
         "title": "Convidar clientes",
         "labels": {
@@ -331,6 +363,10 @@
       "account-contact": {
         "no-contact": "Nenhum contato",
         "show-contact": "Mostrar contato"
+      },
+      "organization-memberships": {
+        "title": "Associações da organização",
+        "blade-subtitle": "Gerir associações da organização"
       }
     },
     "dialogs": {
@@ -381,8 +417,29 @@
         "title": "Convidar clientes",
         "message": "Alguns convites não foram enviados devido a erros"
       },
+      "membership-delete": {
+        "title": "Confirmar exclusão",
+        "message": "Tem certeza de que deseja excluir a(s) associação(ões) selecionada(s)?"
+      },
+      "membership-duplicate": {
+        "title": "Associação duplicada",
+        "message": "Já existe uma associação para este usuário e organização."
+      },
+      "no-security-account": {
+        "title": "Sem conta",
+        "message": "Este membro não tem uma conta de segurança vinculada."
+      },
+      "no-org-membership": {
+        "title": "Não encontrado",
+        "message": "Nenhum registro de associação de organização encontrado para este membro."
+      },
       "commands": {
-        "invite-customers": "Convidar clientes"
+        "invite-customers": "Convidar clientes",
+        "lock-in-org": "Bloquear na organização",
+        "unlock-in-org": "Desbloquear na organização",
+        "change-role-in-org": "Alterar funções",
+        "lock": "Bloquear",
+        "unlock": "Desbloquear"
       }
     }
   },

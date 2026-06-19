@@ -279,6 +279,38 @@
           "status": "Velg en verdi"
         }
       },
+      "organization-memberships-list": {
+        "title": "Organisasjonsmedlemskap",
+        "subtitle": "Administrer organisasjonsmedlemskap",
+        "labels": {
+          "type": "Type",
+          "organization": "Organisasjon",
+          "roles": "Roller",
+          "status": "Status",
+          "lockout-end": "Blokkert til"
+        },
+        "type-org": "Organisasjon",
+        "type-global": "Global",
+        "status-locked": "Blokkert",
+        "status-active": "Aktiv"
+      },
+      "organization-membership-detail": {
+        "title-global": "Globalt medlemskap",
+        "title-new": "Nytt medlemskap",
+        "subtitle": "Medlemskapsdetaljer",
+        "labels": {
+          "organization": "Organisasjon",
+          "type": "Type",
+          "roles": "Roller",
+          "status": "Status",
+          "lockout-end": "Blokkert til"
+        },
+        "placeholders": {
+          "organization": "Velg organisasjon",
+          "roles": "Velg roller",
+          "lockout-end": "Velg dato"
+        }
+      },
       "invite-customers": {
         "title": "Inviter kunder",
         "labels": {
@@ -331,6 +363,10 @@
       "account-contact": {
         "no-contact": "Ingen kontakt",
         "show-contact": "Vis kontakt"
+      },
+      "organization-memberships": {
+        "title": "Organisasjonsmedlemskap",
+        "blade-subtitle": "Administrer organisasjonsmedlemskap"
       }
     },
     "dialogs": {
@@ -380,10 +416,31 @@
       "invite-customers-error": {
         "title": "Inviter kunder",
         "message": "Noen invitasjoner ble ikke sendt på grunn av feil"
+      },
+      "membership-delete": {
+        "title": "Bekreft sletting",
+        "message": "Er du sikker på at du vil slette det valgte medlemskapet/de valgte medlemskapene?"
+      },
+      "membership-duplicate": {
+        "title": "Duplikat medlemskap",
+        "message": "Et medlemskap for denne brukeren og organisasjonen eksisterer allerede."
+      },
+      "no-security-account": {
+        "title": "Ingen konto",
+        "message": "Dette medlemmet har ikke en tilknyttet sikkerhetskonto."
+      },
+      "no-org-membership": {
+        "title": "Ikke funnet",
+        "message": "Ingen organisasjonsmedlemskappost funnet for dette medlemmet."
       }
     },
     "commands": {
-      "invite-customers": "Inviter kunder"
+      "invite-customers": "Inviter kunder",
+      "lock-in-org": "Blokker i organisasjon",
+      "unlock-in-org": "Fjern blokkering i organisasjon",
+      "change-role-in-org": "Endre roller",
+      "lock": "Blokker",
+      "unlock": "Fjern blokkering"
     }
   },
   "permissions": {

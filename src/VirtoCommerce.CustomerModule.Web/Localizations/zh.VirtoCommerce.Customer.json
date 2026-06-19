@@ -279,6 +279,38 @@
           "status": "请选择一个值"
         }
       },
+      "organization-memberships-list": {
+        "title": "组织成员资格",
+        "subtitle": "管理组织成员资格",
+        "labels": {
+          "type": "类型",
+          "organization": "组织",
+          "roles": "角色",
+          "status": "状态",
+          "lockout-end": "锁定至"
+        },
+        "type-org": "组织",
+        "type-global": "全局",
+        "status-locked": "已锁定",
+        "status-active": "活跃"
+      },
+      "organization-membership-detail": {
+        "title-global": "全局成员资格",
+        "title-new": "新成员资格",
+        "subtitle": "成员资格详情",
+        "labels": {
+          "organization": "组织",
+          "type": "类型",
+          "roles": "角色",
+          "status": "状态",
+          "lockout-end": "锁定至"
+        },
+        "placeholders": {
+          "organization": "选择组织",
+          "roles": "选择角色",
+          "lockout-end": "选择日期"
+        }
+      },
       "invite-customers": {
         "title": "邀请客户",
         "labels": {
@@ -331,6 +363,10 @@
       "account-contact": {
         "no-contact": "无联系人",
         "show-contact": "显示联系人"
+      },
+      "organization-memberships": {
+        "title": "组织成员资格",
+        "blade-subtitle": "管理组织成员资格"
       }
     },
     "dialogs": {
@@ -380,10 +416,31 @@
       "invite-customers-error": {
         "title": "邀请客户",
         "message": "由于错误，部分邀请未能发送"
+      },
+      "membership-delete": {
+        "title": "确认删除",
+        "message": "您确定要删除所选的成员资格吗？"
+      },
+      "membership-duplicate": {
+        "title": "重复的成员资格",
+        "message": "此用户和组织的成员资格已存在。"
+      },
+      "no-security-account": {
+        "title": "无账户",
+        "message": "此成员没有关联的安全账户。"
+      },
+      "no-org-membership": {
+        "title": "未找到",
+        "message": "找不到此成员的组织成员资格记录。"
       }
     },
     "commands": {
-      "invite-customers": "邀请客户"
+      "invite-customers": "邀请客户",
+      "lock-in-org": "在组织中锁定",
+      "unlock-in-org": "在组织中解锁",
+      "change-role-in-org": "更改角色",
+      "lock": "锁定",
+      "unlock": "解锁"
     }
   },
   "permissions": {

@@ -279,6 +279,38 @@
           "status": "Bitte wählen Sie einen Wert"
         }
       },
+      "organization-memberships-list": {
+        "title": "Organisationsmitgliedschaften",
+        "subtitle": "Organisationsmitgliedschaften verwalten",
+        "labels": {
+          "type": "Typ",
+          "organization": "Organisation",
+          "roles": "Rollen",
+          "status": "Status",
+          "lockout-end": "Gesperrt bis"
+        },
+        "type-org": "Organisation",
+        "type-global": "Global",
+        "status-locked": "Gesperrt",
+        "status-active": "Aktiv"
+      },
+      "organization-membership-detail": {
+        "title-global": "Globale Mitgliedschaft",
+        "title-new": "Neue Mitgliedschaft",
+        "subtitle": "Mitgliedschaftsdetails",
+        "labels": {
+          "organization": "Organisation",
+          "type": "Typ",
+          "roles": "Rollen",
+          "status": "Status",
+          "lockout-end": "Gesperrt bis"
+        },
+        "placeholders": {
+          "organization": "Organisation auswählen",
+          "roles": "Rollen auswählen",
+          "lockout-end": "Datum auswählen"
+        }
+      },
       "invite-customers": {
         "title": "Kunden einladen",
         "labels": {
@@ -331,6 +363,10 @@
       "account-contact": {
         "no-contact": "Kein Kontakt",
         "show-contact": "Kontakt anzeigen"
+      },
+      "organization-memberships": {
+        "title": "Organisationsmitgliedschaften",
+        "blade-subtitle": "Organisationsmitgliedschaften verwalten"
       }
     },
     "dialogs": {
@@ -380,10 +416,31 @@
       "invite-customers-error": {
         "title": "Kunden einladen",
         "message": "Einige Einladungen konnten aufgrund von Fehlern nicht gesendet werden"
+      },
+      "membership-delete": {
+        "title": "Löschen bestätigen",
+        "message": "Sind Sie sicher, dass Sie die ausgewählten Mitgliedschaft(en) löschen möchten?"
+      },
+      "membership-duplicate": {
+        "title": "Doppelte Mitgliedschaft",
+        "message": "Eine Mitgliedschaft für diesen Benutzer und diese Organisation ist bereits vorhanden."
+      },
+      "no-security-account": {
+        "title": "Kein Konto",
+        "message": "Dieses Mitglied hat kein verknüpftes Sicherheitskonto."
+      },
+      "no-org-membership": {
+        "title": "Nicht gefunden",
+        "message": "Kein Mitgliedschaftsdatensatz für dieses Mitglied gefunden."
       }
     },
     "commands": {
-      "invite-customers": "Kunden einladen"
+      "invite-customers": "Kunden einladen",
+      "lock-in-org": "In Organisation sperren",
+      "unlock-in-org": "In Organisation entsperren",
+      "change-role-in-org": "Rollen ändern",
+      "lock": "Sperren",
+      "unlock": "Entsperren"
     }
   },
   "permissions": {
