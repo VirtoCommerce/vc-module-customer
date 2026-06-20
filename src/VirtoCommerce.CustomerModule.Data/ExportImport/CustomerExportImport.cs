@@ -1,4 +1,4 @@
-using System;
+using System;
 using System.Threading;
 using System.Collections.Generic;
 using System.IO;
@@ -44,20 +44,20 @@ namespace VirtoCommerce.CustomerModule.Data.ExportImport
             using (var sw = new StreamWriter(outStream, Encoding.UTF8))
             using (var writer = new JsonTextWriter(sw))
             {
-                await writer.WriteStartObjectAsync();
+                await writer.WriteStartObjectAsync(cancellationToken);
 
                 progressInfo.Description = "Members exporting...";
                 progressCallback(progressInfo);
 
                 var members = await _memberSearchService.SearchMembersAsync(new MembersSearchCriteria { Take = 0, DeepSearch = true });
                 var memberCount = members.TotalCount;
-                await writer.WritePropertyNameAsync("MembersTotalCount");
-                await writer.WriteValueAsync(memberCount);
+                await writer.WritePropertyNameAsync("MembersTotalCount", cancellationToken);
+                await writer.WriteValueAsync(memberCount, cancellationToken);
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                await writer.WritePropertyNameAsync("Members");
-                await writer.WriteStartArrayAsync();
+                await writer.WritePropertyNameAsync("Members", cancellationToken);
+                await writer.WriteStartArrayAsync(cancellationToken);
 
                 for (var i = 0; i < memberCount; i += batchSize)
                 {
@@ -66,14 +66,14 @@ namespace VirtoCommerce.CustomerModule.Data.ExportImport
                     {
                         _serializer.Serialize(writer, member);
                     }
-                    await writer.FlushAsync();
+                    await writer.FlushAsync(cancellationToken);
                     progressInfo.Description = $"{Math.Min(memberCount, i + batchSize)} of {memberCount} members exported";
                     progressCallback(progressInfo);
                 }
-                await writer.WriteEndArrayAsync();
+                await writer.WriteEndArrayAsync(cancellationToken);
 
-                await writer.WriteEndObjectAsync();
-                await writer.FlushAsync();
+                await writer.WriteEndObjectAsync(cancellationToken);
+                await writer.FlushAsync(cancellationToken);
             }
         }
 
@@ -88,58 +88,68 @@ namespace VirtoCommerce.CustomerModule.Data.ExportImport
             using (var streamReader = new StreamReader(inputStream))
             using (var reader = new JsonTextReader(streamReader))
             {
-                while (await reader.ReadAsync())
+                while (await reader.ReadAsync(cancellationToken))
                 {
-                    if (reader.TokenType == JsonToken.PropertyName)
+                    if (reader.TokenType != JsonToken.PropertyName)
                     {
-                        var readerValueString = reader.Value?.ToString();
+                        continue;
+                    }
 
-                        if (readerValueString.EqualsIgnoreCase("MembersTotalCount"))
-                        {
-                            membersTotalCount = await reader.ReadAsInt32Async() ?? 0;
-                        }
-                        else if (readerValueString.EqualsIgnoreCase("Members"))
-                        {
-                            cancellationToken.ThrowIfCancellationRequested();
-                            await reader.ReadAsync();
-                            if (reader.TokenType == JsonToken.StartArray)
-                            {
-                                await reader.ReadAsync();
+                    var readerValueString = reader.Value?.ToString();
 
-                                var members = new List<Member>();
-                                var membersCount = 0;
-                                //TODO: implement to iterative import without whole members loading
-                                while (reader.TokenType != JsonToken.EndArray)
-                                {
-                                    var member = _serializer.Deserialize<Member>(reader);
-                                    members.Add(member);
-                                    membersCount++;
-
-                                    await reader.ReadAsync();
-                                }
-
-                                cancellationToken.ThrowIfCancellationRequested();
-                                //Need to import by topological sort order, because Organizations have a graph structure and here references integrity must be preserved 
-                                var organizations = members.OfType<Organization>().ToList();
-                                var nodes = new HashSet<string>(organizations.Select(x => x.Id));
-                                var edges = new HashSet<Tuple<string, string>>(organizations.Where(x => !string.IsNullOrEmpty(x.ParentId) && x.Id != x.ParentId).Select(x => new Tuple<string, string>(x.Id, x.ParentId)));
-                                var topologicalSortedList = TopologicalSort.Sort(nodes, edges);
-                                members = members.OrderByDescending(x => topologicalSortedList.IndexOf(x.Id)).ToList();
-
-                                for (var i = 0; i < membersCount; i += batchSize)
-                                {
-                                    await _memberService.SaveChangesAsync(members.Skip(i).Take(batchSize).ToArray());
-
-                                    progressInfo.Description = membersTotalCount > 0
-                                        ? $"{i} of {membersTotalCount} members imported"
-                                        : $"{i} members imported";
-
-                                    progressCallback(progressInfo);
-                                }
-                            }
-                        }
+                    if (readerValueString.EqualsIgnoreCase("MembersTotalCount"))
+                    {
+                        membersTotalCount = await reader.ReadAsInt32Async(cancellationToken) ?? 0;
+                    }
+                    else if (readerValueString.EqualsIgnoreCase("Members"))
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        await ImportMembersAsync(reader, membersTotalCount, batchSize, progressInfo, progressCallback, cancellationToken);
                     }
                 }
+            }
+        }
+
+        private async Task ImportMembersAsync(JsonTextReader reader, int membersTotalCount, int batchSize,
+            ExportImportProgressInfo progressInfo, Action<ExportImportProgressInfo> progressCallback, CancellationToken cancellationToken)
+        {
+            await reader.ReadAsync(cancellationToken);
+            if (reader.TokenType != JsonToken.StartArray)
+            {
+                return;
+            }
+
+            await reader.ReadAsync(cancellationToken);
+
+            var members = new List<Member>();
+            var membersCount = 0;
+            //TODO: implement to iterative import without whole members loading
+            while (reader.TokenType != JsonToken.EndArray)
+            {
+                var member = _serializer.Deserialize<Member>(reader);
+                members.Add(member);
+                membersCount++;
+
+                await reader.ReadAsync(cancellationToken);
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+            //Need to import by topological sort order, because Organizations have a graph structure and here references integrity must be preserved
+            var organizations = members.OfType<Organization>().ToList();
+            var nodes = new HashSet<string>(organizations.Select(x => x.Id));
+            var edges = new HashSet<Tuple<string, string>>(organizations.Where(x => !string.IsNullOrEmpty(x.ParentId) && x.Id != x.ParentId).Select(x => new Tuple<string, string>(x.Id, x.ParentId)));
+            var topologicalSortedList = TopologicalSort.Sort(nodes, edges);
+            members = members.OrderByDescending(x => topologicalSortedList.IndexOf(x.Id)).ToList();
+
+            for (var i = 0; i < membersCount; i += batchSize)
+            {
+                await _memberService.SaveChangesAsync(members.Skip(i).Take(batchSize).ToArray());
+
+                progressInfo.Description = membersTotalCount > 0
+                    ? $"{i} of {membersTotalCount} members imported"
+                    : $"{i} members imported";
+
+                progressCallback(progressInfo);
             }
         }
 
