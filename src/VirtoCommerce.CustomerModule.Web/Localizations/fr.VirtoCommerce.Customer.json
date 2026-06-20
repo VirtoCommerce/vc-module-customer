@@ -279,6 +279,38 @@
           "status": "Veuillez sélectionner une valeur"
         }
       },
+      "organization-memberships-list": {
+        "title": "Adhésions à l'organisation",
+        "subtitle": "Gérer les adhésions à l'organisation",
+        "labels": {
+          "type": "Type",
+          "organization": "Organisation",
+          "roles": "Rôles",
+          "status": "Statut",
+          "lockout-end": "Bloqué jusqu'au"
+        },
+        "type-org": "Organisation",
+        "type-global": "Global",
+        "status-locked": "Bloqué",
+        "status-active": "Actif"
+      },
+      "organization-membership-detail": {
+        "title-global": "Adhésion globale",
+        "title-new": "Nouvelle adhésion",
+        "subtitle": "Détails de l'adhésion",
+        "labels": {
+          "organization": "Organisation",
+          "type": "Type",
+          "roles": "Rôles",
+          "status": "Statut",
+          "lockout-end": "Bloqué jusqu'au"
+        },
+        "placeholders": {
+          "organization": "Sélectionner une organisation",
+          "roles": "Sélectionner des rôles",
+          "lockout-end": "Sélectionner une date"
+        }
+      },
       "invite-customers": {
         "title": "Inviter des clients",
         "labels": {
@@ -331,6 +363,10 @@
       "account-contact": {
         "no-contact": "Aucun contact",
         "show-contact": "Afficher le contact"
+      },
+      "organization-memberships": {
+        "title": "Adhésions à l'organisation",
+        "blade-subtitle": "Gérer les adhésions à l'organisation"
       }
     },
     "dialogs": {
@@ -380,10 +416,31 @@
       "invite-customers-error": {
         "title": "Inviter des clients",
         "message": "Certaines invitations n’ont pas été envoyées en raison d’erreurs"
+      },
+      "membership-delete": {
+        "title": "Confirmer la suppression",
+        "message": "Êtes-vous sûr de vouloir supprimer la/les adhésion(s) sélectionnée(s) ?"
+      },
+      "membership-duplicate": {
+        "title": "Adhésion en double",
+        "message": "Une adhésion pour cet utilisateur et cette organisation existe déjà."
+      },
+      "no-security-account": {
+        "title": "Aucun compte",
+        "message": "Ce membre n’a pas de compte de sécurité lié."
+      },
+      "no-org-membership": {
+        "title": "Introuvable",
+        "message": "Aucun enregistrement d’adhésion à l’organisation trouvé pour ce membre."
       }
     },
     "commands": {
-      "invite-customers": "Inviter des clients"
+      "invite-customers": "Inviter des clients",
+      "lock-in-org": "Bloquer dans l’organisation",
+      "unlock-in-org": "Débloquer dans l’organisation",
+      "change-role-in-org": "Modifier les rôles",
+      "lock": "Bloquer",
+      "unlock": "Débloquer"
     }
   },
   "permissions": {

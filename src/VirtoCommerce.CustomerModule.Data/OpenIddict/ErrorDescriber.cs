@@ -12,4 +12,18 @@ public static class ErrorDescriber
         Code = nameof(InvalidOrganizationId).ToSnakeCase(),
         ErrorDescription = $"Access denied. You cannot switch to organization '{organizationId}'.",
     };
+
+    public static TokenResponse UserIsLockedInOrganization(string organizationId) => new()
+    {
+        Error = Errors.InvalidGrant,
+        Code = nameof(UserIsLockedInOrganization).ToSnakeCase(),
+        ErrorDescription = $"Your access to organization '{organizationId}' has been blocked. Please contact your organization administrator.",
+    };
+
+    public static TokenResponse UserIsLockedOut() => new()
+    {
+        Error = Errors.InvalidGrant,
+        Code = nameof(UserIsLockedOut).ToSnakeCase(),
+        ErrorDescription = "Your account has been locked out. Please contact your administrator.",
+    };
 }

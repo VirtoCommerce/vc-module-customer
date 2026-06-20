@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,6 +29,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         private readonly IMemberSearchService _memberSearchService;
         private readonly IInviteCustomerService _inviteCustomerService;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IOrganizationMembershipService _organizationMembershipService;
 
         private UserManager<ApplicationUser> UserManager => _signInManager.UserManager;
 
@@ -35,13 +37,15 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             IMemberService memberService,
             IMemberSearchService memberSearchService,
             IInviteCustomerService inviteCustomerService,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            IOrganizationMembershipService organizationMembershipService)
         {
             _authorizationService = authorizationService;
             _memberService = memberService;
             _memberSearchService = memberSearchService;
             _inviteCustomerService = inviteCustomerService;
             _signInManager = signInManager;
+            _organizationMembershipService = organizationMembershipService;
         }
 
         /// <summary>
@@ -863,7 +867,27 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
                 }
             }
 
+            var userId = UserManager.GetUserId(User);
+
+            if (!string.IsNullOrEmpty(userId) && organizationsIds.Count > 0)
+            {
+                organizationsIds = await ExcludeLockedOrganizationsAsync(userId, organizationsIds);
+            }
+
             return await GetOrganizationsByIds([.. organizationsIds]);
+        }
+
+        private async Task<List<string>> ExcludeLockedOrganizationsAsync(string userId, List<string> organizationIds)
+        {
+            var lockedOrgIds = await _organizationMembershipService.GetLockedOrganizationIdsAsync(userId);
+            if (lockedOrgIds.Count == 0)
+            {
+                return organizationIds;
+            }
+
+            var lockedSet = new HashSet<string>(lockedOrgIds, StringComparer.OrdinalIgnoreCase);
+
+            return organizationIds.Where(orgId => !lockedSet.Contains(orgId)).ToList();
         }
 
         #endregion

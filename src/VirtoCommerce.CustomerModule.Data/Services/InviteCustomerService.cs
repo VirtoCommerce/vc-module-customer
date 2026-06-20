@@ -35,6 +35,7 @@ public class InviteCustomerService : IInviteCustomerService
     private readonly INotificationSender _notificationSender;
     private readonly Func<UserManager<ApplicationUser>> _userManagerFactory;
     private readonly Func<RoleManager<Role>> _roleManagerFactory;
+    private readonly IOrganizationMembershipService _organizationMembershipService;
     private readonly ILogger<InviteCustomerService> _logger;
 
     public InviteCustomerService(
@@ -44,6 +45,7 @@ public class InviteCustomerService : IInviteCustomerService
         INotificationSender notificationSender,
         Func<UserManager<ApplicationUser>> userManagerFactory,
         Func<RoleManager<Role>> roleManagerFactory,
+        IOrganizationMembershipService organizationMembershipService,
         ILogger<InviteCustomerService> logger)
     {
         _memberService = memberService;
@@ -52,6 +54,7 @@ public class InviteCustomerService : IInviteCustomerService
         _notificationSender = notificationSender;
         _userManagerFactory = userManagerFactory;
         _roleManagerFactory = roleManagerFactory;
+        _organizationMembershipService = organizationMembershipService;
         _logger = logger;
     }
 
@@ -128,6 +131,11 @@ public class InviteCustomerService : IInviteCustomerService
 
             if (identityResult.Succeeded)
             {
+                if (!string.IsNullOrEmpty(request.OrganizationId) && rolesResult.Roles.Count > 0)
+                {
+                    await CreateOrganizationMembershipAsync(user, request.OrganizationId, rolesResult.Roles);
+                }
+
                 var notificationErrors = await SendNotificationAsync(notificationResult.Notification, userManager, user, request, store);
                 if (notificationErrors.Count != 0)
                 {
@@ -192,9 +200,33 @@ public class InviteCustomerService : IInviteCustomerService
         user.StoreId = request.StoreId;
         user.UserType = InitialUserType;
         user.LockoutEnd = DateTimeOffset.MaxValue;
-        user.Roles = roles.ToList();
+
+        // Assign roles globally only when there's no organization context.
+        // With an organization, roles go into OrganizationMembership instead.
+        if (string.IsNullOrEmpty(request.OrganizationId))
+        {
+            user.Roles = roles.ToList();
+        }
 
         return user;
+    }
+
+    protected virtual async Task CreateOrganizationMembershipAsync(ApplicationUser user, string organizationId, List<Role> roles)
+    {
+        var membership = AbstractTypeFactory<OrganizationMembership>.TryCreateInstance();
+        membership.UserId = user.Id;
+        membership.OrganizationId = organizationId;
+        membership.Roles = roles
+            .Select(r =>
+            {
+                var membershipRole = AbstractTypeFactory<OrganizationMembershipRole>.TryCreateInstance();
+                membershipRole.RoleId = r.Id;
+                membershipRole.RoleName = r.Name;
+                return membershipRole;
+            })
+            .ToList();
+
+        await _organizationMembershipService.SaveChangesAsync([membership]);
     }
 
     protected virtual async Task<StoreResult> GetStoreAsync(string storeId)
@@ -264,22 +296,6 @@ public class InviteCustomerService : IInviteCustomerService
         }
 
         return result;
-    }
-
-    protected virtual async Task<List<InviteCustomerError>> AssignUserRoles(UserManager<ApplicationUser> userManager, ApplicationUser user, string[] roleNames)
-    {
-        var errors = new List<InviteCustomerError>();
-
-        if (roleNames.IsNullOrEmpty())
-        {
-            return errors;
-        }
-
-        var assignResult = await userManager.AddToRolesAsync(user, roleNames);
-
-        errors.AddRange(assignResult.Errors.Select(x => MapInviteCustomerErrorError(x, user.UserName)));
-
-        return errors;
     }
 
     protected virtual async Task<NotificationResult> TryGetNotification(InviteCustomerRequest request, Store store)
