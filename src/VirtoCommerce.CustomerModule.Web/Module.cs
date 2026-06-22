@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
@@ -105,10 +106,15 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<LogChangesEventHandler>();
             serviceCollection.AddTransient<SecurtityAccountChangesEventHandler>();
             serviceCollection.AddTransient<IndexMemberChangedEventHandler>();
+            serviceCollection.AddTransient<RevokeTokenOrganizationMembershipChangedEventHandler>();
+            serviceCollection.AddTransient<IndexOrganizationMembershipChangedEventHandler>();
+            serviceCollection.AddTransient<DeleteOrganizationMembershipUserChangedEventHandler>();
 
             serviceCollection.AddTransient<IAuthorizationHandler, CustomerAuthorizationHandler>();
 
             serviceCollection.AddTransient<AbstractValidator<Member>, MemberValidator>();
+
+            serviceCollection.AddSingleton<IOrganizationMembershipService, OrganizationMembershipService>();
 
             serviceCollection.AddSingleton<ITokenRequestValidator, OrganizationIdRequestValidator>();
             serviceCollection.AddSingleton<ITokenClaimProvider, OrganizationIdClaimProvider>();
@@ -148,6 +154,7 @@ namespace VirtoCommerce.CustomerModule.Web
 
             var permissionsRegistrar = appBuilder.ApplicationServices.GetRequiredService<IPermissionsRegistrar>();
             permissionsRegistrar.RegisterPermissions(ModuleInfo.Id, "Customer", ModuleConstants.Security.Permissions.AllPermissions);
+            permissionsRegistrar.RegisterPermissions(ModuleInfo.Id, "OrganizationMembership", ModuleConstants.Security.OrganizationMembershipPermissions.AllPermissions);
 
             AbstractTypeFactory<PermissionScope>.RegisterType<AssociatedOrganizationsOnlyScope>();
 
@@ -165,6 +172,9 @@ namespace VirtoCommerce.CustomerModule.Web
             appBuilder.RegisterEventHandler<UserRoleAddedEvent, LogChangesEventHandler>();
             appBuilder.RegisterEventHandler<UserRoleRemovedEvent, LogChangesEventHandler>();
             appBuilder.RegisterEventHandler<UserChangedEvent, SecurtityAccountChangesEventHandler>();
+            appBuilder.RegisterEventHandler<UserChangedEvent, DeleteOrganizationMembershipUserChangedEventHandler>();
+            appBuilder.RegisterEventHandler<MemberChangedEvent, DeleteOrganizationMembershipUserChangedEventHandler>();
+            appBuilder.RegisterEventHandler<OrganizationMembershipChangedEvent, RevokeTokenOrganizationMembershipChangedEventHandler>();
 
             var settingsManager = appBuilder.ApplicationServices.GetService<ISettingsManager>();
             if (settingsManager.GetValue<bool>(ModuleConstants.Settings.General.EventBasedIndexation))
@@ -173,6 +183,7 @@ namespace VirtoCommerce.CustomerModule.Web
                 appBuilder.RegisterEventHandler<UserChangedEvent, IndexMemberChangedEventHandler>();
                 appBuilder.RegisterEventHandler<UserRoleAddedEvent, IndexMemberChangedEventHandler>();
                 appBuilder.RegisterEventHandler<UserRoleRemovedEvent, IndexMemberChangedEventHandler>();
+                appBuilder.RegisterEventHandler<OrganizationMembershipChangedEvent, IndexOrganizationMembershipChangedEventHandler>();
             }
 
             var searchRequestBuilderRegistrar = appBuilder.ApplicationServices.GetService<ISearchRequestBuilderRegistrar>();
@@ -201,13 +212,13 @@ namespace VirtoCommerce.CustomerModule.Web
         }
 
         public Task ExportAsync(Stream outStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback,
-            ICancellationToken cancellationToken)
+            CancellationToken cancellationToken)
         {
             return _appBuilder.ApplicationServices.GetRequiredService<CustomerExportImport>().ExportAsync(outStream, options, progressCallback, cancellationToken);
         }
 
         public Task ImportAsync(Stream inputStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback,
-            ICancellationToken cancellationToken)
+            CancellationToken cancellationToken)
         {
             return _appBuilder.ApplicationServices.GetRequiredService<CustomerExportImport>().ImportAsync(inputStream, options, progressCallback, cancellationToken);
         }

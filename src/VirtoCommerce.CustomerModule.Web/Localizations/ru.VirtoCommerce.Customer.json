@@ -279,6 +279,38 @@
           "status": "Выберите значение"
         }
       },
+      "organization-memberships-list": {
+        "title": "Членства в организациях",
+        "subtitle": "Управление членствами в организациях",
+        "labels": {
+          "type": "Тип",
+          "organization": "Организация",
+          "roles": "Роли",
+          "status": "Статус",
+          "lockout-end": "Заблокирован до"
+        },
+        "type-org": "Организация",
+        "type-global": "Глобальное",
+        "status-locked": "Заблокирован",
+        "status-active": "Активен"
+      },
+      "organization-membership-detail": {
+        "title-global": "Глобальное членство",
+        "title-new": "Новое членство",
+        "subtitle": "Детали членства",
+        "labels": {
+          "organization": "Организация",
+          "type": "Тип",
+          "roles": "Роли",
+          "status": "Статус",
+          "lockout-end": "Заблокирован до"
+        },
+        "placeholders": {
+          "organization": "Выберите организацию",
+          "roles": "Выберите роли",
+          "lockout-end": "Выберите дату"
+        }
+      },
       "invite-customers": {
         "title": "Пригласить клиентов",
         "labels": {
@@ -331,6 +363,10 @@
       "account-contact": {
         "no-contact": "Нет контакта",
         "show-contact": "Показать контакт"
+      },
+      "organization-memberships": {
+        "title": "Членства в организациях",
+        "blade-subtitle": "Управление членствами в организациях"
       }
     },
     "dialogs": {
@@ -380,10 +416,31 @@
       "invite-customers-error": {
         "title": "Пригласить клиентов",
         "message": "Некоторые приглашения не были отправлены из-за ошибок"
+      },
+      "membership-delete": {
+        "title": "Подтвердите удаление",
+        "message": "Вы уверены, что хотите удалить выбранное(ые) членство(а)?"
+      },
+      "membership-duplicate": {
+        "title": "Дублирующее членство",
+        "message": "Членство для этого пользователя и организации уже существует."
+      },
+      "no-security-account": {
+        "title": "Нет аккаунта",
+        "message": "У этого участника нет связанного аккаунта безопасности."
+      },
+      "no-org-membership": {
+        "title": "Не найдено",
+        "message": "Запись о членстве в организации не найдена для этого участника."
       }
     },
     "commands": {
-      "invite-customers": "Пригласить клиентов"
+      "invite-customers": "Пригласить клиентов",
+      "lock-in-org": "Заблокировать в организации",
+      "unlock-in-org": "Разблокировать в организации",
+      "change-role-in-org": "Изменить роли",
+      "lock": "Заблокировать",
+      "unlock": "Разблокировать"
     }
   },
   "permissions": {
