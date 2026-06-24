@@ -62,10 +62,36 @@ namespace VirtoCommerce.CustomerModule.Core.Model.Search
         /// </summary>
         public string MemberId { get; set; }
 
+        private string[] _memberIds;
         /// <summary>
-        /// Deep search for child members of the given MemberId or everything if MemberId is empty
+        /// Search for child members of any of the given members (plural counterpart of <see cref="MemberId"/>)
+        /// </summary>
+        public string[] MemberIds
+        {
+            get
+            {
+                if (_memberIds == null && !string.IsNullOrEmpty(MemberId))
+                {
+                    _memberIds = new[] { MemberId };
+                }
+                return _memberIds;
+            }
+            set
+            {
+                _memberIds = value;
+            }
+        }
+
+        /// <summary>
+        /// Deep search for child members of the given MemberId(s) or everything if no member is specified
         /// </summary>
         public bool DeepSearch { get; set; }
+
+        /// <summary>
+        /// Explicitly restrict the search to root members (members without a parent/membership relation), independently of MemberId(s).
+        /// When <c>null</c> (default), the legacy behavior applies: root members only when no MemberId(s) is specified and <see cref="DeepSearch"/> is false.
+        /// </summary>
+        public bool? RootMembersOnly { get; set; }
 
         /// <summary>
         /// Search members by outerIds
