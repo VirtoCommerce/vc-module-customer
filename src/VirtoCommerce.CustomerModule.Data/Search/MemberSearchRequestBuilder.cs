@@ -71,17 +71,30 @@ namespace VirtoCommerce.CustomerModule.Data.Search
                 result.Add(CreateTermFilter("Groups", criteria.Groups));
             }
 
-            if (!string.IsNullOrEmpty(criteria.MemberId))
+            AddMembershipFilters(criteria, result);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Adds the membership-relation filters: filter by parent member(s) and/or restrict to root members.
+        /// The "root members only" filter is independent of MemberId(s): when not set explicitly,
+        /// it falls back to the legacy behavior (root members only when no member is specified and not a deep search).
+        /// </summary>
+        protected virtual void AddMembershipFilters(MembersSearchCriteria criteria, IList<IFilter> result)
+        {
+            var hasMemberFilter = criteria.MemberIds?.Length > 0;
+
+            if (hasMemberFilter)
             {
-                result.Add(CreateTermFilter("ParentOrganizations", criteria.MemberId));
+                result.Add(CreateTermFilter("ParentOrganizations", criteria.MemberIds));
                 // TODO: criteria.DeepSearch requires something like outlines in the catalog module
             }
-            else if (!criteria.DeepSearch)
+
+            if (criteria.RootMembersOnly ?? (!hasMemberFilter && !criteria.DeepSearch))
             {
                 result.Add(CreateTermFilter("HasParentOrganizations", "false"));
             }
-
-            return result;
         }
 
         protected virtual IList<SortingField> GetSorting(MembersSearchCriteria criteria)
