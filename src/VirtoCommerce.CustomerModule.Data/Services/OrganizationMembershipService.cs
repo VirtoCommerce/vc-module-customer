@@ -216,6 +216,35 @@ public class OrganizationMembershipService
         });
     }
 
+    public async Task<IDictionary<string, int>> GetOrganizationCountsByUserAsync(string[] roleIds, string[] organizationIds = null, string[] userIds = null)
+    {
+        using var repository = _repositoryFactory();
+
+        var query = repository.OrganizationMemberships.AsQueryable();
+
+        if (!roleIds.IsNullOrEmpty())
+        {
+            query = query.Where(x => x.Roles.Any(r => roleIds.Contains(r.RoleId)));
+        }
+
+        if (!organizationIds.IsNullOrEmpty())
+        {
+            query = query.Where(x => organizationIds.Contains(x.OrganizationId));
+        }
+
+        if (!userIds.IsNullOrEmpty())
+        {
+            query = query.Where(x => userIds.Contains(x.UserId));
+        }
+
+        var grouped = await query
+            .GroupBy(x => x.UserId)
+            .Select(g => new { UserId = g.Key, Count = g.Count() })
+            .ToListAsync();
+
+        return grouped.ToDictionary(x => x.UserId, x => x.Count);
+    }
+
     public Task<OrganizationMembership> LockAsync(string id, DateTime? lockoutEnd = null)
         => SetLockStateAsync(id, isLocked: true, lockoutEnd: lockoutEnd);
 
