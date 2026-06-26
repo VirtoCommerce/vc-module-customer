@@ -138,6 +138,58 @@ public class OrganizationIdRequestValidatorTests
     }
 
     [Fact]
+    public async Task ValidateAsync_UserTemporarilyLocked_ReturnsTemporaryLockoutError()
+    {
+        //Arrange — org member with an active TEMPORARY lock (future end, NOT DateTime.MaxValue),
+        // e.g. after exceeding the failed-attempt threshold. VCST-5374: this must surface the
+        // temporary lockout code, not the permanent one.
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId] });
+
+        var user = new ApplicationUser
+        {
+            Id = UserId,
+            MemberId = MemberId,
+            LockoutEnabled = true,
+            LockoutEnd = DateTimeOffset.UtcNow.AddMinutes(15)
+        };
+
+        //Act
+        var result = await GetValidator().ValidateAsync(BuildContext(OrgId, user: user));
+
+        //Assert
+        Assert.Single(result);
+        Assert.Equal(OpenIddictConstants.Errors.InvalidGrant, result[0].Error);
+        Assert.NotEqual("user_is_locked_out", result[0].Code);
+        Assert.Equal("user_is_temporary_locked_out", result[0].Code);
+    }
+
+    [Fact]
+    public async Task ValidateAsync_UserPermanentlyLocked_ReturnsGlobalLockoutError()
+    {
+        //Arrange — org member with a PERMANENT lock (LockoutEnd == DateTime.MaxValue).
+        // Regression guard: the permanent code must still be returned.
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId] });
+
+        var user = new ApplicationUser
+        {
+            Id = UserId,
+            MemberId = MemberId,
+            LockoutEnabled = true,
+            LockoutEnd = DateTime.MaxValue.ToUniversalTime()
+        };
+
+        //Act
+        var result = await GetValidator().ValidateAsync(BuildContext(OrgId, user: user));
+
+        //Assert
+        Assert.Single(result);
+        Assert.Equal(OpenIddictConstants.Errors.InvalidGrant, result[0].Error);
+        Assert.Equal("user_is_locked_out", result[0].Code);
+    }
+
+    [Fact]
     public async Task ValidateAsync_UserLockedInOrg_ReturnsOrgError()
     {
         //Arrange

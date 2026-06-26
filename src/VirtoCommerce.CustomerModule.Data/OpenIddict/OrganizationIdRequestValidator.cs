@@ -31,7 +31,13 @@ public class OrganizationIdRequestValidator(
         // return the global error immediately without checking org-level state.
         if (context.User != null && IsGloballyLocked(context.User))
         {
-            return [ErrorDescriber.UserIsLockedOut()];
+            // Distinguish a permanent lock (LockoutEnd == DateTime.MaxValue) from a temporary
+            // failed-attempt lock, mirroring how the platform's BaseUserSignInValidator decides.
+            // Otherwise org members get the permanent-worded code for a self-clearing 15-min lock.
+            var permanentLockOut = context.User.LockoutEnd == DateTime.MaxValue.ToUniversalTime();
+            return [permanentLockOut
+                ? ErrorDescriber.UserIsLockedOut()
+                : SecurityErrorDescriber.UserIsTemporaryLockedOut()];
         }
 
         var availableOrganizationIds = await GetAvailableOrganizationIds(context);
