@@ -15,16 +15,16 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
     {
         private readonly IMemberService _memberService;
         private readonly IDynamicPropertySearchService _dynamicPropertySearchService;
-        private readonly IOrganizationMembershipService _organizationMembershipService;
+        private readonly IOrganizationMembershipSearchService _organizationMembershipSearchService;
 
         public MemberDocumentBuilder(
             IMemberService memberService,
             IDynamicPropertySearchService dynamicPropertySearchService,
-            IOrganizationMembershipService organizationMembershipService)
+            IOrganizationMembershipSearchService organizationMembershipSearchService)
         {
             _memberService = memberService;
             _dynamicPropertySearchService = dynamicPropertySearchService;
-            _organizationMembershipService = organizationMembershipService;
+            _organizationMembershipSearchService = organizationMembershipSearchService;
         }
 
         public Task BuildSchemaAsync(IndexDocument schema)
@@ -188,7 +188,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
 
             foreach (var userId in userIds)
             {
-                var searchResult = await _organizationMembershipService.SearchAsync(
+                var searchResult = await _organizationMembershipSearchService.SearchAsync(
                     new OrganizationMembershipSearchCriteria { UserId = userId, Take = int.MaxValue });
 
                 var newRoles = searchResult?.Results?

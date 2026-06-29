@@ -14,6 +14,7 @@ using VirtoCommerce.Platform.Core.Security.Search;
 namespace VirtoCommerce.CustomerModule.Data.Handlers
 {
     public class DeleteOrganizationMembershipUserChangedEventHandler(
+        IOrganizationMembershipSearchService organizationMembershipSearchService,
         IOrganizationMembershipService organizationMembershipService,
         IUserSearchService userSearchService)
         : IEventHandler<UserChangedEvent>,
@@ -96,7 +97,7 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
         protected virtual async Task DeleteMembershipsAsync(string userId)
         {
-            var searchResult = await organizationMembershipService.SearchAsync(
+            var searchResult = await organizationMembershipSearchService.SearchAsync(
                 new OrganizationMembershipSearchCriteria
                 {
                     UserId = userId,
@@ -118,7 +119,7 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
         protected virtual async Task DeleteMembershipsForOrgsAsync(string userId, IList<string> organizationIds)
         {
-            var searchResult = await organizationMembershipService.SearchAsync(
+            var searchResult = await organizationMembershipSearchService.SearchAsync(
                 new OrganizationMembershipSearchCriteria
                 {
                     UserId = userId,

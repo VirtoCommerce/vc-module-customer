@@ -11,16 +11,20 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api;
 
 [Authorize]
 [Route("api/customer/organization-memberships")]
-public class OrganizationMembershipController(IOrganizationMembershipService membershipService) : Controller
+public class OrganizationMembershipController(
+    IOrganizationMembershipService membershipService,
+    IOrganizationMembershipSearchService membershipSearchService) : Controller
 {
     /// <summary>Returns the count of organization memberships for a user (lightweight — for widget counters).</summary>
     [HttpGet("user/{userId}/count")]
     [Authorize(OrgMembershipPermissions.Read)]
     public async Task<ActionResult> CountByUserId([FromRoute] string userId)
     {
-        var count = await membershipService.CountByUserIdAsync(userId);
+        // Take = 0 returns only the TotalCount (no entities are loaded).
+        var result = await membershipSearchService.SearchAsync(
+            new OrganizationMembershipSearchCriteria { UserId = userId, Take = 0 });
 
-        return Ok(new { count });
+        return Ok(new { count = result.TotalCount });
     }
 
     /// <summary>Returns paginated organization memberships.</summary>
@@ -28,7 +32,7 @@ public class OrganizationMembershipController(IOrganizationMembershipService mem
     [Authorize(OrgMembershipPermissions.Read)]
     public async Task<ActionResult<OrganizationMembershipSearchResult>> Search([FromBody] OrganizationMembershipSearchCriteria criteria)
     {
-        var result = await membershipService.SearchAsync(criteria);
+        var result = await membershipSearchService.SearchAsync(criteria);
 
         return Ok(result);
     }
@@ -40,7 +44,12 @@ public class OrganizationMembershipController(IOrganizationMembershipService mem
         [FromRoute] string userId,
         [FromRoute] string organizationId)
     {
-        var result = await membershipService.GetByUserAndOrgAsync(userId, organizationId);
+        var result = (await membershipSearchService.SearchAsync(new OrganizationMembershipSearchCriteria
+        {
+            UserId = userId,
+            OrganizationId = organizationId,
+            Take = 1,
+        })).Results.FirstOrDefault();
 
         return result != null ? Ok(result) : NotFound();
     }

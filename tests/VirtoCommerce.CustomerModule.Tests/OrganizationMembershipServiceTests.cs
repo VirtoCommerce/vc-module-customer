@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -14,66 +15,105 @@ using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.Repositories;
 using VirtoCommerce.CustomerModule.Data.Services;
 using VirtoCommerce.Platform.Caching;
+using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Domain;
 using VirtoCommerce.Platform.Core.Events;
+using VirtoCommerce.Platform.Core.GenericCrud;
 using Xunit;
 
 namespace VirtoCommerce.CustomerModule.Tests;
 
-public class OrganizationMembershipServiceTests
+public abstract class OrganizationMembershipServiceTestsBase
 {
-    private readonly Mock<ICustomerRepository> _repositoryMock = new();
-    private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
-    private readonly Mock<IEventPublisher> _eventPublisherMock = new();
+    protected readonly Mock<ICustomerRepository> RepositoryMock = new();
+    protected readonly Mock<IUnitOfWork> UnitOfWorkMock = new();
+    protected readonly Mock<IEventPublisher> EventPublisherMock = new();
 
-    public OrganizationMembershipServiceTests()
+    protected OrganizationMembershipServiceTestsBase()
     {
-        _repositoryMock.Setup(r => r.UnitOfWork).Returns(_unitOfWorkMock.Object);
-        _repositoryMock.Setup(r => r.OrganizationMemberships)
+        RepositoryMock.Setup(r => r.UnitOfWork).Returns(UnitOfWorkMock.Object);
+        RepositoryMock.Setup(r => r.OrganizationMemberships)
             .Returns(Enumerable.Empty<OrganizationMembershipEntity>().AsTestAsyncQueryable());
-        _repositoryMock.Setup(r => r.Organizations)
+        RepositoryMock.Setup(r => r.Organizations)
             .Returns(Enumerable.Empty<OrganizationEntity>().AsTestAsyncQueryable());
     }
 
+    protected void SetupMemberships(params OrganizationMembershipEntity[] entities) =>
+        RepositoryMock.Setup(r => r.OrganizationMemberships).Returns(entities.AsTestAsyncQueryable());
+
+    protected OrganizationMembershipService CreateCrudService() => CreateServices().Crud;
+
+    protected OrganizationMembershipSearchService CreateSearchService() => CreateServices().Search;
+
+    // The CRUD service's (obsolete) search shims delegate to the search service, and the search service
+    // depends on the CRUD service to load models — wire both with a shared cache and a lazy back-reference.
+    private (OrganizationMembershipService Crud, OrganizationMembershipSearchService Search) CreateServices()
+    {
+        var platformMemoryCache = CreatePlatformMemoryCache();
+        OrganizationMembershipSearchService search = null;
+
+        var crud = new OrganizationMembershipService(
+            () => RepositoryMock.Object, platformMemoryCache, EventPublisherMock.Object, () => search);
+
+        search = new OrganizationMembershipSearchService(
+            () => RepositoryMock.Object, platformMemoryCache, crud, Options.Create(new CrudOptions()));
+
+        return (crud, search);
+    }
+
+    protected static IPlatformMemoryCache CreatePlatformMemoryCache() =>
+        new PlatformMemoryCache(
+            new MemoryCache(Options.Create(new MemoryCacheOptions())),
+            Options.Create(new CachingOptions()),
+            new Mock<ILogger<PlatformMemoryCache>>().Object);
+
+    protected static OrganizationMembershipEntity BuildEntity(
+        string id,
+        string userId = "user1",
+        string orgId = "org1",
+        bool isLocked = false,
+        DateTime? lockoutEnd = null,
+        params string[] roleIds) =>
+        new()
+        {
+            Id = id,
+            UserId = userId,
+            OrganizationId = orgId,
+            IsLocked = isLocked,
+            LockoutEnd = lockoutEnd,
+            Roles = roleIds is { Length: > 0 }
+                ? new ObservableCollection<OrganizationMembershipRoleEntity>(
+                    roleIds.Select(rid => new OrganizationMembershipRoleEntity { RoleId = rid, MembershipId = id }))
+                : new NullCollection<OrganizationMembershipRoleEntity>(),
+        };
+}
+
+public class OrganizationMembershipServiceTests : OrganizationMembershipServiceTestsBase
+{
     [Fact]
     public async Task GetAsync_EmptyIds_ReturnsEmptyList()
     {
-        var result = await GetService().GetAsync([]);
+        var result = await CreateCrudService().GetAsync([]);
         Assert.Empty(result);
-    }
-
-    [Fact]
-    public async Task GetByUserAndOrgAsync_EmptyUserId_ReturnsNull()
-    {
-        var result = await GetService().GetByUserAndOrgAsync(string.Empty, "org1");
-        Assert.Null(result);
     }
 
     [Fact]
     public async Task SaveChangesAsync_EmptyList_DoesNotCallRepository()
     {
-        await GetService().SaveChangesAsync([]);
-        _repositoryMock.Verify(r => r.Add(It.IsAny<OrganizationMembershipEntity>()), Times.Never);
+        await CreateCrudService().SaveChangesAsync([]);
+        RepositoryMock.Verify(r => r.Add(It.IsAny<OrganizationMembershipEntity>()), Times.Never);
     }
 
     [Fact]
     public async Task SaveChangesAsync_DuplicateMembership_ThrowsInvalidOperation()
     {
         //Arrange
-        var existing = new OrganizationMembershipEntity
-        {
-            Id = Guid.NewGuid().ToString(),
-            UserId = "user1",
-            OrganizationId = "org1",
-            Roles = new NullCollection<OrganizationMembershipRoleEntity>()
-        };
-        _repositoryMock.Setup(r => r.OrganizationMemberships)
-            .Returns(new[] { existing }.AsTestAsyncQueryable());
+        SetupMemberships(BuildEntity(Guid.NewGuid().ToString(), userId: "user1", orgId: "org1"));
 
         //Act & Assert
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            GetService().SaveChangesAsync([new OrganizationMembership { UserId = "user1", OrganizationId = "org1" }]));
+            CreateCrudService().SaveChangesAsync([new OrganizationMembership { UserId = "user1", OrganizationId = "org1" }]));
     }
 
     [Fact]
@@ -82,16 +122,15 @@ public class OrganizationMembershipServiceTests
         //Arrange
         var lockoutEnd = DateTime.UtcNow.AddDays(7);
         var entity = BuildEntity("id1");
-        _repositoryMock.Setup(r => r.OrganizationMemberships)
-            .Returns(new[] { entity }.AsTestAsyncQueryable());
+        SetupMemberships(entity);
 
         //Act
-        await GetService().LockAsync("id1", lockoutEnd);
+        await CreateCrudService().LockAsync("id1", lockoutEnd);
 
         //Assert
         Assert.True(entity.IsLocked);
         Assert.Equal(lockoutEnd, entity.LockoutEnd);
-        _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
+        UnitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
     }
 
     [Fact]
@@ -99,107 +138,23 @@ public class OrganizationMembershipServiceTests
     {
         //Arrange
         var entity = BuildEntity("id1", isLocked: true, lockoutEnd: DateTime.UtcNow.AddDays(7));
-        _repositoryMock.Setup(r => r.OrganizationMemberships)
-            .Returns(new[] { entity }.AsTestAsyncQueryable());
+        SetupMemberships(entity);
 
         //Act
-        await GetService().UnlockAsync("id1");
+        await CreateCrudService().UnlockAsync("id1");
 
         //Assert
         Assert.False(entity.IsLocked);
         Assert.Null(entity.LockoutEnd);
-        _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
-    }
-
-    [Fact]
-    public async Task CountByUserIdAsync_EmptyUserId_ReturnsZero()
-    {
-        var result = await GetService().CountByUserIdAsync(string.Empty);
-        Assert.Equal(0, result);
-    }
-
-    [Fact]
-    public async Task CountByUserIdAsync_WithEntities_ReturnsCorrectCount()
-    {
-        //Arrange
-        var entities = new[]
-        {
-            BuildEntity("id1", userId: "user1"),
-            BuildEntity("id2", userId: "user1"),
-            BuildEntity("id3", userId: "other"),
-        };
-        _repositoryMock.Setup(r => r.OrganizationMemberships)
-            .Returns(entities.AsTestAsyncQueryable());
-
-        //Act
-        var result = await GetService().CountByUserIdAsync("user1");
-
-        //Assert
-        Assert.Equal(2, result);
-    }
-
-    [Fact]
-    public async Task GetLockedOrganizationIdsAsync_EmptyUserId_ReturnsEmpty()
-    {
-        var result = await GetService().GetLockedOrganizationIdsAsync(string.Empty);
-        Assert.Empty(result);
-    }
-
-    [Fact]
-    public async Task GetLockedOrganizationIdsAsync_MixedLockStates_ReturnsOnlyActive()
-    {
-        //Arrange
-        var entities = new[]
-        {
-            BuildEntity("id1", userId: "user1", orgId: "org1", isLocked: true,  lockoutEnd: null),                      // locked indefinitely → included
-            BuildEntity("id2", userId: "user1", orgId: "org2", isLocked: true,  lockoutEnd: DateTime.UtcNow.AddDays(1)), // locked future → included
-            BuildEntity("id3", userId: "user1", orgId: "org3", isLocked: true,  lockoutEnd: DateTime.UtcNow.AddDays(-1)),// locked expired → excluded
-            BuildEntity("id4", userId: "user1", orgId: "org4", isLocked: false, lockoutEnd: null),                       // not locked → excluded
-        };
-        _repositoryMock.Setup(r => r.OrganizationMemberships)
-            .Returns(entities.AsTestAsyncQueryable());
-
-        //Act
-        var result = await GetService().GetLockedOrganizationIdsAsync("user1");
-
-        //Assert
-        Assert.Equal(2, result.Count);
-        Assert.Contains("org1", result);
-        Assert.Contains("org2", result);
-    }
-
-    [Fact]
-    public async Task SearchAsync_EmptyUserId_ReturnsEmptyResult()
-    {
-        var result = await GetService().SearchAsync(new OrganizationMembershipSearchCriteria { UserId = string.Empty });
-        Assert.Equal(0, result.TotalCount);
-        Assert.Empty(result.Results);
-    }
-
-    [Fact]
-    public async Task SearchAsync_WithPagination_ReturnsCorrectPage()
-    {
-        //Arrange
-        var entities = Enumerable.Range(1, 5)
-            .Select(i => BuildEntity($"id{i}", userId: "user1", orgId: $"org{i}"))
-            .ToArray();
-        _repositoryMock.Setup(r => r.OrganizationMemberships)
-            .Returns(entities.AsTestAsyncQueryable());
-
-        //Act
-        var result = await GetService().SearchAsync(new OrganizationMembershipSearchCriteria { UserId = "user1", Skip = 0, Take = 3 });
-
-        //Assert
-        Assert.Equal(5, result.TotalCount);
-        Assert.Equal(3, result.Results.Count);
+        UnitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
     }
 
     [Fact]
     public async Task DeleteAsync_EmptyList_DoesNotCallRepository()
     {
-        await GetService().DeleteAsync([]);
-        _repositoryMock.Verify(r => r.Remove(It.IsAny<OrganizationMembershipEntity>()), Times.Never);
-        _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Never);
+        await CreateCrudService().DeleteAsync([]);
+        RepositoryMock.Verify(r => r.Remove(It.IsAny<OrganizationMembershipEntity>()), Times.Never);
+        UnitOfWorkMock.Verify(u => u.CommitAsync(), Times.Never);
     }
 
     [Fact]
@@ -207,47 +162,208 @@ public class OrganizationMembershipServiceTests
     {
         //Arrange
         var entity = BuildEntity("id1", userId: "user1");
-        _repositoryMock.Setup(r => r.OrganizationMemberships)
-            .Returns(new[] { entity }.AsTestAsyncQueryable());
+        SetupMemberships(entity);
 
         //Act
-        await GetService().DeleteAsync(["id1"]);
+        await CreateCrudService().DeleteAsync(["id1"]);
 
         //Assert
-        _repositoryMock.Verify(r => r.Remove(entity), Times.Once);
-        _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
-    }
-
-    private static OrganizationMembershipEntity BuildEntity(
-        string id,
-        string userId = "user1",
-        string orgId = "org1",
-        bool isLocked = false,
-        DateTime? lockoutEnd = null) =>
-        new()
-        {
-            Id = id,
-            UserId = userId,
-            OrganizationId = orgId,
-            IsLocked = isLocked,
-            LockoutEnd = lockoutEnd,
-            Roles = new NullCollection<OrganizationMembershipRoleEntity>()
-        };
-
-    private OrganizationMembershipService GetService()
-    {
-        var memoryCache = new MemoryCache(Options.Create(new MemoryCacheOptions()));
-        var platformMemoryCache = new PlatformMemoryCache(
-            memoryCache,
-            Options.Create(new CachingOptions()),
-            new Mock<ILogger<PlatformMemoryCache>>().Object);
-
-        return new OrganizationMembershipService(
-            () => _repositoryMock.Object,
-            platformMemoryCache,
-            _eventPublisherMock.Object);
+        RepositoryMock.Verify(r => r.Remove(entity), Times.Once);
+        UnitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
     }
 }
+
+public class OrganizationMembershipSearchServiceTests : OrganizationMembershipServiceTestsBase
+{
+    [Fact]
+    public async Task SearchAsync_NoEntities_ReturnsEmptyResult()
+    {
+        var result = await CreateSearchService().SearchAsync(new OrganizationMembershipSearchCriteria { UserId = "user1" });
+
+        Assert.Equal(0, result.TotalCount);
+        Assert.Empty(result.Results);
+    }
+
+    [Fact]
+    public async Task SearchAsync_ByUserAndOrganization_ReturnsMatchingMembership()
+    {
+        //Arrange
+        SetupMemberships(
+            BuildEntity("id1", userId: "user1", orgId: "org1"),
+            BuildEntity("id2", userId: "user1", orgId: "org2"),
+            BuildEntity("id3", userId: "user2", orgId: "org1"));
+
+        //Act
+        var result = await CreateSearchService().SearchAsync(new OrganizationMembershipSearchCriteria
+        {
+            UserId = "user1",
+            OrganizationId = "org1",
+            Take = 1,
+        });
+
+        //Assert
+        Assert.Equal(1, result.TotalCount);
+        Assert.Equal("id1", result.Results.Single().Id);
+    }
+
+    [Fact]
+    public async Task SearchAsync_WithPagination_ReturnsCorrectPage()
+    {
+        //Arrange
+        SetupMemberships(Enumerable.Range(1, 5)
+            .Select(i => BuildEntity($"id{i}", userId: "user1", orgId: $"org{i}"))
+            .ToArray());
+
+        //Act
+        var result = await CreateSearchService().SearchAsync(
+            new OrganizationMembershipSearchCriteria { UserId = "user1", Skip = 0, Take = 3 });
+
+        //Assert
+        Assert.Equal(5, result.TotalCount);
+        Assert.Equal(3, result.Results.Count);
+    }
+
+    [Fact]
+    public async Task SearchAsync_CountOnly_TakeZero_ReturnsTotalCountWithoutResults()
+    {
+        //Arrange
+        SetupMemberships(
+            BuildEntity("id1", userId: "user1"),
+            BuildEntity("id2", userId: "user1"),
+            BuildEntity("id3", userId: "other"));
+
+        //Act
+        var result = await CreateSearchService().SearchAsync(
+            new OrganizationMembershipSearchCriteria { UserId = "user1", Take = 0 });
+
+        //Assert
+        Assert.Equal(2, result.TotalCount);
+        Assert.Empty(result.Results);
+    }
+
+    [Fact]
+    public async Task SearchAsync_OnlyLocked_ReturnsOnlyCurrentlyLocked()
+    {
+        //Arrange
+        SetupMemberships(
+            BuildEntity("id1", userId: "user1", orgId: "org1", isLocked: true, lockoutEnd: null),                       // locked indefinitely → included
+            BuildEntity("id2", userId: "user1", orgId: "org2", isLocked: true, lockoutEnd: DateTime.UtcNow.AddDays(1)),  // locked future → included
+            BuildEntity("id3", userId: "user1", orgId: "org3", isLocked: true, lockoutEnd: DateTime.UtcNow.AddDays(-1)), // locked expired → excluded
+            BuildEntity("id4", userId: "user1", orgId: "org4", isLocked: false, lockoutEnd: null));                      // not locked → excluded
+
+        //Act
+        var result = await CreateSearchService().SearchAsync(new OrganizationMembershipSearchCriteria
+        {
+            UserId = "user1",
+            OnlyLocked = true,
+            Take = int.MaxValue,
+        });
+
+        //Assert
+        Assert.Equal(2, result.TotalCount);
+        var orgIds = result.Results.Select(m => m.OrganizationId).ToList();
+        Assert.Contains("org1", orgIds);
+        Assert.Contains("org2", orgIds);
+    }
+
+    [Fact]
+    public async Task GetCountsByUserAsync_GroupsMatchingMembershipsByUser()
+    {
+        //Arrange — only memberships carrying role "r1" should be counted, one row per user.
+        SetupMemberships(
+            BuildEntity("id1", userId: "user1", orgId: "org1", roleIds: ["r1"]),
+            BuildEntity("id2", userId: "user1", orgId: "org2", roleIds: ["r1"]),
+            BuildEntity("id3", userId: "user2", orgId: "org1", roleIds: ["r1"]),
+            BuildEntity("id4", userId: "user3", orgId: "org1", roleIds: ["r2"]));
+
+        //Act
+        var counts = await CreateSearchService().GetCountsByUserAsync(
+            new OrganizationMembershipSearchCriteria { RoleIds = ["r1"] });
+
+        //Assert
+        Assert.Equal(2, counts.Count);
+        Assert.Equal(2, counts["user1"]);
+        Assert.Equal(1, counts["user2"]);
+        Assert.False(counts.ContainsKey("user3"));
+    }
+}
+
+// Back-compat: the [Obsolete] shims on IOrganizationMembershipService must keep working (delegating to the
+// search service) so already-published consumers compiled against the combined interface keep resolving them.
+#pragma warning disable VC0015
+public class OrganizationMembershipObsoleteShimTests : OrganizationMembershipServiceTestsBase
+{
+    [Fact]
+    public async Task GetByUserAndOrgAsync_ReturnsMatchingMembership()
+    {
+        SetupMemberships(
+            BuildEntity("id1", userId: "user1", orgId: "org1"),
+            BuildEntity("id2", userId: "user1", orgId: "org2"));
+
+        var result = await CreateCrudService().GetByUserAndOrgAsync("user1", "org2");
+
+        Assert.NotNull(result);
+        Assert.Equal("id2", result.Id);
+    }
+
+    [Fact]
+    public async Task GetByUserAndOrgAsync_EmptyArguments_ReturnsNull()
+    {
+        Assert.Null(await CreateCrudService().GetByUserAndOrgAsync(string.Empty, "org1"));
+    }
+
+    [Fact]
+    public async Task CountByUserIdAsync_ReturnsCount()
+    {
+        SetupMemberships(
+            BuildEntity("id1", userId: "user1"),
+            BuildEntity("id2", userId: "user1"),
+            BuildEntity("id3", userId: "other"));
+
+        Assert.Equal(2, await CreateCrudService().CountByUserIdAsync("user1"));
+    }
+
+    [Fact]
+    public async Task GetLockedOrganizationIdsAsync_ReturnsCurrentlyLockedOrgs()
+    {
+        SetupMemberships(
+            BuildEntity("id1", userId: "user1", orgId: "org1", isLocked: true, lockoutEnd: null),
+            BuildEntity("id2", userId: "user1", orgId: "org2", isLocked: true, lockoutEnd: DateTime.UtcNow.AddDays(-1)),
+            BuildEntity("id3", userId: "user1", orgId: "org3", isLocked: false));
+
+        var result = await CreateCrudService().GetLockedOrganizationIdsAsync("user1");
+
+        Assert.Single(result);
+        Assert.Contains("org1", result);
+    }
+
+    [Fact]
+    public async Task GetOrganizationCountsByUserAsync_GroupsByUser()
+    {
+        SetupMemberships(
+            BuildEntity("id1", userId: "user1", roleIds: ["r1"]),
+            BuildEntity("id2", userId: "user1", roleIds: ["r1"]),
+            BuildEntity("id3", userId: "user2", roleIds: ["r1"]));
+
+        var counts = await CreateCrudService().GetOrganizationCountsByUserAsync(["r1"]);
+
+        Assert.Equal(2, counts["user1"]);
+        Assert.Equal(1, counts["user2"]);
+    }
+
+    [Fact]
+    public async Task SearchAsync_DelegatesToSearchService()
+    {
+        SetupMemberships(
+            BuildEntity("id1", userId: "user1"),
+            BuildEntity("id2", userId: "user1"));
+
+        var result = await CreateCrudService().SearchAsync(new OrganizationMembershipSearchCriteria { UserId = "user1" });
+
+        Assert.Equal(2, result.TotalCount);
+    }
+}
+#pragma warning restore VC0015
 
 internal static class TestAsyncQueryableExtensions
 {
