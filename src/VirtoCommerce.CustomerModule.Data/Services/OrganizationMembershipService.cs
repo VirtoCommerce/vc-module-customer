@@ -24,14 +24,17 @@ public class OrganizationMembershipService
     IOrganizationMembershipService
 {
     private readonly Func<ICustomerRepository> _repositoryFactory;
+    private readonly Func<IOrganizationMembershipSearchService> _searchServiceFactory;
 
     public OrganizationMembershipService(
         Func<ICustomerRepository> repositoryFactory,
         IPlatformMemoryCache platformMemoryCache,
-        IEventPublisher eventPublisher)
+        IEventPublisher eventPublisher,
+        Func<IOrganizationMembershipSearchService> searchServiceFactory)
         : base(repositoryFactory, platformMemoryCache, eventPublisher)
     {
         _repositoryFactory = repositoryFactory;
+        _searchServiceFactory = searchServiceFactory;
     }
 
     protected override async Task<IList<OrganizationMembershipEntity>> LoadEntities(
@@ -94,6 +97,79 @@ public class OrganizationMembershipService
         await SaveChangesAsync([model]);
 
         return model;
+    }
+
+    [Obsolete("Use IOrganizationMembershipSearchService.SearchAsync instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
+    public Task<OrganizationMembershipSearchResult> SearchAsync(OrganizationMembershipSearchCriteria criteria, bool clone = true)
+    {
+        return _searchServiceFactory().SearchAsync(criteria, clone);
+    }
+
+    [Obsolete("Use IOrganizationMembershipSearchService.SearchAsync with UserId and OrganizationId filters instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
+    public async Task<OrganizationMembership> GetByUserAndOrgAsync(string userId, string organizationId)
+    {
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(organizationId))
+        {
+            return null;
+        }
+
+        var result = await _searchServiceFactory().SearchAsync(new OrganizationMembershipSearchCriteria
+        {
+            UserId = userId,
+            OrganizationId = organizationId,
+            Take = 1,
+        });
+
+        return result.Results.FirstOrDefault();
+    }
+
+    [Obsolete("Use IOrganizationMembershipSearchService.SearchAsync with the OnlyLocked filter instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
+    public async Task<IReadOnlyCollection<string>> GetLockedOrganizationIdsAsync(string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            return [];
+        }
+
+        var result = await _searchServiceFactory().SearchAsync(new OrganizationMembershipSearchCriteria
+        {
+            UserId = userId,
+            OnlyLocked = true,
+            Take = int.MaxValue,
+        });
+
+        return result.Results
+            .Select(x => x.OrganizationId)
+            .Where(id => !string.IsNullOrEmpty(id))
+            .ToList();
+    }
+
+    [Obsolete("Use IOrganizationMembershipSearchService.SearchAsync with Take = 0 and read TotalCount instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
+    public async Task<int> CountByUserIdAsync(string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            return 0;
+        }
+
+        var result = await _searchServiceFactory().SearchAsync(new OrganizationMembershipSearchCriteria
+        {
+            UserId = userId,
+            Take = 0,
+        });
+
+        return result.TotalCount;
+    }
+
+    [Obsolete("Use IOrganizationMembershipSearchService.GetCountsByUserAsync instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
+    public Task<IDictionary<string, int>> GetOrganizationCountsByUserAsync(string[] roleIds, string[] organizationIds = null, string[] userIds = null)
+    {
+        return _searchServiceFactory().GetCountsByUserAsync(new OrganizationMembershipSearchCriteria
+        {
+            RoleIds = roleIds,
+            OrganizationIds = organizationIds,
+            UserIds = userIds,
+        });
     }
 
     private static async Task ResolveOrganizationNamesAsync(

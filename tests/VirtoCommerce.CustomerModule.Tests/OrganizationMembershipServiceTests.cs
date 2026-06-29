@@ -42,17 +42,24 @@ public abstract class OrganizationMembershipServiceTestsBase
     protected void SetupMemberships(params OrganizationMembershipEntity[] entities) =>
         RepositoryMock.Setup(r => r.OrganizationMemberships).Returns(entities.AsTestAsyncQueryable());
 
-    protected OrganizationMembershipService CreateCrudService() =>
-        new(() => RepositoryMock.Object, CreatePlatformMemoryCache(), EventPublisherMock.Object);
+    protected OrganizationMembershipService CreateCrudService() => CreateServices().Crud;
 
-    protected OrganizationMembershipSearchService CreateSearchService()
+    protected OrganizationMembershipSearchService CreateSearchService() => CreateServices().Search;
+
+    // The CRUD service's (obsolete) search shims delegate to the search service, and the search service
+    // depends on the CRUD service to load models — wire both with a shared cache and a lazy back-reference.
+    private (OrganizationMembershipService Crud, OrganizationMembershipSearchService Search) CreateServices()
     {
         var platformMemoryCache = CreatePlatformMemoryCache();
-        var crudService = new OrganizationMembershipService(
-            () => RepositoryMock.Object, platformMemoryCache, EventPublisherMock.Object);
+        OrganizationMembershipSearchService search = null;
 
-        return new OrganizationMembershipSearchService(
-            () => RepositoryMock.Object, platformMemoryCache, crudService, Options.Create(new CrudOptions()));
+        var crud = new OrganizationMembershipService(
+            () => RepositoryMock.Object, platformMemoryCache, EventPublisherMock.Object, () => search);
+
+        search = new OrganizationMembershipSearchService(
+            () => RepositoryMock.Object, platformMemoryCache, crud, Options.Create(new CrudOptions()));
+
+        return (crud, search);
     }
 
     protected static IPlatformMemoryCache CreatePlatformMemoryCache() =>
@@ -280,6 +287,83 @@ public class OrganizationMembershipSearchServiceTests : OrganizationMembershipSe
         Assert.False(counts.ContainsKey("user3"));
     }
 }
+
+// Back-compat: the [Obsolete] shims on IOrganizationMembershipService must keep working (delegating to the
+// search service) so already-published consumers compiled against the combined interface keep resolving them.
+#pragma warning disable VC0015
+public class OrganizationMembershipObsoleteShimTests : OrganizationMembershipServiceTestsBase
+{
+    [Fact]
+    public async Task GetByUserAndOrgAsync_ReturnsMatchingMembership()
+    {
+        SetupMemberships(
+            BuildEntity("id1", userId: "user1", orgId: "org1"),
+            BuildEntity("id2", userId: "user1", orgId: "org2"));
+
+        var result = await CreateCrudService().GetByUserAndOrgAsync("user1", "org2");
+
+        Assert.NotNull(result);
+        Assert.Equal("id2", result.Id);
+    }
+
+    [Fact]
+    public async Task GetByUserAndOrgAsync_EmptyArguments_ReturnsNull()
+    {
+        Assert.Null(await CreateCrudService().GetByUserAndOrgAsync(string.Empty, "org1"));
+    }
+
+    [Fact]
+    public async Task CountByUserIdAsync_ReturnsCount()
+    {
+        SetupMemberships(
+            BuildEntity("id1", userId: "user1"),
+            BuildEntity("id2", userId: "user1"),
+            BuildEntity("id3", userId: "other"));
+
+        Assert.Equal(2, await CreateCrudService().CountByUserIdAsync("user1"));
+    }
+
+    [Fact]
+    public async Task GetLockedOrganizationIdsAsync_ReturnsCurrentlyLockedOrgs()
+    {
+        SetupMemberships(
+            BuildEntity("id1", userId: "user1", orgId: "org1", isLocked: true, lockoutEnd: null),
+            BuildEntity("id2", userId: "user1", orgId: "org2", isLocked: true, lockoutEnd: DateTime.UtcNow.AddDays(-1)),
+            BuildEntity("id3", userId: "user1", orgId: "org3", isLocked: false));
+
+        var result = await CreateCrudService().GetLockedOrganizationIdsAsync("user1");
+
+        Assert.Single(result);
+        Assert.Contains("org1", result);
+    }
+
+    [Fact]
+    public async Task GetOrganizationCountsByUserAsync_GroupsByUser()
+    {
+        SetupMemberships(
+            BuildEntity("id1", userId: "user1", roleIds: ["r1"]),
+            BuildEntity("id2", userId: "user1", roleIds: ["r1"]),
+            BuildEntity("id3", userId: "user2", roleIds: ["r1"]));
+
+        var counts = await CreateCrudService().GetOrganizationCountsByUserAsync(["r1"]);
+
+        Assert.Equal(2, counts["user1"]);
+        Assert.Equal(1, counts["user2"]);
+    }
+
+    [Fact]
+    public async Task SearchAsync_DelegatesToSearchService()
+    {
+        SetupMemberships(
+            BuildEntity("id1", userId: "user1"),
+            BuildEntity("id2", userId: "user1"));
+
+        var result = await CreateCrudService().SearchAsync(new OrganizationMembershipSearchCriteria { UserId = "user1" });
+
+        Assert.Equal(2, result.TotalCount);
+    }
+}
+#pragma warning restore VC0015
 
 internal static class TestAsyncQueryableExtensions
 {
