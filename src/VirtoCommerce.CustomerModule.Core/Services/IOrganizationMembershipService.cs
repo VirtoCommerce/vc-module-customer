@@ -14,6 +14,8 @@ public interface IOrganizationMembershipService
 {
     Task<OrganizationMembership> GetByUserAndOrgAsync(string userId, string organizationId);
 
+    Task<IReadOnlyCollection<OrganizationRole>> GetRolesByUserAndOrgAsync(string userId, string organizationId);
+
     Task<IReadOnlyCollection<string>> GetUserIdsByRoleInOrgAsync(string organizationId, IList<string> roleIds);
 
     Task<IReadOnlyCollection<string>> GetLockedOrganizationIdsAsync(string userId);

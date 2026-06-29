@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using VirtoCommerce.CustomerModule.Core.Model;
+using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.Repositories;
 using VirtoCommerce.CustomerModule.Data.Services;
@@ -26,6 +27,7 @@ public class OrganizationMembershipServiceTests
     private readonly Mock<ICustomerRepository> _repositoryMock = new();
     private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
     private readonly Mock<IEventPublisher> _eventPublisherMock = new();
+    private readonly Mock<IMemberService> _memberServiceMock = new();
 
     public OrganizationMembershipServiceTests()
     {
@@ -315,6 +317,163 @@ public class OrganizationMembershipServiceTests
         Assert.IsType<IReadOnlyCollection<string>>(result, exactMatch: false);
     }
 
+    [Fact]
+    public async Task GetRolesByUserAndOrgAsync_EmptyOrgId_ReturnsEmpty()
+    {
+        var result = await GetService().GetRolesByUserAndOrgAsync("user1", string.Empty);
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetRolesByUserAndOrgAsync_EmptyUserId_ReturnsEmpty()
+    {
+        var result = await GetService().GetRolesByUserAndOrgAsync(string.Empty, "org1");
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetRolesByUserAndOrgAsync_OrgRolesOnly_ReturnsOrgRoles()
+    {
+        //Arrange — org has a role, user has no membership row
+        _memberServiceMock
+            .Setup(s => s.GetByIdAsync("org1", It.IsAny<string>(), nameof(Organization)))
+            .ReturnsAsync(new Organization
+            {
+                Id = "org1",
+                Roles = [new OrganizationRole { RoleId = "r1", RoleName = "Admin" }]
+            });
+
+        //Act
+        var result = await GetService().GetRolesByUserAndOrgAsync("user1", "org1");
+
+        //Assert
+        Assert.Single(result);
+        Assert.Equal("r1", result.First().RoleId);
+    }
+
+    [Fact]
+    public async Task GetRolesByUserAndOrgAsync_MembershipRolesOnly_ReturnsMembershipRoles()
+    {
+        //Arrange — org has no roles, user has membership with a role
+        _memberServiceMock
+            .Setup(s => s.GetByIdAsync("org1", It.IsAny<string>(), nameof(Organization)))
+            .ReturnsAsync(new Organization { Id = "org1", Roles = [] });
+
+        var membershipEntity = new OrganizationMembershipEntity
+        {
+            Id = "m1",
+            UserId = "user1",
+            OrganizationId = "org1",
+            IsLocked = false,
+            Roles = [new OrganizationMembershipRoleEntity { Id = "mr1", RoleId = "r2", RoleName = "Buyer" }]
+        };
+
+        _repositoryMock.Setup(r => r.OrganizationMemberships)
+            .Returns(new[] { membershipEntity }.AsTestAsyncQueryable());
+
+        //Act
+        var result = await GetService().GetRolesByUserAndOrgAsync("user1", "org1");
+
+        //Assert
+        Assert.Single(result);
+        Assert.Equal("r2", result.First().RoleId);
+    }
+
+    [Fact]
+    public async Task GetRolesByUserAndOrgAsync_BothSources_ReturnsMergedRoles()
+    {
+        //Arrange — org has role A, membership has role B
+        _memberServiceMock
+            .Setup(s => s.GetByIdAsync("org1", It.IsAny<string>(), nameof(Organization)))
+            .ReturnsAsync(new Organization
+            {
+                Id = "org1",
+                Roles = [new OrganizationRole { RoleId = "r1", RoleName = "Admin" }]
+            });
+
+        var membershipEntity = new OrganizationMembershipEntity
+        {
+            Id = "m1",
+            UserId = "user1",
+            OrganizationId = "org1",
+            IsLocked = false,
+            Roles = [new OrganizationMembershipRoleEntity { Id = "mr1", RoleId = "r2", RoleName = "Buyer" }]
+        };
+
+        _repositoryMock.Setup(r => r.OrganizationMemberships)
+            .Returns(new[] { membershipEntity }.AsTestAsyncQueryable());
+
+        //Act
+        var result = await GetService().GetRolesByUserAndOrgAsync("user1", "org1");
+
+        //Assert
+        Assert.Equal(2, result.Count);
+        Assert.Contains(result, r => r.RoleId == "r1");
+        Assert.Contains(result, r => r.RoleId == "r2");
+    }
+
+    [Fact]
+    public async Task GetRolesByUserAndOrgAsync_OverlappingRoles_Deduplicates()
+    {
+        //Arrange — org and membership both have the same role ID
+        _memberServiceMock
+            .Setup(s => s.GetByIdAsync("org1", It.IsAny<string>(), nameof(Organization)))
+            .ReturnsAsync(new Organization
+            {
+                Id = "org1",
+                Roles = [new OrganizationRole { RoleId = "r1", RoleName = "Admin" }]
+            });
+
+        var membershipEntity = new OrganizationMembershipEntity
+        {
+            Id = "m1",
+            UserId = "user1",
+            OrganizationId = "org1",
+            IsLocked = false,
+            Roles = [new OrganizationMembershipRoleEntity { Id = "mr1", RoleId = "r1", RoleName = "Admin" }]
+        };
+
+        _repositoryMock.Setup(r => r.OrganizationMemberships)
+            .Returns(new[] { membershipEntity }.AsTestAsyncQueryable());
+
+        //Act
+        var result = await GetService().GetRolesByUserAndOrgAsync("user1", "org1");
+
+        //Assert — r1 appears exactly once
+        Assert.Single(result);
+        Assert.Equal("r1", result.First().RoleId);
+    }
+
+    [Fact]
+    public async Task GetRolesByUserAndOrgAsync_OrgNotFound_ReturnsMembershipRolesOnly()
+    {
+        //Arrange — memberService returns null (org not found)
+        _memberServiceMock
+            .Setup(s => s.GetByIdAsync("org1", It.IsAny<string>(), nameof(Organization)))
+            .ReturnsAsync((Member)null);
+
+        var membershipEntity = new OrganizationMembershipEntity
+        {
+            Id = "m1",
+            UserId = "user1",
+            OrganizationId = "org1",
+            IsLocked = false,
+            Roles = [new OrganizationMembershipRoleEntity { Id = "mr1", RoleId = "r2", RoleName = "Buyer" }]
+        };
+
+        _repositoryMock.Setup(r => r.OrganizationMemberships)
+            .Returns(new[] { membershipEntity }.AsTestAsyncQueryable());
+
+        //Act
+        var result = await GetService().GetRolesByUserAndOrgAsync("user1", "org1");
+
+        //Assert — membership roles still returned
+        Assert.Single(result);
+        Assert.Equal("r2", result.First().RoleId);
+    }
+
     private static OrganizationMembershipEntity BuildEntityWithRoles(
         string id,
         string userId = "user1",
@@ -359,7 +518,8 @@ public class OrganizationMembershipServiceTests
         return new OrganizationMembershipService(
             () => _repositoryMock.Object,
             platformMemoryCache,
-            _eventPublisherMock.Object);
+            _eventPublisherMock.Object,
+            _memberServiceMock.Object);
     }
 }
 

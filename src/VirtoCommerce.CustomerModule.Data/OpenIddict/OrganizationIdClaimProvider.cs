@@ -53,12 +53,14 @@ public class OrganizationIdClaimProvider(
             return;
         }
 
-        var allRoleIds = await GetOrgScopedRoleIdsAsync(organizationId, membership);
+        var orgScopedRoles = await organizationMembershipService.GetRolesByUserAndOrgAsync(userId, organizationId);
 
-        if (allRoleIds.Count == 0)
+        if (orgScopedRoles.Count == 0)
         {
             return;
         }
+
+        var allRoleIds = orgScopedRoles.Select(r => r.RoleId).ToList();
 
         // Collect permissions already present in the token (from global roles) to avoid duplicates
         var existingPermissions = principal.Claims
@@ -67,18 +69,6 @@ public class OrganizationIdClaimProvider(
             .ToHashSet();
 
         await AddRolePermissionsAsync(identity, allRoleIds, existingPermissions);
-    }
-
-    private async Task<List<string>> GetOrgScopedRoleIdsAsync(string organizationId, OrganizationMembership membership)
-    {
-        // Organization-level roles apply to all org members regardless of explicit OrganizationMembership record
-        var organization = await memberService.GetByIdAsync(organizationId, memberType: nameof(Organization)) as Organization;
-        var orgRoleIds = organization?.Roles?.Select(r => r.RoleId) ?? [];
-
-        // Membership-level roles are user-specific within the org (only when membership record exists)
-        var membershipRoleIds = membership?.Roles?.Select(r => r.RoleId) ?? [];
-
-        return orgRoleIds.Concat(membershipRoleIds).Distinct().ToList();
     }
 
     private async Task AddRolePermissionsAsync(ClaimsIdentity identity, IList<string> roleIds, HashSet<string> existingPermissions)

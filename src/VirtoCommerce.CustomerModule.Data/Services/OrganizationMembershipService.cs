@@ -27,15 +27,18 @@ public class OrganizationMembershipService
 {
     private readonly Func<ICustomerRepository> _repositoryFactory;
     private readonly IPlatformMemoryCache _platformMemoryCache;
+    private readonly IMemberService _memberService;
 
     public OrganizationMembershipService(
         Func<ICustomerRepository> repositoryFactory,
         IPlatformMemoryCache platformMemoryCache,
-        IEventPublisher eventPublisher)
+        IEventPublisher eventPublisher,
+        IMemberService memberService)
         : base(repositoryFactory, platformMemoryCache, eventPublisher)
     {
         _repositoryFactory = repositoryFactory;
         _platformMemoryCache = platformMemoryCache;
+        _memberService = memberService;
     }
 
     protected override async Task<IList<OrganizationMembershipEntity>> LoadEntities(
@@ -185,6 +188,31 @@ public class OrganizationMembershipService
 
             return model;
         });
+    }
+
+    public async Task<IReadOnlyCollection<OrganizationRole>> GetRolesByUserAndOrgAsync(string userId, string organizationId)
+    {
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(organizationId))
+        {
+            return [];
+        }
+
+        var orgTask = _memberService.GetByIdAsync(organizationId, memberType: nameof(Organization));
+        var membershipTask = GetByUserAndOrgAsync(userId, organizationId);
+
+        await Task.WhenAll(orgTask, membershipTask);
+
+        var organization = await orgTask as Organization;
+        var membership = await membershipTask;
+
+        IEnumerable<OrganizationRole> orgRoles = organization?.Roles ?? [];
+        var membershipRoles = membership?.Roles?
+            .Select(r => new OrganizationRole { RoleId = r.RoleId, RoleName = r.RoleName }) ?? [];
+
+        return orgRoles
+            .Concat(membershipRoles)
+            .DistinctBy(r => r.RoleId)
+            .ToList();
     }
 
     public async Task<IReadOnlyCollection<string>> GetLockedOrganizationIdsAsync(string userId)
