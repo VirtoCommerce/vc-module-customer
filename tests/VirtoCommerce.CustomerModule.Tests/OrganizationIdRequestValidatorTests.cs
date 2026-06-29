@@ -18,7 +18,7 @@ public class OrganizationIdRequestValidatorTests
     private const string UserId = "user1";
 
     private readonly Mock<IMemberService> _memberServiceMock = new();
-    private readonly Mock<IOrganizationMembershipService> _membershipServiceMock = new();
+    private readonly Mock<IOrganizationMembershipSearchService> _membershipServiceMock = new();
 
     [Fact]
     public async Task ValidateAsync_NoOrganizationId_NoUser_ReturnsEmpty()
@@ -45,11 +45,7 @@ public class OrganizationIdRequestValidatorTests
                 Organizations = [OrgId]
             });
 
-        _membershipServiceMock.Setup(s => s.GetByUserAndOrgAsync(UserId, OrgId))
-            .ReturnsAsync(new OrganizationMembership
-            {
-                IsLocked = false
-            });
+        SetupMembership(new OrganizationMembership { IsLocked = false });
 
         //Act
         var result = await GetValidator().ValidateAsync(BuildContext(orgId: null, user: user));
@@ -75,12 +71,7 @@ public class OrganizationIdRequestValidatorTests
                 Organizations = [OrgId]
             });
 
-        _membershipServiceMock.Setup(s => s.GetByUserAndOrgAsync(UserId, OrgId))
-            .ReturnsAsync(new OrganizationMembership
-            {
-                IsLocked = true,
-                LockoutEnd = null
-            });
+        SetupMembership(new OrganizationMembership { IsLocked = true, LockoutEnd = null });
 
         //Act
         var result = await GetValidator().ValidateAsync(BuildContext(orgId: null, user: user));
@@ -196,8 +187,7 @@ public class OrganizationIdRequestValidatorTests
         var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
         _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
             .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId] });
-        _membershipServiceMock.Setup(s => s.GetByUserAndOrgAsync(UserId, OrgId))
-            .ReturnsAsync(new OrganizationMembership { IsLocked = true, LockoutEnd = null });
+        SetupMembership(new OrganizationMembership { IsLocked = true, LockoutEnd = null });
 
         //Act
         var result = await GetValidator().ValidateAsync(BuildContext(OrgId, user: user));
@@ -214,8 +204,7 @@ public class OrganizationIdRequestValidatorTests
         var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
         _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
             .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId] });
-        _membershipServiceMock.Setup(s => s.GetByUserAndOrgAsync(UserId, OrgId))
-            .ReturnsAsync(new OrganizationMembership { IsLocked = false });
+        SetupMembership(new OrganizationMembership { IsLocked = false });
 
         //Act
         var result = await GetValidator().ValidateAsync(BuildContext(OrgId, user: user));
@@ -241,6 +230,13 @@ public class OrganizationIdRequestValidatorTests
         Assert.Empty(result);
         Assert.Equal(OrgId, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
     }
+
+    private void SetupMembership(OrganizationMembership membership) =>
+        _membershipServiceMock
+            .Setup(s => s.SearchAsync(
+                It.Is<OrganizationMembershipSearchCriteria>(c => c.UserId == UserId && c.OrganizationId == OrgId),
+                It.IsAny<bool>()))
+            .ReturnsAsync(new OrganizationMembershipSearchResult { Results = [membership] });
 
     private OrganizationIdRequestValidator GetValidator() =>
         new(_memberServiceMock.Object, _membershipServiceMock.Object);

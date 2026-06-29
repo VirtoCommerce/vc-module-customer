@@ -29,7 +29,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         private readonly IMemberSearchService _memberSearchService;
         private readonly IInviteCustomerService _inviteCustomerService;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IOrganizationMembershipService _organizationMembershipService;
+        private readonly IOrganizationMembershipSearchService _organizationMembershipSearchService;
 
         private UserManager<ApplicationUser> UserManager => _signInManager.UserManager;
 
@@ -38,14 +38,14 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             IMemberSearchService memberSearchService,
             IInviteCustomerService inviteCustomerService,
             SignInManager<ApplicationUser> signInManager,
-            IOrganizationMembershipService organizationMembershipService)
+            IOrganizationMembershipSearchService organizationMembershipSearchService)
         {
             _authorizationService = authorizationService;
             _memberService = memberService;
             _memberSearchService = memberSearchService;
             _inviteCustomerService = inviteCustomerService;
             _signInManager = signInManager;
-            _organizationMembershipService = organizationMembershipService;
+            _organizationMembershipSearchService = organizationMembershipSearchService;
         }
 
         /// <summary>
@@ -879,13 +879,20 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
 
         private async Task<List<string>> ExcludeLockedOrganizationsAsync(string userId, List<string> organizationIds)
         {
-            var lockedOrgIds = await _organizationMembershipService.GetLockedOrganizationIdsAsync(userId);
-            if (lockedOrgIds.Count == 0)
+            var lockedResult = await _organizationMembershipSearchService.SearchAsync(new OrganizationMembershipSearchCriteria
+            {
+                UserId = userId,
+                OnlyLocked = true,
+                Take = int.MaxValue,
+            });
+            if (lockedResult.Results.Count == 0)
             {
                 return organizationIds;
             }
 
-            var lockedSet = new HashSet<string>(lockedOrgIds, StringComparer.OrdinalIgnoreCase);
+            var lockedSet = new HashSet<string>(
+                lockedResult.Results.Select(m => m.OrganizationId).Where(orgId => !string.IsNullOrEmpty(orgId)),
+                StringComparer.OrdinalIgnoreCase);
 
             return organizationIds.Where(orgId => !lockedSet.Contains(orgId)).ToList();
         }

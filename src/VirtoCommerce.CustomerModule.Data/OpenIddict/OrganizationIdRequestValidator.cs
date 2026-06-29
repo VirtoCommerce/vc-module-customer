@@ -15,7 +15,7 @@ namespace VirtoCommerce.CustomerModule.Data.OpenIddict;
 
 public class OrganizationIdRequestValidator(
     IMemberService memberService,
-    IOrganizationMembershipService organizationMembershipService) : ITokenRequestValidator
+    IOrganizationMembershipSearchService organizationMembershipSearchService) : ITokenRequestValidator
 {
     public virtual int Priority { get; set; } = 50;
 
@@ -55,7 +55,12 @@ public class OrganizationIdRequestValidator(
 
         if (context.User != null)
         {
-            var membership = await organizationMembershipService.GetByUserAndOrgAsync(context.User.Id, organizationId);
+            var membership = (await organizationMembershipSearchService.SearchAsync(new OrganizationMembershipSearchCriteria
+            {
+                UserId = context.User.Id,
+                OrganizationId = organizationId,
+                Take = 1,
+            })).Results.FirstOrDefault();
             if (membership != null && membership.IsCurrentlyLocked)
             {
                 return [ErrorDescriber.UserIsLockedInOrganization(organizationId)];

@@ -115,6 +115,7 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<AbstractValidator<Member>, MemberValidator>();
 
             serviceCollection.AddSingleton<IOrganizationMembershipService, OrganizationMembershipService>();
+            serviceCollection.AddSingleton<IOrganizationMembershipSearchService, OrganizationMembershipSearchService>();
 
             serviceCollection.AddSingleton<ITokenRequestValidator, OrganizationIdRequestValidator>();
             serviceCollection.AddSingleton<ITokenClaimProvider, OrganizationIdClaimProvider>();
