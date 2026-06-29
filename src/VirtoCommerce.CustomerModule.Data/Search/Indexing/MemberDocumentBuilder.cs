@@ -187,6 +187,19 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                 .ToHashSet();
 
             // Collect all membership records across all user accounts first to avoid redundant org fetches
+            var allMemberships = await CollectMembershipsAsync(userIds);
+
+            if (allMemberships.Count == 0)
+            {
+                return;
+            }
+
+            IndexMembershipRoles(document, allMemberships, existingRoleIds);
+            await IndexOrganizationRolesAsync(document, allMemberships, existingRoleIds);
+        }
+
+        private async Task<List<OrganizationMembership>> CollectMembershipsAsync(IList<string> userIds)
+        {
             var allMemberships = new List<OrganizationMembership>();
             foreach (var userId in userIds)
             {
@@ -198,13 +211,12 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                     allMemberships.AddRange(searchResult.Results);
                 }
             }
+            return allMemberships;
+        }
 
-            if (allMemberships.Count == 0)
-            {
-                return;
-            }
-
-            var membershipRoles = allMemberships
+        private static void IndexMembershipRoles(IndexDocument document, List<OrganizationMembership> memberships, HashSet<string> existingRoleIds)
+        {
+            var membershipRoles = memberships
                 .SelectMany(m => m.Roles ?? [])
                 .Where(r => existingRoleIds.Add(r.RoleId))
                 .ToList();
@@ -214,28 +226,33 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                 document.AddFilterableCollection("RoleId", membershipRoles.Select(r => r.RoleId).ToList());
                 document.AddFilterableCollection("Role", membershipRoles.Select(r => r.RoleName).ToList());
             }
+        }
 
-            // Index organization-level roles — single fetch for all unique orgs across all user accounts
-            var organizationIds = allMemberships
+        private async Task IndexOrganizationRolesAsync(IndexDocument document, List<OrganizationMembership> memberships, HashSet<string> existingRoleIds)
+        {
+            // Single fetch for all unique orgs across all user accounts
+            var organizationIds = memberships
                 .Select(m => m.OrganizationId)
                 .Where(id => !string.IsNullOrEmpty(id))
                 .Distinct()
                 .ToArray();
 
-            if (organizationIds.Length > 0)
+            if (organizationIds.Length == 0)
             {
-                var organizations = await _memberService.GetByIdsAsync(organizationIds, responseGroup: MemberResponseGroup.WithRoles.ToString(), memberTypes: [nameof(Organization)]);
-                var orgRoles = organizations
-                    .OfType<Organization>()
-                    .SelectMany(o => o.Roles ?? [])
-                    .Where(r => existingRoleIds.Add(r.RoleId))
-                    .ToList();
+                return;
+            }
 
-                if (orgRoles.Count > 0)
-                {
-                    document.AddFilterableCollection("RoleId", orgRoles.Select(r => r.RoleId).ToList());
-                    document.AddFilterableCollection("Role", orgRoles.Select(r => r.RoleName).ToList());
-                }
+            var organizations = await _memberService.GetByIdsAsync(organizationIds, responseGroup: MemberResponseGroup.WithRoles.ToString(), memberTypes: [nameof(Organization)]);
+            var orgRoles = organizations
+                .OfType<Organization>()
+                .SelectMany(o => o.Roles ?? [])
+                .Where(r => existingRoleIds.Add(r.RoleId))
+                .ToList();
+
+            if (orgRoles.Count > 0)
+            {
+                document.AddFilterableCollection("RoleId", orgRoles.Select(r => r.RoleId).ToList());
+                document.AddFilterableCollection("Role", orgRoles.Select(r => r.RoleName).ToList());
             }
         }
 

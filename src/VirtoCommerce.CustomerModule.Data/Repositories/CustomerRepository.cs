@@ -23,7 +23,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
         public IQueryable<OrganizationMembershipRoleEntity> OrganizationMembershipRoles => DbContext.Set<OrganizationMembershipRoleEntity>();
         public IQueryable<OrganizationRoleEntity> OrganizationRoles => DbContext.Set<OrganizationRoleEntity>();
 
-        public override async Task<T[]> InnerGetMembersByIds<T>(string[] ids, string responseGroup)
+        public override async Task<T[]> InnerGetMembersByIds<T>(string[] ids, string responseGroup = null)
         {
             var result = await base.InnerGetMembersByIds<T>(ids, responseGroup);
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -72,8 +73,13 @@ public class OrganizationIdClaimProvider(
             .Select(c => c.Value)
             .ToHashSet();
 
+        await AddRolePermissionsAsync(identity, allRoleIds, existingPermissions);
+    }
+
+    private async Task AddRolePermissionsAsync(ClaimsIdentity identity, IList<string> roleIds, HashSet<string> existingPermissions)
+    {
         using var roleManager = roleManagerFactory();
-        foreach (var roleId in allRoleIds)
+        foreach (var roleId in roleIds)
         {
             var role = await roleManager.FindByIdAsync(roleId);
             if (role == null)
@@ -84,12 +90,7 @@ public class OrganizationIdClaimProvider(
             var roleClaims = await roleManager.GetClaimsAsync(role);
             foreach (var claim in roleClaims)
             {
-                if (claim.Type != PlatformConstants.Security.Claims.PermissionClaimType)
-                {
-                    continue;
-                }
-
-                if (!existingPermissions.Add(claim.Value))
+                if (claim.Type != PlatformConstants.Security.Claims.PermissionClaimType || !existingPermissions.Add(claim.Value))
                 {
                     continue;
                 }

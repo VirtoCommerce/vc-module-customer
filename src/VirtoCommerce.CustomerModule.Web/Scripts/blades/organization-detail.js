@@ -27,16 +27,23 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
             };
 
             blade.isRoleAvailable = function (role) {
-                var selected = (blade.currentEntity.roles || []).map(function (r) { return r.roleId || r.id; });
+                var selected = (blade.currentEntity.roles || []).map(function (r) {
+                    return r.roleId || r.id;
+                });
+
                 return selected.indexOf(role.id) === -1;
             };
 
             // Normalize roles added from the platform roles picker ({ id, name }) into OrganizationRole shape ({ roleId, roleName }).
             // Replaces the item reference rather than mutating in-place to avoid corrupting the shared object in availableRoles.
             $scope.$watchCollection('blade.currentEntity.roles', function (newRoles) {
-                if (!newRoles) return;
+                if (!newRoles) {
+                    return;
+                }
+
                 for (var i = 0; i < newRoles.length; i++) {
                     var r = newRoles[i];
+
                     if (!r.roleId && r.id) {
                         newRoles[i] = { roleId: r.id, roleName: r.name };
                     }
@@ -52,6 +59,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                     controller: 'platformWebApp.settingDictionaryController',
                     template: '$(Platform)/Scripts/app/settings/blades/setting-dictionary.tpl.html'
                 };
+
                 bladeNavigationService.showBlade(newBlade, blade);
             };
         }]);
