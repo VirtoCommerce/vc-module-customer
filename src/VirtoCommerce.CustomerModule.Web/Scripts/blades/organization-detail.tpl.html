@@ -31,6 +31,23 @@
         </div>
     </div>
 </script>
+<script type="text/ng-template" id="orgRoles.html">
+    <div class="form-group">
+        <label class="form-label">{{'customer.blades.organization-detail.labels.roles' | translate}}</label>
+        <div class="form-input">
+            <ui-select multiple ng-model="blade.currentEntity.roles">
+                <ui-select-match placeholder="{{'customer.blades.organization-detail.placeholders.roles' | translate}}">
+                    {{ $item.roleName || $item.name }}
+                </ui-select-match>
+                <ui-select-choices repeat="r in blade.availableRoles | filter: blade.isRoleAvailable track by r.id"
+                                   refresh="blade.refreshRoles($select.search)"
+                                   refresh-delay="200">
+                    <span ng-bind-html="r.name | highlight: $select.search"></span>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+    </div>
+</script>
 <script type="text/ng-template" id="status.html">
     <div class="form-group">
         <label class="form-label">

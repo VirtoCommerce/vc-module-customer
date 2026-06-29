@@ -27,19 +27,41 @@ public class OrganizationIdClaimProvider(
 
         if (!organizationId.IsNullOrEmpty() && context.User != null)
         {
-            await AddOrgScopedPermissionsAsync(principal, context.User.Id, organizationId);
+            await AddOrgScopedPermissionsAsync(principal, context.User.Id, context.User.MemberId, organizationId);
         }
     }
 
-    private async Task AddOrgScopedPermissionsAsync(ClaimsPrincipal principal, string userId, string organizationId)
+    private async Task AddOrgScopedPermissionsAsync(ClaimsPrincipal principal, string userId, string memberId, string organizationId)
     {
+        // If user has an explicit membership record and is locked — deny all org-scoped permissions
         var membership = await organizationMembershipService.GetByUserAndOrgAsync(userId, organizationId);
-        if (membership == null || membership.IsCurrentlyLocked || membership.Roles.Count == 0)
+        if (membership?.IsCurrentlyLocked == true)
+        {
+            return;
+        }
+
+        // Without an explicit membership row, verify via the contact's Organizations list to prevent
+        // privilege escalation when an arbitrary organizationId is passed in the token request
+        if (membership == null && !await IsContactMemberOfOrgAsync(memberId, organizationId))
         {
             return;
         }
 
         if (principal.Identity is not ClaimsIdentity identity)
+        {
+            return;
+        }
+
+        // Organization-level roles apply to all org members regardless of explicit OrganizationMembership record
+        var organization = await memberService.GetByIdAsync(organizationId, memberType: nameof(Organization)) as Organization;
+        var orgRoleIds = organization?.Roles?.Select(r => r.RoleId) ?? [];
+
+        // Membership-level roles are user-specific within the org (only when membership record exists)
+        var membershipRoleIds = membership?.Roles?.Select(r => r.RoleId) ?? [];
+
+        var allRoleIds = orgRoleIds.Concat(membershipRoleIds).Distinct().ToList();
+
+        if (allRoleIds.Count == 0)
         {
             return;
         }
@@ -51,9 +73,9 @@ public class OrganizationIdClaimProvider(
             .ToHashSet();
 
         using var roleManager = roleManagerFactory();
-        foreach (var membershipRole in membership.Roles)
+        foreach (var roleId in allRoleIds)
         {
-            var role = await roleManager.FindByIdAsync(membershipRole.RoleId);
+            var role = await roleManager.FindByIdAsync(roleId);
             if (role == null)
             {
                 continue;
@@ -77,6 +99,18 @@ public class OrganizationIdClaimProvider(
                         .SetDestinations(OpenIddictConstants.Destinations.AccessToken));
             }
         }
+    }
+
+    private async Task<bool> IsContactMemberOfOrgAsync(string memberId, string organizationId)
+    {
+        if (string.IsNullOrEmpty(memberId))
+        {
+            return false;
+        }
+
+        var contact = await memberService.GetByIdAsync(memberId) as IHasOrganizations;
+
+        return contact?.Organizations?.ContainsIgnoreCase(organizationId) == true;
     }
 
     private async Task<string> GetOrganizationId(TokenRequestContext context)

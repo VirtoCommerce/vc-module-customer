@@ -141,6 +141,23 @@ public class OrganizationMembershipService
         });
     }
 
+    public async Task<IReadOnlyCollection<string>> GetUserIdsByRoleInOrgAsync(string organizationId, IList<string> roleIds)
+    {
+        if (string.IsNullOrEmpty(organizationId) || roleIds.IsNullOrEmpty())
+        {
+            return [];
+        }
+
+        using var repository = _repositoryFactory();
+
+        return await repository.OrganizationMemberships
+            .Where(m => m.OrganizationId == organizationId)
+            .Where(m => m.Roles.Any(r => roleIds.Contains(r.RoleId)))
+            .Select(m => m.UserId)
+            .Distinct()
+            .ToListAsync();
+    }
+
     public async Task<OrganizationMembership> GetByUserAndOrgAsync(string userId, string organizationId)
     {
         if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(organizationId))

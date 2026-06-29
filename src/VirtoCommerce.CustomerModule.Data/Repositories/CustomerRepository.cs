@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.Platform.Core.Common;
 
@@ -20,6 +21,24 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
         public IQueryable<CustomerPreferenceEntity> CustomerPreferences => DbContext.Set<CustomerPreferenceEntity>();
         public IQueryable<OrganizationMembershipEntity> OrganizationMemberships => DbContext.Set<OrganizationMembershipEntity>();
         public IQueryable<OrganizationMembershipRoleEntity> OrganizationMembershipRoles => DbContext.Set<OrganizationMembershipRoleEntity>();
+        public IQueryable<OrganizationRoleEntity> OrganizationRoles => DbContext.Set<OrganizationRoleEntity>();
+
+        public override async Task<T[]> InnerGetMembersByIds<T>(string[] ids, string responseGroup)
+        {
+            var result = await base.InnerGetMembersByIds<T>(ids, responseGroup);
+
+            var memberResponseGroup = EnumUtility.SafeParseFlags(responseGroup, MemberResponseGroup.Full);
+            if (memberResponseGroup.HasFlag(MemberResponseGroup.WithRoles))
+            {
+                var orgIds = result.OfType<OrganizationEntity>().Select(x => x.Id).ToArray();
+                if (orgIds.Length > 0)
+                {
+                    await OrganizationRoles.Where(x => orgIds.Contains(x.OrganizationId)).LoadAsync();
+                }
+            }
+
+            return result;
+        }
 
         public virtual async Task<IList<CustomerPreferenceEntity>> GetCustomerPreferencesByIdsAsync(IList<string> ids, string responseGroup)
         {

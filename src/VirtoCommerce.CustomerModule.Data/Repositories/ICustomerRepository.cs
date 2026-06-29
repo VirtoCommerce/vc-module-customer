@@ -14,6 +14,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
         IQueryable<CustomerPreferenceEntity> CustomerPreferences { get; }
         IQueryable<OrganizationMembershipEntity> OrganizationMemberships { get; }
         IQueryable<OrganizationMembershipRoleEntity> OrganizationMembershipRoles { get; }
+        IQueryable<OrganizationRoleEntity> OrganizationRoles { get; }
 
         Task<IList<CustomerPreferenceEntity>> GetCustomerPreferencesByIdsAsync(IList<string> ids, string responseGroup);
     }

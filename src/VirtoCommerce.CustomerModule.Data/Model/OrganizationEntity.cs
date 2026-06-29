@@ -16,6 +16,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
         [StringLength(128)]
         public string OwnerId { get; set; }
 
+        public virtual ObservableCollection<OrganizationRoleEntity> Roles { get; set; }
+            = new NullCollection<OrganizationRoleEntity>();
+
         public override Member ToModel(Member member)
         {
             // Call base converter first
@@ -33,6 +36,9 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                         .AncestorId;
                 }
 
+                organization.Roles = Roles
+                    .Select(x => x.ToModel(AbstractTypeFactory<OrganizationRole>.TryCreateInstance()))
+                    .ToList();
             }
 
             return member;
@@ -61,6 +67,17 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
                     MemberRelations.Add(memberRelation);
                 }
+
+                if (organization.Roles != null)
+                {
+                    Roles = new ObservableCollection<OrganizationRoleEntity>(
+                        organization.Roles.Select(r =>
+                        {
+                            var entity = new OrganizationRoleEntity().FromModel(r, pkMap);
+                            entity.OrganizationId = Id;
+                            return entity;
+                        }));
+                }
             }
 
             return this;
@@ -76,6 +93,12 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                 organization.Description = Description;
                 organization.OwnerId = OwnerId;
                 organization.BusinessCategory = BusinessCategory;
+
+                if (!Roles.IsNullCollection())
+                {
+                    organization.Roles ??= new NullCollection<OrganizationRoleEntity>();
+                    Roles.Patch(organization.Roles, (source, dest) => source.Patch(dest));
+                }
             }
         }
     }

@@ -218,6 +218,120 @@ public class OrganizationMembershipServiceTests
         _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
     }
 
+    [Fact]
+    public async Task GetUserIdsByRoleInOrgAsync_EmptyOrgId_ReturnsEmpty()
+    {
+        var result = await GetService().GetUserIdsByRoleInOrgAsync(string.Empty, ["role1"]);
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetUserIdsByRoleInOrgAsync_EmptyRoleIds_ReturnsEmpty()
+    {
+        var result = await GetService().GetUserIdsByRoleInOrgAsync("org1", []);
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetUserIdsByRoleInOrgAsync_ReturnsUsersWithMatchingRole()
+    {
+        //Arrange
+        var entities = new[]
+        {
+            BuildEntityWithRoles("id1", userId: "user1", orgId: "org1", roleId: "admin"),
+            BuildEntityWithRoles("id2", userId: "user2", orgId: "org1", roleId: "editor"),
+            BuildEntityWithRoles("id3", userId: "user3", orgId: "org1", roleId: "viewer"),
+        };
+
+        _repositoryMock.Setup(r => r.OrganizationMemberships)
+            .Returns(entities.AsTestAsyncQueryable());
+
+        //Act
+        var result = await GetService().GetUserIdsByRoleInOrgAsync("org1", ["admin", "editor"]);
+
+        //Assert
+        Assert.Equal(2, result.Count);
+        Assert.Contains("user1", result);
+        Assert.Contains("user2", result);
+    }
+
+    [Fact]
+    public async Task GetUserIdsByRoleInOrgAsync_ExcludesUsersFromDifferentOrg()
+    {
+        //Arrange
+        var entities = new[]
+        {
+            BuildEntityWithRoles("id1", userId: "user1", orgId: "org1", roleId: "admin"),
+            BuildEntityWithRoles("id2", userId: "user2", orgId: "org2", roleId: "admin"),
+        };
+
+        _repositoryMock.Setup(r => r.OrganizationMemberships)
+            .Returns(entities.AsTestAsyncQueryable());
+
+        //Act
+        var result = await GetService().GetUserIdsByRoleInOrgAsync("org1", ["admin"]);
+
+        //Assert
+        Assert.Single(result);
+        Assert.Contains("user1", result);
+    }
+
+    [Fact]
+    public async Task GetUserIdsByRoleInOrgAsync_DeduplicatesUserIds()
+    {
+        // A user with two matching roles should appear only once.
+        //Arrange
+        var entity = new OrganizationMembershipEntity
+        {
+            Id = "id1",
+            UserId = "user1",
+            OrganizationId = "org1",
+            IsLocked = false,
+            Roles =
+            [
+                new() { Id = "mr1", RoleId = "admin", RoleName = "Admin" },
+                new() { Id = "mr2", RoleId = "editor", RoleName = "Editor" },
+            ]
+        };
+
+        _repositoryMock.Setup(r => r.OrganizationMemberships)
+            .Returns(new[] { entity }.AsTestAsyncQueryable());
+
+        //Act
+        var result = await GetService().GetUserIdsByRoleInOrgAsync("org1", ["admin", "editor"]);
+
+        //Assert
+        Assert.Single(result);
+        Assert.Equal("user1", result.First());
+    }
+
+    [Fact]
+    public async Task GetUserIdsByRoleInOrgAsync_ReturnsReadOnlyCollection()
+    {
+        var result = await GetService().GetUserIdsByRoleInOrgAsync(string.Empty, ["role1"]);
+
+        Assert.IsType<IReadOnlyCollection<string>>(result, exactMatch: false);
+    }
+
+    private static OrganizationMembershipEntity BuildEntityWithRoles(
+        string id,
+        string userId = "user1",
+        string orgId = "org1",
+        string roleId = "role1") =>
+        new()
+        {
+            Id = id,
+            UserId = userId,
+            OrganizationId = orgId,
+            IsLocked = false,
+            Roles =
+            [
+                new() { Id = $"{id}-mr", RoleId = roleId, RoleName = roleId }
+            ]
+        };
+
     private static OrganizationMembershipEntity BuildEntity(
         string id,
         string userId = "user1",

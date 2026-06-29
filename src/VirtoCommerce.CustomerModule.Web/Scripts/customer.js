@@ -222,6 +222,10 @@ angular.module(moduleName, [])
                         placeholder: "customer.blades.organization-detail.placeholders.description",
                         spanAllColumns: true,
                         valueType: "LongText"
+                    },
+                    {
+                        spanAllColumns: true,
+                        templateUrl: "orgRoles.html"
                     }]
                 },
                 knownChildrenTypes: ['Organization', 'Employee', 'Contact']

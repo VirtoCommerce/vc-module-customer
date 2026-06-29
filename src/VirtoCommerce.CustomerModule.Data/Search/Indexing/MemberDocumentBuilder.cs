@@ -186,23 +186,56 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                 .Select(r => r.Id)
                 .ToHashSet();
 
+            // Collect all membership records across all user accounts first to avoid redundant org fetches
+            var allMemberships = new List<OrganizationMembership>();
             foreach (var userId in userIds)
             {
                 var searchResult = await _organizationMembershipService.SearchAsync(
                     new OrganizationMembershipSearchCriteria { UserId = userId, Take = int.MaxValue });
 
-                var newRoles = searchResult?.Results?
-                    .SelectMany(m => m.Roles ?? [])
+                if (searchResult?.Results is { Count: > 0 })
+                {
+                    allMemberships.AddRange(searchResult.Results);
+                }
+            }
+
+            if (allMemberships.Count == 0)
+            {
+                return;
+            }
+
+            var membershipRoles = allMemberships
+                .SelectMany(m => m.Roles ?? [])
+                .Where(r => existingRoleIds.Add(r.RoleId))
+                .ToList();
+
+            if (membershipRoles.Count > 0)
+            {
+                document.AddFilterableCollection("RoleId", membershipRoles.Select(r => r.RoleId).ToList());
+                document.AddFilterableCollection("Role", membershipRoles.Select(r => r.RoleName).ToList());
+            }
+
+            // Index organization-level roles — single fetch for all unique orgs across all user accounts
+            var organizationIds = allMemberships
+                .Select(m => m.OrganizationId)
+                .Where(id => !string.IsNullOrEmpty(id))
+                .Distinct()
+                .ToArray();
+
+            if (organizationIds.Length > 0)
+            {
+                var organizations = await _memberService.GetByIdsAsync(organizationIds, responseGroup: MemberResponseGroup.WithRoles.ToString(), memberTypes: [nameof(Organization)]);
+                var orgRoles = organizations
+                    .OfType<Organization>()
+                    .SelectMany(o => o.Roles ?? [])
                     .Where(r => existingRoleIds.Add(r.RoleId))
                     .ToList();
 
-                if (newRoles is not { Count: > 0 })
+                if (orgRoles.Count > 0)
                 {
-                    continue;
+                    document.AddFilterableCollection("RoleId", orgRoles.Select(r => r.RoleId).ToList());
+                    document.AddFilterableCollection("Role", orgRoles.Select(r => r.RoleName).ToList());
                 }
-
-                document.AddFilterableCollection("RoleId", newRoles.Select(r => r.RoleId).ToList());
-                document.AddFilterableCollection("Role", newRoles.Select(r => r.RoleName).ToList());
             }
         }
 

@@ -184,6 +184,21 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
                 builder.HasIndex(x => new { x.UserId, x.Name }).IsUnique();
             });
 
+            #region OrganizationRole
+            modelBuilder.Entity<OrganizationRoleEntity>(builder =>
+            {
+                builder.ToEntityTable("CustomerOrganizationRole");
+                builder.Property(x => x.Id).HasMaxLength(IdLength).ValueGeneratedOnAdd();
+                builder.Property(x => x.OrganizationId).HasMaxLength(IdLength).IsRequired();
+                builder.Property(x => x.RoleId).HasMaxLength(IdLength);
+                builder.Property(x => x.RoleName).HasMaxLength(Length256);
+                builder.HasOne(x => x.Organization)
+                    .WithMany(x => x.Roles)
+                    .HasForeignKey(x => x.OrganizationId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+            #endregion
+
             #region OrganizationMembership
             modelBuilder.Entity<OrganizationMembershipEntity>(builder =>
             {
