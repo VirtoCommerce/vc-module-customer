@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using VirtoCommerce.CustomerModule.Core.Events;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
-using VirtoCommerce.CustomerModule.Data.Caching;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.Repositories;
 using VirtoCommerce.Platform.Core.Caching;
@@ -26,18 +24,19 @@ public class OrganizationMembershipService
     IOrganizationMembershipService
 {
     private readonly Func<ICustomerRepository> _repositoryFactory;
-    private readonly IPlatformMemoryCache _platformMemoryCache;
+    private readonly Func<IOrganizationMembershipSearchService> _searchServiceFactory;
     private readonly IMemberService _memberService;
 
     public OrganizationMembershipService(
         Func<ICustomerRepository> repositoryFactory,
         IPlatformMemoryCache platformMemoryCache,
         IEventPublisher eventPublisher,
+        Func<IOrganizationMembershipSearchService> searchServiceFactory,
         IMemberService memberService)
         : base(repositoryFactory, platformMemoryCache, eventPublisher)
     {
         _repositoryFactory = repositoryFactory;
-        _platformMemoryCache = platformMemoryCache;
+        _searchServiceFactory = searchServiceFactory;
         _memberService = memberService;
     }
 
@@ -76,72 +75,45 @@ public class OrganizationMembershipService
         return models;
     }
 
-    protected override void ClearCache(IList<OrganizationMembership> models)
-    {
-        base.ClearCache(models);
-
-        foreach (var model in models)
-        {
-            if (!string.IsNullOrEmpty(model.Id))
-            {
-                OrganizationMembershipCacheRegion.ExpireById(model.Id);
-            }
-
-            if (!string.IsNullOrEmpty(model.UserId))
-            {
-                OrganizationMembershipCacheRegion.ExpireByUserId(model.UserId);
-            }
-        }
-    }
-
-    protected override void ClearSearchCache(IList<OrganizationMembership> models)
-    {
-        foreach (var model in models.Where(x => !string.IsNullOrEmpty(x.UserId)))
-        {
-            OrganizationMembershipCacheRegion.ExpireByUserId(model.UserId);
-        }
-    }
-
     public override Task DeleteAsync(IList<string> ids, bool softDelete = false)
     {
         return ids.IsNullOrEmpty() ? Task.CompletedTask : base.DeleteAsync(ids, softDelete);
     }
 
-    public async Task<OrganizationMembershipSearchResult> SearchAsync(
-        OrganizationMembershipSearchCriteria criteria, bool clone = true)
+    public Task<OrganizationMembership> LockAsync(string id, DateTime? lockoutEnd = null)
+        => SetLockStateAsync(id, isLocked: true, lockoutEnd: lockoutEnd);
+
+    public Task<OrganizationMembership> UnlockAsync(string id)
+        => SetLockStateAsync(id, isLocked: false, lockoutEnd: null);
+
+    public async Task<IReadOnlyCollection<OrganizationRole>> GetRolesByUserAndOrgAsync(string userId, string organizationId)
     {
-        if (string.IsNullOrEmpty(criteria?.UserId))
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(organizationId))
         {
-            return new OrganizationMembershipSearchResult();
+            return [];
         }
 
-        var cacheKey = CacheKey.With(GetType(), nameof(SearchAsync),
-            criteria.UserId, criteria.Skip.ToString(), criteria.Take.ToString());
-
-        return await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async (cacheEntry) =>
+        var orgTask = _memberService.GetByIdAsync(organizationId, memberType: nameof(Organization));
+        var membershipTask = _searchServiceFactory().SearchAsync(new OrganizationMembershipSearchCriteria
         {
-            cacheEntry.AddExpirationToken(
-                OrganizationMembershipCacheRegion.CreateChangeTokenForUser(criteria.UserId));
-
-            using var repository = _repositoryFactory();
-            var query = repository.OrganizationMemberships.Where(x => x.UserId == criteria.UserId);
-
-            var result = new OrganizationMembershipSearchResult
-            {
-                TotalCount = await query.CountAsync(),
-                Results = await query
-                    .Include(x => x.Roles)
-                    .OrderBy(x => x.CreatedDate)
-                    .Skip(criteria.Skip)
-                    .Take(criteria.Take)
-                    .Select(e => e.ToModel(new OrganizationMembership()))
-                    .ToListAsync()
-            };
-
-            await ResolveOrganizationNamesAsync(repository, result.Results);
-
-            return result;
+            UserId = userId,
+            OrganizationId = organizationId,
+            Take = 1,
         });
+
+        await Task.WhenAll(orgTask, membershipTask);
+
+        var organization = await orgTask as Organization;
+        var membership = (await membershipTask).Results.FirstOrDefault();
+
+        IEnumerable<OrganizationRole> orgRoles = organization?.Roles ?? [];
+        var membershipRoles = membership?.Roles?
+            .Select(r => new OrganizationRole { RoleId = r.RoleId, RoleName = r.RoleName }) ?? [];
+
+        return orgRoles
+            .Concat(membershipRoles)
+            .DistinctBy(r => r.RoleId)
+            .ToList();
     }
 
     public async Task<IReadOnlyCollection<string>> GetUserIdsByRoleInOrgAsync(string organizationId, IList<string> roleIds)
@@ -161,6 +133,13 @@ public class OrganizationMembershipService
             .ToListAsync();
     }
 
+    [Obsolete("Use IOrganizationMembershipSearchService.SearchAsync instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
+    public Task<OrganizationMembershipSearchResult> SearchAsync(OrganizationMembershipSearchCriteria criteria, bool clone = true)
+    {
+        return _searchServiceFactory().SearchAsync(criteria, clone);
+    }
+
+    [Obsolete("Use IOrganizationMembershipSearchService.SearchAsync with UserId and OrganizationId filters instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
     public async Task<OrganizationMembership> GetByUserAndOrgAsync(string userId, string organizationId)
     {
         if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(organizationId))
@@ -168,53 +147,17 @@ public class OrganizationMembershipService
             return null;
         }
 
-        var cacheKey = CacheKey.With(GetType(), nameof(GetByUserAndOrgAsync), userId, organizationId);
-
-        return await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async (cacheEntry) =>
+        var result = await _searchServiceFactory().SearchAsync(new OrganizationMembershipSearchCriteria
         {
-            cacheEntry.AddExpirationToken(
-                OrganizationMembershipCacheRegion.CreateChangeTokenForUser(userId));
-
-            using var repository = _repositoryFactory();
-            var entity = await repository.OrganizationMemberships
-                .Include(x => x.Roles)
-                .FirstOrDefaultAsync(x => x.UserId == userId && x.OrganizationId == organizationId);
-
-            var model = entity?.ToModel(new OrganizationMembership());
-            if (model != null)
-            {
-                await ResolveOrganizationNamesAsync(repository, [model]);
-            }
-
-            return model;
+            UserId = userId,
+            OrganizationId = organizationId,
+            Take = 1,
         });
+
+        return result.Results.FirstOrDefault();
     }
 
-    public async Task<IReadOnlyCollection<OrganizationRole>> GetRolesByUserAndOrgAsync(string userId, string organizationId)
-    {
-        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(organizationId))
-        {
-            return [];
-        }
-
-        var orgTask = _memberService.GetByIdAsync(organizationId, memberType: nameof(Organization));
-        var membershipTask = GetByUserAndOrgAsync(userId, organizationId);
-
-        await Task.WhenAll(orgTask, membershipTask);
-
-        var organization = await orgTask as Organization;
-        var membership = await membershipTask;
-
-        IEnumerable<OrganizationRole> orgRoles = organization?.Roles ?? [];
-        var membershipRoles = membership?.Roles?
-            .Select(r => new OrganizationRole { RoleId = r.RoleId, RoleName = r.RoleName }) ?? [];
-
-        return orgRoles
-            .Concat(membershipRoles)
-            .DistinctBy(r => r.RoleId)
-            .ToList();
-    }
-
+    [Obsolete("Use IOrganizationMembershipSearchService.SearchAsync with the OnlyLocked filter instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
     public async Task<IReadOnlyCollection<string>> GetLockedOrganizationIdsAsync(string userId)
     {
         if (string.IsNullOrEmpty(userId))
@@ -222,25 +165,20 @@ public class OrganizationMembershipService
             return [];
         }
 
-        var cacheKey = CacheKey.With(GetType(), nameof(GetLockedOrganizationIdsAsync), userId);
-
-        return await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async (cacheEntry) =>
+        var result = await _searchServiceFactory().SearchAsync(new OrganizationMembershipSearchCriteria
         {
-            cacheEntry.AddExpirationToken(
-                OrganizationMembershipCacheRegion.CreateChangeTokenForUser(userId));
-
-            var now = DateTime.UtcNow;
-            using var repository = _repositoryFactory();
-
-            return (IReadOnlyCollection<string>)await repository.OrganizationMemberships
-                .Where(x => x.UserId == userId &&
-                            x.IsLocked &&
-                            (x.LockoutEnd == null || x.LockoutEnd > now))
-                .Select(x => x.OrganizationId)
-                .ToListAsync();
+            UserId = userId,
+            OnlyLocked = true,
+            Take = int.MaxValue,
         });
+
+        return result.Results
+            .Select(x => x.OrganizationId)
+            .Where(id => !string.IsNullOrEmpty(id))
+            .ToList();
     }
 
+    [Obsolete("Use IOrganizationMembershipSearchService.SearchAsync with Take = 0 and read TotalCount instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
     public async Task<int> CountByUserIdAsync(string userId)
     {
         if (string.IsNullOrEmpty(userId))
@@ -248,24 +186,25 @@ public class OrganizationMembershipService
             return 0;
         }
 
-        var cacheKey = CacheKey.With(GetType(), nameof(CountByUserIdAsync), userId);
-
-        return await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async (cacheEntry) =>
+        var result = await _searchServiceFactory().SearchAsync(new OrganizationMembershipSearchCriteria
         {
-            cacheEntry.AddExpirationToken(
-                OrganizationMembershipCacheRegion.CreateChangeTokenForUser(userId));
-
-            using var repository = _repositoryFactory();
-
-            return await repository.OrganizationMemberships.CountAsync(x => x.UserId == userId);
+            UserId = userId,
+            Take = 0,
         });
+
+        return result.TotalCount;
     }
 
-    public Task<OrganizationMembership> LockAsync(string id, DateTime? lockoutEnd = null)
-        => SetLockStateAsync(id, isLocked: true, lockoutEnd: lockoutEnd);
-
-    public Task<OrganizationMembership> UnlockAsync(string id)
-        => SetLockStateAsync(id, isLocked: false, lockoutEnd: null);
+    [Obsolete("Use IOrganizationMembershipSearchService.GetCountsByUserAsync instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
+    public Task<IDictionary<string, int>> GetOrganizationCountsByUserAsync(string[] roleIds, string[] organizationIds = null, string[] userIds = null)
+    {
+        return _searchServiceFactory().GetCountsByUserAsync(new OrganizationMembershipSearchCriteria
+        {
+            RoleIds = roleIds,
+            OrganizationIds = organizationIds,
+            UserIds = userIds,
+        });
+    }
 
     private async Task<OrganizationMembership> SetLockStateAsync(string id, bool isLocked, DateTime? lockoutEnd)
     {

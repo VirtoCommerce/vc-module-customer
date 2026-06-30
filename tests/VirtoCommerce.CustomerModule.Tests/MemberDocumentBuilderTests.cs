@@ -15,7 +15,7 @@ namespace VirtoCommerce.CustomerModule.Tests;
 public class MemberDocumentBuilderTests
 {
     private readonly Mock<IMemberService> _memberServiceMock = new();
-    private readonly Mock<IOrganizationMembershipService> _membershipServiceMock = new();
+    private readonly Mock<IOrganizationMembershipSearchService> _membershipServiceMock = new();
 
     [Fact]
     public async Task IndexOrganizationMembershipRolesAsync_NoSecurityAccounts_SkipsAllServiceCalls()
@@ -306,7 +306,7 @@ public class MemberDocumentBuilderTests
 
     private sealed class TestableMemberDocumentBuilder(
         IMemberService memberService,
-        IOrganizationMembershipService organizationMembershipService)
+        IOrganizationMembershipSearchService organizationMembershipService)
         : MemberDocumentBuilder(memberService, new Mock<IDynamicPropertySearchService>().Object, organizationMembershipService)
     {
         public Task IndexRolesAsync(IndexDocument document, Contact contact) =>

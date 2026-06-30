@@ -19,6 +19,7 @@ namespace VirtoCommerce.CustomerModule.Data.OpenIddict;
 public class OrganizationIdClaimProvider(
     IMemberService memberService,
     IOrganizationMembershipService organizationMembershipService,
+    IOrganizationMembershipSearchService organizationMembershipSearchService,
     Func<RoleManager<Role>> roleManagerFactory) : ITokenClaimProvider
 {
     public virtual async Task SetClaimsAsync(ClaimsPrincipal principal, TokenRequestContext context)
@@ -34,8 +35,13 @@ public class OrganizationIdClaimProvider(
 
     private async Task AddOrgScopedPermissionsAsync(ClaimsPrincipal principal, string userId, string memberId, string organizationId)
     {
-        // If user has an explicit membership record and is locked — deny all org-scoped permissions
-        var membership = await organizationMembershipService.GetByUserAndOrgAsync(userId, organizationId);
+        var membership = (await organizationMembershipSearchService.SearchAsync(new OrganizationMembershipSearchCriteria
+        {
+            UserId = userId,
+            OrganizationId = organizationId,
+            Take = 1,
+        })).Results.FirstOrDefault();
+
         if (membership?.IsCurrentlyLocked == true)
         {
             return;
