@@ -36,11 +36,12 @@ public class IndexOrganizationMembersChangedEventHandlerTests
         //Arrange
         var org = new Organization { Id = "org-1" };
         _memberSearchServiceMock
-            .Setup(s => s.SearchMembersAsync(It.Is<MembersSearchCriteria>(c => c.MemberId == "org-1")))
-            .ReturnsAsync(new MemberSearchResult
-            {
-                Results = [new Contact { Id = "contact-1" }, new Contact { Id = "contact-2" }]
-            });
+            .Setup(s => s.SearchAllAsync(It.Is<MembersSearchCriteria>(c => c.MemberId == "org-1")))
+            .ReturnsAsync(
+                [
+                    new Contact { Id = "contact-1" },
+                    new Contact { Id = "contact-2" }
+                ]);
 
         var message = BuildEvent(org, EntryState.Modified);
 
@@ -109,8 +110,8 @@ public class IndexOrganizationMembersChangedEventHandlerTests
         //Arrange
         var org = new Organization { Id = "org-1" };
         _memberSearchServiceMock
-            .Setup(s => s.SearchMembersAsync(It.IsAny<MembersSearchCriteria>()))
-            .ReturnsAsync(new MemberSearchResult { Results = [] });
+            .Setup(s => s.SearchAllAsync(It.IsAny<MembersSearchCriteria>()))
+            .ReturnsAsync([]);
 
         var message = BuildEvent(org, EntryState.Modified);
 
@@ -133,11 +134,11 @@ public class IndexOrganizationMembersChangedEventHandlerTests
         //Arrange
         var sharedContact = new Contact { Id = "contact-shared" };
         _memberSearchServiceMock
-            .Setup(s => s.SearchMembersAsync(It.Is<MembersSearchCriteria>(c => c.MemberId == "org-1")))
-            .ReturnsAsync(new MemberSearchResult { Results = [sharedContact] });
+            .Setup(s => s.SearchAllAsync(It.Is<MembersSearchCriteria>(c => c.MemberId == "org-1")))
+            .ReturnsAsync([sharedContact]);
         _memberSearchServiceMock
-            .Setup(s => s.SearchMembersAsync(It.Is<MembersSearchCriteria>(c => c.MemberId == "org-2")))
-            .ReturnsAsync(new MemberSearchResult { Results = [sharedContact] });
+            .Setup(s => s.SearchAllAsync(It.Is<MembersSearchCriteria>(c => c.MemberId == "org-2")))
+            .ReturnsAsync([sharedContact]);
 
         var message = new MemberChangedEvent(
             [

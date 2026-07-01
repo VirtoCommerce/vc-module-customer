@@ -74,24 +74,15 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
             foreach (var orgId in organizationIds)
             {
-                const int pageSize = 50;
-                var criteria = new MembersSearchCriteria
-                {
-                    MemberId = orgId,
-                    Take = pageSize
-                };
+                var members = await _memberSearchService.SearchAllAsync(
+                    new MembersSearchCriteria
+                    {
+                        MemberId = orgId
+                    });
 
-                int totalCount;
-
-                do
-                {
-                    var searchResult = await _memberSearchService.SearchMembersAsync(criteria);
-                    totalCount = searchResult.TotalCount;
-                    memberIds.AddRange(searchResult.Results.Select(m => m.Id));
-                    criteria.Skip += pageSize;
-                }
-                while (criteria.Skip < totalCount);
+                memberIds.AddRange(members.Select(m => m.Id));
             }
+
             return memberIds;
         }
     }
