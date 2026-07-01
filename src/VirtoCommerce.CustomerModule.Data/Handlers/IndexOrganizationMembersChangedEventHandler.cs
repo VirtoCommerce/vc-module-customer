@@ -45,21 +45,7 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                 return;
             }
 
-            var memberIds = new List<string>();
-            foreach (var orgId in organizationIds)
-            {
-                var searchResult = await _memberSearchService.SearchMembersAsync(new MembersSearchCriteria
-                {
-                    MemberId = orgId,
-                    Take = int.MaxValue,
-                    Skip = 0,
-                });
-
-                if (searchResult?.Results is { Count: > 0 })
-                {
-                    memberIds.AddRange(searchResult.Results.Select(m => m.Id));
-                }
-            }
+            var memberIds = await GetMemberIdsAsync(organizationIds);
 
             if (memberIds.Count == 0)
             {
@@ -80,6 +66,33 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
             _indexingJobService.EnqueueIndexAndDeleteDocuments(indexEntries, JobPriority.Normal,
                 _configurations.GetDocumentBuilders(KnownDocumentTypes.Member, typeof(MemberDocumentChangesProvider)).ToList());
+        }
+
+        private async Task<List<string>> GetMemberIdsAsync(IList<string> organizationIds)
+        {
+            var memberIds = new List<string>();
+
+            foreach (var orgId in organizationIds)
+            {
+                const int pageSize = 50;
+                var criteria = new MembersSearchCriteria
+                {
+                    MemberId = orgId,
+                    Take = pageSize
+                };
+
+                int totalCount;
+
+                do
+                {
+                    var searchResult = await _memberSearchService.SearchMembersAsync(criteria);
+                    totalCount = searchResult.TotalCount;
+                    memberIds.AddRange(searchResult.Results.Select(m => m.Id));
+                    criteria.Skip += pageSize;
+                }
+                while (criteria.Skip < totalCount);
+            }
+            return memberIds;
         }
     }
 }

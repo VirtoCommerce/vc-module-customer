@@ -73,7 +73,7 @@ namespace VirtoCommerce.CustomerModule.Data.Model
                     Roles = new ObservableCollection<OrganizationRoleEntity>(
                         organization.Roles.Select(r =>
                         {
-                            var entity = new OrganizationRoleEntity().FromModel(r, pkMap);
+                            var entity = AbstractTypeFactory<OrganizationRoleEntity>.TryCreateInstance().FromModel(r, pkMap);
                             entity.OrganizationId = Id;
                             return entity;
                         }));
@@ -96,7 +96,6 @@ namespace VirtoCommerce.CustomerModule.Data.Model
 
                 if (!Roles.IsNullCollection())
                 {
-                    organization.Roles ??= new NullCollection<OrganizationRoleEntity>();
                     Roles.Patch(organization.Roles, (source, dest) => source.Patch(dest));
                 }
             }

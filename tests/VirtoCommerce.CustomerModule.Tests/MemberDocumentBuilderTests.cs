@@ -74,7 +74,7 @@ public class MemberDocumentBuilderTests
 
         _membershipServiceMock
             .Setup(s => s.SearchAsync(
-                It.Is<OrganizationMembershipSearchCriteria>(c => c.UserId == "user-1"),
+                It.Is<OrganizationMembershipSearchCriteria>(c => c.UserIds != null && c.UserIds.Contains("user-1")),
                 It.IsAny<bool>()))
             .ReturnsAsync(new OrganizationMembershipSearchResult
             {
@@ -263,20 +263,24 @@ public class MemberDocumentBuilderTests
 
         _membershipServiceMock
             .Setup(s => s.SearchAsync(
-                It.Is<OrganizationMembershipSearchCriteria>(c => c.UserId == "user-1"),
+                It.Is<OrganizationMembershipSearchCriteria>(c =>
+                    c.UserIds != null && c.UserIds.Contains("user-1") && c.UserIds.Contains("user-2")),
                 It.IsAny<bool>()))
             .ReturnsAsync(new OrganizationMembershipSearchResult
             {
-                Results = [new OrganizationMembership { OrganizationId = "org-1", Roles = [] }]
-            });
-
-        _membershipServiceMock
-            .Setup(s => s.SearchAsync(
-                It.Is<OrganizationMembershipSearchCriteria>(c => c.UserId == "user-2"),
-                It.IsAny<bool>()))
-            .ReturnsAsync(new OrganizationMembershipSearchResult
-            {
-                Results = [new OrganizationMembership { OrganizationId = "org-1", Roles = [] }]
+                Results =
+                [
+                    new OrganizationMembership
+                    {
+                        OrganizationId = "org-1",
+                        Roles = []
+                    },
+                    new OrganizationMembership
+                    {
+                        OrganizationId = "org-1",
+                        Roles = []
+                    }
+                ]
             });
 
         _memberServiceMock
@@ -288,10 +292,10 @@ public class MemberDocumentBuilderTests
         //Act
         await GetBuilder().IndexRolesAsync(doc, contact);
 
-        //Assert — SearchAsync called per user, GetByIdsAsync once with deduplicated org IDs
+        //Assert
         _membershipServiceMock.Verify(
             s => s.SearchAsync(It.IsAny<OrganizationMembershipSearchCriteria>(), It.IsAny<bool>()),
-            Times.Exactly(2));
+            Times.Once);
 
         _memberServiceMock.Verify(
             s => s.GetByIdsAsync(

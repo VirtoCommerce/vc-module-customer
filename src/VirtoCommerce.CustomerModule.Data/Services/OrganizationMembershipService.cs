@@ -25,19 +25,16 @@ public class OrganizationMembershipService
 {
     private readonly Func<ICustomerRepository> _repositoryFactory;
     private readonly Func<IOrganizationMembershipSearchService> _searchServiceFactory;
-    private readonly IMemberService _memberService;
 
     public OrganizationMembershipService(
         Func<ICustomerRepository> repositoryFactory,
         IPlatformMemoryCache platformMemoryCache,
         IEventPublisher eventPublisher,
-        Func<IOrganizationMembershipSearchService> searchServiceFactory,
-        IMemberService memberService)
+        Func<IOrganizationMembershipSearchService> searchServiceFactory)
         : base(repositoryFactory, platformMemoryCache, eventPublisher)
     {
         _repositoryFactory = repositoryFactory;
         _searchServiceFactory = searchServiceFactory;
-        _memberService = memberService;
     }
 
     protected override async Task<IList<OrganizationMembershipEntity>> LoadEntities(
@@ -86,53 +83,6 @@ public class OrganizationMembershipService
     public Task<OrganizationMembership> UnlockAsync(string id)
         => SetLockStateAsync(id, isLocked: false, lockoutEnd: null);
 
-    public async Task<IReadOnlyCollection<OrganizationRole>> GetRolesByUserAndOrgAsync(string userId, string organizationId)
-    {
-        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(organizationId))
-        {
-            return [];
-        }
-
-        var orgTask = _memberService.GetByIdAsync(organizationId, memberType: nameof(Organization));
-        var membershipTask = _searchServiceFactory().SearchAsync(new OrganizationMembershipSearchCriteria
-        {
-            UserId = userId,
-            OrganizationId = organizationId,
-            Take = 1,
-        });
-
-        await Task.WhenAll(orgTask, membershipTask);
-
-        var organization = await orgTask as Organization;
-        var membership = (await membershipTask).Results.FirstOrDefault();
-
-        IEnumerable<OrganizationRole> orgRoles = organization?.Roles ?? [];
-        var membershipRoles = membership?.Roles?
-            .Select(r => new OrganizationRole { RoleId = r.RoleId, RoleName = r.RoleName }) ?? [];
-
-        return orgRoles
-            .Concat(membershipRoles)
-            .DistinctBy(r => r.RoleId)
-            .ToList();
-    }
-
-    public async Task<IReadOnlyCollection<string>> GetUserIdsByRoleInOrgAsync(string organizationId, IList<string> roleIds)
-    {
-        if (string.IsNullOrEmpty(organizationId) || roleIds.IsNullOrEmpty())
-        {
-            return [];
-        }
-
-        using var repository = _repositoryFactory();
-
-        return await repository.OrganizationMemberships
-            .Where(m => m.OrganizationId == organizationId)
-            .Where(m => m.Roles.Any(r => roleIds.Contains(r.RoleId)))
-            .Select(m => m.UserId)
-            .Distinct()
-            .ToListAsync();
-    }
-
     [Obsolete("Use IOrganizationMembershipSearchService.SearchAsync instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
     public Task<OrganizationMembershipSearchResult> SearchAsync(OrganizationMembershipSearchCriteria criteria, bool clone = true)
     {
@@ -165,14 +115,14 @@ public class OrganizationMembershipService
             return [];
         }
 
-        var result = await _searchServiceFactory().SearchAsync(new OrganizationMembershipSearchCriteria
-        {
-            UserId = userId,
-            OnlyLocked = true,
-            Take = int.MaxValue,
-        });
+        var results = await _searchServiceFactory().SearchAllNoCloneAsync(
+            new OrganizationMembershipSearchCriteria
+            {
+                UserId = userId,
+                OnlyLocked = true
+            });
 
-        return result.Results
+        return results
             .Select(x => x.OrganizationId)
             .Where(id => !string.IsNullOrEmpty(id))
             .ToList();

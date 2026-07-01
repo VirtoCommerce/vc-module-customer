@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
+using VirtoCommerce.Platform.Core.Common;
 using OrgMembershipPermissions = VirtoCommerce.CustomerModule.Core.ModuleConstants.Security.OrganizationMembershipPermissions;
 
 namespace VirtoCommerce.CustomerModule.Web.Controllers.Api;
@@ -32,6 +33,15 @@ public class OrganizationMembershipController(
     [Authorize(OrgMembershipPermissions.Read)]
     public async Task<ActionResult<OrganizationMembershipSearchResult>> Search([FromBody] OrganizationMembershipSearchCriteria criteria)
     {
+        if (criteria.UserId.IsNullOrEmpty() &&
+            criteria.UserIds.IsNullOrEmpty() &&
+            criteria.OrganizationId.IsNullOrEmpty() &&
+            criteria.OrganizationIds.IsNullOrEmpty() &&
+            criteria.ObjectIds.IsNullOrEmpty())
+        {
+            return BadRequest("At least one scoping filter (UserId, UserIds, OrganizationId, or OrganizationIds) is required.");
+        }
+
         var result = await membershipSearchService.SearchAsync(criteria);
 
         return Ok(result);

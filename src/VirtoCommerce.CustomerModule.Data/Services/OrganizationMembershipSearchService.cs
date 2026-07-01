@@ -19,11 +19,98 @@ public class OrganizationMembershipSearchService(
     Func<ICustomerRepository> repositoryFactory,
     IPlatformMemoryCache platformMemoryCache,
     IOrganizationMembershipService crudService,
-    IOptions<CrudOptions> crudOptions)
+    IOptions<CrudOptions> crudOptions,
+    IMemberService memberService)
     : SearchService<OrganizationMembershipSearchCriteria, OrganizationMembershipSearchResult, OrganizationMembership, OrganizationMembershipEntity>
         (repositoryFactory, platformMemoryCache, crudService, crudOptions),
         IOrganizationMembershipSearchService
 {
+    public virtual async Task<IReadOnlyCollection<OrganizationRole>> GetRolesByUserAndOrgAsync(string userId, string organizationId)
+    {
+        if (userId.IsNullOrEmpty() || organizationId.IsNullOrEmpty())
+        {
+            return [];
+        }
+
+        var orgTask = memberService.GetByIdAsync(organizationId, memberType: nameof(Organization));
+        var membershipTask = SearchAsync(
+            new OrganizationMembershipSearchCriteria
+            {
+                UserId = userId,
+                OrganizationId = organizationId,
+                Take = 1,
+            });
+
+        await Task.WhenAll(orgTask, membershipTask);
+
+        var organization = orgTask.Result as Organization;
+        var membership = membershipTask.Result.Results.FirstOrDefault();
+
+        IEnumerable<OrganizationRole> orgRoles = organization?.Roles ?? [];
+        var membershipRoles = membership?.Roles?.Select(ToOrganizationRole) ?? [];
+
+        return orgRoles
+            .Concat(membershipRoles)
+            .DistinctBy(r => r.RoleId)
+            .ToList();
+    }
+
+    public virtual async Task<IDictionary<string, IReadOnlyCollection<OrganizationRole>>> GetRolesForUsersInOrgAsync(
+        IList<string> userIds, string organizationId)
+    {
+        if (userIds.IsNullOrEmpty() || organizationId.IsNullOrEmpty())
+        {
+            return new Dictionary<string, IReadOnlyCollection<OrganizationRole>>();
+        }
+
+        var orgTask = memberService.GetByIdAsync(organizationId, memberType: nameof(Organization));
+        var membershipsTask = SearchAsync(
+            new OrganizationMembershipSearchCriteria
+            {
+                UserIds = [.. userIds],
+                OrganizationId = organizationId,
+                Take = userIds.Count,
+            });
+
+        await Task.WhenAll(orgTask, membershipsTask);
+
+        var organization = orgTask.Result as Organization;
+        IEnumerable<OrganizationRole> orgRoles = organization?.Roles ?? [];
+
+        var membershipByUserId = membershipsTask.Result.Results.ToDictionary(m => m.UserId);
+
+        return userIds.ToDictionary(
+            userId => userId,
+            userId =>
+            {
+                var membershipRoles = membershipByUserId.TryGetValue(userId, out var membership)
+                    ? membership.Roles?.Select(ToOrganizationRole) ?? []
+                    : [];
+
+                return (IReadOnlyCollection<OrganizationRole>)orgRoles
+                    .Concat(membershipRoles)
+                    .DistinctBy(r => r.RoleId)
+                    .ToList();
+            });
+    }
+
+    public virtual async Task<IReadOnlyCollection<string>> GetUserIdsByRoleInOrgAsync(string organizationId, IList<string> roleIds)
+    {
+        if (organizationId.IsNullOrEmpty() || roleIds.IsNullOrEmpty())
+        {
+            return [];
+        }
+
+        using var repository = repositoryFactory();
+
+        return await repository.OrganizationMemberships
+            .Where(m => m.OrganizationId == organizationId)
+            .Where(m => m.Roles.Any(r => roleIds.Contains(r.RoleId)))
+            .Select(m => m.UserId)
+            .Distinct()
+            .ToListAsync();
+    }
+
     public virtual async Task<IDictionary<string, int>> GetCountsByUserAsync(OrganizationMembershipSearchCriteria criteria)
     {
         ArgumentNullException.ThrowIfNull(criteria);
@@ -38,6 +125,15 @@ public class OrganizationMembershipSearchService(
         return grouped.ToDictionary(x => x.UserId, x => x.Count);
     }
 
+    private static OrganizationRole ToOrganizationRole(OrganizationMembershipRole source)
+    {
+        var role = AbstractTypeFactory<OrganizationRole>.TryCreateInstance();
+        role.RoleId = source.RoleId;
+        role.RoleName = source.RoleName;
+
+        return role;
+    }
+
     protected override IQueryable<OrganizationMembershipEntity> BuildQuery(IRepository repository, OrganizationMembershipSearchCriteria criteria)
     {
         var query = ((ICustomerRepository)repository).OrganizationMemberships;
@@ -47,7 +143,7 @@ public class OrganizationMembershipSearchService(
             query = query.Where(x => criteria.ObjectIds.Contains(x.Id));
         }
 
-        if (!string.IsNullOrEmpty(criteria.UserId))
+        if (!criteria.UserId.IsNullOrEmpty())
         {
             query = query.Where(x => x.UserId == criteria.UserId);
         }
@@ -57,7 +153,7 @@ public class OrganizationMembershipSearchService(
             query = query.Where(x => criteria.UserIds.Contains(x.UserId));
         }
 
-        if (!string.IsNullOrEmpty(criteria.OrganizationId))
+        if (!criteria.OrganizationId.IsNullOrEmpty())
         {
             query = query.Where(x => x.OrganizationId == criteria.OrganizationId);
         }

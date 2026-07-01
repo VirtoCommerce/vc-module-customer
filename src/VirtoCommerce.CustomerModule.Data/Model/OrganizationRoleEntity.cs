@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.Platform.Core.Common;
@@ -33,7 +32,7 @@ public class OrganizationRoleEntity : Entity
     {
         pkMap.AddPair(model, this);
 
-        Id = model.IsTransient() ? Guid.NewGuid().ToString("N") : model.Id;
+        Id = model.Id;
         OrganizationId = model.OrganizationId;
         RoleId = model.RoleId;
         RoleName = model.RoleName;

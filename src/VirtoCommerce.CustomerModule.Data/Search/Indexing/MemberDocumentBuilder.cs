@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.SearchModule.Core.Extensions;
@@ -198,23 +199,16 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             await IndexOrganizationRolesAsync(document, allMemberships, existingRoleIds);
         }
 
-        private async Task<List<OrganizationMembership>> CollectMembershipsAsync(IList<string> userIds)
+        private async Task<IList<OrganizationMembership>> CollectMembershipsAsync(IList<string> userIds)
         {
-            var allMemberships = new List<OrganizationMembership>();
-            foreach (var userId in userIds)
-            {
-                var searchResult = await _organizationMembershipSearchService.SearchAsync(
-                    new OrganizationMembershipSearchCriteria { UserId = userId, Take = int.MaxValue });
-
-                if (searchResult?.Results is { Count: > 0 })
+            return await _organizationMembershipSearchService.SearchAllNoCloneAsync(
+                new OrganizationMembershipSearchCriteria
                 {
-                    allMemberships.AddRange(searchResult.Results);
-                }
-            }
-            return allMemberships;
+                    UserIds = userIds
+                });
         }
 
-        private static void IndexMembershipRoles(IndexDocument document, List<OrganizationMembership> memberships, HashSet<string> existingRoleIds)
+        private static void IndexMembershipRoles(IndexDocument document, IList<OrganizationMembership> memberships, HashSet<string> existingRoleIds)
         {
             var membershipRoles = memberships
                 .SelectMany(m => m.Roles ?? [])
@@ -228,7 +222,7 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
             }
         }
 
-        private async Task IndexOrganizationRolesAsync(IndexDocument document, List<OrganizationMembership> memberships, HashSet<string> existingRoleIds)
+        private async Task IndexOrganizationRolesAsync(IndexDocument document, IList<OrganizationMembership> memberships, HashSet<string> existingRoleIds)
         {
             // Single fetch for all unique orgs across all user accounts
             var organizationIds = memberships

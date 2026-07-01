@@ -18,7 +18,6 @@ namespace VirtoCommerce.CustomerModule.Data.OpenIddict;
 
 public class OrganizationIdClaimProvider(
     IMemberService memberService,
-    IOrganizationMembershipService organizationMembershipService,
     IOrganizationMembershipSearchService organizationMembershipSearchService,
     Func<RoleManager<Role>> roleManagerFactory) : ITokenClaimProvider
 {
@@ -59,7 +58,7 @@ public class OrganizationIdClaimProvider(
             return;
         }
 
-        var orgScopedRoles = await organizationMembershipService.GetRolesByUserAndOrgAsync(userId, organizationId);
+        var orgScopedRoles = await organizationMembershipSearchService.GetRolesByUserAndOrgAsync(userId, organizationId);
 
         if (orgScopedRoles.Count == 0)
         {

@@ -56,10 +56,10 @@ public abstract class OrganizationMembershipServiceTestsBase
         OrganizationMembershipSearchService search = null;
 
         var crud = new OrganizationMembershipService(
-            () => RepositoryMock.Object, platformMemoryCache, EventPublisherMock.Object, () => search, MemberServiceMock.Object);
+            () => RepositoryMock.Object, platformMemoryCache, EventPublisherMock.Object, () => search);
 
         search = new OrganizationMembershipSearchService(
-            () => RepositoryMock.Object, platformMemoryCache, crud, Options.Create(new CrudOptions()));
+            () => RepositoryMock.Object, platformMemoryCache, crud, Options.Create(new CrudOptions()), MemberServiceMock.Object);
 
         return (crud, search);
     }
@@ -177,7 +177,7 @@ public class OrganizationMembershipServiceTests : OrganizationMembershipServiceT
     [Fact]
     public async Task GetUserIdsByRoleInOrgAsync_EmptyOrgId_ReturnsEmpty()
     {
-        var result = await CreateCrudService().GetUserIdsByRoleInOrgAsync(string.Empty, ["role1"]);
+        var result = await CreateSearchService().GetUserIdsByRoleInOrgAsync(string.Empty, ["role1"]);
 
         Assert.Empty(result);
     }
@@ -185,7 +185,7 @@ public class OrganizationMembershipServiceTests : OrganizationMembershipServiceT
     [Fact]
     public async Task GetUserIdsByRoleInOrgAsync_EmptyRoleIds_ReturnsEmpty()
     {
-        var result = await CreateCrudService().GetUserIdsByRoleInOrgAsync("org1", []);
+        var result = await CreateSearchService().GetUserIdsByRoleInOrgAsync("org1", []);
 
         Assert.Empty(result);
     }
@@ -200,7 +200,7 @@ public class OrganizationMembershipServiceTests : OrganizationMembershipServiceT
             BuildEntity("id3", userId: "user3", orgId: "org1", roleIds: "viewer"));
 
         //Act
-        var result = await CreateCrudService().GetUserIdsByRoleInOrgAsync("org1", ["admin", "editor"]);
+        var result = await CreateSearchService().GetUserIdsByRoleInOrgAsync("org1", ["admin", "editor"]);
 
         //Assert
         Assert.Equal(2, result.Count);
@@ -217,7 +217,7 @@ public class OrganizationMembershipServiceTests : OrganizationMembershipServiceT
             BuildEntity("id2", userId: "user2", orgId: "org2", roleIds: "admin"));
 
         //Act
-        var result = await CreateCrudService().GetUserIdsByRoleInOrgAsync("org1", ["admin"]);
+        var result = await CreateSearchService().GetUserIdsByRoleInOrgAsync("org1", ["admin"]);
 
         //Assert
         Assert.Single(result);
@@ -232,7 +232,7 @@ public class OrganizationMembershipServiceTests : OrganizationMembershipServiceT
         SetupMemberships(BuildEntity("id1", userId: "user1", orgId: "org1", roleIds: ["admin", "editor"]));
 
         //Act
-        var result = await CreateCrudService().GetUserIdsByRoleInOrgAsync("org1", ["admin", "editor"]);
+        var result = await CreateSearchService().GetUserIdsByRoleInOrgAsync("org1", ["admin", "editor"]);
 
         //Assert
         Assert.Single(result);
@@ -242,7 +242,7 @@ public class OrganizationMembershipServiceTests : OrganizationMembershipServiceT
     [Fact]
     public async Task GetUserIdsByRoleInOrgAsync_ReturnsReadOnlyCollection()
     {
-        var result = await CreateCrudService().GetUserIdsByRoleInOrgAsync(string.Empty, ["role1"]);
+        var result = await CreateSearchService().GetUserIdsByRoleInOrgAsync(string.Empty, ["role1"]);
 
         Assert.IsType<IReadOnlyCollection<string>>(result, exactMatch: false);
     }
@@ -250,7 +250,7 @@ public class OrganizationMembershipServiceTests : OrganizationMembershipServiceT
     [Fact]
     public async Task GetRolesByUserAndOrgAsync_EmptyOrgId_ReturnsEmpty()
     {
-        var result = await CreateCrudService().GetRolesByUserAndOrgAsync("user1", string.Empty);
+        var result = await CreateSearchService().GetRolesByUserAndOrgAsync("user1", string.Empty);
 
         Assert.Empty(result);
     }
@@ -258,7 +258,7 @@ public class OrganizationMembershipServiceTests : OrganizationMembershipServiceT
     [Fact]
     public async Task GetRolesByUserAndOrgAsync_EmptyUserId_ReturnsEmpty()
     {
-        var result = await CreateCrudService().GetRolesByUserAndOrgAsync(string.Empty, "org1");
+        var result = await CreateSearchService().GetRolesByUserAndOrgAsync(string.Empty, "org1");
 
         Assert.Empty(result);
     }
@@ -276,7 +276,7 @@ public class OrganizationMembershipServiceTests : OrganizationMembershipServiceT
             });
 
         //Act
-        var result = await CreateCrudService().GetRolesByUserAndOrgAsync("user1", "org1");
+        var result = await CreateSearchService().GetRolesByUserAndOrgAsync("user1", "org1");
 
         //Assert
         Assert.Single(result);
@@ -294,7 +294,7 @@ public class OrganizationMembershipServiceTests : OrganizationMembershipServiceT
         SetupMemberships(BuildEntity("m1", userId: "user1", orgId: "org1", roleIds: "r2"));
 
         //Act
-        var result = await CreateCrudService().GetRolesByUserAndOrgAsync("user1", "org1");
+        var result = await CreateSearchService().GetRolesByUserAndOrgAsync("user1", "org1");
 
         //Assert
         Assert.Single(result);
@@ -316,7 +316,7 @@ public class OrganizationMembershipServiceTests : OrganizationMembershipServiceT
         SetupMemberships(BuildEntity("m1", userId: "user1", orgId: "org1", roleIds: "r2"));
 
         //Act
-        var result = await CreateCrudService().GetRolesByUserAndOrgAsync("user1", "org1");
+        var result = await CreateSearchService().GetRolesByUserAndOrgAsync("user1", "org1");
 
         //Assert
         Assert.Equal(2, result.Count);
@@ -339,7 +339,7 @@ public class OrganizationMembershipServiceTests : OrganizationMembershipServiceT
         SetupMemberships(BuildEntity("m1", userId: "user1", orgId: "org1", roleIds: "r1"));
 
         //Act
-        var result = await CreateCrudService().GetRolesByUserAndOrgAsync("user1", "org1");
+        var result = await CreateSearchService().GetRolesByUserAndOrgAsync("user1", "org1");
 
         //Assert — r1 appears exactly once
         Assert.Single(result);
@@ -357,7 +357,7 @@ public class OrganizationMembershipServiceTests : OrganizationMembershipServiceT
         SetupMemberships(BuildEntity("m1", userId: "user1", orgId: "org1", roleIds: "r2"));
 
         //Act
-        var result = await CreateCrudService().GetRolesByUserAndOrgAsync("user1", "org1");
+        var result = await CreateSearchService().GetRolesByUserAndOrgAsync("user1", "org1");
 
         //Assert — membership roles still returned
         Assert.Single(result);
@@ -556,6 +556,191 @@ public class OrganizationMembershipObsoleteShimTests : OrganizationMembershipSer
     }
 }
 #pragma warning restore VC0015
+
+public class OrganizationMembershipSearchServiceGetRolesForUsersTests : OrganizationMembershipServiceTestsBase
+{
+    [Fact]
+    public async Task GetRolesForUsersInOrgAsync_EmptyUserIds_ReturnsEmptyDictionary()
+    {
+        var result = await CreateSearchService().GetRolesForUsersInOrgAsync([], "org1");
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetRolesForUsersInOrgAsync_EmptyOrgId_ReturnsEmptyDictionary()
+    {
+        var result = await CreateSearchService().GetRolesForUsersInOrgAsync(["user1"], string.Empty);
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetRolesForUsersInOrgAsync_OrgRolesOnly_AllUsersReceiveOrgRoles()
+    {
+        //Arrange — org has a role, no membership rows exist
+        MemberServiceMock
+            .Setup(s => s.GetByIdAsync("org1", It.IsAny<string>(), nameof(Organization)))
+            .ReturnsAsync(
+                new Organization
+                {
+                    Id = "org1",
+                    Roles =
+                    [
+                        new OrganizationRole
+                        {
+                            RoleId = "r1",
+                            RoleName = "Admin"
+                        }
+                     ]
+                });
+
+        //Act
+        var result = await CreateSearchService().GetRolesForUsersInOrgAsync(["user1", "user2"], "org1");
+
+        //Assert
+        Assert.Equal(2, result.Count);
+        Assert.Single(result["user1"]);
+        Assert.Equal("r1", result["user1"].Single().RoleId);
+        Assert.Single(result["user2"]);
+        Assert.Equal("r1", result["user2"].Single().RoleId);
+    }
+
+    [Fact]
+    public async Task GetRolesForUsersInOrgAsync_MembershipRoles_MergedWithOrgRoles()
+    {
+        //Arrange — org has r1; user1 membership has r2
+        MemberServiceMock
+            .Setup(s => s.GetByIdAsync("org1", It.IsAny<string>(), nameof(Organization)))
+            .ReturnsAsync(
+                new Organization
+                {
+                    Id = "org1",
+                    Roles =
+                    [
+                        new OrganizationRole
+                        {
+                            RoleId = "r1",
+                            RoleName = "Admin"
+                        }
+                    ]
+                });
+
+        SetupMemberships(BuildEntity("m1", userId: "user1", orgId: "org1", roleIds: "r2"));
+
+        //Act
+        var result = await CreateSearchService().GetRolesForUsersInOrgAsync(["user1", "user2"], "org1");
+
+        //Assert
+        Assert.Equal(2, result["user1"].Count);
+        Assert.Contains(result["user1"], r => r.RoleId == "r1");
+        Assert.Contains(result["user1"], r => r.RoleId == "r2");
+        Assert.Single(result["user2"]);
+        Assert.Equal("r1", result["user2"].Single().RoleId);
+    }
+
+    [Fact]
+    public async Task GetRolesForUsersInOrgAsync_OverlappingRoles_Deduplicates()
+    {
+        //Arrange — org and membership both carry r1
+        MemberServiceMock
+            .Setup(s => s.GetByIdAsync("org1", It.IsAny<string>(), nameof(Organization)))
+            .ReturnsAsync(
+                new Organization
+                {
+                    Id = "org1",
+                    Roles =
+                    [
+                        new OrganizationRole
+                        {
+                            RoleId = "r1",
+                            RoleName = "Admin"
+                        }
+                    ]
+                });
+
+        SetupMemberships(BuildEntity("m1", userId: "user1", orgId: "org1", roleIds: "r1"));
+
+        //Act
+        var result = await CreateSearchService().GetRolesForUsersInOrgAsync(["user1"], "org1");
+
+        //Assert — r1 appears exactly once
+        Assert.Single(result["user1"]);
+        Assert.Equal("r1", result["user1"].Single().RoleId);
+    }
+
+    [Fact]
+    public async Task GetRolesForUsersInOrgAsync_UserWithNoMembership_GetsOrgRolesOnly()
+    {
+        //Arrange — org has r1; user2 has no membership row
+        MemberServiceMock
+            .Setup(s => s.GetByIdAsync("org1", It.IsAny<string>(), nameof(Organization)))
+            .ReturnsAsync(
+                new Organization
+                {
+                    Id = "org1",
+                    Roles =
+                    [
+                        new OrganizationRole
+                        {
+                            RoleId = "r1",
+                            RoleName = "Admin"
+                        }
+                    ]
+                });
+
+        SetupMemberships(BuildEntity("m1", userId: "user1", orgId: "org1", roleIds: "r2"));
+
+        //Act
+        var result = await CreateSearchService().GetRolesForUsersInOrgAsync(["user2"], "org1");
+
+        //Assert
+        Assert.Single(result["user2"]);
+        Assert.Equal("r1", result["user2"].Single().RoleId);
+    }
+
+    [Fact]
+    public async Task GetRolesForUsersInOrgAsync_OrgNotFound_ReturnsMembershipRolesOnly()
+    {
+        //Arrange — org not found; user1 has membership with r2
+        MemberServiceMock
+            .Setup(s => s.GetByIdAsync("org1", It.IsAny<string>(), nameof(Organization)))
+            .ReturnsAsync((Member)null);
+
+        SetupMemberships(BuildEntity("m1", userId: "user1", orgId: "org1", roleIds: "r2"));
+
+        //Act
+        var result = await CreateSearchService().GetRolesForUsersInOrgAsync(["user1"], "org1");
+
+        //Assert — org roles are empty, only membership role returned
+        Assert.Single(result["user1"]);
+        Assert.Equal("r2", result["user1"].Single().RoleId);
+    }
+
+    [Fact]
+    public async Task GetRolesForUsersInOrgAsync_ReturnsDictionaryKeyedByAllRequestedUserIds()
+    {
+        //Arrange — no org roles, no memberships
+        MemberServiceMock
+            .Setup(s => s.GetByIdAsync("org1", It.IsAny<string>(), nameof(Organization)))
+            .ReturnsAsync(
+                new Organization
+                {
+                    Id = "org1",
+                    Roles = []
+                });
+
+        //Act
+        var result = await CreateSearchService().GetRolesForUsersInOrgAsync(["user1", "user2", "user3"], "org1");
+
+        //Assert — all three keys present, each with empty roles
+        Assert.Equal(3, result.Count);
+        Assert.True(result.ContainsKey("user1"));
+        Assert.True(result.ContainsKey("user2"));
+        Assert.True(result.ContainsKey("user3"));
+        Assert.All(result.Values, Assert.Empty);
+    }
+}
 
 internal static class TestAsyncQueryableExtensions
 {

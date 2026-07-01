@@ -16,4 +16,10 @@ public interface IOrganizationMembershipSearchService
     /// (e.g. a permission's roles) across organizations and how many organizations each one serves.
     /// </summary>
     Task<IDictionary<string, int>> GetCountsByUserAsync(OrganizationMembershipSearchCriteria criteria);
+
+    Task<IReadOnlyCollection<OrganizationRole>> GetRolesByUserAndOrgAsync(string userId, string organizationId);
+
+    Task<IDictionary<string, IReadOnlyCollection<OrganizationRole>>> GetRolesForUsersInOrgAsync(IList<string> userIds, string organizationId);
+
+    Task<IReadOnlyCollection<string>> GetUserIdsByRoleInOrgAsync(string organizationId, IList<string> roleIds);
 }
