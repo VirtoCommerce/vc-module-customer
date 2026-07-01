@@ -106,6 +106,7 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<LogChangesEventHandler>();
             serviceCollection.AddTransient<SecurtityAccountChangesEventHandler>();
             serviceCollection.AddTransient<IndexMemberChangedEventHandler>();
+            serviceCollection.AddTransient<IndexOrganizationMembersChangedEventHandler>();
             serviceCollection.AddTransient<RevokeTokenOrganizationMembershipChangedEventHandler>();
             serviceCollection.AddTransient<IndexOrganizationMembershipChangedEventHandler>();
             serviceCollection.AddTransient<DeleteOrganizationMembershipUserChangedEventHandler>();
@@ -115,6 +116,9 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<AbstractValidator<Member>, MemberValidator>();
 
             serviceCollection.AddSingleton<IOrganizationMembershipService, OrganizationMembershipService>();
+            serviceCollection.AddSingleton<IOrganizationMembershipSearchService, OrganizationMembershipSearchService>();
+            // Lazy factory so the (obsolete) search shims on the CRUD service can delegate to the search service without a DI cycle.
+            serviceCollection.AddSingleton<Func<IOrganizationMembershipSearchService>>(provider => () => provider.GetRequiredService<IOrganizationMembershipSearchService>());
 
             serviceCollection.AddSingleton<ITokenRequestValidator, OrganizationIdRequestValidator>();
             serviceCollection.AddSingleton<ITokenClaimProvider, OrganizationIdClaimProvider>();
@@ -141,6 +145,9 @@ namespace VirtoCommerce.CustomerModule.Web
             AbstractTypeFactory<MemberEntity>.RegisterType<OrganizationEntity>();
             AbstractTypeFactory<MemberEntity>.RegisterType<VendorEntity>();
             AbstractTypeFactory<MemberEntity>.RegisterType<EmployeeEntity>();
+
+            AbstractTypeFactory<OrganizationRole>.RegisterType<OrganizationRole>();
+            AbstractTypeFactory<OrganizationRoleEntity>.RegisterType<OrganizationRoleEntity>();
 
             var settingsRegistrar = appBuilder.ApplicationServices.GetRequiredService<ISettingsRegistrar>();
             settingsRegistrar.RegisterSettings(ModuleConstants.Settings.AllSettings, ModuleInfo.Id);
@@ -180,6 +187,7 @@ namespace VirtoCommerce.CustomerModule.Web
             if (settingsManager.GetValue<bool>(ModuleConstants.Settings.General.EventBasedIndexation))
             {
                 appBuilder.RegisterEventHandler<MemberChangedEvent, IndexMemberChangedEventHandler>();
+                appBuilder.RegisterEventHandler<MemberChangedEvent, IndexOrganizationMembersChangedEventHandler>();
                 appBuilder.RegisterEventHandler<UserChangedEvent, IndexMemberChangedEventHandler>();
                 appBuilder.RegisterEventHandler<UserRoleAddedEvent, IndexMemberChangedEventHandler>();
                 appBuilder.RegisterEventHandler<UserRoleRemovedEvent, IndexMemberChangedEventHandler>();

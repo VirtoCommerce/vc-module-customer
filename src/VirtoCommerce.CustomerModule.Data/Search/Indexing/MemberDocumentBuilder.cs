@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.SearchModule.Core.Extensions;
@@ -15,16 +16,16 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
     {
         private readonly IMemberService _memberService;
         private readonly IDynamicPropertySearchService _dynamicPropertySearchService;
-        private readonly IOrganizationMembershipService _organizationMembershipService;
+        private readonly IOrganizationMembershipSearchService _organizationMembershipSearchService;
 
         public MemberDocumentBuilder(
             IMemberService memberService,
             IDynamicPropertySearchService dynamicPropertySearchService,
-            IOrganizationMembershipService organizationMembershipService)
+            IOrganizationMembershipSearchService organizationMembershipSearchService)
         {
             _memberService = memberService;
             _dynamicPropertySearchService = dynamicPropertySearchService;
-            _organizationMembershipService = organizationMembershipService;
+            _organizationMembershipSearchService = organizationMembershipSearchService;
         }
 
         public Task BuildSchemaAsync(IndexDocument schema)
@@ -186,23 +187,66 @@ namespace VirtoCommerce.CustomerModule.Data.Search.Indexing
                 .Select(r => r.Id)
                 .ToHashSet();
 
-            foreach (var userId in userIds)
+            // Collect all membership records across all user accounts first to avoid redundant org fetches
+            var allMemberships = await CollectMembershipsAsync(userIds);
+
+            if (allMemberships.Count == 0)
             {
-                var searchResult = await _organizationMembershipService.SearchAsync(
-                    new OrganizationMembershipSearchCriteria { UserId = userId, Take = int.MaxValue });
+                return;
+            }
 
-                var newRoles = searchResult?.Results?
-                    .SelectMany(m => m.Roles ?? [])
-                    .Where(r => existingRoleIds.Add(r.RoleId))
-                    .ToList();
+            IndexMembershipRoles(document, allMemberships, existingRoleIds);
+            await IndexOrganizationRolesAsync(document, allMemberships, existingRoleIds);
+        }
 
-                if (newRoles is not { Count: > 0 })
+        private async Task<IList<OrganizationMembership>> CollectMembershipsAsync(IList<string> userIds)
+        {
+            return await _organizationMembershipSearchService.SearchAllNoCloneAsync(
+                new OrganizationMembershipSearchCriteria
                 {
-                    continue;
-                }
+                    UserIds = userIds
+                });
+        }
 
-                document.AddFilterableCollection("RoleId", newRoles.Select(r => r.RoleId).ToList());
-                document.AddFilterableCollection("Role", newRoles.Select(r => r.RoleName).ToList());
+        private static void IndexMembershipRoles(IndexDocument document, IList<OrganizationMembership> memberships, HashSet<string> existingRoleIds)
+        {
+            var membershipRoles = memberships
+                .SelectMany(m => m.Roles ?? [])
+                .Where(r => existingRoleIds.Add(r.RoleId))
+                .ToList();
+
+            if (membershipRoles.Count > 0)
+            {
+                document.AddFilterableCollection("RoleId", membershipRoles.Select(r => r.RoleId).ToList());
+                document.AddFilterableCollection("Role", membershipRoles.Select(r => r.RoleName).ToList());
+            }
+        }
+
+        private async Task IndexOrganizationRolesAsync(IndexDocument document, IList<OrganizationMembership> memberships, HashSet<string> existingRoleIds)
+        {
+            // Single fetch for all unique orgs across all user accounts
+            var organizationIds = memberships
+                .Select(m => m.OrganizationId)
+                .Where(id => !string.IsNullOrEmpty(id))
+                .Distinct()
+                .ToArray();
+
+            if (organizationIds.Length == 0)
+            {
+                return;
+            }
+
+            var organizations = await _memberService.GetByIdsAsync(organizationIds, responseGroup: MemberResponseGroup.WithRoles.ToString(), memberTypes: [nameof(Organization)]);
+            var orgRoles = organizations
+                .OfType<Organization>()
+                .SelectMany(o => o.Roles ?? [])
+                .Where(r => existingRoleIds.Add(r.RoleId))
+                .ToList();
+
+            if (orgRoles.Count > 0)
+            {
+                document.AddFilterableCollection("RoleId", orgRoles.Select(r => r.RoleId).ToList());
+                document.AddFilterableCollection("Role", orgRoles.Select(r => r.RoleName).ToList());
             }
         }
 

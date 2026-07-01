@@ -92,11 +92,13 @@
         "labels": {
           "name": "名称",
           "description": "描述",
-          "business-category": "业务领域"
+          "business-category": "业务领域",
+          "roles": "角色"
         },
         "placeholders": {
           "name": "输入名称",
-          "description": "提供描述"
+          "description": "提供描述",
+          "roles": "选择角色"
         }
       },
       "vendor-detail": {
@@ -366,7 +368,9 @@
       },
       "organization-memberships": {
         "title": "组织成员资格",
-        "blade-subtitle": "管理组织成员资格"
+        "blade-subtitle": "管理组织成员资格",
+        "no-account-title": "无用户账户",
+        "no-account-message": "此联系人没有用户账户。请先创建用户账户以管理组织成员资格。"
       }
     },
     "dialogs": {
@@ -491,6 +495,14 @@
       "ContactDefaultStatus": {
         "title": "联系人默认状态",
         "description": "此状态将分配给最近注册的公司的所有者"
+      },
+      "OrganizationRolesWhitelist": {
+        "title": "组织角色白名单",
+        "description": "可在组织级别分配的角色"
+      },
+      "MembershipRolesWhitelist": {
+        "title": "成员资格角色白名单",
+        "description": "可在组织成员资格级别分配的角色"
       }
     },
     "VirtoCommerce": {

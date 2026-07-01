@@ -21,6 +21,7 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
         private const string MemberId = "contact1";
         private const string OrgId = "org1";
 
+        private readonly Mock<IOrganizationMembershipSearchService> _membershipSearchServiceMock = new();
         private readonly Mock<IOrganizationMembershipService> _membershipServiceMock = new();
         private readonly Mock<IUserSearchService> _userSearchServiceMock = new();
         private readonly DeleteOrganizationMembershipUserChangedEventHandler _handler;
@@ -28,6 +29,7 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
         public DeleteOrganizationMembershipUserChangedEventHandlerTests()
         {
             _handler = new DeleteOrganizationMembershipUserChangedEventHandler(
+                _membershipSearchServiceMock.Object,
                 _membershipServiceMock.Object,
                 _userSearchServiceMock.Object);
         }
@@ -36,7 +38,7 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
         public async Task Handle_UserDeleted_DeletesMemberships()
         {
             //Arrange
-            _membershipServiceMock
+            _membershipSearchServiceMock
                 .Setup(s => s.SearchAsync(It.Is<OrganizationMembershipSearchCriteria>(c => c.UserId == UserId)))
                 .ReturnsAsync(new OrganizationMembershipSearchResult
                 {
@@ -56,7 +58,7 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
         public async Task Handle_UserDeleted_NoMemberships_DoesNotCallDelete()
         {
             //Arrange
-            _membershipServiceMock
+            _membershipSearchServiceMock
                 .Setup(s => s.SearchAsync(It.IsAny<OrganizationMembershipSearchCriteria>()))
                 .ReturnsAsync(new OrganizationMembershipSearchResult { Results = [] });
 
@@ -74,7 +76,7 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
             await _handler.Handle(BuildUserEvent(UserId, EntryState.Modified));
 
             //Assert
-            _membershipServiceMock.Verify(s => s.SearchAsync(It.IsAny<OrganizationMembershipSearchCriteria>()), Times.Never);
+            _membershipSearchServiceMock.Verify(s => s.SearchAsync(It.IsAny<OrganizationMembershipSearchCriteria>()), Times.Never);
             _membershipServiceMock.Verify(s => s.DeleteAsync(It.IsAny<IList<string>>()), Times.Never);
         }
 
@@ -83,10 +85,10 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
         {
             //Arrange
             var userId2 = "user2";
-            _membershipServiceMock
+            _membershipSearchServiceMock
                 .Setup(s => s.SearchAsync(It.Is<OrganizationMembershipSearchCriteria>(c => c.UserId == UserId)))
                 .ReturnsAsync(new OrganizationMembershipSearchResult { Results = [new OrganizationMembership { Id = "m1" }] });
-            _membershipServiceMock
+            _membershipSearchServiceMock
                 .Setup(s => s.SearchAsync(It.Is<OrganizationMembershipSearchCriteria>(c => c.UserId == userId2)))
                 .ReturnsAsync(new OrganizationMembershipSearchResult { Results = [new OrganizationMembership { Id = "m2" }] });
 
@@ -111,7 +113,7 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
             _userSearchServiceMock
                 .Setup(s => s.SearchUsersAsync(It.Is<UserSearchCriteria>(c => c.MemberIds.Contains(MemberId))))
                 .ReturnsAsync(new UserSearchResult { Results = [new ApplicationUser { Id = UserId }] });
-            _membershipServiceMock
+            _membershipSearchServiceMock
                 .Setup(s => s.SearchAsync(It.Is<OrganizationMembershipSearchCriteria>(c => c.UserId == UserId)))
                 .ReturnsAsync(new OrganizationMembershipSearchResult
                 {
@@ -140,7 +142,7 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
             await _handler.Handle(BuildMemberEvent(contact, contact, EntryState.Deleted));
 
             //Assert
-            _membershipServiceMock.Verify(s => s.SearchAsync(It.IsAny<OrganizationMembershipSearchCriteria>()), Times.Never);
+            _membershipSearchServiceMock.Verify(s => s.SearchAsync(It.IsAny<OrganizationMembershipSearchCriteria>()), Times.Never);
             _membershipServiceMock.Verify(s => s.DeleteAsync(It.IsAny<IList<string>>()), Times.Never);
         }
 
@@ -153,7 +155,7 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
             _userSearchServiceMock
                 .Setup(s => s.SearchUsersAsync(It.Is<UserSearchCriteria>(c => c.MemberIds.Contains(MemberId))))
                 .ReturnsAsync(new UserSearchResult { Results = [new ApplicationUser { Id = UserId }] });
-            _membershipServiceMock
+            _membershipSearchServiceMock
                 .Setup(s => s.SearchAsync(It.Is<OrganizationMembershipSearchCriteria>(c => c.UserId == UserId)))
                 .ReturnsAsync(new OrganizationMembershipSearchResult
                 {
@@ -182,7 +184,7 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
             _userSearchServiceMock
                 .Setup(s => s.SearchUsersAsync(It.IsAny<UserSearchCriteria>()))
                 .ReturnsAsync(new UserSearchResult { Results = [new ApplicationUser { Id = UserId }] });
-            _membershipServiceMock
+            _membershipSearchServiceMock
                 .Setup(s => s.SearchAsync(It.IsAny<OrganizationMembershipSearchCriteria>()))
                 .ReturnsAsync(new OrganizationMembershipSearchResult { Results = [] });
 

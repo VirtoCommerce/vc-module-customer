@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace VirtoCommerce.CustomerModule.Data.OpenIddict;
 
 public class OrganizationIdClaimProvider(
     IMemberService memberService,
-    IOrganizationMembershipService organizationMembershipService,
+    IOrganizationMembershipSearchService organizationMembershipSearchService,
     Func<RoleManager<Role>> roleManagerFactory) : ITokenClaimProvider
 {
     public virtual async Task SetClaimsAsync(ClaimsPrincipal principal, TokenRequestContext context)
@@ -27,14 +28,28 @@ public class OrganizationIdClaimProvider(
 
         if (!organizationId.IsNullOrEmpty() && context.User != null)
         {
-            await AddOrgScopedPermissionsAsync(principal, context.User.Id, organizationId);
+            await AddOrgScopedPermissionsAsync(principal, context.User.Id, context.User.MemberId, organizationId);
         }
     }
 
-    private async Task AddOrgScopedPermissionsAsync(ClaimsPrincipal principal, string userId, string organizationId)
+    private async Task AddOrgScopedPermissionsAsync(ClaimsPrincipal principal, string userId, string memberId, string organizationId)
     {
-        var membership = await organizationMembershipService.GetByUserAndOrgAsync(userId, organizationId);
-        if (membership == null || membership.IsCurrentlyLocked || membership.Roles.Count == 0)
+        // At most one membership per (userId, organizationId) — enforced by IX_CustomerOrganizationMembership_UserId_OrganizationId
+        var membership = (await organizationMembershipSearchService.SearchAsync(new OrganizationMembershipSearchCriteria
+        {
+            UserId = userId,
+            OrganizationId = organizationId,
+            Take = 1,
+        })).Results.FirstOrDefault();
+
+        if (membership?.IsCurrentlyLocked == true)
+        {
+            return;
+        }
+
+        // Without an explicit membership row, verify via the contact's Organizations list to prevent
+        // privilege escalation when an arbitrary organizationId is passed in the token request
+        if (membership == null && !await IsContactMemberOfOrgAsync(memberId, organizationId))
         {
             return;
         }
@@ -44,16 +59,30 @@ public class OrganizationIdClaimProvider(
             return;
         }
 
+        var orgScopedRoles = await organizationMembershipSearchService.GetRolesByUserAndOrgAsync(userId, organizationId);
+
+        if (orgScopedRoles.Count == 0)
+        {
+            return;
+        }
+
+        var allRoleIds = orgScopedRoles.Select(r => r.RoleId).ToList();
+
         // Collect permissions already present in the token (from global roles) to avoid duplicates
         var existingPermissions = principal.Claims
             .Where(c => c.Type == PlatformConstants.Security.Claims.PermissionClaimType)
             .Select(c => c.Value)
             .ToHashSet();
 
+        await AddRolePermissionsAsync(identity, allRoleIds, existingPermissions);
+    }
+
+    private async Task AddRolePermissionsAsync(ClaimsIdentity identity, IList<string> roleIds, HashSet<string> existingPermissions)
+    {
         using var roleManager = roleManagerFactory();
-        foreach (var membershipRole in membership.Roles)
+        foreach (var roleId in roleIds)
         {
-            var role = await roleManager.FindByIdAsync(membershipRole.RoleId);
+            var role = await roleManager.FindByIdAsync(roleId);
             if (role == null)
             {
                 continue;
@@ -62,12 +91,7 @@ public class OrganizationIdClaimProvider(
             var roleClaims = await roleManager.GetClaimsAsync(role);
             foreach (var claim in roleClaims)
             {
-                if (claim.Type != PlatformConstants.Security.Claims.PermissionClaimType)
-                {
-                    continue;
-                }
-
-                if (!existingPermissions.Add(claim.Value))
+                if (claim.Type != PlatformConstants.Security.Claims.PermissionClaimType || !existingPermissions.Add(claim.Value))
                 {
                     continue;
                 }
@@ -77,6 +101,18 @@ public class OrganizationIdClaimProvider(
                         .SetDestinations(OpenIddictConstants.Destinations.AccessToken));
             }
         }
+    }
+
+    private async Task<bool> IsContactMemberOfOrgAsync(string memberId, string organizationId)
+    {
+        if (string.IsNullOrEmpty(memberId))
+        {
+            return false;
+        }
+
+        var contact = await memberService.GetByIdAsync(memberId) as IHasOrganizations;
+
+        return contact?.Organizations?.ContainsIgnoreCase(organizationId) == true;
     }
 
     private async Task<string> GetOrganizationId(TokenRequestContext context)

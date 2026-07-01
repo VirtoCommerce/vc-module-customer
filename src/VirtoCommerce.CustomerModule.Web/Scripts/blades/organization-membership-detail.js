@@ -2,11 +2,13 @@ angular.module('virtoCommerce.customerModule')
     .controller('virtoCommerce.customerModule.organizationMembershipDetailController',
         ['$scope', 'platformWebApp.bladeNavigationService', 'platformWebApp.dialogService',
          'virtoCommerce.customerModule.organizationMemberships', 'virtoCommerce.customerModule.organizations',
-         'platformWebApp.roles',
+         'platformWebApp.roles', 'platformWebApp.settings',
         function ($scope, bladeNavigationService, dialogService,
-                  organizationMemberships, organizations, roles) {
+                  organizationMemberships, organizations, roles, settings) {
             var blade = $scope.blade;
             blade.updatePermission = 'customer:update';
+
+            var membershipRolesWhitelist = settings.getValues({ id: 'Customer.MembershipRolesWhitelist' }) || [];
 
             blade.metaFields = [
                 {
@@ -49,7 +51,10 @@ angular.module('virtoCommerce.customerModule')
 
             blade.refreshRoles = function (keyword) {
                 roles.search({ keyword: keyword || '', take: 20 }).$promise.then(function (data) {
-                    blade.availableRoles = data.results || [];
+                    var allRoles = data.results || [];
+                    blade.availableRoles = membershipRolesWhitelist.length
+                        ? allRoles.filter(function (r) { return membershipRolesWhitelist.indexOf(r.name) !== -1; })
+                        : allRoles;
                 });
             };
 
