@@ -34,6 +34,7 @@ public class OrganizationIdClaimProvider(
 
     private async Task AddOrgScopedPermissionsAsync(ClaimsPrincipal principal, string userId, string memberId, string organizationId)
     {
+        // At most one membership per (userId, organizationId) — enforced by IX_CustomerOrganizationMembership_UserId_OrganizationId
         var membership = (await organizationMembershipSearchService.SearchAsync(new OrganizationMembershipSearchCriteria
         {
             UserId = userId,

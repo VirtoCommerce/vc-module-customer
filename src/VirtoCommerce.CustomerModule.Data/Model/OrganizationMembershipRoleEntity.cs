@@ -33,7 +33,7 @@ public class OrganizationMembershipRoleEntity : Entity
     {
         pkMap.AddPair(model, this);
 
-        Id = model.IsTransient() ? Guid.NewGuid().ToString("N") : model.Id;
+        Id = model.Id;
         MembershipId = model.MembershipId;
         RoleId = model.RoleId;
         RoleName = model.RoleName;
