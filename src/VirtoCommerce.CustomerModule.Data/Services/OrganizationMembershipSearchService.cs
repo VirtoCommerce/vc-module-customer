@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.CustomerModule.Data.Repositories;
+using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.GenericCrud;
@@ -25,9 +27,11 @@ public class OrganizationMembershipSearchService(
         (repositoryFactory, platformMemoryCache, crudService, crudOptions),
         IOrganizationMembershipSearchService
 {
+    private readonly IPlatformMemoryCache _platformMemoryCache = platformMemoryCache;
+
     public virtual async Task<IReadOnlyCollection<OrganizationRole>> GetRolesByUserAndOrgAsync(string userId, string organizationId)
     {
-        if (userId.IsNullOrEmpty() || organizationId.IsNullOrEmpty())
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(organizationId))
         {
             return [];
         }
@@ -51,7 +55,7 @@ public class OrganizationMembershipSearchService(
 
     public virtual async Task<IReadOnlyCollection<OrganizationRole>> GetRolesByUserAndOrgAsync(string organizationId, OrganizationMembership membership)
     {
-        if (organizationId.IsNullOrEmpty())
+        if (string.IsNullOrEmpty(organizationId))
         {
             return [];
         }
@@ -75,7 +79,7 @@ public class OrganizationMembershipSearchService(
     public virtual async Task<IDictionary<string, IReadOnlyCollection<OrganizationRole>>> GetRolesForUsersInOrgAsync(
         IList<string> userIds, string organizationId)
     {
-        if (userIds.IsNullOrEmpty() || organizationId.IsNullOrEmpty())
+        if (userIds.IsNullOrEmpty() || string.IsNullOrEmpty(organizationId))
         {
             return new Dictionary<string, IReadOnlyCollection<OrganizationRole>>();
         }
@@ -113,7 +117,7 @@ public class OrganizationMembershipSearchService(
 
     public virtual async Task<IReadOnlyCollection<string>> GetUserIdsByRoleInOrgAsync(string organizationId, IList<string> roleIds)
     {
-        if (organizationId.IsNullOrEmpty() || roleIds.IsNullOrEmpty())
+        if (string.IsNullOrEmpty(organizationId) || roleIds.IsNullOrEmpty())
         {
             return [];
         }
@@ -128,26 +132,33 @@ public class OrganizationMembershipSearchService(
             .ToListAsync();
     }
 
-    public virtual async Task<IReadOnlyCollection<string>> GetLockedOrganizationIdsAsync(string userId)
+    public virtual Task<IReadOnlyCollection<string>> GetLockedOrganizationIdsAsync(string userId)
     {
-        if (userId.IsNullOrEmpty())
+        if (string.IsNullOrEmpty(userId))
         {
-            return [];
+            return Task.FromResult<IReadOnlyCollection<string>>([]);
         }
 
-        using var repository = repositoryFactory();
+        var cacheKey = CacheKey.With(GetType(), nameof(GetLockedOrganizationIdsAsync), userId);
 
-        var criteria = new OrganizationMembershipSearchCriteria
+        return _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
         {
-            UserId = userId,
-            OnlyLocked = true,
-        };
+            cacheEntry.AddExpirationToken(GenericSearchCachingRegion<OrganizationMembership>.CreateChangeToken());
 
-        return await BuildQuery(repository, criteria)
-            .Select(x => x.OrganizationId)
-            .Where(id => !string.IsNullOrEmpty(id))
-            .Distinct()
-            .ToListAsync();
+            using var repository = repositoryFactory();
+
+            var criteria = new OrganizationMembershipSearchCriteria
+            {
+                UserId = userId,
+                OnlyLocked = true,
+            };
+
+            return (IReadOnlyCollection<string>)await BuildQuery(repository, criteria)
+                .Select(x => x.OrganizationId)
+                .Where(id => !string.IsNullOrEmpty(id))
+                .Distinct()
+                .ToListAsync();
+        });
     }
 
     public virtual async Task<IDictionary<string, int>> GetCountsByUserAsync(OrganizationMembershipSearchCriteria criteria)
@@ -182,7 +193,7 @@ public class OrganizationMembershipSearchService(
             query = query.Where(x => criteria.ObjectIds.Contains(x.Id));
         }
 
-        if (!criteria.UserId.IsNullOrEmpty())
+        if (!string.IsNullOrEmpty(criteria.UserId))
         {
             query = query.Where(x => x.UserId == criteria.UserId);
         }
@@ -192,7 +203,7 @@ public class OrganizationMembershipSearchService(
             query = query.Where(x => criteria.UserIds.Contains(x.UserId));
         }
 
-        if (!criteria.OrganizationId.IsNullOrEmpty())
+        if (!string.IsNullOrEmpty(criteria.OrganizationId))
         {
             query = query.Where(x => x.OrganizationId == criteria.OrganizationId);
         }

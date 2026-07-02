@@ -146,9 +146,6 @@ namespace VirtoCommerce.CustomerModule.Web
             AbstractTypeFactory<MemberEntity>.RegisterType<VendorEntity>();
             AbstractTypeFactory<MemberEntity>.RegisterType<EmployeeEntity>();
 
-            AbstractTypeFactory<OrganizationRole>.RegisterType<OrganizationRole>();
-            AbstractTypeFactory<OrganizationRoleEntity>.RegisterType<OrganizationRoleEntity>();
-
             var settingsRegistrar = appBuilder.ApplicationServices.GetRequiredService<ISettingsRegistrar>();
             settingsRegistrar.RegisterSettings(ModuleConstants.Settings.AllSettings, ModuleInfo.Id);
             settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.StoreLevelSettings, nameof(Store));

@@ -34,7 +34,10 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
         public async Task Handle(MemberChangedEvent message)
         {
             var organizationIds = message.ChangedEntries
-                .Where(x => x.EntryState == EntryState.Modified && x.NewEntry is Organization)
+                .Where(x => x.EntryState == EntryState.Modified &&
+                            x.NewEntry is Organization newOrg &&
+                            x.OldEntry is Organization oldOrg &&
+                            RolesChanged(oldOrg, newOrg))
                 .Select(x => x.NewEntry.Id)
                 .Where(id => !string.IsNullOrEmpty(id))
                 .Distinct()
@@ -66,6 +69,22 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
             _indexingJobService.EnqueueIndexAndDeleteDocuments(indexEntries, JobPriority.Normal,
                 _configurations.GetDocumentBuilders(KnownDocumentTypes.Member, typeof(MemberDocumentChangesProvider)).ToList());
+        }
+
+        private static bool RolesChanged(Organization oldOrg, Organization newOrg)
+        {
+            // Null Roles on the saved model means the caller did not manage roles,
+            // and the persistence layer leaves them intact (see OrganizationEntity.Patch)
+            if (newOrg.Roles == null)
+            {
+                return false;
+            }
+
+            // Role names are indexed in member documents too, so compare both id and name
+            var oldRoles = oldOrg.Roles?.Select(r => (r.RoleId, r.RoleName)).ToHashSet() ?? [];
+            var newRoles = newOrg.Roles.Select(r => (r.RoleId, r.RoleName)).ToHashSet();
+
+            return !oldRoles.SetEquals(newRoles);
         }
 
         private async Task<List<string>> GetMemberIdsAsync(IList<string> organizationIds)

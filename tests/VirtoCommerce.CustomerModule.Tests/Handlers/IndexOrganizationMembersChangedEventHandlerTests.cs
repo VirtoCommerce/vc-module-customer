@@ -8,6 +8,7 @@ using VirtoCommerce.CustomerModule.Core.Model.Search;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Data.Handlers;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.SearchModule.Core.BackgroundJobs;
 using VirtoCommerce.SearchModule.Core.Model;
 using VirtoCommerce.SearchModule.Core.Services;
@@ -31,10 +32,9 @@ public class IndexOrganizationMembersChangedEventHandlerTests
     }
 
     [Fact]
-    public async Task Handle_OrganizationModified_EnqueuesReindexForMembers()
+    public async Task Handle_OrganizationRolesModified_EnqueuesReindexForMembers()
     {
         //Arrange
-        var org = new Organization { Id = "org-1" };
         _memberSearchServiceMock
             .Setup(s => s.SearchAllAsync(It.Is<MembersSearchCriteria>(c => c.MemberId == "org-1")))
             .ReturnsAsync(
@@ -43,7 +43,7 @@ public class IndexOrganizationMembersChangedEventHandlerTests
                     new Contact { Id = "contact-2" }
                 ]);
 
-        var message = BuildEvent(org, EntryState.Modified);
+        var message = BuildRolesChangedEvent("org-1");
 
         //Act
         await _handler.Handle(message);
@@ -62,12 +62,104 @@ public class IndexOrganizationMembersChangedEventHandlerTests
     }
 
     [Fact]
+    public async Task Handle_OrganizationModifiedWithoutRoleChanges_DoesNotEnqueue()
+    {
+        // A rename/description edit must not cascade to members — only role changes do.
+        //Arrange
+        var message = new MemberChangedEvent(
+        [
+            ModifiedOrgEntry("org-1", oldRoleIds: ["r1"], newRoleIds: ["r1"]),
+        ]);
+
+        //Act
+        await _handler.Handle(message);
+
+        //Assert
+        _indexingJobServiceMock.Verify(s =>
+            s.EnqueueIndexAndDeleteDocuments(
+                It.IsAny<IndexEntry[]>(),
+                It.IsAny<string>(),
+                It.IsAny<IList<IIndexDocumentBuilder>>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_OrganizationModifiedWithNullRoles_DoesNotEnqueue()
+    {
+        // Null Roles on the saved model means roles were not managed by the caller
+        // (the persistence layer leaves them intact), so no role change happened.
+        //Arrange
+        var message = new MemberChangedEvent(
+        [
+            new(new Organization { Id = "org-1" }, BuildOrg("org-1", "r1"), EntryState.Modified),
+        ]);
+
+        //Act
+        await _handler.Handle(message);
+
+        //Assert
+        _indexingJobServiceMock.Verify(s =>
+            s.EnqueueIndexAndDeleteDocuments(
+                It.IsAny<IndexEntry[]>(),
+                It.IsAny<string>(),
+                It.IsAny<IList<IIndexDocumentBuilder>>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_OrganizationRoleRenamed_EnqueuesReindexForMembers()
+    {
+        // Role names are indexed in member documents, so a rename (same RoleId) must reindex members.
+        //Arrange
+        _memberSearchServiceMock
+            .Setup(s => s.SearchAllAsync(It.Is<MembersSearchCriteria>(c => c.MemberId == "org-1")))
+            .ReturnsAsync([new Contact { Id = "contact-1" }]);
+
+        var oldOrg = new Organization
+        {
+            Id = "org-1",
+            Roles =
+            [
+                new OrganizationRole { RoleId = "r1", RoleName = "Buyer" }
+            ]
+        };
+
+        var newOrg = new Organization
+        {
+            Id = "org-1",
+            Roles =
+            [
+                new OrganizationRole { RoleId = "r1", RoleName = "Purchaser" }
+            ]
+        };
+
+        var message = new MemberChangedEvent(
+        [
+            new(newOrg, oldOrg, EntryState.Modified),
+        ]);
+
+        //Act
+        await _handler.Handle(message);
+
+        //Assert
+        _indexingJobServiceMock.Verify(s =>
+            s.EnqueueIndexAndDeleteDocuments(
+                It.Is<IndexEntry[]>(entries => entries.Length == 1 && entries[0].Id == "contact-1"),
+                It.IsAny<string>(),
+                It.IsAny<IList<IIndexDocumentBuilder>>()),
+            Times.Once);
+    }
+
+    [Fact]
     public async Task Handle_OrganizationAdded_DoesNotEnqueue()
     {
         // Only Modified orgs trigger member reindex (org roles changed → propagate to members).
         //Arrange
         var org = new Organization { Id = "org-1" };
-        var message = BuildEvent(org, EntryState.Added);
+        var message = new MemberChangedEvent(
+        [
+            new(org, EntryState.Added),
+        ]);
 
         //Act
         await _handler.Handle(message);
@@ -108,12 +200,11 @@ public class IndexOrganizationMembersChangedEventHandlerTests
     public async Task Handle_OrganizationWithNoMembers_DoesNotEnqueue()
     {
         //Arrange
-        var org = new Organization { Id = "org-1" };
         _memberSearchServiceMock
             .Setup(s => s.SearchAllAsync(It.IsAny<MembersSearchCriteria>()))
             .ReturnsAsync([]);
 
-        var message = BuildEvent(org, EntryState.Modified);
+        var message = BuildRolesChangedEvent("org-1");
 
         //Act
         await _handler.Handle(message);
@@ -141,10 +232,10 @@ public class IndexOrganizationMembersChangedEventHandlerTests
             .ReturnsAsync([sharedContact]);
 
         var message = new MemberChangedEvent(
-            [
-                new(new Organization { Id = "org-1" }, EntryState.Modified),
-                new(new Organization { Id = "org-2" }, EntryState.Modified),
-            ]);
+        [
+            ModifiedOrgEntry("org-1", oldRoleIds: [], newRoleIds: ["r1"]),
+            ModifiedOrgEntry("org-2", oldRoleIds: [], newRoleIds: ["r1"]),
+        ]);
 
         //Act
         await _handler.Handle(message);
@@ -176,9 +267,19 @@ public class IndexOrganizationMembersChangedEventHandlerTests
             Times.Never);
     }
 
-    private static MemberChangedEvent BuildEvent(Organization org, EntryState state) =>
+    private static MemberChangedEvent BuildRolesChangedEvent(string orgId) =>
         new(
         [
-            new(org, state),
+            ModifiedOrgEntry(orgId, oldRoleIds: [], newRoleIds: ["r1"]),
         ]);
+
+    private static GenericChangedEntry<Member> ModifiedOrgEntry(string orgId, string[] oldRoleIds, string[] newRoleIds) =>
+        new(BuildOrg(orgId, newRoleIds), BuildOrg(orgId, oldRoleIds), EntryState.Modified);
+
+    private static Organization BuildOrg(string id, params string[] roleIds) =>
+        new()
+        {
+            Id = id,
+            Roles = roleIds.Select(rid => new OrganizationRole { RoleId = rid }).ToList(),
+        };
 }
