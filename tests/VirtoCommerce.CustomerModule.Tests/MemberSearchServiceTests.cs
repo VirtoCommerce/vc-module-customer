@@ -88,6 +88,14 @@ namespace VirtoCommerce.CustomerModule.Tests
             Assert.Equal(AllIds, ids.OrderBy(x => x));
         }
 
+        [Fact]
+        public void BuildQuery_ExcludedObjectIds_ExcludesGivenMembers()
+        {
+            var ids = Search(new MembersSearchCriteria { ExcludedObjectIds = [OrgAId] });
+
+            Assert.Equal([OrgBId], ids);
+        }
+
         private string[] Search(MembersSearchCriteria criteria)
         {
             var service = new TestableMemberSearchService();

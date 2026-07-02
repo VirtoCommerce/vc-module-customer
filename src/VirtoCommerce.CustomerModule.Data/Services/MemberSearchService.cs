@@ -142,6 +142,11 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                 query = query.Where(m => criteria.ObjectIds.Contains(m.Id));
             }
 
+            if (!criteria.ExcludedObjectIds.IsNullOrEmpty())
+            {
+                query = query.Where(m => !criteria.ExcludedObjectIds.Contains(m.Id));
+            }
+
             if (!criteria.MemberTypes.IsNullOrEmpty())
             {
                 query = query.Where(m => criteria.MemberTypes.Contains(m.MemberType));

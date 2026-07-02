@@ -151,6 +151,34 @@ public class IndexOrganizationMembersChangedEventHandlerTests
     }
 
     [Fact]
+    public async Task Handle_OrganizationRoleRemoved_EnqueuesReindexForMembers()
+    {
+        // A role removed from the org (no longer assignable) is also a role-set change, not just additions.
+        //Arrange
+        _memberSearchServiceMock
+            .Setup(s => s.SearchAllAsync(It.Is<MembersSearchCriteria>(c => c.MemberId == "org-1")))
+            .ReturnsAsync([new Contact { Id = "contact-1" }]);
+
+        var oldOrg = new Organization { Id = "org-1", Roles = [new OrganizationRole { RoleId = "r1", RoleName = "Buyer" }] };
+        var newOrg = new Organization { Id = "org-1", Roles = [] };
+        var message = new MemberChangedEvent(
+        [
+            new(newOrg, oldOrg, EntryState.Modified),
+        ]);
+
+        //Act
+        await _handler.Handle(message);
+
+        //Assert
+        _indexingJobServiceMock.Verify(s =>
+            s.EnqueueIndexAndDeleteDocuments(
+                It.Is<IndexEntry[]>(entries => entries.Length == 1 && entries[0].Id == "contact-1"),
+                It.IsAny<string>(),
+                It.IsAny<IList<IIndexDocumentBuilder>>()),
+            Times.Once);
+    }
+
+    [Fact]
     public async Task Handle_OrganizationAdded_DoesNotEnqueue()
     {
         // Only Modified orgs trigger member reindex (org roles changed → propagate to members).

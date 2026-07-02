@@ -661,6 +661,42 @@ public class OrganizationMembershipSearchServiceGetRolesForUsersTests : Organiza
     }
 
     [Fact]
+    public async Task GetRolesForUsersInOrgAsync_NullOrEmptyUserIdsMixedIn_DoesNotThrow()
+    {
+        //Arrange — org has r1; caller passes null/empty entries alongside a real id
+        MemberServiceMock
+            .Setup(s => s.GetByIdAsync("org1", It.IsAny<string>(), nameof(Organization)))
+            .ReturnsAsync(
+                new Organization
+                {
+                    Id = "org1",
+                    Roles =
+                    [
+                        new OrganizationRole
+                        {
+                            RoleId = "r1",
+                            RoleName = "Admin"
+                        }
+                    ]
+                });
+
+        //Act
+        var result = await CreateSearchService().GetRolesForUsersInOrgAsync(["user1", null, ""], "org1");
+
+        //Assert — no ArgumentNullException from a null dictionary key; only the real id is present
+        Assert.Single(result);
+        Assert.Equal("r1", result["user1"].Single().RoleId);
+    }
+
+    [Fact]
+    public async Task GetRolesForUsersInOrgAsync_OnlyNullOrEmptyUserIds_ReturnsEmptyDictionary()
+    {
+        var result = await CreateSearchService().GetRolesForUsersInOrgAsync([null, ""], "org1");
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
     public async Task GetRolesForUsersInOrgAsync_OrgRolesOnly_AllUsersReceiveOrgRoles()
     {
         //Arrange — org has a role, no membership rows exist
@@ -751,6 +787,34 @@ public class OrganizationMembershipSearchServiceGetRolesForUsersTests : Organiza
 
         //Assert — r1 appears exactly once
         Assert.Single(result["user1"]);
+        Assert.Equal("r1", result["user1"].Single().RoleId);
+    }
+
+    [Fact]
+    public async Task GetRolesForUsersInOrgAsync_DuplicateUserIds_DoesNotThrow()
+    {
+        //Arrange — org has r1; caller passes the same user id twice
+        MemberServiceMock
+            .Setup(s => s.GetByIdAsync("org1", It.IsAny<string>(), nameof(Organization)))
+            .ReturnsAsync(
+                new Organization
+                {
+                    Id = "org1",
+                    Roles =
+                    [
+                        new OrganizationRole
+                        {
+                            RoleId = "r1",
+                            RoleName = "Admin"
+                        }
+                    ]
+                });
+
+        //Act
+        var result = await CreateSearchService().GetRolesForUsersInOrgAsync(["user1", "user1"], "org1");
+
+        //Assert — no ArgumentException from duplicate dictionary keys; a single entry is returned
+        Assert.Single(result);
         Assert.Equal("r1", result["user1"].Single().RoleId);
     }
 

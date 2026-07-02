@@ -61,6 +61,11 @@ namespace VirtoCommerce.CustomerModule.Data.Search
                 result.Add(new IdsFilter { Values = criteria.ObjectIds });
             }
 
+            if (criteria.ExcludedObjectIds?.Any() == true)
+            {
+                result.Add(new NotFilter { ChildFilter = new IdsFilter { Values = criteria.ExcludedObjectIds } });
+            }
+
             if (criteria.MemberTypes?.Any() == true)
             {
                 result.Add(CreateTermFilter("MemberType", criteria.MemberTypes));

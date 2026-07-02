@@ -84,13 +84,25 @@ public class OrganizationMembershipSearchService(
             return new Dictionary<string, IReadOnlyCollection<OrganizationRole>>();
         }
 
+        // Filter out null/empty and deduplicate defensively: Dictionary rejects a null key,
+        // and a caller-supplied list with repeated ids would otherwise throw on ToDictionary below
+        var distinctUserIds = userIds
+            .Where(id => !string.IsNullOrEmpty(id))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (distinctUserIds.Count == 0)
+        {
+            return new Dictionary<string, IReadOnlyCollection<OrganizationRole>>();
+        }
+
         var orgTask = memberService.GetByIdAsync(organizationId, memberType: nameof(Organization));
         var membershipsTask = SearchAsync(
             new OrganizationMembershipSearchCriteria
             {
-                UserIds = [.. userIds],
+                UserIds = distinctUserIds,
                 OrganizationId = organizationId,
-                Take = userIds.Count,
+                Take = distinctUserIds.Count,
             });
 
         await Task.WhenAll(orgTask, membershipsTask);
@@ -100,7 +112,7 @@ public class OrganizationMembershipSearchService(
 
         var membershipByUserId = membershipsTask.Result.Results.ToDictionary(m => m.UserId);
 
-        return userIds.ToDictionary(
+        return distinctUserIds.ToDictionary(
             userId => userId,
             userId =>
             {
@@ -144,6 +156,10 @@ public class OrganizationMembershipSearchService(
         return _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
         {
             cacheEntry.AddExpirationToken(GenericSearchCachingRegion<OrganizationMembership>.CreateChangeToken());
+
+            // OnlyLocked embeds DateTime.UtcNow, so a temporary lock (LockoutEnd) can naturally expire
+            // without any write happening to bust the region token above — bound the staleness window
+            cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
 
             using var repository = repositoryFactory();
 
