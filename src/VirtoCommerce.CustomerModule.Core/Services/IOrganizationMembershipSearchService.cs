@@ -19,7 +19,19 @@ public interface IOrganizationMembershipSearchService
 
     Task<IReadOnlyCollection<OrganizationRole>> GetRolesByUserAndOrgAsync(string userId, string organizationId);
 
+    /// <summary>
+    /// Same as <see cref="GetRolesByUserAndOrgAsync(string,string)"/> but reuses an already-fetched membership
+    /// instead of searching it again. Pass null when the user has no membership record in the organization.
+    /// </summary>
+    Task<IReadOnlyCollection<OrganizationRole>> GetRolesByUserAndOrgAsync(string organizationId, OrganizationMembership membership);
+
     Task<IDictionary<string, IReadOnlyCollection<OrganizationRole>>> GetRolesForUsersInOrgAsync(IList<string> userIds, string organizationId);
 
     Task<IReadOnlyCollection<string>> GetUserIdsByRoleInOrgAsync(string organizationId, IList<string> roleIds);
+
+    /// <summary>
+    /// Returns ids of organizations where the user's membership is currently locked.
+    /// Runs as a single projected query without hydrating membership entities.
+    /// </summary>
+    Task<IReadOnlyCollection<string>> GetLockedOrganizationIdsAsync(string userId);
 }

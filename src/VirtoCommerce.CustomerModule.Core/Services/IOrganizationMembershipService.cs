@@ -20,7 +20,7 @@ public interface IOrganizationMembershipService
     [Obsolete("Use IOrganizationMembershipSearchService.SearchAsync with UserId and OrganizationId filters instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
     Task<OrganizationMembership> GetByUserAndOrgAsync(string userId, string organizationId);
 
-    [Obsolete("Use IOrganizationMembershipSearchService.SearchAsync with the OnlyLocked filter instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
+    [Obsolete("Use IOrganizationMembershipSearchService.GetLockedOrganizationIdsAsync instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
     Task<IReadOnlyCollection<string>> GetLockedOrganizationIdsAsync(string userId);
 
     [Obsolete("Use IOrganizationMembershipSearchService.SearchAsync with Take = 0 and read TotalCount instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]

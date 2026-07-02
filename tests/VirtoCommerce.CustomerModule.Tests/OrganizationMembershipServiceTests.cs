@@ -363,6 +363,91 @@ public class OrganizationMembershipServiceTests : OrganizationMembershipServiceT
         Assert.Single(result);
         Assert.Equal("r2", result.First().RoleId);
     }
+
+    [Fact]
+    public async Task GetRolesByUserAndOrgAsync_WithMembership_EmptyOrgId_ReturnsEmpty()
+    {
+        var membership = new OrganizationMembership
+        {
+            UserId = "user1",
+            OrganizationId = "org1",
+            Roles = [new OrganizationMembershipRole { RoleId = "r2" }],
+        };
+
+        var result = await CreateSearchService().GetRolesByUserAndOrgAsync(string.Empty, membership);
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetRolesByUserAndOrgAsync_WithNullMembership_ReturnsOrgRolesOnly()
+    {
+        //Arrange — org has a role, membership is not passed
+        MemberServiceMock
+            .Setup(s => s.GetByIdAsync("org1", It.IsAny<string>(), nameof(Organization)))
+            .ReturnsAsync(
+                new Organization
+                {
+                    Id = "org1",
+                    Roles =
+                    [
+                        new OrganizationRole
+                        {
+                            RoleId = "r1",
+                            RoleName = "Admin"
+                        }
+                    ]
+                });
+
+        //Act
+        var result = await CreateSearchService().GetRolesByUserAndOrgAsync("org1", membership: null);
+
+        //Assert
+        Assert.Single(result);
+        Assert.Equal("r1", result.First().RoleId);
+    }
+
+    [Fact]
+    public async Task GetRolesByUserAndOrgAsync_WithMembership_ReturnsMergedRolesWithoutMembershipSearch()
+    {
+        //Arrange — org has role A, the pre-fetched membership has role B; no membership rows in the repository
+        MemberServiceMock
+            .Setup(s => s.GetByIdAsync("org1", It.IsAny<string>(), nameof(Organization)))
+            .ReturnsAsync(
+                new Organization
+                {
+                    Id = "org1",
+                    Roles =
+                    [
+                        new OrganizationRole
+                        {
+                            RoleId = "r1",
+                            RoleName = "Admin"
+                        }
+                    ]
+                });
+
+        var membership = new OrganizationMembership
+        {
+            UserId = "user1",
+            OrganizationId = "org1",
+            Roles =
+            [
+                new OrganizationMembershipRole
+                {
+                    RoleId = "r2"
+                }
+            ],
+        };
+
+        //Act
+        var result = await CreateSearchService().GetRolesByUserAndOrgAsync("org1", membership);
+
+        //Assert — merged from both sources even though the repository has no memberships to search
+        Assert.Equal(2, result.Count);
+        Assert.Contains(result, r => r.RoleId == "r1");
+        Assert.Contains(result, r => r.RoleId == "r2");
+    }
 }
 
 public class OrganizationMembershipSearchServiceTests : OrganizationMembershipServiceTestsBase

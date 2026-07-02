@@ -59,7 +59,7 @@ public class OrganizationIdClaimProvider(
             return;
         }
 
-        var orgScopedRoles = await organizationMembershipSearchService.GetRolesByUserAndOrgAsync(userId, organizationId);
+        var orgScopedRoles = await organizationMembershipSearchService.GetRolesByUserAndOrgAsync(organizationId, membership);
 
         if (orgScopedRoles.Count == 0)
         {

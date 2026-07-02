@@ -879,22 +879,14 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
 
         private async Task<List<string>> ExcludeLockedOrganizationsAsync(string userId, List<string> organizationIds)
         {
-            var lockedMemberships = await _organizationMembershipSearchService.SearchAllNoCloneAsync(
-                new OrganizationMembershipSearchCriteria
-                {
-                    UserId = userId,
-                    OrganizationIds = organizationIds,
-                    OnlyLocked = true
-                });
+            var lockedOrgIds = await _organizationMembershipSearchService.GetLockedOrganizationIdsAsync(userId);
 
-            if (lockedMemberships.Count == 0)
+            if (lockedOrgIds.Count == 0)
             {
                 return organizationIds;
             }
 
-            var lockedSet = new HashSet<string>(
-                lockedMemberships.Select(m => m.OrganizationId).Where(orgId => !string.IsNullOrEmpty(orgId)),
-                StringComparer.OrdinalIgnoreCase);
+            var lockedSet = new HashSet<string>(lockedOrgIds, StringComparer.OrdinalIgnoreCase);
 
             return organizationIds.Where(orgId => !lockedSet.Contains(orgId)).ToList();
         }

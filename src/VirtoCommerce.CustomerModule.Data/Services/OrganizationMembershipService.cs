@@ -107,25 +107,10 @@ public class OrganizationMembershipService
         return result.Results.FirstOrDefault();
     }
 
-    [Obsolete("Use IOrganizationMembershipSearchService.SearchAsync with the OnlyLocked filter instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
-    public async Task<IReadOnlyCollection<string>> GetLockedOrganizationIdsAsync(string userId)
+    [Obsolete("Use IOrganizationMembershipSearchService.GetLockedOrganizationIdsAsync instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
+    public Task<IReadOnlyCollection<string>> GetLockedOrganizationIdsAsync(string userId)
     {
-        if (string.IsNullOrEmpty(userId))
-        {
-            return [];
-        }
-
-        var results = await _searchServiceFactory().SearchAllNoCloneAsync(
-            new OrganizationMembershipSearchCriteria
-            {
-                UserId = userId,
-                OnlyLocked = true
-            });
-
-        return results
-            .Select(x => x.OrganizationId)
-            .Where(id => !string.IsNullOrEmpty(id))
-            .ToList();
+        return _searchServiceFactory().GetLockedOrganizationIdsAsync(userId);
     }
 
     [Obsolete("Use IOrganizationMembershipSearchService.SearchAsync with Take = 0 and read TotalCount instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]

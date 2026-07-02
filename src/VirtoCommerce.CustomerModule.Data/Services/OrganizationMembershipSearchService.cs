@@ -46,6 +46,23 @@ public class OrganizationMembershipSearchService(
         var organization = orgTask.Result as Organization;
         var membership = membershipTask.Result.Results.FirstOrDefault();
 
+        return MergeRoles(organization, membership);
+    }
+
+    public virtual async Task<IReadOnlyCollection<OrganizationRole>> GetRolesByUserAndOrgAsync(string organizationId, OrganizationMembership membership)
+    {
+        if (organizationId.IsNullOrEmpty())
+        {
+            return [];
+        }
+
+        var organization = await memberService.GetByIdAsync(organizationId, memberType: nameof(Organization)) as Organization;
+
+        return MergeRoles(organization, membership);
+    }
+
+    private static IReadOnlyCollection<OrganizationRole> MergeRoles(Organization organization, OrganizationMembership membership)
+    {
         IEnumerable<OrganizationRole> orgRoles = organization?.Roles ?? [];
         var membershipRoles = membership?.Roles?.Select(ToOrganizationRole) ?? [];
 
@@ -107,6 +124,28 @@ public class OrganizationMembershipSearchService(
             .Where(m => m.OrganizationId == organizationId)
             .Where(m => m.Roles.Any(r => roleIds.Contains(r.RoleId)))
             .Select(m => m.UserId)
+            .Distinct()
+            .ToListAsync();
+    }
+
+    public virtual async Task<IReadOnlyCollection<string>> GetLockedOrganizationIdsAsync(string userId)
+    {
+        if (userId.IsNullOrEmpty())
+        {
+            return [];
+        }
+
+        using var repository = repositoryFactory();
+
+        var criteria = new OrganizationMembershipSearchCriteria
+        {
+            UserId = userId,
+            OnlyLocked = true,
+        };
+
+        return await BuildQuery(repository, criteria)
+            .Select(x => x.OrganizationId)
+            .Where(id => !string.IsNullOrEmpty(id))
             .Distinct()
             .ToListAsync();
     }
