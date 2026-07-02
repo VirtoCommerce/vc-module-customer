@@ -65,7 +65,7 @@ public class OrganizationMembershipSearchService(
         return MergeRoles(organization, membership);
     }
 
-    private static IReadOnlyCollection<OrganizationRole> MergeRoles(Organization organization, OrganizationMembership membership)
+    private static List<OrganizationRole> MergeRoles(Organization organization, OrganizationMembership membership)
     {
         IEnumerable<OrganizationRole> orgRoles = organization?.Roles ?? [];
         var membershipRoles = membership?.Roles?.Select(ToOrganizationRole) ?? [];
