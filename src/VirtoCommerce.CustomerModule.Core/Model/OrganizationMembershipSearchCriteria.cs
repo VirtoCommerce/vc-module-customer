@@ -35,4 +35,10 @@ public class OrganizationMembershipSearchCriteria : SearchCriteriaBase
     /// (<see cref="OrganizationMembership.IsLocked"/> and the lockout has not expired).
     /// </summary>
     public bool OnlyLocked { get; set; }
+
+    /// <summary>
+    /// When true, return only memberships that are currently NOT locked — i.e. active
+    /// (not <see cref="OrganizationMembership.IsLocked"/>, or the lockout has already expired).
+    /// </summary>
+    public bool OnlyUnlocked { get; set; }
 }

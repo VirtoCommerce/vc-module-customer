@@ -234,10 +234,19 @@ public class OrganizationMembershipSearchService(
             query = query.Where(x => x.Roles.Any(r => criteria.RoleIds.Contains(r.RoleId)));
         }
 
-        if (criteria.OnlyLocked)
+        if (criteria.OnlyLocked || criteria.OnlyUnlocked)
         {
             var now = DateTime.UtcNow;
-            query = query.Where(x => x.IsLocked && (x.LockoutEnd == null || x.LockoutEnd > now));
+
+            if (criteria.OnlyLocked)
+            {
+                query = query.Where(x => x.IsLocked && (x.LockoutEnd == null || x.LockoutEnd > now));
+            }
+
+            if (criteria.OnlyUnlocked)
+            {
+                query = query.Where(x => !x.IsLocked || (x.LockoutEnd != null && x.LockoutEnd <= now));
+            }
         }
 
         return query;
