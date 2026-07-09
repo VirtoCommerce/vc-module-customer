@@ -1,6 +1,6 @@
 angular.module('virtoCommerce.customerModule').controller('virtoCommerce.customerModule.organizationDetailController',
-    ['$scope', 'platformWebApp.settings', 'platformWebApp.bladeNavigationService', 'platformWebApp.roles',
-        function ($scope, settings, bladeNavigationService, roles) {
+    ['$scope', 'platformWebApp.settings', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.rolesPickerService',
+        function ($scope, settings, bladeNavigationService, rolesPickerService) {
             var blade = $scope.blade;
 
             if (blade.isNew) {
@@ -15,39 +15,21 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
             blade.groups = settings.getValues({ id: 'Customer.MemberGroups' });
             blade.availableRoles = [];
 
-            var orgRolesWhitelist = settings.getValues({ id: 'Customer.OrganizationRolesWhitelist' });
+            var rolesPicker = rolesPickerService.create({
+                whitelistSettingId: 'Customer.OrganizationRolesWhitelist',
+                getSelectedRoles: function () { return blade.currentEntity.roles; },
+                onAvailableRolesChanged: function (list) { blade.availableRoles = list; }
+            });
 
-            blade.refreshRoles = function (keyword) {
-                roles.search({ keyword: keyword || '', take: 20 }).$promise.then(function (data) {
-                    var allRoles = data.results || [];
-                    blade.availableRoles = orgRolesWhitelist.length
-                        ? allRoles.filter(function (r) { return orgRolesWhitelist.indexOf(r.name) !== -1; })
-                        : allRoles;
-                });
-            };
+            blade.refreshRoles = rolesPicker.refresh;
 
-            blade.isRoleAvailable = function (role) {
-                var selected = (blade.currentEntity.roles || []).map(function (r) {
-                    return r.roleId || r.id;
-                });
-
-                return selected.indexOf(role.id) === -1;
-            };
-
-            // Normalize roles added from the platform roles picker ({ id, name }) into OrganizationRole shape ({ roleId, roleName }).
-            // Replaces the item reference rather than mutating in-place to avoid corrupting the shared object in availableRoles.
             $scope.$watchCollection('blade.currentEntity.roles', function (newRoles) {
                 if (!newRoles) {
                     return;
                 }
 
-                for (var i = 0; i < newRoles.length; i++) {
-                    var r = newRoles[i];
-
-                    if (!r.roleId && r.id) {
-                        newRoles[i] = { roleId: r.id, roleName: r.name };
-                    }
-                }
+                rolesPicker.normalizeSelected(newRoles);
+                rolesPicker.syncAvailableRoles();
             });
 
             blade.openGroupsDictionarySettingManagement = function () {

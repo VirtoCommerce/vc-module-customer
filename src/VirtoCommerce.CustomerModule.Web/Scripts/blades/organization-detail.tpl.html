@@ -39,7 +39,7 @@
                 <ui-select-match placeholder="{{'customer.blades.organization-detail.placeholders.roles' | translate}}">
                     {{ $item.roleName || $item.name }}
                 </ui-select-match>
-                <ui-select-choices repeat="r in blade.availableRoles | filter: blade.isRoleAvailable track by r.id"
+                <ui-select-choices repeat="r in blade.availableRoles"
                                    refresh="blade.refreshRoles($select.search)"
                                    refresh-delay="200">
                     <span ng-bind-html="r.name | highlight: $select.search"></span>
