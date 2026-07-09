@@ -25,7 +25,8 @@ angular.module('virtoCommerce.customerModule')
 
                     return {
                         refresh: function (keyword) {
-                            var token = ++requestToken;
+                            requestToken++;
+                            var token = requestToken;
 
                             roles.search({ keyword: keyword || '', take: 20 }).$promise.then(function (data) {
                                 if (token !== requestToken) {
@@ -39,7 +40,9 @@ angular.module('virtoCommerce.customerModule')
                                         return value.toLowerCase();
                                     });
 
-                                    allRoles = allRoles.filter(function (r) { return whitelistLower.indexOf(r.name.toLowerCase()) !== -1; });
+                                    allRoles = allRoles.filter(function (r) {
+                                        return whitelistLower.indexOf(r.name.toLowerCase()) !== -1;
+                                    });
                                 }
 
                                 lastFetchedRoles = allRoles;
