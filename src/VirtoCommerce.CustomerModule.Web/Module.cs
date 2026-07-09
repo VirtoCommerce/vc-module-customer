@@ -112,7 +112,7 @@ namespace VirtoCommerce.CustomerModule.Web
 
             serviceCollection.AddTransient<IAuthorizationHandler, CustomerAuthorizationHandler>();
 
-            serviceCollection.AddTransient<AbstractValidator<Member>, MemberValidator>();
+            serviceCollection.AddSingleton<AbstractValidator<Member>, MemberValidator>();
 
             serviceCollection.AddSingleton<IOrganizationMembershipService, OrganizationMembershipService>();
 
