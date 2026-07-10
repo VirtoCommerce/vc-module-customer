@@ -56,17 +56,22 @@ namespace VirtoCommerce.CustomerModule.Data.Search
                 result.AddRange(parseResult.Filters);
             }
 
-            if (criteria.ObjectIds?.Any() == true)
+            if (criteria.ObjectIds?.Count > 0)
             {
                 result.Add(new IdsFilter { Values = criteria.ObjectIds });
             }
 
-            if (criteria.MemberTypes?.Any() == true)
+            if (criteria.ExcludedObjectIds?.Length > 0)
+            {
+                result.Add(new NotFilter { ChildFilter = new IdsFilter { Values = criteria.ExcludedObjectIds } });
+            }
+
+            if (criteria.MemberTypes?.Length > 0)
             {
                 result.Add(CreateTermFilter("MemberType", criteria.MemberTypes));
             }
 
-            if (criteria.Groups?.Any() == true)
+            if (criteria.Groups?.Length > 0)
             {
                 result.Add(CreateTermFilter("Groups", criteria.Groups));
             }

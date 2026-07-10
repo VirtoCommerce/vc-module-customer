@@ -2,9 +2,9 @@ angular.module('virtoCommerce.customerModule')
     .controller('virtoCommerce.customerModule.organizationMembershipDetailController',
         ['$scope', 'platformWebApp.bladeNavigationService', 'platformWebApp.dialogService',
          'virtoCommerce.customerModule.organizationMemberships', 'virtoCommerce.customerModule.organizations',
-         'platformWebApp.roles',
+         'virtoCommerce.customerModule.rolesPickerService',
         function ($scope, bladeNavigationService, dialogService,
-                  organizationMemberships, organizations, roles) {
+                  organizationMemberships, organizations, rolesPickerService) {
             var blade = $scope.blade;
             blade.updatePermission = 'customer:update';
 
@@ -47,19 +47,21 @@ angular.module('virtoCommerce.customerModule')
                 });
             };
 
-            blade.refreshRoles = function (keyword) {
-                roles.search({ keyword: keyword || '', take: 20 }).$promise.then(function (data) {
-                    blade.availableRoles = data.results || [];
-                });
-            };
+            var rolesPicker = rolesPickerService.create({
+                whitelistSettingId: 'Customer.MembershipRolesWhitelist',
+                getSelectedRoles: function () { return blade.currentEntity.roles; },
+                onAvailableRolesChanged: function (list) { blade.availableRoles = list; }
+            });
 
-            blade.isRoleAvailable = function (role) {
-                var selectedIds = (blade.currentEntity.roles || []).map(function (r) {
-                    return r.roleId || r.id;
-                });
+            blade.refreshRoles = rolesPicker.refresh;
 
-                return selectedIds.indexOf(role.id) === -1;
-            };
+            $scope.$watchCollection('blade.currentEntity.roles', function (newRoles) {
+                if (!newRoles) {
+                    return;
+                }
+
+                rolesPicker.syncAvailableRoles();
+            });
 
             blade.fetchOrganizations = function (criteria) {
                 criteria = criteria || {};

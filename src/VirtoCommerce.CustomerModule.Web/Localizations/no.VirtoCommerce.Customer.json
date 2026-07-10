@@ -92,11 +92,13 @@
         "labels": {
           "name": "Navn",
           "description": "Beskrivelse",
-          "business-category": "Forretningsområde"
+          "business-category": "Forretningsområde",
+          "roles": "Roller"
         },
         "placeholders": {
           "name": "Skriv inn navn",
-          "description": "Angi beskrivelse"
+          "description": "Angi beskrivelse",
+          "roles": "Velg roller"
         }
       },
       "vendor-detail": {
@@ -366,7 +368,9 @@
       },
       "organization-memberships": {
         "title": "Organisasjonsmedlemskap",
-        "blade-subtitle": "Administrer organisasjonsmedlemskap"
+        "blade-subtitle": "Administrer organisasjonsmedlemskap",
+        "no-account-title": "Ingen brukerkonto",
+        "no-account-message": "Denne kontakten har ikke en brukerkonto. Opprett en brukerkonto først for å administrere organisasjonsmedlemskap."
       }
     },
     "dialogs": {
@@ -491,6 +495,14 @@
       "ContactDefaultStatus": {
         "title": "Kontaktens standardstatus",
         "description": "Denne statusen tildeles eieren av det nylig registrerte selskapet"
+      },
+      "OrganizationRolesWhitelist": {
+        "title": "Hviteliste for organisasjonsroller",
+        "description": "Roller tilgjengelige for tildeling på organisasjonsnivå"
+      },
+      "MembershipRolesWhitelist": {
+        "title": "Hviteliste for medlemskapsroller",
+        "description": "Roller tilgjengelige for tildeling på organisasjonsmedlemskapsnivå"
       }
     },
     "VirtoCommerce": {

@@ -76,6 +76,24 @@ namespace VirtoCommerce.CustomerModule.Core
                     DefaultValue = true
                 };
 
+                public static SettingDescriptor OrganizationRolesWhitelist { get; } = new SettingDescriptor
+                {
+                    Name = "Customer.OrganizationRolesWhitelist",
+                    GroupName = "Customer|Roles",
+                    ValueType = SettingValueType.ShortText,
+                    IsDictionary = true,
+                    AllowedValues = [],
+                };
+
+                public static SettingDescriptor MembershipRolesWhitelist { get; } = new SettingDescriptor
+                {
+                    Name = "Customer.MembershipRolesWhitelist",
+                    GroupName = "Customer|Roles",
+                    ValueType = SettingValueType.ShortText,
+                    IsDictionary = true,
+                    AllowedValues = [],
+                };
+
                 #region Statuses
 
                 public static SettingDescriptor OrganizationStatuses { get; } = new SettingDescriptor
@@ -140,6 +158,8 @@ namespace VirtoCommerce.CustomerModule.Core
                     ExportImportPageSize,
                     MemberIndexationDate,
                     EventBasedIndexation,
+                    OrganizationRolesWhitelist,
+                    MembershipRolesWhitelist,
                     OrganizationStatuses,
                     VendorStatuses,
                     EmployeeStatuses,

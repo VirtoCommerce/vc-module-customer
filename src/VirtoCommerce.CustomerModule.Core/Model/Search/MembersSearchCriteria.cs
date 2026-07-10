@@ -98,6 +98,12 @@ namespace VirtoCommerce.CustomerModule.Core.Model.Search
         /// </summary>
         public string[] OuterIds { get; set; }
 
+        /// <summary>
+        /// Exclude members with the given ids from the search result.
+        /// Applied before pagination, so page sizes and the total count stay consistent.
+        /// </summary>
+        public string[] ExcludedObjectIds { get; set; }
+
 
     }
 }

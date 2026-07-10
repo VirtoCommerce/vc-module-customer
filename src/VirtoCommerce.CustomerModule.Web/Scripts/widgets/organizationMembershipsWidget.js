@@ -1,11 +1,15 @@
 angular.module('virtoCommerce.customerModule')
     .controller('virtoCommerce.customerModule.organizationMembershipsWidgetController',
-        ['$scope', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.organizationMemberships',
-        function ($scope, bladeNavigationService, organizationMemberships) {
+        ['$scope', 'platformWebApp.bladeNavigationService', 'platformWebApp.dialogService', 'virtoCommerce.customerModule.organizationMemberships',
+        function ($scope, bladeNavigationService, dialogService, organizationMemberships) {
             var blade = $scope.widget.blade;
 
+            function hasUser() {
+                return blade.currentEntity && blade.currentEntity.securityAccounts && blade.currentEntity.securityAccounts.length > 0;
+            }
+
             function refresh() {
-                if (!blade.currentEntity || !blade.currentEntity.securityAccounts || !blade.currentEntity.securityAccounts.length) {
+                if (!hasUser()) {
                     $scope.count = 0;
                     return;
                 }
@@ -17,7 +21,12 @@ angular.module('virtoCommerce.customerModule')
             }
 
             $scope.openBlade = function () {
-                if (!blade.currentEntity || !blade.currentEntity.securityAccounts || !blade.currentEntity.securityAccounts.length) {
+                if (!hasUser()) {
+                    dialogService.showNotificationDialog({
+                        id: 'noUserAccount',
+                        title: 'customer.widgets.organization-memberships.no-account-title',
+                        message: 'customer.widgets.organization-memberships.no-account-message'
+                    });
                     return;
                 }
                 var userId = blade.currentEntity.securityAccounts[0].id;
