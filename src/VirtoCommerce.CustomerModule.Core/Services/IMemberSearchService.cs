@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Model.Search;
 
 namespace VirtoCommerce.CustomerModule.Core.Services
@@ -6,5 +8,7 @@ namespace VirtoCommerce.CustomerModule.Core.Services
     public interface IMemberSearchService
     {
         Task<MemberSearchResult> SearchMembersAsync(MembersSearchCriteria criteria);
+
+        Task<IList<Member>> SearchAllAsync(MembersSearchCriteria criteria);
     }
 }

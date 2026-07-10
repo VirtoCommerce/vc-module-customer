@@ -92,11 +92,13 @@
         "labels": {
           "name": "Nimi",
           "description": "Kuvaus",
-          "business-category": "Liiketoiminta-ala"
+          "business-category": "Liiketoiminta-ala",
+          "roles": "Roolit"
         },
         "placeholders": {
           "name": "Syötä nimi",
-          "description": "Anna kuvaus"
+          "description": "Anna kuvaus",
+          "roles": "Valitse roolit"
         }
       },
       "vendor-detail": {
@@ -366,7 +368,9 @@
       },
       "organization-memberships": {
         "title": "Organisaatiojäsenyydet",
-        "blade-subtitle": "Hallitse organisaatiojäsenyyksiä"
+        "blade-subtitle": "Hallitse organisaatiojäsenyyksiä",
+        "no-account-title": "Ei käyttäjätiliä",
+        "no-account-message": "Tällä yhteystiedolla ei ole käyttäjätiliä. Luo ensin käyttäjätili organisaatiojäsenyyksien hallitsemiseksi."
       }
     },
     "dialogs": {
@@ -491,6 +495,14 @@
       "ContactDefaultStatus": {
         "title": "Yhteystiedon oletustila",
         "description": "Tämä tila määritetään äskettäin rekisteröidyn yrityksen omistajalle"
+      },
+      "OrganizationRolesWhitelist": {
+        "title": "Organisaatioroolien sallittujen luettelo",
+        "description": "Organisaatiotasolla tehtäviin toimeksiantoihin käytettävissä olevat roolit"
+      },
+      "MembershipRolesWhitelist": {
+        "title": "Jäsenyyden roolien sallittujen luettelo",
+        "description": "Organisaatiojäsenyyden tasolla tehtäviin toimeksiantoihin käytettävissä olevat roolit"
       }
     },
     "VirtoCommerce": {

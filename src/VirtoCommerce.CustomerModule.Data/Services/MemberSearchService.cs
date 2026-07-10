@@ -49,6 +49,25 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
             return result;
         }
+
+        public virtual async Task<IList<Member>> SearchAllAsync(MembersSearchCriteria criteria)
+        {
+            var result = new List<Member>();
+            var localCriteria = criteria.CloneTyped();
+            int totalCount;
+
+            do
+            {
+                var searchResult = await SearchMembersAsync(localCriteria);
+                result.AddRange(searchResult.Results);
+                totalCount = searchResult.TotalCount;
+                localCriteria.Skip += localCriteria.Take;
+            }
+            while (localCriteria.Skip < totalCount);
+
+            return result;
+        }
+
         #endregion
 
 
@@ -121,6 +140,11 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             if (!criteria.ObjectIds.IsNullOrEmpty())
             {
                 query = query.Where(m => criteria.ObjectIds.Contains(m.Id));
+            }
+
+            if (!criteria.ExcludedObjectIds.IsNullOrEmpty())
+            {
+                query = query.Where(m => !criteria.ExcludedObjectIds.Contains(m.Id));
             }
 
             if (!criteria.MemberTypes.IsNullOrEmpty())

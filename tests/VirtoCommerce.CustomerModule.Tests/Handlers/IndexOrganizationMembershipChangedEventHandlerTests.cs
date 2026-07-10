@@ -160,6 +160,31 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
                 Times.Once);
         }
 
+        [Fact]
+        public async Task Handle_WhenTwoUsersMapToSameMember_EnqueuesReindexOnce()
+        {
+            _userManagerMock.Setup(m => m.FindByIdAsync("user-1"))
+                .ReturnsAsync(new ApplicationUser { Id = "user-1", MemberId = "member-1" });
+            _userManagerMock.Setup(m => m.FindByIdAsync("user-2"))
+                .ReturnsAsync(new ApplicationUser { Id = "user-2", MemberId = "member-1" });
+
+            var message = new OrganizationMembershipChangedEvent(
+                new List<GenericChangedEntry<OrganizationMembership>>
+                {
+                    new(new OrganizationMembership { UserId = "user-1" }, EntryState.Modified),
+                    new(new OrganizationMembership { UserId = "user-2" }, EntryState.Modified),
+                });
+
+            await _handler.Handle(message);
+
+            _indexingJobServiceMock.Verify(s =>
+                s.EnqueueIndexAndDeleteDocuments(
+                    It.Is<IndexEntry[]>(entries => entries.Length == 1 && entries[0].Id == "member-1"),
+                    It.IsAny<string>(),
+                    It.IsAny<IList<IIndexDocumentBuilder>>()),
+                Times.Once);
+        }
+
         private static OrganizationMembershipChangedEvent BuildEvent(OrganizationMembership membership, EntryState state)
         {
             return new OrganizationMembershipChangedEvent(

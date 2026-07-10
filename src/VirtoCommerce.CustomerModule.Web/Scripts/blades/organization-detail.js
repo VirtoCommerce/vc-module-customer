@@ -1,6 +1,6 @@
 angular.module('virtoCommerce.customerModule').controller('virtoCommerce.customerModule.organizationDetailController',
-    ['$scope', 'platformWebApp.settings', 'platformWebApp.bladeNavigationService',
-        function ($scope, settings, bladeNavigationService) {
+    ['$scope', 'platformWebApp.settings', 'platformWebApp.bladeNavigationService', 'virtoCommerce.customerModule.rolesPickerService',
+        function ($scope, settings, bladeNavigationService, rolesPickerService) {
             var blade = $scope.blade;
 
             if (blade.isNew) {
@@ -13,6 +13,24 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
             }
 
             blade.groups = settings.getValues({ id: 'Customer.MemberGroups' });
+            blade.availableRoles = [];
+
+            var rolesPicker = rolesPickerService.create({
+                whitelistSettingId: 'Customer.OrganizationRolesWhitelist',
+                getSelectedRoles: function () { return blade.currentEntity.roles; },
+                onAvailableRolesChanged: function (list) { blade.availableRoles = list; }
+            });
+
+            blade.refreshRoles = rolesPicker.refresh;
+
+            $scope.$watchCollection('blade.currentEntity.roles', function (newRoles) {
+                if (!newRoles) {
+                    return;
+                }
+
+                rolesPicker.normalizeSelected(newRoles);
+                rolesPicker.syncAvailableRoles();
+            });
 
             blade.openGroupsDictionarySettingManagement = function () {
                 var newBlade = {
@@ -23,6 +41,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                     controller: 'platformWebApp.settingDictionaryController',
                     template: '$(Platform)/Scripts/app/settings/blades/setting-dictionary.tpl.html'
                 };
+
                 bladeNavigationService.showBlade(newBlade, blade);
             };
         }]);

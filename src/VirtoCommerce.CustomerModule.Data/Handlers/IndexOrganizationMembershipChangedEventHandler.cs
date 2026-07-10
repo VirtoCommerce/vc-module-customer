@@ -46,7 +46,7 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
             using var userManager = _userManagerFactory();
 
-            var memberIds = new List<string>();
+            var memberIds = new HashSet<string>();
             foreach (var userId in userIds)
             {
                 var user = await userManager.FindByIdAsync(userId);

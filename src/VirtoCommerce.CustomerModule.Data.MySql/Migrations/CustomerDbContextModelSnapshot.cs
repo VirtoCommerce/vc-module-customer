@@ -17,7 +17,7 @@ namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.7")
+                .HasAnnotation("ProductVersion", "10.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
@@ -571,6 +571,33 @@ namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
                     b.ToTable("CustomerOrganizationMembershipRole", (string)null);
                 });
 
+            modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.OrganizationRoleEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<string>("OrganizationId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<string>("RoleId")
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<string>("RoleName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizationId");
+
+                    b.ToTable("CustomerOrganizationRole", (string)null);
+                });
+
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.PhoneEntity", b =>
                 {
                     b.Property<string>("Id")
@@ -979,6 +1006,17 @@ namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
                     b.Navigation("Membership");
                 });
 
+            modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.OrganizationRoleEntity", b =>
+                {
+                    b.HasOne("VirtoCommerce.CustomerModule.Data.Model.OrganizationEntity", "Organization")
+                        .WithMany("Roles")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
+                });
+
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.PhoneEntity", b =>
                 {
                     b.HasOne("VirtoCommerce.CustomerModule.Data.Model.MemberEntity", "Member")
@@ -1020,6 +1058,11 @@ namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
                 });
 
             modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.OrganizationMembershipEntity", b =>
+                {
+                    b.Navigation("Roles");
+                });
+
+            modelBuilder.Entity("VirtoCommerce.CustomerModule.Data.Model.OrganizationEntity", b =>
                 {
                     b.Navigation("Roles");
                 });
