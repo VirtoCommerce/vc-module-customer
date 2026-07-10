@@ -14,6 +14,7 @@ namespace VirtoCommerce.CustomerModule.Core.Model
         WithSecurityAccounts = 1 << 5,
         WithSeo = 1 << 6,
         WithDynamicProperties = 1 << 7,
-        Full = WithNotes | WithEmails | WithEmails | WithAddresses | WithPhones | WithGroups | WithSecurityAccounts | WithSeo | WithDynamicProperties
+        WithRoles = 1 << 8,
+        Full = WithNotes | WithEmails | WithAddresses | WithPhones | WithGroups | WithSecurityAccounts | WithSeo | WithDynamicProperties | WithRoles
     }
 }

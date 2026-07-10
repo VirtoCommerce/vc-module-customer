@@ -92,11 +92,13 @@
         "labels": {
           "name": "Nome",
           "description": "Descrizione",
-          "business-category": "Settore"
+          "business-category": "Settore",
+          "roles": "Ruoli"
         },
         "placeholders": {
           "name": "Inserisci il nome",
-          "description": "Fornisci una descrizione"
+          "description": "Fornisci una descrizione",
+          "roles": "Seleziona ruoli"
         }
       },
       "vendor-detail": {
@@ -366,7 +368,9 @@
       },
       "organization-memberships": {
         "title": "Appartenenze all'organizzazione",
-        "blade-subtitle": "Gestisci le appartenenze all'organizzazione"
+        "blade-subtitle": "Gestisci le appartenenze all'organizzazione",
+        "no-account-title": "Nessun account utente",
+        "no-account-message": "Questo contatto non ha un account utente. Crea prima un account utente per gestire le appartenenze all'organizzazione."
       }
     },
     "dialogs": {
@@ -491,6 +495,14 @@
       "ContactDefaultStatus": {
         "title": "Stato predefinito di contatto",
         "description": "Questo stato sarà assegnato al proprietario dell'azienda recentemente registrata"
+      },
+      "OrganizationRolesWhitelist": {
+        "title": "Whitelist dei ruoli dell'organizzazione",
+        "description": "Ruoli disponibili per l'assegnazione a livello di organizzazione"
+      },
+      "MembershipRolesWhitelist": {
+        "title": "Whitelist dei ruoli di appartenenza",
+        "description": "Ruoli disponibili per l'assegnazione a livello di appartenenza all'organizzazione"
       }
     },
     "VirtoCommerce": {

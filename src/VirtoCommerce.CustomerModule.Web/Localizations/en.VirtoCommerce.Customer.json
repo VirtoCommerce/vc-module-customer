@@ -92,11 +92,13 @@
         "labels": {
           "name": "Name",
           "description": "Description",
-          "business-category": "Business field"
+          "business-category": "Business field",
+          "roles": "Roles"
         },
         "placeholders": {
           "name": "Enter name",
-          "description": "Provide description"
+          "description": "Provide description",
+          "roles": "Select roles"
         }
       },
       "vendor-detail": {
@@ -366,7 +368,9 @@
       },
       "organization-memberships": {
         "title": "Organization memberships",
-        "blade-subtitle": "Manage organization memberships"
+        "blade-subtitle": "Manage organization memberships",
+        "no-account-title": "No user account",
+        "no-account-message": "This contact does not have a user account. Create a user account first to manage organization memberships."
       }
     },
     "dialogs": {
@@ -491,6 +495,14 @@
       "ContactDefaultStatus": {
         "title": "Contact default status",
         "description": "Specifies the status assigned to newly registered company owners"
+      },
+      "OrganizationRolesWhitelist": {
+        "title": "Organization roles whitelist",
+        "description": "Roles available for assignment at the organization level"
+      },
+      "MembershipRolesWhitelist": {
+        "title": "Membership roles whitelist",
+        "description": "Roles available for assignment at the organization membership level"
       }
     },
     "VirtoCommerce": {

@@ -45,7 +45,7 @@ public class OrganizationMembershipEntity : AuditableEntity, IDataEntity<Organiz
     {
         pkMap.AddPair(model, this);
 
-        Id = model.IsTransient() ? Guid.NewGuid().ToString("N") : model.Id;
+        Id = model.Id;
         CreatedBy = model.CreatedBy;
         CreatedDate = model.CreatedDate;
         ModifiedBy = model.ModifiedBy;
