@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -85,7 +87,12 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<IIndexedMemberSearchService, MemberIndexedSearchService>();
             serviceCollection.AddTransient<IMemberSearchService, MemberSearchService>();
             serviceCollection.AddTransient<IMemberService, MemberService>();
-            serviceCollection.AddTransient<IMemberResolver, MemberResolver>();
+            // Explicit factory pins the ctor: the [Obsolete] 3-arg ctor makes reflection-based
+            // constructor selection ambiguous once IHttpContextAccessor is added. Same Transient lifetime.
+            serviceCollection.AddTransient<IMemberResolver>(provider => new MemberResolver(
+                provider.GetRequiredService<IMemberService>(),
+                provider.GetRequiredService<Func<UserManager<ApplicationUser>>>(),
+                provider.GetRequiredService<IHttpContextAccessor>()));
             serviceCollection.AddSingleton<CustomerExportImport>();
             serviceCollection.AddTransient<MemberSearchRequestBuilder>();
             serviceCollection.AddSingleton<IFavoriteAddressService, FavoriteAddressService>();
