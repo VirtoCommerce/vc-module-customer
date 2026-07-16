@@ -21,6 +21,9 @@ public class OrganizationIdRequestValidator(
 
     public virtual async Task<IList<TokenResponse>> ValidateAsync(TokenRequestContext context)
     {
+        // Captured before any fallback below rewrites the parameter, so an explicit request for a specific
+        // organization can be told apart from one auto-resolved from the member.
+        var requestedOrganizationId = context.Request.GetParameter(Parameters.OrganizationId)?.ToString();
         var organizationId = await GetOrganizationId(context);
         if (string.IsNullOrEmpty(organizationId))
         {
@@ -63,11 +66,35 @@ public class OrganizationIdRequestValidator(
             })).Results.FirstOrDefault();
             if (membership != null && membership.IsCurrentlyLocked)
             {
+                // When the organization was auto-resolved (the caller didn't request a specific one) on a fresh
+                // password sign-in, a lock in that single organization must not lock the user out of the others
+                // they belong to — e.g. a sales rep serving many organizations. Fall back to a non-locked
+                // organization instead. Block only when the caller explicitly asked for this (now-locked)
+                // organization, or every organization the user belongs to is locked.
+                if (string.IsNullOrEmpty(requestedOrganizationId) &&
+                    context.Request.GrantType == OpenIddictConstants.GrantTypes.Password)
+                {
+                    var unlockedOrganizationId = await GetFirstUnlockedOrganizationId(context.User.Id, availableOrganizationIds);
+                    if (!string.IsNullOrEmpty(unlockedOrganizationId))
+                    {
+                        context.Request.SetParameter(Parameters.OrganizationId, unlockedOrganizationId);
+                        return [];
+                    }
+                }
+
                 return [ErrorDescriber.UserIsLockedInOrganization(organizationId)];
             }
         }
 
         return [];
+    }
+
+    private async Task<string> GetFirstUnlockedOrganizationId(string userId, IList<string> availableOrganizationIds)
+    {
+        var lockedOrganizationIds = (await organizationMembershipSearchService.GetLockedOrganizationIdsAsync(userId))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        return availableOrganizationIds.FirstOrDefault(id => !lockedOrganizationIds.Contains(id));
     }
 
     /// <summary>
