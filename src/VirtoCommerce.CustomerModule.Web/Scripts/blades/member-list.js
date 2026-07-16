@@ -375,7 +375,7 @@ angular.module('virtoCommerce.customerModule')
                 var m = `0${dt.getMonth() + 1}`.slice(-2);
                 var day = `0${dt.getDate()}`.slice(-2);
 
-                return endOfTheDay ? `"${y}-${m}-${day}T23:59:59"` : `"${y}-${m}-${day}T00:00:00"`;
+                return endOfTheDay ? `"${y}-${m}-${day}T23:59:59Z"` : `"${y}-${m}-${day}T00:00:00Z"`;
             };
 
             filter.formatDate = function (d) {
