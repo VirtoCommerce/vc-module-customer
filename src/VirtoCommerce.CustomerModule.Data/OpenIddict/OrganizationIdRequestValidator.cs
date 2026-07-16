@@ -21,9 +21,11 @@ public class OrganizationIdRequestValidator(
 
     public virtual async Task<IList<TokenResponse>> ValidateAsync(TokenRequestContext context)
     {
-        // Captured before any fallback below rewrites the parameter, so an explicit request for a specific
-        // organization can be told apart from one auto-resolved from the member.
-        var requestedOrganizationId = context.Request.GetParameter(Parameters.OrganizationId)?.ToString();
+        // Whether the organization was auto-resolved from the member (no explicit request) on a fresh password
+        // sign-in — computed before any fallback below rewrites the parameter. Only then may a locked auto-resolved
+        // organization fall back to a non-locked one instead of blocking.
+        var isAutoResolved = string.IsNullOrEmpty(context.Request.GetParameter(Parameters.OrganizationId)?.ToString()) &&
+            context.Request.GrantType == OpenIddictConstants.GrantTypes.Password;
         var organizationId = await GetOrganizationId(context);
         if (string.IsNullOrEmpty(organizationId))
         {
@@ -45,7 +47,7 @@ public class OrganizationIdRequestValidator(
 
         if (context.User != null)
         {
-            var lockError = await ValidateOrganizationLockAsync(context, requestedOrganizationId, organizationId, availableOrganizationIds);
+            var lockError = await ValidateOrganizationLockAsync(context, isAutoResolved, organizationId, availableOrganizationIds);
             if (lockError != null)
             {
                 return [lockError];
@@ -78,15 +80,9 @@ public class OrganizationIdRequestValidator(
         return [ErrorDescriber.InvalidOrganizationId(organizationId)];
     }
 
-    private async Task<TokenResponse> ValidateOrganizationLockAsync(TokenRequestContext context, string requestedOrganizationId, string organizationId, IList<string> availableOrganizationIds)
+    private async Task<TokenResponse> ValidateOrganizationLockAsync(TokenRequestContext context, bool isAutoResolved, string organizationId, IList<string> availableOrganizationIds)
     {
-        var membership = (await organizationMembershipSearchService.SearchAsync(new OrganizationMembershipSearchCriteria
-        {
-            UserId = context.User.Id,
-            OrganizationId = organizationId,
-            Take = 1,
-        })).Results.FirstOrDefault();
-
+        var membership = await GetMembership(context.User.Id, organizationId);
         if (membership is null || !membership.IsCurrentlyLocked)
         {
             return null;
@@ -96,8 +92,6 @@ public class OrganizationIdRequestValidator(
         // sign-in, a lock in that single organization must not lock the user out of the others they belong to —
         // e.g. a sales rep serving many organizations. Fall back to a non-locked organization instead. Block only
         // when the caller explicitly asked for this (now-locked) organization, or every organization is locked.
-        var isAutoResolved = string.IsNullOrEmpty(requestedOrganizationId) &&
-            context.Request.GrantType == OpenIddictConstants.GrantTypes.Password;
         if (isAutoResolved)
         {
             var unlockedOrganizationId = await GetFirstUnlockedOrganizationId(context.User.Id, availableOrganizationIds);
@@ -109,6 +103,18 @@ public class OrganizationIdRequestValidator(
         }
 
         return ErrorDescriber.UserIsLockedInOrganization(organizationId);
+    }
+
+    private async Task<OrganizationMembership> GetMembership(string userId, string organizationId)
+    {
+        var result = await organizationMembershipSearchService.SearchAsync(new OrganizationMembershipSearchCriteria
+        {
+            UserId = userId,
+            OrganizationId = organizationId,
+            Take = 1,
+        });
+
+        return result.Results.FirstOrDefault();
     }
 
     private async Task<string> GetFirstUnlockedOrganizationId(string userId, IList<string> availableOrganizationIds)
