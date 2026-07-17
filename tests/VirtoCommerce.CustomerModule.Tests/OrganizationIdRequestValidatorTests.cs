@@ -231,6 +231,95 @@ public class OrganizationIdRequestValidatorTests
         Assert.Equal(OrgId, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
     }
 
+    [Fact]
+    public async Task ValidateAsync_PasswordGrant_AutoResolvedOrgLocked_FallsBackToUnlockedOrg_ReturnsEmpty()
+    {
+        //Arrange — a rep serves two orgs; the auto-resolved (first) one is locked, the other is active. A fresh
+        // password sign-in must NOT be blocked: locking one org must not lock the rep out of the others.
+        const string lockedOrg = "org-locked";
+        const string activeOrg = "org-active";
+
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [lockedOrg, activeOrg] });
+
+        _membershipServiceMock
+            .Setup(s => s.SearchAsync(
+                It.Is<OrganizationMembershipSearchCriteria>(c => c.UserId == UserId && c.OrganizationId == lockedOrg),
+                It.IsAny<bool>()))
+            .ReturnsAsync(new OrganizationMembershipSearchResult { Results = [new OrganizationMembership { IsLocked = true }] });
+        _membershipServiceMock
+            .Setup(s => s.GetLockedOrganizationIdsAsync(UserId))
+            .ReturnsAsync(new[] { lockedOrg });
+
+        var context = BuildContext(orgId: null, grantType: OpenIddictConstants.GrantTypes.Password, user: user);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert — no error, and the request switched to the active org.
+        Assert.Empty(result);
+        Assert.Equal(activeOrg, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
+    }
+
+    [Fact]
+    public async Task ValidateAsync_PasswordGrant_AllOrgsLocked_ReturnsOrgError()
+    {
+        //Arrange — every org the rep belongs to is locked: nowhere to fall back to, so sign-in is blocked.
+        const string lockedOrg1 = "org-locked-1";
+        const string lockedOrg2 = "org-locked-2";
+
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [lockedOrg1, lockedOrg2] });
+
+        _membershipServiceMock
+            .Setup(s => s.SearchAsync(
+                It.Is<OrganizationMembershipSearchCriteria>(c => c.UserId == UserId && c.OrganizationId == lockedOrg1),
+                It.IsAny<bool>()))
+            .ReturnsAsync(new OrganizationMembershipSearchResult { Results = [new OrganizationMembership { IsLocked = true }] });
+        _membershipServiceMock
+            .Setup(s => s.GetLockedOrganizationIdsAsync(UserId))
+            .ReturnsAsync(new[] { lockedOrg1, lockedOrg2 });
+
+        var context = BuildContext(orgId: null, grantType: OpenIddictConstants.GrantTypes.Password, user: user);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Single(result);
+        Assert.Equal(OpenIddictConstants.Errors.InvalidGrant, result[0].Error);
+    }
+
+    [Fact]
+    public async Task ValidateAsync_PasswordGrant_ExplicitlyRequestedLockedOrg_ReturnsOrgError()
+    {
+        //Arrange — the caller explicitly asks to sign in as a specific (locked) org. That is an explicit choice,
+        // so it must be blocked rather than silently falling back to another org.
+        const string lockedOrg = "org-locked";
+        const string activeOrg = "org-active";
+
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [lockedOrg, activeOrg] });
+
+        _membershipServiceMock
+            .Setup(s => s.SearchAsync(
+                It.Is<OrganizationMembershipSearchCriteria>(c => c.UserId == UserId && c.OrganizationId == lockedOrg),
+                It.IsAny<bool>()))
+            .ReturnsAsync(new OrganizationMembershipSearchResult { Results = [new OrganizationMembership { IsLocked = true }] });
+
+        var context = BuildContext(lockedOrg, grantType: OpenIddictConstants.GrantTypes.Password, user: user);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Single(result);
+        Assert.Equal(OpenIddictConstants.Errors.InvalidGrant, result[0].Error);
+    }
+
     private void SetupMembership(OrganizationMembership membership) =>
         _membershipServiceMock
             .Setup(s => s.SearchAsync(
