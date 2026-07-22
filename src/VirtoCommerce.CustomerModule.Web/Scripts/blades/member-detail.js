@@ -90,10 +90,6 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
         };
 
         function isDirty() {
-            // origEntity is set only after the async members.get() resolves, so this guard
-            // skips the false "save changes" prompt when the blade is closed mid-load (fast
-            // user-switch / double-click). Not gated on isLoading: it stays true after a
-            // failed save (no error callback) and would then hide genuine unsaved edits.
             return blade.origEntity && !angular.equals(blade.currentEntity, blade.origEntity) && !blade.isNew && blade.hasUpdatePermission();
         }
 
