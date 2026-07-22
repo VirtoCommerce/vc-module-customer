@@ -90,11 +90,14 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
         };
 
         function isDirty() {
-            // Suppress the dirty check until the entity has finished loading. On fast
-            // user-switching / double-click the blade can be closed while members.get()
-            // is still in flight (origEntity not yet set), which otherwise makes
-            // angular.equals() report a false change and pops the "save changes" dialog.
-            return !blade.isLoading && blade.origEntity && !angular.equals(blade.currentEntity, blade.origEntity) && !blade.isNew && blade.hasUpdatePermission();
+            // Guard on origEntity: it is assigned only in initializeBlade() (the async
+            // members.get() callback). On fast user-switching / double-click the blade can
+            // be closed while that request is still in flight (origEntity not yet set),
+            // which otherwise makes angular.equals() report a false change and pops the
+            // "save changes" dialog. Deliberately NOT gating on blade.isLoading: it stays
+            // true after a failed save (no error callback), so gating on it would hide
+            // genuine unsaved edits.
+            return blade.origEntity && !angular.equals(blade.currentEntity, blade.origEntity) && !blade.isNew && blade.hasUpdatePermission();
         }
 
         function canSave() {
