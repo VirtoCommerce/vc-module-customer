@@ -90,7 +90,11 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
         };
 
         function isDirty() {
-            return !angular.equals(blade.currentEntity, blade.origEntity) && !blade.isNew && blade.hasUpdatePermission();
+            // Suppress the dirty check until the entity has finished loading. On fast
+            // user-switching / double-click the blade can be closed while members.get()
+            // is still in flight (origEntity not yet set), which otherwise makes
+            // angular.equals() report a false change and pops the "save changes" dialog.
+            return !blade.isLoading && blade.origEntity && !angular.equals(blade.currentEntity, blade.origEntity) && !blade.isNew && blade.hasUpdatePermission();
         }
 
         function canSave() {
