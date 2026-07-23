@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,12 +17,10 @@ using Xunit;
 
 namespace VirtoCommerce.CustomerModule.Tests
 {
-    public class MemberResolverTests : IDisposable
+    public class MemberResolverTests
     {
         private const string UserId = "user-1";
         private const string OtherUserId = "user-2";
-
-        private readonly List<IDisposable> _disposables = [];
 
         [Fact]
         public async Task ResolveMemberByIdAsync_SameUserIdWithRequestCache_ResolvesUnderlyingOnlyOnce()
@@ -223,29 +220,19 @@ namespace VirtoCommerce.CustomerModule.Tests
 
         // Builds an IHttpContextAccessor whose request scope exposes the real platform RequestScopedCache,
         // mirroring how MemberResolver obtains the cache in production (HttpContext.RequestServices).
-        private Mock<IHttpContextAccessor> CreateHttpContextAccessorWithCache()
+        private static Mock<IHttpContextAccessor> CreateHttpContextAccessorWithCache()
         {
-            var services = new ServiceCollection();
-            services.AddScoped<IRequestScopedCache, RequestScopedCache>();
-            var serviceProvider = services.BuildServiceProvider();
-            var scope = serviceProvider.CreateScope();
-            _disposables.Add(scope);
-            _disposables.Add(serviceProvider);
-
-            var httpContext = new DefaultHttpContext { RequestServices = scope.ServiceProvider };
+            // Real platform cache instance (a plain object - nothing to dispose), handed to MemberResolver
+            // through the request scope exactly as in production (HttpContext.RequestServices).
+            var cache = new RequestScopedCache();
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            serviceProviderMock.Setup(x => x.GetService(typeof(IRequestScopedCache))).Returns(cache);
+            var httpContext = new DefaultHttpContext { RequestServices = serviceProviderMock.Object };
 
             var accessorMock = new Mock<IHttpContextAccessor>();
             accessorMock.Setup(x => x.HttpContext).Returns(httpContext);
 
             return accessorMock;
-        }
-
-        public void Dispose()
-        {
-            foreach (var disposable in _disposables)
-            {
-                disposable.Dispose();
-            }
         }
 
         private static UserManager<ApplicationUser> CreateUserManager()
