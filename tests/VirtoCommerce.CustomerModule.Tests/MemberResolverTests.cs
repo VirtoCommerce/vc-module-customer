@@ -10,6 +10,7 @@ using Moq;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Data.Services;
+using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Security;
 using Xunit;
@@ -22,7 +23,7 @@ namespace VirtoCommerce.CustomerModule.Tests
         private const string OtherUserId = "user-2";
 
         [Fact]
-        public async Task ResolveMemberByIdAsync_SameUserIdWithHttpContext_ResolvesUnderlyingOnlyOnce()
+        public async Task ResolveMemberByIdAsync_SameUserIdWithRequestCache_ResolvesUnderlyingOnlyOnce()
         {
             //Arrange
             var memberServiceMock = new Mock<IMemberService>();
@@ -35,8 +36,7 @@ namespace VirtoCommerce.CustomerModule.Tests
                 return CreateUserManager();
             };
 
-            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-            httpContextAccessorMock.Setup(x => x.HttpContext).Returns(new DefaultHttpContext());
+            var httpContextAccessorMock = CreateHttpContextAccessorWithCache();
 
             var resolver = new MemberResolver(memberServiceMock.Object, userManagerFactory, httpContextAccessorMock.Object);
 
@@ -50,7 +50,7 @@ namespace VirtoCommerce.CustomerModule.Tests
         }
 
         [Fact]
-        public async Task ResolveMemberByIdAsync_NoHttpContext_ResolvesUnderlyingEveryCall()
+        public async Task ResolveMemberByIdAsync_NoRequestScope_ResolvesUnderlyingEveryCall()
         {
             //Arrange
             var memberServiceMock = new Mock<IMemberService>();
@@ -91,8 +91,7 @@ namespace VirtoCommerce.CustomerModule.Tests
                 return CreateUserManager();
             };
 
-            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-            httpContextAccessorMock.Setup(x => x.HttpContext).Returns(new DefaultHttpContext());
+            var httpContextAccessorMock = CreateHttpContextAccessorWithCache();
 
             var resolver = new MemberResolver(memberServiceMock.Object, userManagerFactory, httpContextAccessorMock.Object);
 
@@ -175,8 +174,7 @@ namespace VirtoCommerce.CustomerModule.Tests
                 return CreateUserManager();
             };
 
-            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-            httpContextAccessorMock.Setup(x => x.HttpContext).Returns(new DefaultHttpContext());
+            var httpContextAccessorMock = CreateHttpContextAccessorWithCache();
 
             var resolver = new MemberResolver(memberServiceMock.Object, userManagerFactory, httpContextAccessorMock.Object);
 
@@ -207,10 +205,7 @@ namespace VirtoCommerce.CustomerModule.Tests
                     return member;
                 });
 
-            var httpContext = new DefaultHttpContext();
-            _ = httpContext.Items; // Real requests materialize Items early in the pipeline, before resolvers fan out.
-            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-            httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+            var httpContextAccessorMock = CreateHttpContextAccessorWithCache();
 
             var resolver = new MemberResolver(memberServiceMock.Object, CreateUserManager, httpContextAccessorMock.Object);
 
@@ -221,6 +216,23 @@ namespace VirtoCommerce.CustomerModule.Tests
             //Assert
             Assert.Equal(1, getByIdCallCount);
             Assert.All(results, x => Assert.Same(member, x));
+        }
+
+        // Builds an IHttpContextAccessor whose request scope exposes the real platform RequestScopedCache,
+        // mirroring how MemberResolver obtains the cache in production (HttpContext.RequestServices).
+        private static Mock<IHttpContextAccessor> CreateHttpContextAccessorWithCache()
+        {
+            // Real platform cache instance (a plain object - nothing to dispose), handed to MemberResolver
+            // through the request scope exactly as in production (HttpContext.RequestServices).
+            var cache = new RequestScopedCache();
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            serviceProviderMock.Setup(x => x.GetService(typeof(IRequestScopedCache))).Returns(cache);
+            var httpContext = new DefaultHttpContext { RequestServices = serviceProviderMock.Object };
+
+            var accessorMock = new Mock<IHttpContextAccessor>();
+            accessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+
+            return accessorMock;
         }
 
         private static UserManager<ApplicationUser> CreateUserManager()
