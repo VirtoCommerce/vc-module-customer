@@ -1,8 +1,8 @@
 using System;
-using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.Platform.Core.Caching;
@@ -12,8 +12,6 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 {
     public class MemberResolver(IMemberService memberService, Func<UserManager<ApplicationUser>> userManagerFactory, IHttpContextAccessor httpContextAccessor) : IMemberResolver
     {
-        private const string RequestCacheKey = "MemberResolver:RequestCache";
-
         [Obsolete("Use new constructor without IPlatformMemoryCache argument", DiagnosticId = "VC0012", UrlFormat = "https://docs.virtocommerce.org/platform/user-guide/versions/virto3-products-versions/")]
         public MemberResolver(IMemberService memberService, Func<UserManager<ApplicationUser>> userManagerFactory, IPlatformMemoryCache platformMemoryCache)
             : this(memberService, userManagerFactory, (IHttpContextAccessor)null)
@@ -30,38 +28,16 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             // Per-request cache: getFullCart resolves the same shopper's userId many times per request,
             // and each uncached call constructs a fresh CustomUserManager, which takes a process-global
             // Meter lock unconditionally (.NET 9 UserManagerMetrics) -> lock convoy under load.
-            var httpContext = httpContextAccessor?.HttpContext;
-            if (httpContext is null)
+            // Resolved per-call from the request scope (not ctor-injected): keeps this transient service
+            // free of a captured Scoped dependency, so singleton consumers of IMemberResolver stay valid.
+            var requestCache = httpContextAccessor?.HttpContext?.RequestServices?.GetService<IRequestScopedCache>();
+            if (requestCache is null)
             {
-                // No ambient request (e.g. background job) - nothing to scope the cache to.
+                // No ambient request scope (e.g. background job) - nothing to scope the cache to.
                 return ResolveMemberByIdInternalAsync(userId);
             }
 
-            var cache = GetOrCreateRequestCache(httpContext);
-
-            // Lazy guarantees the resolution runs once even if two callers miss the same key concurrently.
-            var lazyTask = cache.GetOrAdd(userId, static (id, resolver) => new Lazy<Task<Member>>(() => resolver.ResolveMemberByIdInternalAsync(id)), this);
-
-            return lazyTask.Value;
-        }
-
-        private static ConcurrentDictionary<string, Lazy<Task<Member>>> GetOrCreateRequestCache(HttpContext httpContext)
-        {
-            // HttpContext.Items is not thread-safe; the O(1) container get-or-create runs under the lock.
-            // The expensive resolution stays outside it, via GetOrAdd(...).Value on the ConcurrentDictionary.
-            lock (httpContext.Items)
-            {
-                if (httpContext.Items.TryGetValue(RequestCacheKey, out var value)
-                    && value is ConcurrentDictionary<string, Lazy<Task<Member>>> cache)
-                {
-                    return cache;
-                }
-
-                cache = new ConcurrentDictionary<string, Lazy<Task<Member>>>();
-                httpContext.Items[RequestCacheKey] = cache;
-
-                return cache;
-            }
+            return requestCache.GetOrAddAsync($"{nameof(MemberResolver)}:{userId}", () => ResolveMemberByIdInternalAsync(userId));
         }
 
         private async Task<Member> ResolveMemberByIdInternalAsync(string userId)

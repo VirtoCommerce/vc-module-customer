@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,7 +24,7 @@ namespace VirtoCommerce.CustomerModule.Tests
         private const string OtherUserId = "user-2";
 
         [Fact]
-        public async Task ResolveMemberByIdAsync_SameUserIdWithHttpContext_ResolvesUnderlyingOnlyOnce()
+        public async Task ResolveMemberByIdAsync_SameUserIdWithRequestCache_ResolvesUnderlyingOnlyOnce()
         {
             //Arrange
             var memberServiceMock = new Mock<IMemberService>();
@@ -35,8 +37,7 @@ namespace VirtoCommerce.CustomerModule.Tests
                 return CreateUserManager();
             };
 
-            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-            httpContextAccessorMock.Setup(x => x.HttpContext).Returns(new DefaultHttpContext());
+            var httpContextAccessorMock = CreateHttpContextAccessorWithCache();
 
             var resolver = new MemberResolver(memberServiceMock.Object, userManagerFactory, httpContextAccessorMock.Object);
 
@@ -50,7 +51,7 @@ namespace VirtoCommerce.CustomerModule.Tests
         }
 
         [Fact]
-        public async Task ResolveMemberByIdAsync_NoHttpContext_ResolvesUnderlyingEveryCall()
+        public async Task ResolveMemberByIdAsync_NoRequestScope_ResolvesUnderlyingEveryCall()
         {
             //Arrange
             var memberServiceMock = new Mock<IMemberService>();
@@ -91,8 +92,7 @@ namespace VirtoCommerce.CustomerModule.Tests
                 return CreateUserManager();
             };
 
-            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-            httpContextAccessorMock.Setup(x => x.HttpContext).Returns(new DefaultHttpContext());
+            var httpContextAccessorMock = CreateHttpContextAccessorWithCache();
 
             var resolver = new MemberResolver(memberServiceMock.Object, userManagerFactory, httpContextAccessorMock.Object);
 
@@ -175,8 +175,7 @@ namespace VirtoCommerce.CustomerModule.Tests
                 return CreateUserManager();
             };
 
-            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-            httpContextAccessorMock.Setup(x => x.HttpContext).Returns(new DefaultHttpContext());
+            var httpContextAccessorMock = CreateHttpContextAccessorWithCache();
 
             var resolver = new MemberResolver(memberServiceMock.Object, userManagerFactory, httpContextAccessorMock.Object);
 
@@ -207,10 +206,7 @@ namespace VirtoCommerce.CustomerModule.Tests
                     return member;
                 });
 
-            var httpContext = new DefaultHttpContext();
-            _ = httpContext.Items; // Real requests materialize Items early in the pipeline, before resolvers fan out.
-            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-            httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+            var httpContextAccessorMock = CreateHttpContextAccessorWithCache();
 
             var resolver = new MemberResolver(memberServiceMock.Object, CreateUserManager, httpContextAccessorMock.Object);
 
@@ -221,6 +217,20 @@ namespace VirtoCommerce.CustomerModule.Tests
             //Assert
             Assert.Equal(1, getByIdCallCount);
             Assert.All(results, x => Assert.Same(member, x));
+        }
+
+        // Builds an IHttpContextAccessor whose request scope exposes a real single-flight IRequestScopedCache,
+        // mirroring how MemberResolver obtains the cache in production (HttpContext.RequestServices).
+        private static Mock<IHttpContextAccessor> CreateHttpContextAccessorWithCache()
+        {
+            var services = new ServiceCollection();
+            services.AddSingleton<IRequestScopedCache>(new TestRequestScopedCache());
+            var httpContext = new DefaultHttpContext { RequestServices = services.BuildServiceProvider() };
+
+            var accessorMock = new Mock<IHttpContextAccessor>();
+            accessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+
+            return accessorMock;
         }
 
         private static UserManager<ApplicationUser> CreateUserManager()
@@ -241,6 +251,27 @@ namespace VirtoCommerce.CustomerModule.Tests
                 null,
                 null,
                 null);
+        }
+
+        // Minimal single-flight IRequestScopedCache for tests: same key -> factory runs once (Lazy),
+        // matching the platform RequestScopedCache contract. GetOrLoadMapByIdsAsync is unused by MemberResolver.
+        private sealed class TestRequestScopedCache : IRequestScopedCache
+        {
+            private readonly ConcurrentDictionary<string, Lazy<Task>> _cache = new();
+
+            public Task<T> GetOrAddAsync<T>(string key, Func<Task<T>> factory)
+            {
+                var lazy = _cache.GetOrAdd(key, static (_, arg) => new Lazy<Task>(arg), factory);
+
+                return (Task<T>)lazy.Value;
+            }
+
+            public Task<IDictionary<string, T>> GetOrLoadMapByIdsAsync<T>(
+                string keyPrefix,
+                ICollection<string> ids,
+                Func<T, string> idSelector,
+                Func<ICollection<string>, Task<IList<T>>> loadMissing)
+                where T : class => throw new NotSupportedException();
         }
     }
 }
