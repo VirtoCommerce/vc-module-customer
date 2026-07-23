@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +10,7 @@ using Moq;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Data.Services;
+using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Security;
 using Xunit;
@@ -219,13 +218,14 @@ namespace VirtoCommerce.CustomerModule.Tests
             Assert.All(results, x => Assert.Same(member, x));
         }
 
-        // Builds an IHttpContextAccessor whose request scope exposes a real single-flight IRequestScopedCache,
+        // Builds an IHttpContextAccessor whose request scope exposes the real platform RequestScopedCache,
         // mirroring how MemberResolver obtains the cache in production (HttpContext.RequestServices).
         private static Mock<IHttpContextAccessor> CreateHttpContextAccessorWithCache()
         {
             var services = new ServiceCollection();
-            services.AddSingleton<IRequestScopedCache>(new TestRequestScopedCache());
-            var httpContext = new DefaultHttpContext { RequestServices = services.BuildServiceProvider() };
+            services.AddScoped<IRequestScopedCache, RequestScopedCache>();
+            var scope = services.BuildServiceProvider().CreateScope();
+            var httpContext = new DefaultHttpContext { RequestServices = scope.ServiceProvider };
 
             var accessorMock = new Mock<IHttpContextAccessor>();
             accessorMock.Setup(x => x.HttpContext).Returns(httpContext);
@@ -251,27 +251,6 @@ namespace VirtoCommerce.CustomerModule.Tests
                 null,
                 null,
                 null);
-        }
-
-        // Minimal single-flight IRequestScopedCache for tests: same key -> factory runs once (Lazy),
-        // matching the platform RequestScopedCache contract. GetOrLoadMapByIdsAsync is unused by MemberResolver.
-        private sealed class TestRequestScopedCache : IRequestScopedCache
-        {
-            private readonly ConcurrentDictionary<string, Lazy<Task>> _cache = new();
-
-            public Task<T> GetOrAddAsync<T>(string key, Func<Task<T>> factory)
-            {
-                var lazy = _cache.GetOrAdd(key, static (_, arg) => new Lazy<Task>(arg), factory);
-
-                return (Task<T>)lazy.Value;
-            }
-
-            public Task<IDictionary<string, T>> GetOrLoadMapByIdsAsync<T>(
-                string keyPrefix,
-                ICollection<string> ids,
-                Func<T, string> idSelector,
-                Func<ICollection<string>, Task<IList<T>>> loadMissing)
-                where T : class => throw new NotSupportedException();
         }
     }
 }
