@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,10 +18,12 @@ using Xunit;
 
 namespace VirtoCommerce.CustomerModule.Tests
 {
-    public class MemberResolverTests
+    public class MemberResolverTests : IDisposable
     {
         private const string UserId = "user-1";
         private const string OtherUserId = "user-2";
+
+        private readonly List<IDisposable> _disposables = [];
 
         [Fact]
         public async Task ResolveMemberByIdAsync_SameUserIdWithRequestCache_ResolvesUnderlyingOnlyOnce()
@@ -220,17 +223,29 @@ namespace VirtoCommerce.CustomerModule.Tests
 
         // Builds an IHttpContextAccessor whose request scope exposes the real platform RequestScopedCache,
         // mirroring how MemberResolver obtains the cache in production (HttpContext.RequestServices).
-        private static Mock<IHttpContextAccessor> CreateHttpContextAccessorWithCache()
+        private Mock<IHttpContextAccessor> CreateHttpContextAccessorWithCache()
         {
             var services = new ServiceCollection();
             services.AddScoped<IRequestScopedCache, RequestScopedCache>();
-            var scope = services.BuildServiceProvider().CreateScope();
+            var serviceProvider = services.BuildServiceProvider();
+            var scope = serviceProvider.CreateScope();
+            _disposables.Add(scope);
+            _disposables.Add(serviceProvider);
+
             var httpContext = new DefaultHttpContext { RequestServices = scope.ServiceProvider };
 
             var accessorMock = new Mock<IHttpContextAccessor>();
             accessorMock.Setup(x => x.HttpContext).Returns(httpContext);
 
             return accessorMock;
+        }
+
+        public void Dispose()
+        {
+            foreach (var disposable in _disposables)
+            {
+                disposable.Dispose();
+            }
         }
 
         private static UserManager<ApplicationUser> CreateUserManager()
