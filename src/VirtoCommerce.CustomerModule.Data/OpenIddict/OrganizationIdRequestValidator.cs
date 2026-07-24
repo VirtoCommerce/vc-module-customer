@@ -23,6 +23,12 @@ public class OrganizationIdRequestValidator(
 
     public virtual async Task<IList<TokenResponse>> ValidateAsync(TokenRequestContext context)
     {
+        // Whether the organization was auto-resolved from the member (no explicit request) on a fresh password
+        // sign-in — computed before any fallback below rewrites the parameter. Only then may a blocked
+        // auto-resolved organization fall back to an accessible one instead of blocking sign-in entirely.
+        var isAutoResolved = string.IsNullOrEmpty(context.Request.GetParameter(Parameters.OrganizationId)?.ToString()) &&
+            context.Request.GrantType == OpenIddictConstants.GrantTypes.Password;
+
         var member = await GetMemberAsync(context);
 
         var organizationId = await GetOrganizationId(context, member);
@@ -33,10 +39,7 @@ public class OrganizationIdRequestValidator(
 
         if (context.User != null && IsGloballyLocked(context.User))
         {
-            var permanentLockOut = context.User.LockoutEnd == DateTime.MaxValue.ToUniversalTime();
-            return [permanentLockOut
-                ? ErrorDescriber.UserIsLockedOut()
-                : SecurityErrorDescriber.UserIsTemporaryLockedOut()];
+            return [GetGlobalLockoutError(context.User)];
         }
 
         var isPasswordGrant = context.Request.GrantType == OpenIddictConstants.GrantTypes.Password;
@@ -57,31 +60,58 @@ public class OrganizationIdRequestValidator(
 
         if (context.User != null)
         {
-            var membership = await organizationMembershipSearchService.GetMembershipAsync(context.User.Id, organizationId);
-
-            var isLocked = membership != null && membership.IsCurrentlyLocked;
-            var effectiveStatus = OrganizationMembership.ResolveEffectiveStatus(membership?.Status, member?.Status);
-            var statusError = GetStatusError(effectiveStatus, organizationId);
-
-            if (isLocked || statusError != null)
+            var accessError = await ValidateOrganizationAccessAsync(context, member, isAutoResolved, organizationId, availableOrganizationIds);
+            if (accessError != null)
             {
-                if (isPasswordGrant)
-                {
-                    var accessibleOrganizationIds = await GetAccessibleOrganizationIdsAsync(context.User.Id, member, availableOrganizationIds);
-                    var fallbackOrganizationId = accessibleOrganizationIds.FirstOrDefault();
-
-                    if (!string.IsNullOrEmpty(fallbackOrganizationId))
-                    {
-                        context.Request.SetParameter(Parameters.OrganizationId, fallbackOrganizationId);
-                        return [];
-                    }
-                }
-
-                return [isLocked ? ErrorDescriber.UserIsLockedInOrganization(organizationId) : statusError];
+                return [accessError];
             }
         }
 
         return [];
+    }
+
+    private static TokenResponse GetGlobalLockoutError(ApplicationUser user)
+    {
+        // Distinguish a permanent lock (LockoutEnd == DateTime.MaxValue) from a temporary failed-attempt lock,
+        // mirroring how the platform's BaseUserSignInValidator decides. Otherwise org members get the
+        // permanent-worded code for a self-clearing 15-min lock.
+        var permanentLockOut = user.LockoutEnd == DateTime.MaxValue.ToUniversalTime();
+        return permanentLockOut
+            ? ErrorDescriber.UserIsLockedOut()
+            : SecurityErrorDescriber.UserIsTemporaryLockedOut();
+    }
+
+    private async Task<TokenResponse> ValidateOrganizationAccessAsync(
+        TokenRequestContext context, Member member, bool isAutoResolved, string organizationId, IList<string> availableOrganizationIds)
+    {
+        var membership = await organizationMembershipSearchService.GetMembershipAsync(context.User.Id, organizationId);
+
+        var isLocked = membership != null && membership.IsCurrentlyLocked;
+        var effectiveStatus = OrganizationMembership.ResolveEffectiveStatus(membership?.Status, member?.Status);
+        var statusError = GetStatusError(effectiveStatus, organizationId);
+
+        if (!isLocked && statusError == null)
+        {
+            return null;
+        }
+
+        // When the organization was auto-resolved (the caller didn't request a specific one) on a fresh password
+        // sign-in, being locked/blocked in that single organization must not lock the user out of the others they
+        // belong to — e.g. a sales rep serving many organizations. Fall back to an accessible one instead. Block
+        // only when the caller explicitly asked for this (now-blocked) organization, or none other is accessible.
+        if (isAutoResolved)
+        {
+            var accessibleOrganizationIds = await GetAccessibleOrganizationIdsAsync(context.User.Id, member, availableOrganizationIds);
+            var fallbackOrganizationId = accessibleOrganizationIds.FirstOrDefault();
+
+            if (!string.IsNullOrEmpty(fallbackOrganizationId))
+            {
+                context.Request.SetParameter(Parameters.OrganizationId, fallbackOrganizationId);
+                return null;
+            }
+        }
+
+        return isLocked ? ErrorDescriber.UserIsLockedInOrganization(organizationId) : statusError;
     }
 
     private static TokenResponse GetStatusError(string effectiveStatus, string organizationId)

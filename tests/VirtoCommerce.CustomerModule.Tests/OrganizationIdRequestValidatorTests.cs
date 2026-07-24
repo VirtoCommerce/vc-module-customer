@@ -66,7 +66,7 @@ public class OrganizationIdRequestValidatorTests
     [Fact]
     public async Task ValidateAsync_NoExplicitOrgId_AutoDetectsFromMember_LockedInOrg_ReturnsOrgError()
     {
-        //Arrange
+        //Arrange — the member's only organization is locked, so there is nothing to fall back to.
         var user = new ApplicationUser
         {
             Id = UserId,
@@ -241,9 +241,10 @@ public class OrganizationIdRequestValidatorTests
     }
 
     [Fact]
-    public async Task ValidateAsync_RejectedOrgPasswordGrant_FallsBackToAccessibleOrgAndReturnsEmpty()
+    public async Task ValidateAsync_ExplicitlyRequestedRejectedOrg_ReturnsOrgError()
     {
-        //Arrange
+        //Arrange — the caller explicitly asks to sign in as a specific (rejected) org. That is an explicit
+        // choice, so it must be blocked rather than silently falling back to another org.
         var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
         _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
             .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId, OrgId2] });
@@ -256,8 +257,29 @@ public class OrganizationIdRequestValidatorTests
         var result = await GetValidator().ValidateAsync(context);
 
         //Assert
+        Assert.Single(result);
+        Assert.Equal(OpenIddictConstants.Errors.InvalidGrant, result[0].Error);
+    }
+
+    [Fact]
+    public async Task ValidateAsync_AutoResolvedRejectedOrg_FallsBackToAccessibleOrgAndReturnsEmpty()
+    {
+        //Arrange — the member's current org is rejected, but they have another accessible one. Auto-detection
+        // (no explicit org requested) already skips the rejected org and resolves straight to the accessible
+        // one, so a fresh password sign-in must not be blocked entirely.
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId, OrgId2], CurrentOrganizationId = OrgId });
+
+        SetupMembership(new OrganizationMembership { OrganizationId = OrgId, Status = ModuleConstants.MembershipStatuses.Rejected });
+
+        var context = BuildContext(orgId: null, grantType: OpenIddictConstants.GrantTypes.Password, user: user);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
         Assert.Empty(result);
-        Assert.Equal(OrgId2, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
     }
 
     [Fact]

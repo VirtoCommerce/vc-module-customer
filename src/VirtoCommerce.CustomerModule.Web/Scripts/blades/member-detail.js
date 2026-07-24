@@ -90,7 +90,7 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
         };
 
         function isDirty() {
-            return !angular.equals(blade.currentEntity, blade.origEntity) && !blade.isNew && blade.hasUpdatePermission();
+            return blade.origEntity && !angular.equals(blade.currentEntity, blade.origEntity) && !blade.isNew && blade.hasUpdatePermission();
         }
 
         function canSave() {
