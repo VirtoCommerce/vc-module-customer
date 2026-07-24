@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
 using VirtoCommerce.CustomerModule.Core;
+using VirtoCommerce.CustomerModule.Core.Extensions;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.Platform.Core;
@@ -35,13 +36,7 @@ public class OrganizationIdClaimProvider(
 
     private async Task AddOrgScopedPermissionsAsync(ClaimsPrincipal principal, string userId, string memberId, string organizationId)
     {
-        // At most one membership per (userId, organizationId) — enforced by IX_CustomerOrganizationMembership_UserId_OrganizationId
-        var membership = (await organizationMembershipSearchService.SearchAsync(new OrganizationMembershipSearchCriteria
-        {
-            UserId = userId,
-            OrganizationId = organizationId,
-            Take = 1,
-        })).Results.FirstOrDefault();
+        var membership = await organizationMembershipSearchService.GetMembershipAsync(userId, organizationId);
 
         if (membership?.IsCurrentlyLocked == true)
         {

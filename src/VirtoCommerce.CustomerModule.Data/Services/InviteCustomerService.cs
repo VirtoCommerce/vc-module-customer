@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using VirtoCommerce.CustomerModule.Core;
+using VirtoCommerce.CustomerModule.Core.Extensions;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Notifications;
 using VirtoCommerce.CustomerModule.Core.Services;
@@ -335,12 +336,7 @@ public class InviteCustomerService : IInviteCustomerService
         RegistrationInvitationNotificationBase notification,
         Store store)
     {
-        var existingMembership = (await _organizationMembershipSearchService.SearchAsync(new OrganizationMembershipSearchCriteria
-        {
-            UserId = existingUser.Id,
-            OrganizationId = request.OrganizationId,
-            Take = 1,
-        })).Results.FirstOrDefault();
+        var existingMembership = await _organizationMembershipSearchService.GetMembershipAsync(existingUser.Id, request.OrganizationId);
 
         if (existingMembership != null)
         {

@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using OpenIddict.Abstractions;
 using VirtoCommerce.CustomerModule.Core;
+using VirtoCommerce.CustomerModule.Core.Extensions;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
@@ -56,12 +57,7 @@ public class OrganizationIdRequestValidator(
 
         if (context.User != null)
         {
-            var membership = (await organizationMembershipSearchService.SearchAsync(new OrganizationMembershipSearchCriteria
-            {
-                UserId = context.User.Id,
-                OrganizationId = organizationId,
-                Take = 1,
-            })).Results.FirstOrDefault();
+            var membership = await organizationMembershipSearchService.GetMembershipAsync(context.User.Id, organizationId);
 
             var isLocked = membership != null && membership.IsCurrentlyLocked;
             var effectiveStatus = OrganizationMembership.ResolveEffectiveStatus(membership?.Status, member?.Status);
