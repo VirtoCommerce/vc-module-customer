@@ -142,7 +142,7 @@ public class InviteCustomerService : IInviteCustomerService
                 }
 
                 var membershipErrors = await InviteExistingUserToOrganization(
-                    existingUser, request, rolesResult.Roles, existingUserNotificationResult.Notification, store);
+                    existingUser, request, rolesResult.Roles, existingUserNotificationResult?.Notification, store);
 
                 result.Errors.AddRange(membershipErrors);
                 result.Succeeded |= membershipErrors.Count == 0;

@@ -42,20 +42,10 @@ public class OrganizationIdRequestValidator(
             return [GetGlobalLockoutError(context.User)];
         }
 
-        var isPasswordGrant = context.Request.GrantType == OpenIddictConstants.GrantTypes.Password;
-
         var availableOrganizationIds = GetAvailableOrganizationIds(member);
         if (!availableOrganizationIds.Contains(organizationId))
         {
-            if (isPasswordGrant)
-            {
-                var accessibleOrganizationIds = await GetAccessibleOrganizationIdsAsync(context.User?.Id, member, availableOrganizationIds);
-                context.Request.SetParameter(Parameters.OrganizationId, accessibleOrganizationIds.FirstOrDefault());
-
-                return [];
-            }
-
-            return [ErrorDescriber.InvalidOrganizationId(organizationId)];
+            return await HandleUnavailableOrganizationAsync(context, member, organizationId, availableOrganizationIds);
         }
 
         if (context.User != null)
@@ -66,6 +56,20 @@ public class OrganizationIdRequestValidator(
                 return [accessError];
             }
         }
+
+        return [];
+    }
+
+    private async Task<IList<TokenResponse>> HandleUnavailableOrganizationAsync(
+        TokenRequestContext context, Member member, string organizationId, IList<string> availableOrganizationIds)
+    {
+        if (context.Request.GrantType != OpenIddictConstants.GrantTypes.Password)
+        {
+            return [ErrorDescriber.InvalidOrganizationId(organizationId)];
+        }
+
+        var accessibleOrganizationIds = await GetAccessibleOrganizationIdsAsync(context.User?.Id, member, availableOrganizationIds);
+        context.Request.SetParameter(Parameters.OrganizationId, accessibleOrganizationIds.FirstOrDefault());
 
         return [];
     }

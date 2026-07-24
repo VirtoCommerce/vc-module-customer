@@ -36,11 +36,32 @@ public class OrganizationIdClaimProvider(
 
     private async Task AddOrgScopedPermissionsAsync(ClaimsPrincipal principal, string userId, string memberId, string organizationId)
     {
+        if (principal.Identity is not ClaimsIdentity identity)
+        {
+            return;
+        }
+
+        var roleIds = await GetOrgScopedRoleIdsAsync(userId, memberId, organizationId);
+        if (roleIds.Count == 0)
+        {
+            return;
+        }
+
+        var existingPermissions = principal.Claims
+            .Where(c => c.Type == PlatformConstants.Security.Claims.PermissionClaimType)
+            .Select(c => c.Value)
+            .ToHashSet();
+
+        await AddRolePermissionsAsync(identity, roleIds, existingPermissions);
+    }
+
+    private async Task<IList<string>> GetOrgScopedRoleIdsAsync(string userId, string memberId, string organizationId)
+    {
         var membership = await organizationMembershipSearchService.GetMembershipAsync(userId, organizationId);
 
         if (membership?.IsCurrentlyLocked == true)
         {
-            return;
+            return [];
         }
 
         var member = string.IsNullOrEmpty(memberId) ? null : await memberService.GetByIdAsync(memberId);
@@ -48,36 +69,18 @@ public class OrganizationIdClaimProvider(
         var effectiveStatus = OrganizationMembership.ResolveEffectiveStatus(membership?.Status, member?.Status);
         if (ModuleConstants.MembershipStatuses.IsBlocking(effectiveStatus))
         {
-            return;
+            return [];
         }
 
         var isMemberOfOrg = (member as IHasOrganizations)?.Organizations?.ContainsIgnoreCase(organizationId) == true;
         if (membership == null && !isMemberOfOrg)
         {
-            return;
-        }
-
-        if (principal.Identity is not ClaimsIdentity identity)
-        {
-            return;
+            return [];
         }
 
         var orgScopedRoles = await organizationMembershipSearchService.GetRolesByUserAndOrgAsync(organizationId, membership);
 
-        if (orgScopedRoles.Count == 0)
-        {
-            return;
-        }
-
-        var allRoleIds = orgScopedRoles.Select(r => r.RoleId).ToList();
-
-        // Collect permissions already present in the token (from global roles) to avoid duplicates
-        var existingPermissions = principal.Claims
-            .Where(c => c.Type == PlatformConstants.Security.Claims.PermissionClaimType)
-            .Select(c => c.Value)
-            .ToHashSet();
-
-        await AddRolePermissionsAsync(identity, allRoleIds, existingPermissions);
+        return orgScopedRoles.Select(r => r.RoleId).ToList();
     }
 
     private async Task AddRolePermissionsAsync(ClaimsIdentity identity, IList<string> roleIds, HashSet<string> existingPermissions)
