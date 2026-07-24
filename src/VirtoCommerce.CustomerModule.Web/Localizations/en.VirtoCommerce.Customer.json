@@ -289,12 +289,18 @@
           "organization": "Organization",
           "roles": "Roles",
           "status": "Status",
-          "lockout-end": "Locked until"
+          "lockout-end": "Locked until",
+          "locked-state": "Locked state"
         },
         "type-org": "Organization",
         "type-global": "Global",
         "status-locked": "Locked",
-        "status-active": "Active"
+        "status-unlocked": "Unlocked",
+        "status-approved": "Approved",
+        "status-invited": "Invited",
+        "status-rejected": "Rejected",
+        "status-deleted": "Deleted",
+        "status-new": "New"
       },
       "organization-membership-detail": {
         "title-global": "Global membership",
@@ -305,12 +311,18 @@
           "type": "Type",
           "roles": "Roles",
           "status": "Status",
+          "locked-state": "Locked state",
           "lockout-end": "Locked until"
         },
         "placeholders": {
           "organization": "Select organization",
           "roles": "Select roles",
-          "lockout-end": "Select date"
+          "lockout-end": "Select date",
+          "status-inherited": "Inherit from member"
+        },
+        "hints": {
+          "roles": "Roles assigned to the member within this organization, in addition to any global roles.",
+          "status": "Overrides the member's global status for this organization only. Leave empty to use the member's global status."
         }
       },
       "invite-customers": {
@@ -416,10 +428,6 @@
       "invite-customers-success": {
         "title": "Invite customers",
         "message": "Invitation notifications have been queqed successfuly"
-      },
-      "invite-customers-error": {
-        "title": "Invite customers",
-        "message": "Some invitations were not sent due to errors"
       },
       "membership-delete": {
         "title": "Confirm delete",

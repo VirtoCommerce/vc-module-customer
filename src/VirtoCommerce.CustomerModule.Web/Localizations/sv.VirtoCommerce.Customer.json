@@ -289,12 +289,18 @@
           "organization": "Organisation",
           "roles": "Roller",
           "status": "Status",
-          "lockout-end": "Låst till"
+          "lockout-end": "Låst till",
+          "locked-state": "Låsstatus"
         },
         "type-org": "Organisation",
         "type-global": "Global",
         "status-locked": "Låst",
-        "status-active": "Aktiv"
+        "status-unlocked": "Olåst",
+        "status-approved": "Godkänd",
+        "status-invited": "Inbjuden",
+        "status-rejected": "Avvisad",
+        "status-deleted": "Raderad",
+        "status-new": "Ny"
       },
       "organization-membership-detail": {
         "title-global": "Globalt medlemskap",
@@ -305,12 +311,18 @@
           "type": "Typ",
           "roles": "Roller",
           "status": "Status",
+          "locked-state": "Låsstatus",
           "lockout-end": "Låst till"
         },
         "placeholders": {
           "organization": "Välj organisation",
           "roles": "Välj roller",
-          "lockout-end": "Välj datum"
+          "lockout-end": "Välj datum",
+          "status-inherited": "Ärv från medlem"
+        },
+        "hints": {
+          "roles": "Roller tilldelade medlemmen inom denna organisation, utöver eventuella globala roller.",
+          "status": "Åsidosätter medlemmens globala status enbart för denna organisation. Lämna tomt för att använda medlemmens globala status."
         }
       },
       "invite-customers": {
@@ -416,10 +428,6 @@
       "invite-customers-success": {
         "title": "Bjud in kunder",
         "message": "Inbjudningsaviseringar har lagts i kö"
-      },
-      "invite-customers-error": {
-        "title": "Bjud in kunder",
-        "message": "Vissa inbjudningar skickades inte på grund av fel. Visa felinformation för detaljer."
       },
       "membership-delete": {
         "title": "Bekräfta borttagning",

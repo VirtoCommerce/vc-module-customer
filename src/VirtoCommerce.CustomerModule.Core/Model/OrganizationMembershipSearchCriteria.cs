@@ -41,4 +41,9 @@ public class OrganizationMembershipSearchCriteria : SearchCriteriaBase
     /// (not <see cref="OrganizationMembership.IsLocked"/>, or the lockout has already expired).
     /// </summary>
     public bool OnlyUnlocked { get; set; }
+
+    /// <summary>
+    /// Restrict to memberships whose status override (not effective status) is one of these values.
+    /// </summary>
+    public IList<string> Statuses { get; set; }
 }

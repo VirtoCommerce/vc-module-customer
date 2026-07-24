@@ -289,12 +289,18 @@
           "organization": "Organizzazione",
           "roles": "Ruoli",
           "status": "Stato",
-          "lockout-end": "Bloccato fino al"
+          "lockout-end": "Bloccato fino al",
+          "locked-state": "Stato di blocco"
         },
         "type-org": "Organizzazione",
         "type-global": "Globale",
         "status-locked": "Bloccato",
-        "status-active": "Attivo"
+        "status-unlocked": "Sbloccato",
+        "status-approved": "Approvato",
+        "status-invited": "Invitato",
+        "status-rejected": "Rifiutato",
+        "status-deleted": "Eliminato",
+        "status-new": "Nuovo"
       },
       "organization-membership-detail": {
         "title-global": "Appartenenza globale",
@@ -305,12 +311,18 @@
           "type": "Tipo",
           "roles": "Ruoli",
           "status": "Stato",
+          "locked-state": "Stato di blocco",
           "lockout-end": "Bloccato fino al"
         },
         "placeholders": {
           "organization": "Seleziona organizzazione",
           "roles": "Seleziona ruoli",
-          "lockout-end": "Seleziona data"
+          "lockout-end": "Seleziona data",
+          "status-inherited": "Eredita dal membro"
+        },
+        "hints": {
+          "roles": "Ruoli assegnati al membro all'interno di questa organizzazione, in aggiunta a eventuali ruoli globali.",
+          "status": "Sostituisce lo stato globale del membro solo per questa organizzazione. Lascia vuoto per utilizzare lo stato globale del membro."
         }
       },
       "invite-customers": {
@@ -416,10 +428,6 @@
       "invite-customers-success": {
         "title": "Invita clienti",
         "message": "Le notifiche di invito sono state messe in coda con successo"
-      },
-      "invite-customers-error": {
-        "title": "Invita clienti",
-        "message": "Alcuni inviti non sono stati inviati a causa di errori"
       },
       "membership-delete": {
         "title": "Conferma eliminazione",

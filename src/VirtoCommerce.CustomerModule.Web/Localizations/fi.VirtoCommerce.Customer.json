@@ -289,12 +289,18 @@
           "organization": "Organisaatio",
           "roles": "Roolit",
           "status": "Tila",
-          "lockout-end": "Lukittu asti"
+          "lockout-end": "Lukittu asti",
+          "locked-state": "Lukitustila"
         },
         "type-org": "Organisaatio",
         "type-global": "Globaali",
         "status-locked": "Lukittu",
-        "status-active": "Aktiivinen"
+        "status-unlocked": "Lukitsematon",
+        "status-approved": "Hyväksytty",
+        "status-invited": "Kutsuttu",
+        "status-rejected": "Hylätty",
+        "status-deleted": "Poistettu",
+        "status-new": "Uusi"
       },
       "organization-membership-detail": {
         "title-global": "Globaali jäsenyys",
@@ -305,12 +311,18 @@
           "type": "Tyyppi",
           "roles": "Roolit",
           "status": "Tila",
+          "locked-state": "Lukitustila",
           "lockout-end": "Lukittu asti"
         },
         "placeholders": {
           "organization": "Valitse organisaatio",
           "roles": "Valitse roolit",
-          "lockout-end": "Valitse päivämäärä"
+          "lockout-end": "Valitse päivämäärä",
+          "status-inherited": "Peritään jäseneltä"
+        },
+        "hints": {
+          "roles": "Jäsenelle tämän organisaation sisällä määritetyt roolit, mahdollisten globaalien roolien lisäksi.",
+          "status": "Ohittaa jäsenen globaalin tilan vain tässä organisaatiossa. Jätä tyhjäksi käyttääksesi jäsenen globaalia tilaa."
         }
       },
       "invite-customers": {
@@ -416,10 +428,6 @@
       "invite-customers-success": {
         "title": "Kutsu asiakkaita",
         "message": "Kutsuilmoitukset on lisätty jonoon onnistuneesti"
-      },
-      "invite-customers-error": {
-        "title": "Kutsu asiakkaita",
-        "message": "Osa kutsuista ei lähetetty virheiden vuoksi. Katso lisätietoja virheistä."
       },
       "membership-delete": {
         "title": "Vahvista poisto",

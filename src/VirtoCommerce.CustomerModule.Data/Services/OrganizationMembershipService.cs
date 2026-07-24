@@ -78,10 +78,41 @@ public class OrganizationMembershipService
     }
 
     public Task<OrganizationMembership> LockAsync(string id, DateTime? lockoutEnd = null)
-        => SetLockStateAsync(id, isLocked: true, lockoutEnd: lockoutEnd);
+        => SetLockState(id, isLocked: true, lockoutEnd: lockoutEnd);
 
     public Task<OrganizationMembership> UnlockAsync(string id)
-        => SetLockStateAsync(id, isLocked: false, lockoutEnd: null);
+        => SetLockState(id, isLocked: false, lockoutEnd: null);
+
+    public async Task<OrganizationMembership> SetStatusAsync(string id, string status)
+    {
+        var model = (await GetAsync([id])).FirstOrDefault();
+        if (model == null)
+        {
+            return null;
+        }
+
+        model.Status = status;
+
+        await SaveChangesAsync([model]);
+
+        return model;
+    }
+
+    private async Task<OrganizationMembership> SetLockState(string id, bool isLocked, DateTime? lockoutEnd)
+    {
+        var model = (await GetAsync([id])).FirstOrDefault();
+        if (model == null)
+        {
+            return null;
+        }
+
+        model.IsLocked = isLocked;
+        model.LockoutEnd = isLocked ? lockoutEnd : null;
+
+        await SaveChangesAsync([model]);
+
+        return model;
+    }
 
     [Obsolete("Use IOrganizationMembershipSearchService.SearchAsync instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
     public Task<OrganizationMembershipSearchResult> SearchAsync(OrganizationMembershipSearchCriteria criteria, bool clone = true)
@@ -139,22 +170,6 @@ public class OrganizationMembershipService
             OrganizationIds = organizationIds,
             UserIds = userIds,
         });
-    }
-
-    private async Task<OrganizationMembership> SetLockStateAsync(string id, bool isLocked, DateTime? lockoutEnd)
-    {
-        var model = (await GetAsync([id])).FirstOrDefault();
-        if (model == null)
-        {
-            return null;
-        }
-
-        model.IsLocked = isLocked;
-        model.LockoutEnd = lockoutEnd;
-
-        await SaveChangesAsync([model]);
-
-        return model;
     }
 
     private static async Task ResolveOrganizationNamesAsync(

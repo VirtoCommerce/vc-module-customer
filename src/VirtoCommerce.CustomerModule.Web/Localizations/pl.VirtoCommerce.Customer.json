@@ -289,12 +289,18 @@
           "organization": "Organizacja",
           "roles": "Role",
           "status": "Status",
-          "lockout-end": "Zablokowany do"
+          "lockout-end": "Zablokowany do",
+          "locked-state": "Stan blokady"
         },
         "type-org": "Organizacja",
         "type-global": "Globalne",
         "status-locked": "Zablokowany",
-        "status-active": "Aktywny"
+        "status-unlocked": "Odblokowany",
+        "status-approved": "Zatwierdzony",
+        "status-invited": "Zaproszony",
+        "status-rejected": "Odrzucony",
+        "status-deleted": "Usunięty",
+        "status-new": "Nowy"
       },
       "organization-membership-detail": {
         "title-global": "Globalne członkostwo",
@@ -305,12 +311,18 @@
           "type": "Typ",
           "roles": "Role",
           "status": "Status",
+          "locked-state": "Stan blokady",
           "lockout-end": "Zablokowany do"
         },
         "placeholders": {
           "organization": "Wybierz organizację",
           "roles": "Wybierz role",
-          "lockout-end": "Wybierz datę"
+          "lockout-end": "Wybierz datę",
+          "status-inherited": "Odziedziczone od członka"
+        },
+        "hints": {
+          "roles": "Role przypisane członkowi w ramach tej organizacji, oprócz ewentualnych ról globalnych.",
+          "status": "Zastępuje globalny status członka wyłącznie dla tej organizacji. Pozostaw puste, aby użyć globalnego statusu członka."
         }
       },
       "invite-customers": {
@@ -416,10 +428,6 @@
       "invite-customers-success": {
         "title": "Zaproś klientów",
         "message": "Powiadomienia o zaproszeniach zostały pomyślnie dodane do kolejki"
-      },
-      "invite-customers-error": {
-        "title": "Zaproś klientów",
-        "message": "Niektóre zaproszenia nie zostały wysłane z powodu błędów"
       },
       "membership-delete": {
         "title": "Potwierdź usunięcie",

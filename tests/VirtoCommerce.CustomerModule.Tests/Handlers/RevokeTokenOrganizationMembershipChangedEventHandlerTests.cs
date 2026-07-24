@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Events;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Data.Handlers;
@@ -94,7 +95,7 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
         }
 
         [Fact]
-        public async Task Handle_WhenEntryStateIsAdded_AndLocked_RevokesTokens()
+        public async Task Handle_WhenEntryStateIsAdded_AndLocked_DoesNotRevokeTokens()
         {
             var membership = new OrganizationMembership
             {
@@ -106,7 +107,23 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
 
             await _handler.Handle(message);
 
-            _sessionServiceMock.Verify(s => s.TerminateAllUserSessions("user-1"), Times.Once);
+            _sessionServiceMock.Verify(s => s.TerminateAllUserSessions(It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Handle_WhenEntryStateIsAdded_WithInvitedStatus_DoesNotRevokeTokens()
+        {
+            var membership = new OrganizationMembership
+            {
+                UserId = "user-1",
+                Status = ModuleConstants.MembershipStatuses.Invited,
+            };
+
+            var message = BuildEvent(membership, EntryState.Added);
+
+            await _handler.Handle(message);
+
+            _sessionServiceMock.Verify(s => s.TerminateAllUserSessions(It.IsAny<string>()), Times.Never);
         }
 
         private static OrganizationMembershipChangedEvent BuildEvent(OrganizationMembership membership, EntryState state)

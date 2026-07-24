@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using VirtoCommerce.Platform.Core.Settings;
 
 namespace VirtoCommerce.CustomerModule.Core
@@ -36,6 +37,24 @@ namespace VirtoCommerce.CustomerModule.Core
             {
                 public const string OrganizationId = "organization_id";
             }
+        }
+
+        public static class MembershipStatuses
+        {
+            public const string New = "New";
+            public const string Invited = "Invited";
+            public const string Approved = "Approved";
+            public const string Rejected = "Rejected";
+            public const string Deleted = "Deleted";
+
+            public static string[] ManuallySelectableStatuses { get; } = { New, Approved, Rejected, Deleted };
+
+            public static string[] BlockingStatuses { get; } = { Invited, Rejected, Deleted };
+
+            public static bool IsBlocking(string effectiveStatus) =>
+                !string.IsNullOrEmpty(effectiveStatus) && BlockingStatuses.Contains(effectiveStatus);
+
+            public static string[] ReinvitableStatuses { get; } = { Rejected, Deleted };
         }
 
         public static class Settings
@@ -136,6 +155,16 @@ namespace VirtoCommerce.CustomerModule.Core
                     AllowedValues = new[] { "New", "Approved", "Rejected", "Deleted" }
                 };
 
+                public static SettingDescriptor OrganizationMembershipStatuses { get; } = new SettingDescriptor
+                {
+                    Name = "Customer.OrganizationMembershipStatuses",
+                    ValueType = SettingValueType.ShortText,
+                    GroupName = "Customer|Statuses",
+                    IsDictionary = true,
+                    DefaultValue = "New",
+                    AllowedValues = MembershipStatuses.ManuallySelectableStatuses
+                };
+
                 public static SettingDescriptor OrganizationDefaultStatus { get; } = new SettingDescriptor
                 {
                     Name = "Customer.OrganizationDefaultStatus",
@@ -164,6 +193,7 @@ namespace VirtoCommerce.CustomerModule.Core
                     VendorStatuses,
                     EmployeeStatuses,
                     ContactStatuses,
+                    OrganizationMembershipStatuses,
                     OrganizationDefaultStatus,
                     ContactDefaultStatus
                 };

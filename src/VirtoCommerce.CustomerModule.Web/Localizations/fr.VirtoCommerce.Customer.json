@@ -289,12 +289,18 @@
           "organization": "Organisation",
           "roles": "Rôles",
           "status": "Statut",
-          "lockout-end": "Bloqué jusqu'au"
+          "lockout-end": "Bloqué jusqu'au",
+          "locked-state": "État de verrouillage"
         },
         "type-org": "Organisation",
         "type-global": "Global",
         "status-locked": "Bloqué",
-        "status-active": "Actif"
+        "status-unlocked": "Débloqué",
+        "status-approved": "Approuvé",
+        "status-invited": "Invité",
+        "status-rejected": "Rejeté",
+        "status-deleted": "Supprimé",
+        "status-new": "Nouveau"
       },
       "organization-membership-detail": {
         "title-global": "Adhésion globale",
@@ -305,12 +311,18 @@
           "type": "Type",
           "roles": "Rôles",
           "status": "Statut",
+          "locked-state": "État de verrouillage",
           "lockout-end": "Bloqué jusqu'au"
         },
         "placeholders": {
           "organization": "Sélectionner une organisation",
           "roles": "Sélectionner des rôles",
-          "lockout-end": "Sélectionner une date"
+          "lockout-end": "Sélectionner une date",
+          "status-inherited": "Hériter du membre"
+        },
+        "hints": {
+          "roles": "Rôles attribués au membre au sein de cette organisation, en plus des rôles globaux éventuels.",
+          "status": "Remplace le statut global du membre pour cette organisation uniquement. Laissez vide pour utiliser le statut global du membre."
         }
       },
       "invite-customers": {
@@ -416,10 +428,6 @@
       "invite-customers-success": {
         "title": "Inviter des clients",
         "message": "Les notifications d’invitation ont été mises en file d’attente avec succès"
-      },
-      "invite-customers-error": {
-        "title": "Inviter des clients",
-        "message": "Certaines invitations n’ont pas été envoyées en raison d’erreurs"
       },
       "membership-delete": {
         "title": "Confirmer la suppression",

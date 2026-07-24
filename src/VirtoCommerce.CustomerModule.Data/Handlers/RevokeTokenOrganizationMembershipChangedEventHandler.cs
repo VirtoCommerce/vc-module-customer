@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Events;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
@@ -16,12 +17,12 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
         {
             foreach (var changedEntry in message.ChangedEntries)
             {
-                if (changedEntry.EntryState != EntryState.Added && changedEntry.EntryState != EntryState.Modified)
+                if (changedEntry.EntryState != EntryState.Modified)
                 {
                     continue;
                 }
 
-                if (changedEntry.NewEntry.IsCurrentlyLocked)
+                if (changedEntry.NewEntry.IsCurrentlyLocked || ModuleConstants.MembershipStatuses.IsBlocking(changedEntry.NewEntry.Status))
                 {
                     await RevokeUserTokensAsync(changedEntry.NewEntry.UserId);
                 }

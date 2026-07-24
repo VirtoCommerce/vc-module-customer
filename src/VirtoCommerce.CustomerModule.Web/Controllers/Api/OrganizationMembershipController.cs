@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
@@ -97,6 +98,25 @@ public class OrganizationMembershipController(
         await membershipService.SaveChangesAsync([membership]);
 
         return Ok(membership);
+    }
+
+    /// <summary>Sets the organization-specific lifecycle status override for a membership.</summary>
+    [HttpPost("{id}/status")]
+    [Authorize(OrgMembershipPermissions.Update)]
+    public async Task<ActionResult<OrganizationMembership>> SetStatus(
+        [FromRoute] string id,
+        [FromBody] ChangeMembershipStatusRequest request)
+    {
+        var status = request?.Status;
+
+        if (!status.IsNullOrEmpty() && !ModuleConstants.MembershipStatuses.ManuallySelectableStatuses.Contains(status))
+        {
+            return BadRequest($"Status must be one of: {string.Join(", ", ModuleConstants.MembershipStatuses.ManuallySelectableStatuses)}.");
+        }
+
+        var result = await membershipService.SetStatusAsync(id, status);
+
+        return result != null ? Ok(result) : NotFound();
     }
 
     /// <summary>Locks a membership — user cannot sign in to this organization.</summary>

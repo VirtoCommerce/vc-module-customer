@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Moq;
 using OpenIddict.Abstractions;
+using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Data.OpenIddict;
@@ -14,11 +15,19 @@ namespace VirtoCommerce.CustomerModule.Tests;
 public class OrganizationIdRequestValidatorTests
 {
     private const string OrgId = "org1";
+    private const string OrgId2 = "org2";
     private const string MemberId = "member1";
     private const string UserId = "user1";
 
     private readonly Mock<IMemberService> _memberServiceMock = new();
     private readonly Mock<IOrganizationMembershipSearchService> _membershipServiceMock = new();
+
+    public OrganizationIdRequestValidatorTests()
+    {
+        _membershipServiceMock
+            .Setup(s => s.SearchAsync(It.IsAny<OrganizationMembershipSearchCriteria>(), It.IsAny<bool>()))
+            .ReturnsAsync(new OrganizationMembershipSearchResult { Results = [] });
+    }
 
     [Fact]
     public async Task ValidateAsync_NoOrganizationId_NoUser_ReturnsEmpty()
@@ -231,10 +240,58 @@ public class OrganizationIdRequestValidatorTests
         Assert.Equal(OrgId, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
     }
 
+    [Fact]
+    public async Task ValidateAsync_RejectedOrgPasswordGrant_FallsBackToAccessibleOrgAndReturnsEmpty()
+    {
+        //Arrange
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId, OrgId2] });
+
+        SetupMembership(new OrganizationMembership { OrganizationId = OrgId, Status = ModuleConstants.MembershipStatuses.Rejected });
+
+        var context = BuildContext(OrgId, grantType: OpenIddictConstants.GrantTypes.Password, user: user);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Empty(result);
+        Assert.Equal(OrgId2, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
+    }
+
+    [Fact]
+    public async Task ValidateAsync_RefreshTokenGrant_SwitchToSecondAcceptedOrganization_ReturnsEmpty()
+    {
+        //Arrange
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId, OrgId2] });
+
+        _membershipServiceMock
+            .Setup(s => s.SearchAsync(
+                It.Is<OrganizationMembershipSearchCriteria>(c => c.UserId == UserId && c.OrganizationId == OrgId2),
+                It.IsAny<bool>()))
+            .ReturnsAsync(new OrganizationMembershipSearchResult
+            {
+                Results = [new OrganizationMembership { OrganizationId = OrgId2, Status = ModuleConstants.MembershipStatuses.Approved }],
+            });
+
+        var context = BuildContext(OrgId2, grantType: OpenIddictConstants.GrantTypes.RefreshToken, user: user);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Empty(result);
+    }
+
     private void SetupMembership(OrganizationMembership membership) =>
         _membershipServiceMock
             .Setup(s => s.SearchAsync(
-                It.Is<OrganizationMembershipSearchCriteria>(c => c.UserId == UserId && c.OrganizationId == OrgId),
+                It.Is<OrganizationMembershipSearchCriteria>(c =>
+                    c.UserId == UserId &&
+                    (c.OrganizationId == OrgId || (c.OrganizationIds != null && c.OrganizationIds.Contains(OrgId)))),
                 It.IsAny<bool>()))
             .ReturnsAsync(new OrganizationMembershipSearchResult { Results = [membership] });
 

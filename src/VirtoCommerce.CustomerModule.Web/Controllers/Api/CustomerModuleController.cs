@@ -361,6 +361,28 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
             return Ok(result);
         }
 
+        /// <summary>Cancels a not-yet-accepted organization membership invite.</summary>
+        [HttpPost]
+        [Authorize(ModuleConstants.Security.Permissions.Invite)]
+        [Route("members/customers/invite/{membershipId}/revoke")]
+        public async Task<ActionResult<InviteCustomerResult>> RevokeInvite([FromRoute] string membershipId)
+        {
+            var result = await _inviteCustomerService.RevokeInviteAsync(membershipId);
+
+            return Ok(result);
+        }
+
+        /// <summary>Re-sends the invitation notification for a not-yet-accepted organization membership invite.</summary>
+        [HttpPost]
+        [Authorize(ModuleConstants.Security.Permissions.Invite)]
+        [Route("members/customers/invite/{membershipId}/resend")]
+        public async Task<ActionResult<InviteCustomerResult>> ResendInvite([FromRoute] string membershipId)
+        {
+            var result = await _inviteCustomerService.ResendInviteAsync(membershipId);
+
+            return Ok(result);
+        }
+
         #region Special members for storefront C# API client  (because it not support polymorph types)
 
         #region Contact

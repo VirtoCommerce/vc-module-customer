@@ -289,12 +289,18 @@
           "organization": "組織",
           "roles": "役割",
           "status": "状態",
-          "lockout-end": "ロック解除日"
+          "lockout-end": "ロック解除日",
+          "locked-state": "ロック状態"
         },
         "type-org": "組織",
         "type-global": "グローバル",
         "status-locked": "ロック済み",
-        "status-active": "アクティブ"
+        "status-unlocked": "ロック解除済み",
+        "status-approved": "承認済み",
+        "status-invited": "招待済み",
+        "status-rejected": "拒否済み",
+        "status-deleted": "削除済み",
+        "status-new": "新規"
       },
       "organization-membership-detail": {
         "title-global": "グローバルメンバーシップ",
@@ -304,13 +310,19 @@
           "organization": "組織",
           "type": "タイプ",
           "roles": "役割",
-          "status": "状態",
+          "status": "ステータス",
+          "locked-state": "ロック状態",
           "lockout-end": "ロック解除日"
         },
         "placeholders": {
           "organization": "組織を選択",
           "roles": "役割を選択",
-          "lockout-end": "日付を選択"
+          "lockout-end": "日付を選択",
+          "status-inherited": "メンバーから継承"
+        },
+        "hints": {
+          "roles": "このメンバーがこの組織内で持つ役割です。グローバルな役割に加えて適用されます。",
+          "status": "この設定は、この組織内でのみメンバーのグローバルステータスを上書きします。空のままにすると、メンバーのグローバルステータスが使用されます。"
         }
       },
       "invite-customers": {
@@ -416,10 +428,6 @@
       "invite-customers-success": {
         "title": "顧客を招待",
         "message": "招待通知は正常にキューに追加されました"
-      },
-      "invite-customers-error": {
-        "title": "顧客を招待",
-        "message": "エラーのため、一部の招待が送信されませんでした"
       },
       "membership-delete": {
         "title": "削除の確認",

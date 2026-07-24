@@ -289,12 +289,18 @@
           "organization": "Organisation",
           "roles": "Rollen",
           "status": "Status",
-          "lockout-end": "Gesperrt bis"
+          "lockout-end": "Gesperrt bis",
+          "locked-state": "Sperrstatus"
         },
         "type-org": "Organisation",
         "type-global": "Global",
         "status-locked": "Gesperrt",
-        "status-active": "Aktiv"
+        "status-unlocked": "Entsperrt",
+        "status-approved": "Genehmigt",
+        "status-invited": "Eingeladen",
+        "status-rejected": "Abgelehnt",
+        "status-deleted": "Gelöscht",
+        "status-new": "Neu"
       },
       "organization-membership-detail": {
         "title-global": "Globale Mitgliedschaft",
@@ -305,12 +311,18 @@
           "type": "Typ",
           "roles": "Rollen",
           "status": "Status",
+          "locked-state": "Sperrstatus",
           "lockout-end": "Gesperrt bis"
         },
         "placeholders": {
           "organization": "Organisation auswählen",
           "roles": "Rollen auswählen",
-          "lockout-end": "Datum auswählen"
+          "lockout-end": "Datum auswählen",
+          "status-inherited": "Vom Mitglied übernehmen"
+        },
+        "hints": {
+          "roles": "Rollen, die dem Mitglied innerhalb dieser Organisation zugewiesen sind, zusätzlich zu etwaigen globalen Rollen.",
+          "status": "Überschreibt den globalen Status des Mitglieds nur für diese Organisation. Leer lassen, um den globalen Status des Mitglieds zu verwenden."
         }
       },
       "invite-customers": {
@@ -416,10 +428,6 @@
       "invite-customers-success": {
         "title": "Kunden einladen",
         "message": "Einladungsbenachrichtigungen wurden erfolgreich in die Warteschlange gestellt"
-      },
-      "invite-customers-error": {
-        "title": "Kunden einladen",
-        "message": "Einige Einladungen konnten aufgrund von Fehlern nicht gesendet werden"
       },
       "membership-delete": {
         "title": "Löschen bestätigen",

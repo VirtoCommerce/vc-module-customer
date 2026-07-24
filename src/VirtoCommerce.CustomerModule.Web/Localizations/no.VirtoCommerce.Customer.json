@@ -289,12 +289,18 @@
           "organization": "Organisasjon",
           "roles": "Roller",
           "status": "Status",
-          "lockout-end": "Blokkert til"
+          "lockout-end": "Blokkert til",
+          "locked-state": "Låsestatus"
         },
         "type-org": "Organisasjon",
         "type-global": "Global",
         "status-locked": "Blokkert",
-        "status-active": "Aktiv"
+        "status-unlocked": "Ulåst",
+        "status-approved": "Godkjent",
+        "status-invited": "Invitert",
+        "status-rejected": "Avvist",
+        "status-deleted": "Slettet",
+        "status-new": "Ny"
       },
       "organization-membership-detail": {
         "title-global": "Globalt medlemskap",
@@ -305,12 +311,18 @@
           "type": "Type",
           "roles": "Roller",
           "status": "Status",
+          "locked-state": "Låsestatus",
           "lockout-end": "Blokkert til"
         },
         "placeholders": {
           "organization": "Velg organisasjon",
           "roles": "Velg roller",
-          "lockout-end": "Velg dato"
+          "lockout-end": "Velg dato",
+          "status-inherited": "Arv fra medlem"
+        },
+        "hints": {
+          "roles": "Roller tildelt medlemmet innenfor denne organisasjonen, i tillegg til eventuelle globale roller.",
+          "status": "Overstyrer medlemmets globale status kun for denne organisasjonen. La stå tomt for å bruke medlemmets globale status."
         }
       },
       "invite-customers": {
@@ -416,10 +428,6 @@
       "invite-customers-success": {
         "title": "Inviter kunder",
         "message": "Invitasjonsvarsler er lagt i kø"
-      },
-      "invite-customers-error": {
-        "title": "Inviter kunder",
-        "message": "Noen invitasjoner ble ikke sendt på grunn av feil"
       },
       "membership-delete": {
         "title": "Bekreft sletting",

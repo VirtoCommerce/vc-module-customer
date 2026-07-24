@@ -289,12 +289,18 @@
           "organization": "组织",
           "roles": "角色",
           "status": "状态",
-          "lockout-end": "锁定至"
+          "lockout-end": "锁定至",
+          "locked-state": "锁定状态"
         },
         "type-org": "组织",
         "type-global": "全局",
         "status-locked": "已锁定",
-        "status-active": "活跃"
+        "status-unlocked": "未锁定",
+        "status-approved": "已批准",
+        "status-invited": "已邀请",
+        "status-rejected": "已拒绝",
+        "status-deleted": "已删除",
+        "status-new": "新建"
       },
       "organization-membership-detail": {
         "title-global": "全局成员资格",
@@ -305,12 +311,18 @@
           "type": "类型",
           "roles": "角色",
           "status": "状态",
+          "locked-state": "锁定状态",
           "lockout-end": "锁定至"
         },
         "placeholders": {
           "organization": "选择组织",
           "roles": "选择角色",
-          "lockout-end": "选择日期"
+          "lockout-end": "选择日期",
+          "status-inherited": "继承自成员"
+        },
+        "hints": {
+          "roles": "分配给该成员在此组织内的角色，作为其全局角色的补充。",
+          "status": "仅针对此组织覆盖该成员的全局状态。留空则使用该成员的全局状态。"
         }
       },
       "invite-customers": {
@@ -416,10 +428,6 @@
       "invite-customers-success": {
         "title": "邀请客户",
         "message": "邀请通知已成功加入队列"
-      },
-      "invite-customers-error": {
-        "title": "邀请客户",
-        "message": "由于错误，部分邀请未能发送"
       },
       "membership-delete": {
         "title": "确认删除",

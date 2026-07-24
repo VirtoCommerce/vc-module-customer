@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using OpenIddict.Abstractions;
+using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
@@ -21,32 +22,32 @@ public class OrganizationIdRequestValidator(
 
     public virtual async Task<IList<TokenResponse>> ValidateAsync(TokenRequestContext context)
     {
-        var organizationId = await GetOrganizationId(context);
+        var member = await GetMemberAsync(context);
+
+        var organizationId = await GetOrganizationId(context, member);
         if (string.IsNullOrEmpty(organizationId))
         {
             return [];
         }
 
-        // Global lock has the highest priority — if the user is globally locked out,
-        // return the global error immediately without checking org-level state.
         if (context.User != null && IsGloballyLocked(context.User))
         {
-            // Distinguish a permanent lock (LockoutEnd == DateTime.MaxValue) from a temporary
-            // failed-attempt lock, mirroring how the platform's BaseUserSignInValidator decides.
-            // Otherwise org members get the permanent-worded code for a self-clearing 15-min lock.
             var permanentLockOut = context.User.LockoutEnd == DateTime.MaxValue.ToUniversalTime();
             return [permanentLockOut
                 ? ErrorDescriber.UserIsLockedOut()
                 : SecurityErrorDescriber.UserIsTemporaryLockedOut()];
         }
 
-        var availableOrganizationIds = await GetAvailableOrganizationIds(context);
+        var isPasswordGrant = context.Request.GrantType == OpenIddictConstants.GrantTypes.Password;
+
+        var availableOrganizationIds = GetAvailableOrganizationIds(member);
         if (!availableOrganizationIds.Contains(organizationId))
         {
-            // Replace invalid organization ID with default organization ID when signing in
-            if (context.Request.GrantType == OpenIddictConstants.GrantTypes.Password)
+            if (isPasswordGrant)
             {
-                context.Request.SetParameter(Parameters.OrganizationId, availableOrganizationIds.FirstOrDefault());
+                var accessibleOrganizationIds = await GetAccessibleOrganizationIdsAsync(context.User?.Id, member, availableOrganizationIds);
+                context.Request.SetParameter(Parameters.OrganizationId, accessibleOrganizationIds.FirstOrDefault());
+
                 return [];
             }
 
@@ -61,19 +62,43 @@ public class OrganizationIdRequestValidator(
                 OrganizationId = organizationId,
                 Take = 1,
             })).Results.FirstOrDefault();
-            if (membership != null && membership.IsCurrentlyLocked)
+
+            var isLocked = membership != null && membership.IsCurrentlyLocked;
+            var effectiveStatus = OrganizationMembership.ResolveEffectiveStatus(membership?.Status, member?.Status);
+            var statusError = GetStatusError(effectiveStatus, organizationId);
+
+            if (isLocked || statusError != null)
             {
-                return [ErrorDescriber.UserIsLockedInOrganization(organizationId)];
+                if (isPasswordGrant)
+                {
+                    var accessibleOrganizationIds = await GetAccessibleOrganizationIdsAsync(context.User.Id, member, availableOrganizationIds);
+                    var fallbackOrganizationId = accessibleOrganizationIds.FirstOrDefault();
+
+                    if (!string.IsNullOrEmpty(fallbackOrganizationId))
+                    {
+                        context.Request.SetParameter(Parameters.OrganizationId, fallbackOrganizationId);
+                        return [];
+                    }
+                }
+
+                return [isLocked ? ErrorDescriber.UserIsLockedInOrganization(organizationId) : statusError];
             }
         }
 
         return [];
     }
 
-    /// <summary>
-    /// Returns true when the platform-level (global) lockout is active for the user.
-    /// Global lockout has higher priority than organisation-level lockout.
-    /// </summary>
+    private static TokenResponse GetStatusError(string effectiveStatus, string organizationId)
+    {
+        return effectiveStatus switch
+        {
+            ModuleConstants.MembershipStatuses.Invited => ErrorDescriber.UserInvitationPendingInOrganization(organizationId),
+            ModuleConstants.MembershipStatuses.Rejected => ErrorDescriber.UserIsRejectedInOrganization(organizationId),
+            ModuleConstants.MembershipStatuses.Deleted => ErrorDescriber.UserIsRemovedFromOrganization(organizationId),
+            _ => null,
+        };
+    }
+
     private static bool IsGloballyLocked(ApplicationUser user)
     {
         return user.LockoutEnabled
@@ -81,7 +106,7 @@ public class OrganizationIdRequestValidator(
             && user.LockoutEnd.Value > DateTimeOffset.UtcNow;
     }
 
-    private async Task<string> GetOrganizationId(TokenRequestContext context)
+    private async Task<string> GetOrganizationId(TokenRequestContext context, Member member)
     {
         var organizationId = context.Request.GetParameter(Parameters.OrganizationId)?.ToString();
         if (!string.IsNullOrEmpty(organizationId))
@@ -95,19 +120,11 @@ public class OrganizationIdRequestValidator(
             return organizationId;
         }
 
-        return await GetMemberOrganizationId(context);
+        return await GetMemberOrganizationId(context, member);
     }
 
-    private async Task<string> GetMemberOrganizationId(TokenRequestContext context)
+    private async Task<string> GetMemberOrganizationId(TokenRequestContext context, Member member)
     {
-        var memberId = context.User?.MemberId;
-        if (string.IsNullOrEmpty(memberId))
-        {
-            return null;
-        }
-
-        var member = await memberService.GetByIdAsync(memberId);
-
         if (member is not IHasOrganizations contact)
         {
             return null;
@@ -115,30 +132,66 @@ public class OrganizationIdRequestValidator(
 
         var organizations = contact.Organizations ?? [];
 
-        if (!contact.CurrentOrganizationId.IsNullOrEmpty() && organizations.ContainsIgnoreCase(contact.CurrentOrganizationId))
+        var accessibleOrganizations = await GetAccessibleOrganizationIdsAsync(context.User?.Id, member, organizations);
+
+        if (!contact.CurrentOrganizationId.IsNullOrEmpty() && accessibleOrganizations.Contains(contact.CurrentOrganizationId, StringComparer.OrdinalIgnoreCase))
         {
             return contact.CurrentOrganizationId;
         }
 
-        if (!contact.DefaultOrganizationId.IsNullOrEmpty() && organizations.ContainsIgnoreCase(contact.DefaultOrganizationId))
+        if (!contact.DefaultOrganizationId.IsNullOrEmpty() && accessibleOrganizations.Contains(contact.DefaultOrganizationId, StringComparer.OrdinalIgnoreCase))
         {
             return contact.DefaultOrganizationId;
         }
 
-        return organizations.FirstOrDefault();
+        return accessibleOrganizations.FirstOrDefault();
     }
 
-    private async Task<IList<string>> GetAvailableOrganizationIds(TokenRequestContext context)
+    private async Task<IReadOnlyCollection<string>> GetAccessibleOrganizationIdsAsync(string userId, Member member, IList<string> organizationIds)
+    {
+        if (string.IsNullOrEmpty(userId) || organizationIds.IsNullOrEmpty())
+        {
+            return organizationIds?.ToList() ?? [];
+        }
+
+        var memberships = await organizationMembershipSearchService.SearchAllNoCloneAsync(new OrganizationMembershipSearchCriteria
+        {
+            UserId = userId,
+            OrganizationIds = organizationIds,
+        });
+
+        var membershipByOrgId = memberships
+            .Where(m => m.OrganizationId != null)
+            .GroupBy(m => m.OrganizationId)
+            .ToDictionary(g => g.Key, g => g.First());
+
+        return organizationIds
+            .Where(orgId =>
+            {
+                membershipByOrgId.TryGetValue(orgId, out var membership);
+
+                if (membership?.IsCurrentlyLocked == true)
+                {
+                    return false;
+                }
+
+                var effectiveStatus = OrganizationMembership.ResolveEffectiveStatus(membership?.Status, member?.Status);
+                return !ModuleConstants.MembershipStatuses.IsBlocking(effectiveStatus);
+            })
+            .ToList();
+    }
+
+    private async Task<Member> GetMemberAsync(TokenRequestContext context)
     {
         var memberId = context.User?.MemberId;
 
-        if (string.IsNullOrEmpty(memberId))
-        {
-            return [];
-        }
+        return string.IsNullOrEmpty(memberId)
+            ? null
+            : await memberService.GetByIdAsync(memberId);
+    }
 
-        var member = await memberService.GetByIdAsync(memberId);
-
+    private static IList<string> GetAvailableOrganizationIds(Member member)
+    {
         return member switch
         {
             Contact contact => contact.Organizations ?? [],

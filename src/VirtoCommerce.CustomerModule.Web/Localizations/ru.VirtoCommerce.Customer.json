@@ -289,12 +289,18 @@
           "organization": "Организация",
           "roles": "Роли",
           "status": "Статус",
-          "lockout-end": "Заблокирован до"
+          "lockout-end": "Заблокирован до",
+          "locked-state": "Статус блокировки"
         },
         "type-org": "Организация",
         "type-global": "Глобальное",
         "status-locked": "Заблокирован",
-        "status-active": "Активен"
+        "status-unlocked": "Разблокирован",
+        "status-approved": "Одобрен",
+        "status-invited": "Приглашён",
+        "status-rejected": "Отклонён",
+        "status-deleted": "Удалён",
+        "status-new": "Новый"
       },
       "organization-membership-detail": {
         "title-global": "Глобальное членство",
@@ -305,12 +311,18 @@
           "type": "Тип",
           "roles": "Роли",
           "status": "Статус",
+          "locked-state": "Статус блокировки",
           "lockout-end": "Заблокирован до"
         },
         "placeholders": {
           "organization": "Выберите организацию",
           "roles": "Выберите роли",
-          "lockout-end": "Выберите дату"
+          "lockout-end": "Выберите дату",
+          "status-inherited": "Наследовать от участника"
+        },
+        "hints": {
+          "roles": "Роли, назначенные участнику в рамках этой организации, в дополнение к глобальным ролям.",
+          "status": "Переопределяет глобальный статус участника только для этой организации. Оставьте пустым, чтобы использовать глобальный статус."
         }
       },
       "invite-customers": {
@@ -416,10 +428,6 @@
       "invite-customers-success": {
         "title": "Пригласить клиентов",
         "message": "Уведомления о приглашениях успешно поставлены в очередь"
-      },
-      "invite-customers-error": {
-        "title": "Пригласить клиентов",
-        "message": "Некоторые приглашения не были отправлены из-за ошибок"
       },
       "membership-delete": {
         "title": "Подтвердите удаление",

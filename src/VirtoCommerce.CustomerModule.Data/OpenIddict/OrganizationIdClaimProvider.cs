@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
+using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.Platform.Core;
@@ -47,9 +48,16 @@ public class OrganizationIdClaimProvider(
             return;
         }
 
-        // Without an explicit membership row, verify via the contact's Organizations list to prevent
-        // privilege escalation when an arbitrary organizationId is passed in the token request
-        if (membership == null && !await IsContactMemberOfOrgAsync(memberId, organizationId))
+        var member = string.IsNullOrEmpty(memberId) ? null : await memberService.GetByIdAsync(memberId);
+
+        var effectiveStatus = OrganizationMembership.ResolveEffectiveStatus(membership?.Status, member?.Status);
+        if (ModuleConstants.MembershipStatuses.IsBlocking(effectiveStatus))
+        {
+            return;
+        }
+
+        var isMemberOfOrg = (member as IHasOrganizations)?.Organizations?.ContainsIgnoreCase(organizationId) == true;
+        if (membership == null && !isMemberOfOrg)
         {
             return;
         }
@@ -101,18 +109,6 @@ public class OrganizationIdClaimProvider(
                         .SetDestinations(OpenIddictConstants.Destinations.AccessToken));
             }
         }
-    }
-
-    private async Task<bool> IsContactMemberOfOrgAsync(string memberId, string organizationId)
-    {
-        if (string.IsNullOrEmpty(memberId))
-        {
-            return false;
-        }
-
-        var contact = await memberService.GetByIdAsync(memberId) as IHasOrganizations;
-
-        return contact?.Organizations?.ContainsIgnoreCase(organizationId) == true;
     }
 
     private async Task<string> GetOrganizationId(TokenRequestContext context)

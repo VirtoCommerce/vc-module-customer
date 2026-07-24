@@ -530,6 +530,10 @@ namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
+                    b.Property<string>("Status")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasMaxLength(128)
