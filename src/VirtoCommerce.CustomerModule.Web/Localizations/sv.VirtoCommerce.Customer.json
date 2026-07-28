@@ -288,7 +288,7 @@
           "type": "Typ",
           "organization": "Organisation",
           "roles": "Roller",
-          "status": "Status",
+          "status": "Inbjudningsstatus",
           "lockout-end": "Låst till",
           "locked-state": "Låsstatus"
         },
@@ -310,7 +310,7 @@
           "organization": "Organisation",
           "type": "Typ",
           "roles": "Roller",
-          "status": "Status",
+          "status": "Inbjudningsstatus",
           "locked-state": "Låsstatus",
           "lockout-end": "Låst till"
         },

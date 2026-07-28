@@ -288,7 +288,7 @@
           "type": "タイプ",
           "organization": "組織",
           "roles": "役割",
-          "status": "状態",
+          "status": "招待ステータス",
           "lockout-end": "ロック解除日",
           "locked-state": "ロック状態"
         },
@@ -310,7 +310,7 @@
           "organization": "組織",
           "type": "タイプ",
           "roles": "役割",
-          "status": "ステータス",
+          "status": "招待ステータス",
           "locked-state": "ロック状態",
           "lockout-end": "ロック解除日"
         },

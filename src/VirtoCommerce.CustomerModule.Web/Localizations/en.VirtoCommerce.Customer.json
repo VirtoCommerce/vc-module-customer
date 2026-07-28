@@ -288,7 +288,7 @@
           "type": "Type",
           "organization": "Organization",
           "roles": "Roles",
-          "status": "Status",
+          "status": "Invite status",
           "lockout-end": "Locked until",
           "locked-state": "Locked state"
         },
@@ -310,7 +310,7 @@
           "organization": "Organization",
           "type": "Type",
           "roles": "Roles",
-          "status": "Status",
+          "status": "Invite status",
           "locked-state": "Locked state",
           "lockout-end": "Locked until"
         },

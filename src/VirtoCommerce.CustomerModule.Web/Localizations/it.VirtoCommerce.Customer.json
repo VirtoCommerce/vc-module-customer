@@ -288,7 +288,7 @@
           "type": "Tipo",
           "organization": "Organizzazione",
           "roles": "Ruoli",
-          "status": "Stato",
+          "status": "Stato dell'invito",
           "lockout-end": "Bloccato fino al",
           "locked-state": "Stato di blocco"
         },
@@ -310,7 +310,7 @@
           "organization": "Organizzazione",
           "type": "Tipo",
           "roles": "Ruoli",
-          "status": "Stato",
+          "status": "Stato dell'invito",
           "locked-state": "Stato di blocco",
           "lockout-end": "Bloccato fino al"
         },

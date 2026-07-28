@@ -47,7 +47,7 @@ namespace VirtoCommerce.CustomerModule.Core
             public const string Rejected = "Rejected";
             public const string Deleted = "Deleted";
 
-            public static string[] ManuallySelectableStatuses { get; } = { New, Approved, Rejected, Deleted };
+            public static string[] ManuallySelectableStatuses { get; } = { Invited, Approved, Rejected, Deleted };
 
             public static string[] BlockingStatuses { get; } = { Invited, Rejected, Deleted };
 

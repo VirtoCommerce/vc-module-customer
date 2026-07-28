@@ -288,7 +288,7 @@
           "type": "Tyyppi",
           "organization": "Organisaatio",
           "roles": "Roolit",
-          "status": "Tila",
+          "status": "Kutsun tila",
           "lockout-end": "Lukittu asti",
           "locked-state": "Lukitustila"
         },
@@ -310,7 +310,7 @@
           "organization": "Organisaatio",
           "type": "Tyyppi",
           "roles": "Roolit",
-          "status": "Tila",
+          "status": "Kutsun tila",
           "locked-state": "Lukitustila",
           "lockout-end": "Lukittu asti"
         },

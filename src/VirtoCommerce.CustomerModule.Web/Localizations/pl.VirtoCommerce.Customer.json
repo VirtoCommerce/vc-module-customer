@@ -288,7 +288,7 @@
           "type": "Typ",
           "organization": "Organizacja",
           "roles": "Role",
-          "status": "Status",
+          "status": "Status zaproszenia",
           "lockout-end": "Zablokowany do",
           "locked-state": "Stan blokady"
         },
@@ -310,7 +310,7 @@
           "organization": "Organizacja",
           "type": "Typ",
           "roles": "Role",
-          "status": "Status",
+          "status": "Status zaproszenia",
           "locked-state": "Stan blokady",
           "lockout-end": "Zablokowany do"
         },

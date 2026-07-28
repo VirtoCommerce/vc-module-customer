@@ -175,11 +175,9 @@ public class OrganizationMembershipServiceTests : OrganizationMembershipServiceT
         var entity = BuildEntity("id1");
         SetupMemberships(entity);
 
-        //Act & Assert — only the manually-selectable statuses may be set through this API; "Invited" is
-        // system-assigned by the invite flow and must never be set directly (e.g. by X-API bypassing the CM
-        // controller's own check).
+        //Act & Assert — only the manually-selectable statuses may be set through this API.
         await Assert.ThrowsAsync<ArgumentException>(
-            () => CreateCrudService().SetStatusAsync("id1", ModuleConstants.MembershipStatuses.Invited));
+            () => CreateCrudService().SetStatusAsync("id1", "SomeUnknownStatus"));
 
         UnitOfWorkMock.Verify(u => u.CommitAsync(), Times.Never);
     }

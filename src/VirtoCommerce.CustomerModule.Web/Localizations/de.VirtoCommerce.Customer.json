@@ -288,7 +288,7 @@
           "type": "Typ",
           "organization": "Organisation",
           "roles": "Rollen",
-          "status": "Status",
+          "status": "Einladungsstatus",
           "lockout-end": "Gesperrt bis",
           "locked-state": "Sperrstatus"
         },
@@ -310,7 +310,7 @@
           "organization": "Organisation",
           "type": "Typ",
           "roles": "Rollen",
-          "status": "Status",
+          "status": "Einladungsstatus",
           "locked-state": "Sperrstatus",
           "lockout-end": "Gesperrt bis"
         },

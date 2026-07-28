@@ -288,7 +288,7 @@
           "type": "Type",
           "organization": "Organisasjon",
           "roles": "Roller",
-          "status": "Status",
+          "status": "Invitasjonsstatus",
           "lockout-end": "Blokkert til",
           "locked-state": "Låsestatus"
         },
@@ -310,7 +310,7 @@
           "organization": "Organisasjon",
           "type": "Type",
           "roles": "Roller",
-          "status": "Status",
+          "status": "Invitasjonsstatus",
           "locked-state": "Låsestatus",
           "lockout-end": "Blokkert til"
         },

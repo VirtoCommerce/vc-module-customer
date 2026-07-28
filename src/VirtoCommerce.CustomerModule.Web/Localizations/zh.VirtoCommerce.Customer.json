@@ -288,7 +288,7 @@
           "type": "类型",
           "organization": "组织",
           "roles": "角色",
-          "status": "状态",
+          "status": "邀请状态",
           "lockout-end": "锁定至",
           "locked-state": "锁定状态"
         },
@@ -310,7 +310,7 @@
           "organization": "组织",
           "type": "类型",
           "roles": "角色",
-          "status": "状态",
+          "status": "邀请状态",
           "locked-state": "锁定状态",
           "lockout-end": "锁定至"
         },
