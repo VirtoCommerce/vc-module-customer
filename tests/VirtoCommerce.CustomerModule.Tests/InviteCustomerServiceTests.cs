@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using VirtoCommerce.CustomerModule.Core;
@@ -10,12 +11,8 @@ using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Notifications;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Data.Services;
-using VirtoCommerce.NotificationsModule.Core.Extensions;
 using VirtoCommerce.NotificationsModule.Core.Model;
 using VirtoCommerce.NotificationsModule.Core.Services;
-using VirtoCommerce.NotificationsModule.Core.Types;
-using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Platform.Core.Extensions;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.StoreModule.Core.Model;
 using VirtoCommerce.StoreModule.Core.Services;
@@ -39,6 +36,7 @@ public class InviteCustomerServiceTests
     {
         _userManagerMock = new Mock<UserManager<ApplicationUser>>(
             new Mock<IUserStore<ApplicationUser>>().Object, null, null, null, null, null, null, null, null);
+        _userManagerMock.Setup(x => x.GetLoginsAsync(It.IsAny<ApplicationUser>())).ReturnsAsync([]);
         _roleManagerMock = new Mock<RoleManager<Role>>(
             new Mock<IRoleStore<Role>>().Object, null, null, null, null);
     }
@@ -108,7 +106,7 @@ public class InviteCustomerServiceTests
         // Arrange
         var store = new Store { Id = "store-1", Url = "https://store.test", Email = "store@test.com" };
         _storeServiceMock.Setup(x => x.GetAsync(It.IsAny<IList<string>>(), It.IsAny<string>(), It.IsAny<bool>()))
-            .ReturnsAsync(new List<Store> { store });
+            .ReturnsAsync([store]);
 
         _notificationSearchServiceMock
             .Setup(x => x.SearchNotificationsAsync(It.Is<NotificationSearchCriteria>(
@@ -149,7 +147,7 @@ public class InviteCustomerServiceTests
         // Arrange
         var store = new Store { Id = "store-1", Url = "https://store.test", Email = "store@test.com" };
         _storeServiceMock.Setup(x => x.GetAsync(It.IsAny<IList<string>>(), It.IsAny<string>(), It.IsAny<bool>()))
-            .ReturnsAsync(new List<Store> { store });
+            .ReturnsAsync([store]);
 
         _notificationSearchServiceMock
             .Setup(x => x.SearchNotificationsAsync(It.Is<NotificationSearchCriteria>(
@@ -211,7 +209,7 @@ public class InviteCustomerServiceTests
         // Arrange
         var store = new Store { Id = "store-1", Url = "https://store.test", Email = "store@test.com" };
         _storeServiceMock.Setup(x => x.GetAsync(It.IsAny<IList<string>>(), It.IsAny<string>(), It.IsAny<bool>()))
-            .ReturnsAsync(new List<Store> { store });
+            .ReturnsAsync([store]);
 
         _notificationSearchServiceMock
             .Setup(x => x.SearchNotificationsAsync(It.IsAny<NotificationSearchCriteria>()))
@@ -261,7 +259,7 @@ public class InviteCustomerServiceTests
         // Arrange
         var store = new Store { Id = "store-1", Url = "https://store.test", Email = "store@test.com" };
         _storeServiceMock.Setup(x => x.GetAsync(It.IsAny<IList<string>>(), It.IsAny<string>(), It.IsAny<bool>()))
-            .ReturnsAsync(new List<Store> { store });
+            .ReturnsAsync([store]);
 
         _notificationSearchServiceMock
             .Setup(x => x.SearchNotificationsAsync(It.IsAny<NotificationSearchCriteria>()))
@@ -317,14 +315,14 @@ public class InviteCustomerServiceTests
             Status = ModuleConstants.MembershipStatuses.Invited,
         };
         _membershipServiceMock.Setup(x => x.GetAsync(It.IsAny<IList<string>>()))
-            .ReturnsAsync(new List<OrganizationMembership> { membership });
+            .ReturnsAsync([membership]);
 
         var user = new ApplicationUser { Id = "user-1", Email = "existing@test.com", StoreId = "store-1", PasswordHash = "somehash" };
         _userManagerMock.Setup(x => x.FindByIdAsync("user-1")).ReturnsAsync(user);
 
         var store = new Store { Id = "store-1", Url = "https://store.test", Email = "store@test.com" };
         _storeServiceMock.Setup(x => x.GetAsync(It.IsAny<IList<string>>(), It.IsAny<string>(), It.IsAny<bool>()))
-            .ReturnsAsync(new List<Store> { store });
+            .ReturnsAsync([store]);
 
         _notificationSearchServiceMock
             .Setup(x => x.SearchNotificationsAsync(It.IsAny<NotificationSearchCriteria>()))
@@ -337,7 +335,7 @@ public class InviteCustomerServiceTests
         var service = BuildTestableService();
 
         // Act
-        var result = await service.ResendInviteAsync("m1", cancellationToken: TestContext.Current.CancellationToken);
+        var result = await service.ResendInviteAsync(new ResendInviteRequest { MembershipId = "m1" }, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.True(result.Succeeded);
@@ -348,6 +346,55 @@ public class InviteCustomerServiceTests
         _notificationSenderMock.Verify(
             x => x.ScheduleSendNotificationAsync(It.Is<Notification>(n =>
                 ((OrganizationInviteExistingUserEmailNotification)n).InviteUrl.EndsWith("/account/dashboard", StringComparison.Ordinal))),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task ResendInviteAsync_ExistingUserWithCustomUrlSuffix_UsesCustomUrl()
+    {
+        // Arrange — a custom UrlSuffix must be honored for existing users too, not silently ignored
+        // in favor of the hardcoded default dashboard route.
+        var membership = new OrganizationMembership
+        {
+            Id = "m1",
+            UserId = "user-1",
+            OrganizationId = "org-1",
+            Status = ModuleConstants.MembershipStatuses.Invited,
+        };
+
+        _membershipServiceMock.Setup(x => x.GetAsync(It.IsAny<IList<string>>()))
+            .ReturnsAsync([membership]);
+
+        var user = new ApplicationUser { Id = "user-1", Email = "existing@test.com", StoreId = "store-1", PasswordHash = "somehash" };
+
+        _userManagerMock.Setup(x => x.FindByIdAsync("user-1")).ReturnsAsync(user);
+
+        var store = new Store { Id = "store-1", Url = "https://store.test", Email = "store@test.com" };
+
+        _storeServiceMock.Setup(x => x.GetAsync(It.IsAny<IList<string>>(), It.IsAny<string>(), It.IsAny<bool>()))
+            .ReturnsAsync([store]);
+
+        _notificationSearchServiceMock
+            .Setup(x => x.SearchNotificationsAsync(It.IsAny<NotificationSearchCriteria>()))
+            .ReturnsAsync(new NotificationSearchResult
+            {
+                Results = [new OrganizationInviteExistingUserEmailNotification()],
+                TotalCount = 1,
+            });
+
+        var service = BuildTestableService();
+
+        // Act
+        var result = await service.ResendInviteAsync(
+            new ResendInviteRequest { MembershipId = "m1", UrlSuffix = "/organization/invite" },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        Assert.True(result.Succeeded);
+
+        _notificationSenderMock.Verify(
+            x => x.ScheduleSendNotificationAsync(It.Is<Notification>(n =>
+                ((OrganizationInviteExistingUserEmailNotification)n).InviteUrl.EndsWith("/organization/invite", StringComparison.Ordinal))),
             Times.Once);
     }
 
@@ -363,7 +410,7 @@ public class InviteCustomerServiceTests
             Status = ModuleConstants.MembershipStatuses.Invited,
         };
         _membershipServiceMock.Setup(x => x.GetAsync(It.IsAny<IList<string>>()))
-            .ReturnsAsync(new List<OrganizationMembership> { membership });
+            .ReturnsAsync([membership]);
 
         var user = new ApplicationUser { Id = "user-1", Email = "new@test.com", StoreId = "store-1" };
         _userManagerMock.Setup(x => x.FindByIdAsync("user-1")).ReturnsAsync(user);
@@ -371,7 +418,7 @@ public class InviteCustomerServiceTests
 
         var store = new Store { Id = "store-1", Url = "https://store.test", Email = "store@test.com" };
         _storeServiceMock.Setup(x => x.GetAsync(It.IsAny<IList<string>>(), It.IsAny<string>(), It.IsAny<bool>()))
-            .ReturnsAsync(new List<Store> { store });
+            .ReturnsAsync([store]);
 
         _notificationSearchServiceMock
             .Setup(x => x.SearchNotificationsAsync(It.IsAny<NotificationSearchCriteria>()))
@@ -384,11 +431,152 @@ public class InviteCustomerServiceTests
         var service = BuildTestableService();
 
         // Act
-        var result = await service.ResendInviteAsync("m1", cancellationToken: TestContext.Current.CancellationToken);
+        var result = await service.ResendInviteAsync(new ResendInviteRequest { MembershipId = "m1" }, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.True(result.Succeeded);
         _userManagerMock.Verify(x => x.GeneratePasswordResetTokenAsync(user), Times.Once);
+    }
+
+    [Fact]
+    public async Task ResendInviteAsync_SsoUserWithoutPassword_UsesExistingUserNotification_NoToken()
+    {
+        // Arrange — an SSO-only user (Azure AD/Google) has no PasswordHash but already has a working
+        // external login. They must be treated as an existing user, not sent a password-setup invite.
+        var membership = new OrganizationMembership
+        {
+            Id = "m1",
+            UserId = "user-1",
+            OrganizationId = "org-1",
+            Status = ModuleConstants.MembershipStatuses.Invited,
+        };
+
+        _membershipServiceMock.Setup(x => x.GetAsync(It.IsAny<IList<string>>()))
+            .ReturnsAsync([membership]);
+
+        var user = new ApplicationUser { Id = "user-1", Email = "sso@test.com", StoreId = "store-1" };
+
+        _userManagerMock.Setup(x => x.FindByIdAsync("user-1")).ReturnsAsync(user);
+        _userManagerMock.Setup(x => x.GetLoginsAsync(user))
+            .ReturnsAsync([new("AzureAD", "external-id-1", "Azure AD")]);
+
+        var store = new Store { Id = "store-1", Url = "https://store.test", Email = "store@test.com" };
+
+        _storeServiceMock.Setup(x => x.GetAsync(It.IsAny<IList<string>>(), It.IsAny<string>(), It.IsAny<bool>()))
+            .ReturnsAsync([store]);
+
+        _notificationSearchServiceMock
+            .Setup(x => x.SearchNotificationsAsync(It.IsAny<NotificationSearchCriteria>()))
+            .ReturnsAsync(new NotificationSearchResult
+            {
+                Results = [new OrganizationInviteExistingUserEmailNotification()],
+                TotalCount = 1,
+            });
+
+        var service = BuildTestableService();
+
+        // Act
+        var result = await service.ResendInviteAsync(new ResendInviteRequest { MembershipId = "m1" }, TestContext.Current.CancellationToken);
+
+        // Assert
+        Assert.True(result.Succeeded);
+
+        _userManagerMock.Verify(x => x.GeneratePasswordResetTokenAsync(It.IsAny<ApplicationUser>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task ResendInviteAsync_UrlSuffixWithQuote_ReturnsInvalidUrlSuffixError()
+    {
+        // Arrange — a urlSuffix containing a quote could break out of the rendered <a href="..."> attribute.
+        var membership = new OrganizationMembership
+        {
+            Id = "m1",
+            UserId = "user-1",
+            OrganizationId = "org-1",
+            Status = ModuleConstants.MembershipStatuses.Invited,
+        };
+
+        _membershipServiceMock.Setup(x => x.GetAsync(It.IsAny<IList<string>>()))
+            .ReturnsAsync([membership]);
+
+        var user = new ApplicationUser { Id = "user-1", Email = "new@test.com", StoreId = "store-1" };
+
+        _userManagerMock.Setup(x => x.FindByIdAsync("user-1")).ReturnsAsync(user);
+
+        var store = new Store { Id = "store-1", Url = "https://store.test", Email = "store@test.com" };
+
+        _storeServiceMock.Setup(x => x.GetAsync(It.IsAny<IList<string>>(), It.IsAny<string>(), It.IsAny<bool>()))
+            .ReturnsAsync([store]);
+
+        _notificationSearchServiceMock
+            .Setup(x => x.SearchNotificationsAsync(It.IsAny<NotificationSearchCriteria>()))
+            .ReturnsAsync(new NotificationSearchResult
+            {
+                Results = [new OrganizationInviteNewUserEmailNotification()],
+                TotalCount = 1,
+            });
+
+        var service = BuildTestableService();
+
+        // Act
+        var result = await service.ResendInviteAsync(
+            new ResendInviteRequest { MembershipId = "m1", UrlSuffix = "/confirm\" onclick=\"alert(1)" },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        Assert.False(result.Succeeded);
+        Assert.Contains(result.Errors, e => e.Code == "InvalidUrlSuffix");
+
+        _userManagerMock.Verify(x => x.GeneratePasswordResetTokenAsync(It.IsAny<ApplicationUser>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task InviteCustomerAsyc_UnrelatedDbUpdateException_PropagatesInsteadOfBeingReportedAsDuplicate()
+    {
+        // Arrange — a DbUpdateException unrelated to a unique-index race (e.g. a transient connection drop)
+        // must surface as a real failure, not be silently reported as "already a member of organization".
+        var store = new Store { Id = "store-1", Url = "https://store.test", Email = "store@test.com" };
+
+        _storeServiceMock.Setup(x => x.GetAsync(It.IsAny<IList<string>>(), It.IsAny<string>(), It.IsAny<bool>()))
+            .ReturnsAsync([store]);
+
+        _notificationSearchServiceMock
+            .Setup(x => x.SearchNotificationsAsync(It.IsAny<NotificationSearchCriteria>()))
+            .ReturnsAsync(new NotificationSearchResult
+            {
+                Results = [new OrganizationInviteExistingUserEmailNotification()],
+                TotalCount = 1,
+            });
+
+        var existingUser = new ApplicationUser { Id = "user-1", Email = "existing@test.com", MemberId = "contact-1" };
+
+        _userManagerMock.Setup(x => x.FindByEmailAsync("existing@test.com")).ReturnsAsync(existingUser);
+
+        _membershipSearchServiceMock
+            .Setup(x => x.SearchAsync(
+                It.Is<OrganizationMembershipSearchCriteria>(c => c.UserId == "user-1" && c.OrganizationId == "org-1"),
+                It.IsAny<bool>()))
+            .ReturnsAsync(new OrganizationMembershipSearchResult { Results = [] });
+
+        _memberServiceMock.Setup(x => x.GetByIdAsync("contact-1", null, null))
+            .ReturnsAsync(new Contact { Id = "contact-1", Organizations = [] });
+
+        _membershipServiceMock
+            .Setup(x => x.SaveChangesAsync(It.IsAny<IList<OrganizationMembership>>()))
+            .ThrowsAsync(new DbUpdateException("connection dropped"));
+
+        var service = BuildTestableService();
+
+        var request = new InviteCustomerRequest
+        {
+            StoreId = "store-1",
+            OrganizationId = "org-1",
+            Emails = ["existing@test.com"],
+        };
+
+        // Act & Assert
+        await Assert.ThrowsAsync<DbUpdateException>(
+            () => service.InviteCustomerAsyc(request, TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -403,7 +591,7 @@ public class InviteCustomerServiceTests
             Status = ModuleConstants.MembershipStatuses.Invited,
         };
         _membershipServiceMock.Setup(x => x.GetAsync(It.IsAny<IList<string>>()))
-            .ReturnsAsync(new List<OrganizationMembership> { membership });
+            .ReturnsAsync([membership]);
 
         var service = BuildTestableService();
 

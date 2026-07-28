@@ -378,7 +378,7 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         [Route("members/customers/invite/{membershipId}/resend")]
         public async Task<ActionResult<InviteCustomerResult>> ResendInvite([FromRoute] string membershipId)
         {
-            var result = await _inviteCustomerService.ResendInviteAsync(membershipId);
+            var result = await _inviteCustomerService.ResendInviteAsync(new ResendInviteRequest { MembershipId = membershipId });
 
             return Ok(result);
         }

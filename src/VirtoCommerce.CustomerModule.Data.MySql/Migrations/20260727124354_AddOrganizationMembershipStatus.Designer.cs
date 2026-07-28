@@ -12,7 +12,7 @@ using VirtoCommerce.CustomerModule.Data.Repositories;
 namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
 {
     [DbContext(typeof(CustomerDbContext))]
-    [Migration("20260724091200_AddOrganizationMembershipStatus")]
+    [Migration("20260727124354_AddOrganizationMembershipStatus")]
     partial class AddOrganizationMembershipStatus
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.9")
+                .HasAnnotation("ProductVersion", "10.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
@@ -534,8 +534,8 @@ namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
                         .HasColumnType("varchar(128)");
 
                     b.Property<string>("Status")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
 
                     b.Property<string>("UserId")
                         .IsRequired()

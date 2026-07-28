@@ -1,4 +1,5 @@
 using System;
+using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Data.Model;
 using VirtoCommerce.Platform.Core.Common;
@@ -22,6 +23,22 @@ public class OrganizationMembershipTests
     {
         var membership = new OrganizationMembership { IsLocked = isLocked, LockoutEnd = lockoutEnd };
         Assert.Equal(expected, membership.IsCurrentlyLocked);
+    }
+
+    public static TheoryData<string, string, string> ResolveEffectiveStatusData => new()
+    {
+        { ModuleConstants.MembershipStatuses.Rejected, ModuleConstants.MembershipStatuses.Approved, ModuleConstants.MembershipStatuses.Rejected },
+        { null, ModuleConstants.MembershipStatuses.Rejected, ModuleConstants.MembershipStatuses.Rejected },
+        { "", ModuleConstants.MembershipStatuses.Approved, ModuleConstants.MembershipStatuses.Approved },
+        { null, null, ModuleConstants.MembershipStatuses.Approved },
+        { "", "", ModuleConstants.MembershipStatuses.Approved },
+    };
+
+    [Theory]
+    [MemberData(nameof(ResolveEffectiveStatusData))]
+    public void ResolveEffectiveStatus_ReturnsExpected(string membershipStatus, string memberStatus, string expected)
+    {
+        Assert.Equal(expected, OrganizationMembership.ResolveEffectiveStatus(membershipStatus, memberStatus));
     }
 
     [Fact]

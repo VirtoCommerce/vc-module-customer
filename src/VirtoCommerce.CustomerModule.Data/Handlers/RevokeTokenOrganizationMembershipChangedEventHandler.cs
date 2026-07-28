@@ -17,14 +17,15 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
         {
             foreach (var changedEntry in message.ChangedEntries)
             {
-                if (changedEntry.EntryState != EntryState.Modified)
+                switch (changedEntry.EntryState)
                 {
-                    continue;
-                }
+                    case EntryState.Deleted:
+                        await RevokeUserTokensAsync(changedEntry.OldEntry.UserId);
+                        break;
 
-                if (changedEntry.NewEntry.IsCurrentlyLocked || ModuleConstants.MembershipStatuses.IsBlocking(changedEntry.NewEntry.Status))
-                {
-                    await RevokeUserTokensAsync(changedEntry.NewEntry.UserId);
+                    case EntryState.Modified when changedEntry.NewEntry.IsCurrentlyLocked || ModuleConstants.MembershipStatuses.IsBlocking(changedEntry.NewEntry.Status):
+                        await RevokeUserTokensAsync(changedEntry.NewEntry.UserId);
+                        break;
                 }
             }
         }

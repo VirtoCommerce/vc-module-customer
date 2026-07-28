@@ -44,11 +44,6 @@ angular.module('virtoCommerce.customerModule')
                 method: 'POST',
                 url: baseUrl + '/:id/unlock',
                 params: { id: '@id' }
-            },
-            setStatus: {
-                method: 'POST',
-                url: baseUrl + '/:id/status',
-                params: { id: '@id' }
             }
         });
     }]);

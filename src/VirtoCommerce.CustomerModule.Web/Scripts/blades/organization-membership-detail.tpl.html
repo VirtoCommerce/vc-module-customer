@@ -69,7 +69,7 @@
             <a href="" ng-click="blade.openStatusSettingManagement('Customer.OrganizationMembershipStatuses')" class="form-edit" va-permission="platform:setting:update"><i class="form-ico fa fa-pencil"></i></a>
         </label>
         <div class="form-input">
-            <ui-select ng-model="blade.currentEntity.status" ng-init="blade.loadStatuses('Customer.OrganizationMembershipStatuses')" ng-change="changeStatus(blade.currentEntity.status)">
+            <ui-select ng-model="blade.currentEntity.status">
                 <ui-select-match placeholder="{{ 'customer.blades.organization-membership-detail.placeholders.status-inherited' | translate }}">{{ blade.currentEntity.status }}</ui-select-match>
                 <ui-select-choices repeat="x in blade.statuses | filter: $select.search">
                     <span ng-if="x" ng-bind-html="x | highlight: $select.search"></span>

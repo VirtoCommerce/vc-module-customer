@@ -174,29 +174,6 @@ angular.module('virtoCommerce.customerModule')
                 }
             };
 
-            $scope.changeStatus = function (status) {
-                blade.isLoading = true;
-
-                organizationMemberships.setStatus(
-                    {
-                        id: blade.currentEntity.id
-                    },
-                    {
-                        status: status
-                    },
-                    function (result) {
-                        blade.currentEntity = result;
-                        blade.origEntity = angular.copy(result);
-                        blade.isLoading = false;
-                        blade.parentBlade.refresh();
-                    },
-                    function () {
-                        blade.currentEntity.status = blade.origEntity.status;
-                        blade.isLoading = false;
-                    }
-                );
-            };
-
             $scope.lockMembership = function () {
                 blade.isLoading = true;
                 organizationMemberships.lock(
@@ -281,4 +258,8 @@ angular.module('virtoCommerce.customerModule')
 
             setToolbarCommands();
             blade.refresh();
+
+            if (!blade.isNew) {
+                blade.loadStatuses('Customer.OrganizationMembershipStatuses');
+            }
         }]);

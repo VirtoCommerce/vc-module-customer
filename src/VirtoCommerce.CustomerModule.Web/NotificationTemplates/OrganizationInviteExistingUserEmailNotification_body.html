@@ -80,7 +80,7 @@
                                                 <tr>
                                                   <td style="padding:15px 18px">
                                                     <p style="Margin:0;font-family:helvetica,'helvetica neue',arial,verdana,sans-serif;line-height:23px;color:#384860;font-size:15px;font-style:italic">
-                                                      &ldquo;{{ message }}&rdquo;
+                                                      &ldquo;{{ message | escape }}&rdquo;
                                                     </p>
                                                   </td>
                                                 </tr>
@@ -108,7 +108,7 @@
                                         <table cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;border-spacing:0px">
                                           <tr>
                                             <td align="center" valign="top" height="52" style="padding:0;Margin:0">
-                                              <a href="{{ invite_url }}">
+                                              <a href="{{ invite_url | escape }}">
                                                 <div style="border-style: solid; border-color: #f0ad4e; background: #f0ad4e; border-width: 2px; display: inline-block; border-radius: 6px; width: auto">
                                                   <div style="text-decoration:none;color:#ffffff;font-size:16px;border-style:solid;border-color:#f0ad4e;border-width:13px 54px 13px;display:inline-block;background:#f0ad4e;border-radius:6px;font-family:helvetica,'helvetica neue',arial,verdana,sans-serif;font-weight:bold;font-style:normal;line-height:19px;width:auto;text-align:center">
                                                     Accept invitation
@@ -130,7 +130,7 @@
                           <td align="left" style="Margin:0;padding-bottom:5px;padding-left:35px;padding-right:35px;padding-top:0">
                             <p style="Margin:0;font-family:helvetica,'helvetica neue',arial,verdana,sans-serif;line-height:22px;color:#8a95a5;font-size:13px;text-align:center">
                               If the button doesn't work, copy and paste this link into your browser:<br>
-                              <a href="{{ invite_url }}" style="color:#f0ad4e;word-break:break-all">{{ invite_url }}</a>
+                              <a href="{{ invite_url | escape }}" style="color:#f0ad4e;word-break:break-all">{{ invite_url | escape }}</a>
                             </p>
                           </td>
                         </tr>

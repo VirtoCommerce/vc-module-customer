@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Events;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
@@ -85,6 +86,12 @@ public class OrganizationMembershipService
 
     public async Task<OrganizationMembership> SetStatusAsync(string id, string status)
     {
+        if (!string.IsNullOrEmpty(status) && !ModuleConstants.MembershipStatuses.ManuallySelectableStatuses.Contains(status))
+        {
+            throw new ArgumentException(
+                $"Status must be one of: {string.Join(", ", ModuleConstants.MembershipStatuses.ManuallySelectableStatuses)}.", nameof(status));
+        }
+
         var model = (await GetAsync([id])).FirstOrDefault();
         if (model == null)
         {

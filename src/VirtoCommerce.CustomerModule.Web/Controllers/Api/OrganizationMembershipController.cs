@@ -94,29 +94,24 @@ public class OrganizationMembershipController(
         [FromRoute] string id,
         [FromBody] OrganizationMembership membership)
     {
-        membership.Id = id;
-        await membershipService.SaveChangesAsync([membership]);
+        var existing = (await membershipService.GetAsync([id])).FirstOrDefault();
+        if (existing == null)
+        {
+            return NotFound();
+        }
 
-        return Ok(membership);
-    }
-
-    /// <summary>Sets the organization-specific lifecycle status override for a membership.</summary>
-    [HttpPost("{id}/status")]
-    [Authorize(OrgMembershipPermissions.Update)]
-    public async Task<ActionResult<OrganizationMembership>> SetStatus(
-        [FromRoute] string id,
-        [FromBody] ChangeMembershipStatusRequest request)
-    {
-        var status = request?.Status;
-
-        if (!status.IsNullOrEmpty() && !ModuleConstants.MembershipStatuses.ManuallySelectableStatuses.Contains(status))
+        if (!membership.Status.IsNullOrEmpty() &&
+            membership.Status != existing.Status &&
+            !ModuleConstants.MembershipStatuses.ManuallySelectableStatuses.Contains(membership.Status))
         {
             return BadRequest($"Status must be one of: {string.Join(", ", ModuleConstants.MembershipStatuses.ManuallySelectableStatuses)}.");
         }
 
-        var result = await membershipService.SetStatusAsync(id, status);
+        membership.Id = id;
 
-        return result != null ? Ok(result) : NotFound();
+        await membershipService.SaveChangesAsync([membership]);
+
+        return Ok(membership);
     }
 
     /// <summary>Locks a membership — user cannot sign in to this organization.</summary>

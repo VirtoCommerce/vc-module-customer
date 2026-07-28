@@ -32,6 +32,8 @@ public class InviteCustomerService : IInviteCustomerService
 
     public virtual string InvitationUrlSuffix => "/confirm-invitation";
 
+    public virtual string ExistingUserInviteUrlSuffix => "/account/dashboard";
+
     private readonly IMemberService _memberService;
     private readonly IStoreService _storeService;
     private readonly INotificationSearchService _notificationSearchService;
@@ -122,6 +124,8 @@ public class InviteCustomerService : IInviteCustomerService
             }
         }
 
+        var organizationName = string.IsNullOrEmpty(request.OrganizationId) ? null : await GetOrganizationName(request.OrganizationId);
+
         using var userManager = _userManagerFactory();
         foreach (var email in request.Emails.Distinct())
         {
@@ -142,7 +146,7 @@ public class InviteCustomerService : IInviteCustomerService
                 }
 
                 var membershipErrors = await InviteExistingUserToOrganization(
-                    existingUser, request, rolesResult.Roles, existingUserNotificationResult?.Notification, store);
+                    existingUser, request, rolesResult.Roles, existingUserNotificationResult?.Notification, store, organizationName);
 
                 result.Errors.AddRange(membershipErrors);
                 result.Succeeded |= membershipErrors.Count == 0;
@@ -164,7 +168,7 @@ public class InviteCustomerService : IInviteCustomerService
                         user, request.OrganizationId, rolesResult.Roles, ModuleConstants.MembershipStatuses.Invited);
                 }
 
-                var notificationErrors = await SendNotificationAsync(notificationResult.Notification, userManager, user, request, store);
+                var notificationErrors = await SendNotificationAsync(notificationResult.Notification, userManager, user, request, store, organizationName);
                 if (notificationErrors.Count != 0)
                 {
                     identityResult = IdentityResult.Failed();
@@ -206,11 +210,11 @@ public class InviteCustomerService : IInviteCustomerService
         return result;
     }
 
-    public virtual async Task<InviteCustomerResult> ResendInviteAsync(string membershipId, string urlSuffix = null, string message = null, CancellationToken cancellationToken = default)
+    public virtual async Task<InviteCustomerResult> ResendInviteAsync(ResendInviteRequest request, CancellationToken cancellationToken = default)
     {
         var result = new InviteCustomerResult { Errors = new List<InviteCustomerError>() };
 
-        var membership = await GetPendingInvite(membershipId, result);
+        var membership = await GetPendingInvite(request.MembershipId, result);
         if (membership == null)
         {
             return result;
@@ -231,18 +235,18 @@ public class InviteCustomerService : IInviteCustomerService
             return result;
         }
 
-        var request = new InviteCustomerRequest
+        var inviteRequest = new InviteCustomerRequest
         {
             StoreId = user.StoreId,
             OrganizationId = membership.OrganizationId,
-            UrlSuffix = urlSuffix,
-            Message = message,
+            UrlSuffix = request.UrlSuffix,
+            Message = request.Message,
         };
 
-        var isExistingUser = !string.IsNullOrEmpty(user.PasswordHash);
+        var isExistingUser = !string.IsNullOrEmpty(user.PasswordHash) || (await userManager.GetLoginsAsync(user)).Count > 0;
 
         var notificationResult = await TryGetNotification(
-            isExistingUser ? typeof(OrganizationInviteExistingUserEmailNotification).Name : GetNewUserNotificationType(request),
+            isExistingUser ? typeof(OrganizationInviteExistingUserEmailNotification).Name : GetNewUserNotificationType(inviteRequest),
             storeResult.Store);
 
         if (notificationResult.Errors.Count != 0)
@@ -251,9 +255,11 @@ public class InviteCustomerService : IInviteCustomerService
             return result;
         }
 
+        var organizationName = string.IsNullOrEmpty(inviteRequest.OrganizationId) ? null : await GetOrganizationName(inviteRequest.OrganizationId);
+
         var notificationErrors = isExistingUser
-            ? await SendExistingUserInviteNotification(notificationResult.Notification, user, request, storeResult.Store)
-            : await SendNotificationAsync(notificationResult.Notification, userManager, user, request, storeResult.Store);
+            ? await SendExistingUserInviteNotification(notificationResult.Notification, user, inviteRequest, storeResult.Store, organizationName)
+            : await SendNotificationAsync(notificationResult.Notification, userManager, user, inviteRequest, storeResult.Store, organizationName);
 
         result.Errors.AddRange(notificationErrors);
         result.Succeeded = notificationErrors.Count == 0;
@@ -334,7 +340,8 @@ public class InviteCustomerService : IInviteCustomerService
         InviteCustomerRequest request,
         List<Role> roles,
         RegistrationInvitationNotificationBase notification,
-        Store store)
+        Store store,
+        string organizationName)
     {
         var existingMembership = await _organizationMembershipSearchService.GetMembershipAsync(existingUser.Id, request.OrganizationId);
 
@@ -361,15 +368,29 @@ public class InviteCustomerService : IInviteCustomerService
 
         await AddOrganizationToContact(existingUser.MemberId, request.OrganizationId);
 
-        return await SendExistingUserInviteNotification(notification, existingUser, request, store);
+        return await SendExistingUserInviteNotification(notification, existingUser, request, store, organizationName);
     }
 
     protected virtual async Task<List<InviteCustomerError>> SendExistingUserInviteNotification(
-        RegistrationInvitationNotificationBase notification, ApplicationUser existingUser, InviteCustomerRequest request, Store store)
+        RegistrationInvitationNotificationBase notification, ApplicationUser existingUser, InviteCustomerRequest request, Store store, string organizationName)
     {
         try
         {
-            notification.InviteUrl = $"{store.Url.TrimLastSlash()}/account/dashboard";
+            var urlSuffix = string.IsNullOrEmpty(request.UrlSuffix) ? ExistingUserInviteUrlSuffix : request.UrlSuffix;
+            if (!IsValidUrlSuffix(urlSuffix))
+            {
+                return
+                [
+                    new InviteCustomerError
+                    {
+                        Code = "InvalidUrlSuffix",
+                        Description = "UrlSuffix must be a relative path.",
+                        Parameter = urlSuffix,
+                    }
+                ];
+            }
+
+            notification.InviteUrl = $"{store.Url.TrimLastSlash()}{urlSuffix.NormalizeUrlSuffix()}";
 
             AddAdditionalParams(request, notification);
 
@@ -380,7 +401,7 @@ public class InviteCustomerService : IInviteCustomerService
 
             if (notification is OrganizationInviteExistingUserEmailNotification existingUserNotification)
             {
-                existingUserNotification.OrganizationName = await GetOrganizationName(request.OrganizationId);
+                existingUserNotification.OrganizationName = organizationName;
                 existingUserNotification.CustomerName = await GetContactName(existingUser.MemberId);
             }
 
@@ -560,13 +581,26 @@ public class InviteCustomerService : IInviteCustomerService
         UserManager<ApplicationUser> userManager,
         ApplicationUser user,
         InviteCustomerRequest request,
-        Store store)
+        Store store,
+        string organizationName)
     {
         try
         {
-            var token = await userManager.GeneratePasswordResetTokenAsync(user);
-
             var urlSuffix = string.IsNullOrEmpty(request.UrlSuffix) ? InvitationUrlSuffix : request.UrlSuffix;
+            if (!IsValidUrlSuffix(urlSuffix))
+            {
+                return
+                [
+                    new InviteCustomerError
+                    {
+                        Code = "InvalidUrlSuffix",
+                        Description = "UrlSuffix must be a relative path.",
+                        Parameter = urlSuffix,
+                    }
+                ];
+            }
+
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
 
             notification.InviteUrl = $"{store.Url.TrimLastSlash()}{urlSuffix.NormalizeUrlSuffix()}?userId={user.Id}&email={HttpUtility.UrlEncode(user.Email)}&token={Uri.EscapeDataString(token)}";
 
@@ -584,7 +618,7 @@ public class InviteCustomerService : IInviteCustomerService
 
             if (notification is OrganizationInviteNewUserEmailNotification newUserNotification)
             {
-                newUserNotification.OrganizationName = await GetOrganizationName(request.OrganizationId);
+                newUserNotification.OrganizationName = organizationName;
             }
 
             await _notificationSender.ScheduleSendNotificationAsync(notification);
@@ -675,7 +709,14 @@ public class InviteCustomerService : IInviteCustomerService
         Email = email,
     };
 
-    private static bool IsDuplicateMembershipException(Exception ex) => ex is InvalidOperationException or DbUpdateException;
+    private static bool IsDuplicateMembershipException(Exception ex) => ex is InvalidOperationException;
+
+    private static bool IsValidUrlSuffix(string urlSuffix)
+    {
+        return string.IsNullOrEmpty(urlSuffix) ||
+            (!urlSuffix.StartsWith("//", StringComparison.Ordinal) &&
+             urlSuffix.IndexOfAny(['"', '<', '>', ':', '\r', '\n']) < 0);
+    }
 
     protected class StoreResult
     {

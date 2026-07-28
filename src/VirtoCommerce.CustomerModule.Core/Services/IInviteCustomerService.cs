@@ -13,5 +13,5 @@ public interface IInviteCustomerService
 
     Task<InviteCustomerResult> RevokeInviteAsync(string membershipId, CancellationToken cancellationToken = default);
 
-    Task<InviteCustomerResult> ResendInviteAsync(string membershipId, string urlSuffix = null, string message = null, CancellationToken cancellationToken = default);
+    Task<InviteCustomerResult> ResendInviteAsync(ResendInviteRequest request, CancellationToken cancellationToken = default);
 }

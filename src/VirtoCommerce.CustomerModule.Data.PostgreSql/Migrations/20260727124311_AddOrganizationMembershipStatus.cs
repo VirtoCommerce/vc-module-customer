@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
+namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
 {
     /// <inheritdoc />
     public partial class AddOrganizationMembershipStatus : Migration
@@ -13,10 +13,9 @@ namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "Status",
                 table: "CustomerOrganizationMembership",
-                type: "varchar(256)",
-                maxLength: 256,
-                nullable: true)
-                .Annotation("MySql:CharSet", "utf8mb4");
+                type: "character varying(64)",
+                maxLength: 64,
+                nullable: true);
         }
 
         /// <inheritdoc />

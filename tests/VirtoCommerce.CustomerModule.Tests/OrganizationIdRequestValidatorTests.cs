@@ -262,6 +262,46 @@ public class OrganizationIdRequestValidatorTests
     }
 
     [Fact]
+    public async Task ValidateAsync_ContactGloballyRejected_NoMembershipOverride_BlocksAccess()
+    {
+        //Arrange — the contact's global Status is Rejected and there is no per-organization override for
+        // this org. The global Status is the effective default here, so sign-in must be blocked.
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId], Status = ModuleConstants.MembershipStatuses.Rejected });
+
+        var context = BuildContext(OrgId, grantType: OpenIddictConstants.GrantTypes.Password, user: user);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Single(result);
+        Assert.Equal(OpenIddictConstants.Errors.InvalidGrant, result[0].Error);
+    }
+
+    [Fact]
+    public async Task ValidateAsync_ContactGloballyRejected_MembershipOverridesToApproved_DoesNotBlockAccess()
+    {
+        //Arrange — the contact's global Status is Rejected, but this specific organization's membership has
+        // an explicit Approved override. The override wins, so sign-in must not be blocked.
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId], Status = ModuleConstants.MembershipStatuses.Rejected });
+
+        SetupMembership(new OrganizationMembership { OrganizationId = OrgId, Status = ModuleConstants.MembershipStatuses.Approved });
+
+        var context = BuildContext(OrgId, grantType: OpenIddictConstants.GrantTypes.Password, user: user);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Empty(result);
+    }
+
+    [Fact]
     public async Task ValidateAsync_AutoResolvedRejectedOrg_FallsBackToAccessibleOrgAndReturnsEmpty()
     {
         //Arrange — the member's current org is rejected, but they have another accessible one. Auto-detection

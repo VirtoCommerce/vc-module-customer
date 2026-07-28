@@ -13,8 +13,8 @@ namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "Status",
                 table: "CustomerOrganizationMembership",
-                type: "nvarchar(256)",
-                maxLength: 256,
+                type: "nvarchar(64)",
+                maxLength: 64,
                 nullable: true);
         }
 

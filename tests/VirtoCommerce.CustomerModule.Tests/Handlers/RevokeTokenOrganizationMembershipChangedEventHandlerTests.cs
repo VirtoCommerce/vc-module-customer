@@ -79,19 +79,19 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
         }
 
         [Fact]
-        public async Task Handle_WhenEntryStateIsDeleted_DoesNotRevokeTokens()
+        public async Task Handle_WhenEntryStateIsDeleted_RevokesTokens()
         {
             var membership = new OrganizationMembership
             {
                 UserId = "user-1",
-                IsLocked = true,
+                IsLocked = false,
             };
 
             var message = BuildEvent(membership, EntryState.Deleted);
 
             await _handler.Handle(message);
 
-            _sessionServiceMock.Verify(s => s.TerminateAllUserSessions(It.IsAny<string>()), Times.Never);
+            _sessionServiceMock.Verify(s => s.TerminateAllUserSessions("user-1"), Times.Once);
         }
 
         [Fact]

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Data.Model;
@@ -149,6 +150,38 @@ public class OrganizationMembershipServiceTests : OrganizationMembershipServiceT
         Assert.False(entity.IsLocked);
         Assert.Null(entity.LockoutEnd);
         UnitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task SetStatusAsync_ValidStatus_UpdatesEntity()
+    {
+        //Arrange
+        var entity = BuildEntity("id1");
+        SetupMemberships(entity);
+
+        //Act
+        await CreateCrudService().SetStatusAsync("id1", ModuleConstants.MembershipStatuses.Rejected);
+
+        //Assert
+        Assert.Equal(ModuleConstants.MembershipStatuses.Rejected, entity.Status);
+
+        UnitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task SetStatusAsync_InvalidStatus_ThrowsArgumentException()
+    {
+        //Arrange
+        var entity = BuildEntity("id1");
+        SetupMemberships(entity);
+
+        //Act & Assert — only the manually-selectable statuses may be set through this API; "Invited" is
+        // system-assigned by the invite flow and must never be set directly (e.g. by X-API bypassing the CM
+        // controller's own check).
+        await Assert.ThrowsAsync<ArgumentException>(
+            () => CreateCrudService().SetStatusAsync("id1", ModuleConstants.MembershipStatuses.Invited));
+
+        UnitOfWorkMock.Verify(u => u.CommitAsync(), Times.Never);
     }
 
     [Fact]
