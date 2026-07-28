@@ -84,7 +84,7 @@ public class OrganizationMembershipService
     public Task<OrganizationMembership> UnlockAsync(string id)
         => SetLockState(id, isLocked: false, lockoutEnd: null);
 
-    public async Task<OrganizationMembership> SetStatusAsync(string id, string status)
+    public Task<OrganizationMembership> SetStatusAsync(string id, string status)
     {
         if (!string.IsNullOrEmpty(status) && !ModuleConstants.MembershipStatuses.ManuallySelectableStatuses.Contains(status))
         {
@@ -92,6 +92,11 @@ public class OrganizationMembershipService
                 $"Status must be one of: {string.Join(", ", ModuleConstants.MembershipStatuses.ManuallySelectableStatuses)}.", nameof(status));
         }
 
+        return SetStatusInternalAsync(id, status);
+    }
+
+    private async Task<OrganizationMembership> SetStatusInternalAsync(string id, string status)
+    {
         var model = (await GetAsync([id])).FirstOrDefault();
         if (model == null)
         {
