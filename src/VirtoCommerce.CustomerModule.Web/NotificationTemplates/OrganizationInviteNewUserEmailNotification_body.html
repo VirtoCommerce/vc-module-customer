@@ -54,7 +54,7 @@
                                         <tr>
                                           <td align="left" style="Margin:0;padding-top:5px;padding-bottom:5px;padding-left:15px;padding-right:15px">
                                             <p style="Margin:0;font-family:helvetica,'helvetica neue',arial,verdana,sans-serif;line-height:24px;color:#202b3c;font-size:20px">
-                                              You're invited to join <strong>{{ organization_name }}</strong> 🎉
+                                              You're invited to join <strong>{{ organization_name | escape }}</strong> 🎉
                                             </p>
                                           </td>
                                         </tr>
@@ -68,7 +68,7 @@
                                         <tr>
                                           <td align="left" style="Margin:0;padding-top:5px;padding-bottom:5px;padding-left:15px;padding-right:15px">
                                             <p style="Margin:0;font-family:helvetica,'helvetica neue',arial,verdana,sans-serif;line-height:24px;color:#384860;font-size:16px">
-                                              You have been invited to join <strong>{{ organization_name }}</strong> on our platform. To get started, accept the invitation and set up your account &mdash; it only takes a minute.
+                                              You have been invited to join <strong>{{ organization_name | escape }}</strong> on our platform. To get started, accept the invitation and set up your account &mdash; it only takes a minute.
                                             </p>
                                           </td>
                                         </tr>

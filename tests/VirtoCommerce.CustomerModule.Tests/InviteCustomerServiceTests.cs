@@ -350,10 +350,10 @@ public class InviteCustomerServiceTests
     }
 
     [Fact]
-    public async Task ResendInviteAsync_ExistingUserWithCustomUrlSuffix_UsesCustomUrl()
+    public async Task ResendInviteAsync_ExistingUserWithCustomUrlSuffix_IgnoresCustomUrl()
     {
-        // Arrange — a custom UrlSuffix must be honored for existing users too, not silently ignored
-        // in favor of the hardcoded default dashboard route.
+        // Arrange — a caller-supplied UrlSuffix must be ignored for existing users: the storefront always
+        // sends the new-user registration path, which carries no token for this notification to use.
         var membership = new OrganizationMembership
         {
             Id = "m1",
@@ -394,7 +394,7 @@ public class InviteCustomerServiceTests
 
         _notificationSenderMock.Verify(
             x => x.ScheduleSendNotificationAsync(It.Is<Notification>(n =>
-                ((OrganizationInviteExistingUserEmailNotification)n).InviteUrl.EndsWith("/organization/invite", StringComparison.Ordinal))),
+                ((OrganizationInviteExistingUserEmailNotification)n).InviteUrl.EndsWith("/account/dashboard", StringComparison.Ordinal))),
             Times.Once);
     }
 

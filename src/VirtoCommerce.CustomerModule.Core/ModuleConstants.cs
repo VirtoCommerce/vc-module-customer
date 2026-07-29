@@ -41,7 +41,6 @@ namespace VirtoCommerce.CustomerModule.Core
 
         public static class MembershipStatuses
         {
-            public const string New = "New";
             public const string Invited = "Invited";
             public const string Approved = "Approved";
             public const string Rejected = "Rejected";
@@ -161,7 +160,7 @@ namespace VirtoCommerce.CustomerModule.Core
                     ValueType = SettingValueType.ShortText,
                     GroupName = "Customer|Statuses",
                     IsDictionary = true,
-                    DefaultValue = "New",
+                    DefaultValue = MembershipStatuses.Approved,
                     AllowedValues = MembershipStatuses.ManuallySelectableStatuses
                 };
 

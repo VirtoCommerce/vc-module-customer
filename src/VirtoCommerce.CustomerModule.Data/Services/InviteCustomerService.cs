@@ -376,7 +376,7 @@ public class InviteCustomerService : IInviteCustomerService
     {
         try
         {
-            var urlSuffix = string.IsNullOrEmpty(request.UrlSuffix) ? ExistingUserInviteUrlSuffix : request.UrlSuffix;
+            var urlSuffix = ExistingUserInviteUrlSuffix;
             if (!IsValidUrlSuffix(urlSuffix))
             {
                 return

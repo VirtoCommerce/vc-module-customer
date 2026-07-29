@@ -54,21 +54,21 @@
                                         <tr>
                                           <td align="left" style="Margin:0;padding-top:5px;padding-bottom:5px;padding-left:15px;padding-right:15px">
                                             <p style="Margin:0;font-family:helvetica,'helvetica neue',arial,verdana,sans-serif;line-height:24px;color:#202b3c;font-size:20px">
-                                              You've been invited to join <strong>{{ organization_name }}</strong> 🎉
+                                              You've been invited to join <strong>{{ organization_name | escape }}</strong> 🎉
                                             </p>
                                           </td>
                                         </tr>
                                         <tr>
                                           <td align="left" style="Margin:0;padding-top:5px;padding-bottom:5px;padding-left:15px;padding-right:15px">
                                             <p style="Margin:0;font-family:helvetica,'helvetica neue',arial,verdana,sans-serif;line-height:24px;color:#202b3c;font-size:16px">
-                                              Hello <strong>{{ customer_name }}</strong> 👋
+                                              Hello <strong>{{ customer_name | escape }}</strong> 👋
                                             </p>
                                           </td>
                                         </tr>
                                         <tr>
                                           <td align="left" style="Margin:0;padding-top:5px;padding-bottom:5px;padding-left:15px;padding-right:15px">
                                             <p style="Margin:0;font-family:helvetica,'helvetica neue',arial,verdana,sans-serif;line-height:24px;color:#384860;font-size:16px">
-                                              You have been invited to join <strong>{{ organization_name }}</strong>. Because you already have an account with us, there's nothing new to set up &mdash; simply accept the invitation and you'll get access right away.
+                                              You have been invited to join <strong>{{ organization_name | escape }}</strong>. Because you already have an account with us, there's nothing new to set up &mdash; simply accept the invitation and you'll get access right away.
                                             </p>
                                           </td>
                                         </tr>
