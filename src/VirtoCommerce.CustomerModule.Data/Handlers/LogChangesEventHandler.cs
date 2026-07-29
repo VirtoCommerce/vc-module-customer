@@ -25,7 +25,7 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
         /// New work goes through <see cref="LogEntityChangesJobHandler"/>; remove this once no such job
         /// can still be pending.
         /// </summary>
-        [Obsolete("Enqueued indirectly by legacy Hangfire jobs only; new work uses LogEntityChangesJobHandler.", DiagnosticId = "VC0012", UrlFormat = "https://docs.virtocommerce.org/platform/user-guide/versions/virto3-products-versions/")]
+        [Obsolete("Enqueued indirectly by legacy Hangfire jobs only; new work uses LogEntityChangesJobHandler.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
         public Task LogEntityChangesInBackground(OperationLog[] operationLogs)
         {
             return _changeLogService.SaveChangesAsync(operationLogs);

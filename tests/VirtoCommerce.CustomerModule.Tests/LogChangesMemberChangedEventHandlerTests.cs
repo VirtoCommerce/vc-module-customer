@@ -124,9 +124,9 @@ namespace VirtoCommerce.CustomerModule.Tests
             var handler = new LogChangesEventHandler(changeLogServiceMock.Object);
 
             //Act
-#pragma warning disable VC0012
+#pragma warning disable VC0015
             await handler.LogEntityChangesInBackground(operationLogs);
-#pragma warning restore VC0012
+#pragma warning restore VC0015
 
             //Assert
             changeLogServiceMock.Verify(x => x.SaveChangesAsync(operationLogs), Times.Once);
