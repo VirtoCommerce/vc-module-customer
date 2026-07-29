@@ -21,10 +21,9 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
         }
 
         /// <summary>
-        /// Kept only so Hangfire jobs enqueued by an earlier version still resolve: the store persists this
-        /// type and method by name, so deleting it would strand every queued entry as permanently Failed.
-        /// New work goes through <see cref="LogEntityChangesJobHandler"/>; remove this once no store can
-        /// still hold a job that predates the migration.
+        /// Kept for background jobs enqueued by an earlier version, which reference this method by name.
+        /// New work goes through <see cref="LogEntityChangesJobHandler"/>; remove this once no such job
+        /// can still be pending.
         /// </summary>
         [Obsolete("Enqueued indirectly by legacy Hangfire jobs only; new work uses LogEntityChangesJobHandler.", DiagnosticId = "VC0012", UrlFormat = "https://docs.virtocommerce.org/platform/user-guide/versions/virto3-products-versions/")]
         public Task LogEntityChangesInBackground(OperationLog[] operationLogs)
@@ -77,9 +76,8 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
             var payload = AbstractTypeFactory<LogEntityChangesJobPayload>.TryCreateInstance();
             payload.OperationLogs = operationLogs;
 
-            // The static facade, not an injected IBackgroundJob: this handler is resolved once from the ROOT
-            // provider by RegisterEventHandler and held for the process lifetime, so it cannot hold the Scoped
-            // IBackgroundJob. The facade opens a short-lived scope per call, which is what it exists for.
+            // The static facade, not an injected IBackgroundJob: this handler is registered once from the root
+            // provider and held for the process lifetime, so it must not capture a Scoped dependency.
             return BackgroundJob.Enqueue<LogEntityChangesJobHandler>(payload);
         }
 

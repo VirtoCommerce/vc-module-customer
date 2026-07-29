@@ -112,10 +112,7 @@ namespace VirtoCommerce.CustomerModule.Web
             });
 
             serviceCollection.AddTransient<LogChangesEventHandler>();
-            // Not triggerable by name. A caller-crafted payload reaches ChangeLogService.SaveChangesAsync, where
-            // an OperationLog carrying an Id that matches an existing row takes the Patch branch and overwrites
-            // that audit row - and the IAuditable update trigger keeps its original CreatedBy, so the tampering
-            // reads as authentic. Arbitrary ObjectType="Member" rows also drive spurious member reindexing.
+            // Not triggerable by name: this job writes audit-log rows, so a caller-supplied payload must never reach it.
             serviceCollection.AddBackgroundJob<LogEntityChangesJobHandler, LogEntityChangesJobPayload>(triggerable: false);
             serviceCollection.AddTransient<SecurtityAccountChangesEventHandler>();
             serviceCollection.AddTransient<IndexMemberChangedEventHandler>();
