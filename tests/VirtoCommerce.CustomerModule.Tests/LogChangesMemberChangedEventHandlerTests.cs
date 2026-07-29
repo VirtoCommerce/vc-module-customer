@@ -84,6 +84,25 @@ namespace VirtoCommerce.CustomerModule.Tests
         }
 
         [Fact]
+        public async Task Handle_UserChangedEvent_NoEntryHasMemberId_EnqueuesNothing()
+        {
+            //Arrange
+            // The array-producing paths can filter every entry out. Enqueuing the empty result would still
+            // reach SaveChangesAsync, whose Reset() expires the whole change-log cache region.
+            using var capture = new EnqueueCapture();
+            var handler = new LogChangesEventHandler(Mock.Of<IChangeLogService>());
+
+            var user = new ApplicationUser { Id = "user1" };
+            var message = new UserChangedEvent([new GenericChangedEntry<ApplicationUser>(user, user, EntryState.Modified)]);
+
+            //Act
+            await handler.Handle(message);
+
+            //Assert
+            Assert.Equal(0, capture.EnqueueCount);
+        }
+
+        [Fact]
         public async Task Handle_UserRoleAddedEvent_WithMemberId_EnqueuesSingleLog()
         {
             //Arrange

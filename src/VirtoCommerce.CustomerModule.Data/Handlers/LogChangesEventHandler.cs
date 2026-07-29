@@ -73,6 +73,13 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
         protected virtual Task InnerHandle(params OperationLog[] operationLogs)
         {
+            if (operationLogs.Length == 0)
+            {
+                // An empty batch is not free: SaveChangesAsync ends in Reset(), which expires the whole
+                // change-log cache region, so enqueuing one would evict the cache for nothing.
+                return Task.CompletedTask;
+            }
+
             var payload = AbstractTypeFactory<LogEntityChangesJobPayload>.TryCreateInstance();
             payload.OperationLogs = operationLogs;
 
