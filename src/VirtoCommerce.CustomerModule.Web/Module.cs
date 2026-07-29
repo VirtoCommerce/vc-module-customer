@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -30,10 +29,12 @@ using VirtoCommerce.CustomerModule.Data.SqlServer;
 using VirtoCommerce.CustomerModule.Data.Validation;
 using VirtoCommerce.CustomerModule.Web.Authorization;
 using VirtoCommerce.NotificationsModule.Core.Services;
+using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Core.ExportImport;
+using VirtoCommerce.Platform.Core.Jobs;
 using VirtoCommerce.Platform.Core.JsonConverters;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
@@ -87,12 +88,12 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<IIndexedMemberSearchService, MemberIndexedSearchService>();
             serviceCollection.AddTransient<IMemberSearchService, MemberSearchService>();
             serviceCollection.AddTransient<IMemberService, MemberService>();
-            // Explicit factory pins the ctor: the [Obsolete] 3-arg ctor makes reflection-based
-            // constructor selection ambiguous once IHttpContextAccessor is added. Same Transient lifetime.
+            // Explicit factory pins the ctor: the [Obsolete] IPlatformMemoryCache ctor has the same arity,
+            // so reflection-based constructor selection cannot choose between them. Same Transient lifetime.
             serviceCollection.AddTransient<IMemberResolver>(provider => new MemberResolver(
                 provider.GetRequiredService<IMemberService>(),
                 provider.GetRequiredService<Func<UserManager<ApplicationUser>>>(),
-                provider.GetRequiredService<IHttpContextAccessor>()));
+                provider.GetRequiredService<IRequestScopedCacheAccessor>()));
             serviceCollection.AddSingleton<CustomerExportImport>();
             serviceCollection.AddTransient<MemberSearchRequestBuilder>();
             serviceCollection.AddSingleton<IFavoriteAddressService, FavoriteAddressService>();
@@ -111,6 +112,11 @@ namespace VirtoCommerce.CustomerModule.Web
             });
 
             serviceCollection.AddTransient<LogChangesEventHandler>();
+            // Not triggerable by name. A caller-crafted payload reaches ChangeLogService.SaveChangesAsync, where
+            // an OperationLog carrying an Id that matches an existing row takes the Patch branch and overwrites
+            // that audit row - and the IAuditable update trigger keeps its original CreatedBy, so the tampering
+            // reads as authentic. Arbitrary ObjectType="Member" rows also drive spurious member reindexing.
+            serviceCollection.AddBackgroundJob<LogEntityChangesJobHandler, LogEntityChangesJobPayload>(triggerable: false);
             serviceCollection.AddTransient<SecurtityAccountChangesEventHandler>();
             serviceCollection.AddTransient<IndexMemberChangedEventHandler>();
             serviceCollection.AddTransient<IndexOrganizationMembersChangedEventHandler>();

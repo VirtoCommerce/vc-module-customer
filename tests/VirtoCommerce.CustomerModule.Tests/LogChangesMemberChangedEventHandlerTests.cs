@@ -1,10 +1,10 @@
 // Ignore Spelling: Virto
 
 using System;
-using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Hangfire;
-using Hangfire.MemoryStorage;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using VirtoCommerce.CustomerModule.Core.Events;
 using VirtoCommerce.CustomerModule.Core.Model;
@@ -12,123 +12,180 @@ using VirtoCommerce.CustomerModule.Data.Handlers;
 using VirtoCommerce.Platform.Core.ChangeLog;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
+using VirtoCommerce.Platform.Core.Jobs;
+using VirtoCommerce.Platform.Core.Security;
+using VirtoCommerce.Platform.Core.Security.Events;
 using Xunit;
 
 namespace VirtoCommerce.CustomerModule.Tests
 {
+    // Any other test class that enqueues through the static BackgroundJob facade must join this collection:
+    // the facade has no reset API (Initialize rejects null), so Dispose leaves a DISPOSED provider behind in
+    // the static, and a class racing this one would see ObjectDisposedException from it.
+    [Collection(nameof(LogChangesMemberChangedEventHandlerTests))]
     [Trait("Category", "CI")]
-    [Trait("Category", "IntegrationTest")]
     public class LogChangesMemberChangedEventHandlerTests
     {
-        public LogChangesMemberChangedEventHandlerTests()
+        [Fact]
+        public async Task Handle_MemberChangedEvent_EnqueuesOneLogPerChangedEntry()
         {
-            // Use in-memory Hangfire storage to avoid ArgumentNullException
-            GlobalConfiguration.Configuration.UseMemoryStorage();
-        }
-
-        [Theory]
-        [MemberData(nameof(LogsData))]
-        public Task LogChangesMemberChangedEventHandler_SavesChanges(
-            Contact oldMember, Contact newMember, IReadOnlyCollection<string> expectedLogs)
-        {
-            var changesLogService = new Mock<IChangeLogService>();
-            changesLogService
-                .Setup(x => x.SaveChangesAsync(It.IsAny<OperationLog[]>()))
-                .Callback<OperationLog[]>(logs =>
-                {
-                    // The amount of logged changes should be the same as expected
-                    Assert.Equal(expectedLogs.Count, logs.Length);
-
-                    // All logged changes should have:
-                    Assert.All(logs, l =>
-                        {
-                            // The same ObjectId as oldMember.Id
-                            Assert.Equal(oldMember.Id, l.ObjectId);
-                            // ObjectType Contact
-                            Assert.Equal("Contact", l.ObjectType);
-                            // OperationType Modified
-                            Assert.Equal(EntryState.Modified, l.OperationType);
-                        });
-
-                    // For each expected log there should be only one logged changed with such detail
-                    foreach (var log in expectedLogs)
-                    {
-                        Assert.Single(logs, l => l.Detail == log);
-                    }
-                });
-            var handler = new LogChangesEventHandler(changesLogService.Object);
+            //Arrange
+            using var capture = new EnqueueCapture();
+            var handler = new LogChangesEventHandler(Mock.Of<IChangeLogService>());
 
             var message = new MemberChangedEvent(
-                new[] { new GenericChangedEntry<Member>(newMember, oldMember, EntryState.Modified) });
+            [
+                new GenericChangedEntry<Member>(new Contact { Id = "id1" }, new Contact { Id = "id1" }, EntryState.Modified),
+                new GenericChangedEntry<Member>(new Contact { Id = "id2" }, new Contact { Id = "id2" }, EntryState.Added),
+            ]);
 
-            return handler.Handle(message);
+            //Act
+            await handler.Handle(message);
+
+            //Assert
+            Assert.Equal(1, capture.EnqueueCount);
+            Assert.Equal(2, capture.Payload.OperationLogs.Length);
+
+            // ObjectType is forced to 'Member' (not the concrete Contact/Organization) because
+            // MemberDocumentChangesProvider queries all changed members in one request by that type.
+            Assert.All(capture.Payload.OperationLogs, x => Assert.Equal(nameof(Member), x.ObjectType));
+            Assert.Equal(["id1", "id2"], capture.Payload.OperationLogs.Select(x => x.ObjectId));
+            Assert.Equal([EntryState.Modified, EntryState.Added], capture.Payload.OperationLogs.Select(x => x.OperationType));
         }
 
-        public static TheoryData<Contact, Contact, IReadOnlyCollection<string>> LogsData()
+        [Fact]
+        public async Task Handle_UserChangedEvent_SkipsEntriesWithoutMemberId()
         {
-            var data = new TheoryData<Contact, Contact, IReadOnlyCollection<string>>
-            {
-                // Modified Name
-                {
-                    new Contact { Id = "id", Name = "Name1", FirstName = "FirstName1", MiddleName = "MiddleName1", LastName = "LastName1", Salutation = "Salutation1", FullName = "FullName1",  BirthDate = new DateTime(2001, 1, 10)  },
-                    new Contact { Id = "id", Name = "Name_New", FirstName = "FirstName_NEW", MiddleName = "MiddleName_NEW", LastName = "LastName_NEW", Salutation = "Salutation_NEW", FullName = "FullName_NEW",  BirthDate = new DateTime(2001, 3, 10) },
-                    new[]
-                    {
-                      string.Format("The property '{0}' changed from '{1}' to '{2}'", "Name", "Name1", "Name_New"),
-                      string.Format("The property '{0}' changed from '{1}' to '{2}'", "FirstName", "FirstName1", "FirstName_NEW"),
-                      string.Format("The property '{0}' changed from '{1}' to '{2}'", "MiddleName", "MiddleName1", "MiddleName_NEW"),
-                      string.Format("The property '{0}' changed from '{1}' to '{2}'", "LastName", "LastName1", "LastName_NEW"),
-                      string.Format("The property '{0}' changed from '{1}' to '{2}'", "Salutation", "Salutation1", "Salutation_NEW"),
-                      string.Format("The property '{0}' changed from '{1}' to '{2}'", "FullName", "FullName1", "FullName_NEW"),
-                      string.Format("The property '{0}' changed from '{1}' to '{2}'", "BirthDate", new DateTime(2001, 1, 10), new DateTime(2001, 3, 10)),
-                    }
-                },             
-                // Emails
-                {
-                    new Contact { Id = "id", Emails = new List<string>() { "unchanged@mail.com", "deleted@mail.com" } },
-                    new Contact { Id = "id", Emails = new List<string> { "unchanged@mail.com", "added@mail.com" } },
-                    new[]
-                    {
-                        string.Format("The address '{0}' added", "added@mail.com"),
-                        string.Format("The address '{0}' deleted", "deleted@mail.com")
-                    }
-                },           
-                // Phones
-                {
-                    new Contact { Id = "id", Phones = new List<string>(){ "unchanged phone", "deleted phone" } },
-                    new Contact { Id = "id", Phones = new List<string> { "unchanged phone", "added phone" } },
-                    new[]
-                    {
-                       string.Format("The phone '{0}' added", "added phone"),
-                       string.Format("The phone '{0}' deleted", "deleted phone")
-                    }
-                },             
-                // Addresses
-                {
-                   new Contact { Id = "id", Addresses = new List<Address>() { new Address { Key = "1", City = "modified address" }, new Address { Key = "2", City = "deleted address" } } },
-                   new Contact { Id = "id", Addresses = new List<Address> {  new Address { City = "added address" }, new Address { Key = "1", City = "modified address2" } } },
-                   new[]
-                   {
-                       string.Format("The address '{0}' added", "added address"),
-                       string.Format("The address '{0}' deleted", "deleted address"),
-                       string.Format("The address  '{0}' changed to '{1}'", "modified address", "modified address2")
-                   }
-                },
-                // Partial update (when null was passed for dependencies collections
-                {
-                new Contact { Id = "id", Phones = new List<string>(){ "phone" }, Emails = new List<string>() { "email" }, Addresses = new List<Address>() { new Address { Name = "address" } }  },
-                    new Contact { Id = "id" },
-                   Array.Empty<string>()
-                },
-                // No changes
-                {
-                new Contact { Id = "id", Name = "Name" },
-                    new Contact { Id = "id", Name = "Name" },
-                     Array.Empty<string>()
-                }
-        };
+            //Arrange
+            using var capture = new EnqueueCapture();
+            var handler = new LogChangesEventHandler(Mock.Of<IChangeLogService>());
 
-            return data;
+            var withMember = new ApplicationUser { Id = "user1", MemberId = "member1" };
+            var withoutMember = new ApplicationUser { Id = "user2" };
+
+            var message = new UserChangedEvent(
+            [
+                new GenericChangedEntry<ApplicationUser>(withMember, withMember, EntryState.Modified),
+                new GenericChangedEntry<ApplicationUser>(withoutMember, withoutMember, EntryState.Modified),
+            ]);
+
+            //Act
+            await handler.Handle(message);
+
+            //Assert
+            // Count matters as well as contents: one enqueue per changed entry would also leave a
+            // single-log Payload behind, since each callback overwrites it.
+            Assert.Equal(1, capture.EnqueueCount);
+
+            var log = Assert.Single(capture.Payload.OperationLogs);
+            Assert.Equal("member1", log.ObjectId);
+            Assert.Equal(nameof(Member), log.ObjectType);
+            Assert.Equal(EntryState.Modified, log.OperationType);
+        }
+
+        [Fact]
+        public async Task Handle_UserRoleAddedEvent_WithMemberId_EnqueuesSingleLog()
+        {
+            //Arrange
+            using var capture = new EnqueueCapture();
+            var handler = new LogChangesEventHandler(Mock.Of<IChangeLogService>());
+
+            //Act
+            await handler.Handle(new UserRoleAddedEvent(new ApplicationUser { Id = "user1", MemberId = "member1" }, "role"));
+
+            //Assert
+            var log = Assert.Single(capture.Payload.OperationLogs);
+            Assert.Equal("member1", log.ObjectId);
+        }
+
+        [Fact]
+        public async Task Handle_UserRoleAddedEvent_WithoutMemberId_EnqueuesNothing()
+        {
+            //Arrange
+            using var capture = new EnqueueCapture();
+            var handler = new LogChangesEventHandler(Mock.Of<IChangeLogService>());
+
+            //Act
+            await handler.Handle(new UserRoleAddedEvent(new ApplicationUser { Id = "user1" }, "role"));
+
+            //Assert
+            Assert.Equal(0, capture.EnqueueCount);
+        }
+
+        [Fact]
+        public async Task LogEntityChangesInBackground_StillSavesForLegacyHangfireJobs()
+        {
+            //Arrange
+            // Hangfire stores a queued job as type + method name + serialized args, so a store written by an
+            // earlier version can still invoke this method. Deleting it would strand those entries as Failed.
+            var operationLogs = new[] { AbstractTypeFactory<OperationLog>.TryCreateInstance() };
+            var changeLogServiceMock = new Mock<IChangeLogService>();
+
+            var handler = new LogChangesEventHandler(changeLogServiceMock.Object);
+
+            //Act
+#pragma warning disable VC0012
+            await handler.LogEntityChangesInBackground(operationLogs);
+#pragma warning restore VC0012
+
+            //Assert
+            changeLogServiceMock.Verify(x => x.SaveChangesAsync(operationLogs), Times.Once);
+        }
+
+        [Fact]
+        public async Task LogEntityChangesJobHandler_SavesThePayloadLogs()
+        {
+            //Arrange
+            var operationLogs = new[] { AbstractTypeFactory<OperationLog>.TryCreateInstance() };
+            var changeLogServiceMock = new Mock<IChangeLogService>();
+
+            var handler = new LogEntityChangesJobHandler(changeLogServiceMock.Object);
+
+            //Act
+            await handler.Execute(new LogEntityChangesJobPayload { OperationLogs = operationLogs }, context: null,
+                TestContext.Current.CancellationToken);
+
+            //Assert
+            changeLogServiceMock.Verify(x => x.SaveChangesAsync(operationLogs), Times.Once);
+        }
+
+        // Captures what the handler enqueued through the static BackgroundJob facade. IBackgroundJob is
+        // registered Scoped here exactly as the engine module registers it, so this also proves the facade's
+        // per-call scope resolves it - the handler itself is root-resolved and must never hold it.
+        // The facade is process-global state; xUnit runs one class's tests sequentially and no other test
+        // class touches it, so exclusive ownership holds.
+        private sealed class EnqueueCapture : IDisposable
+        {
+            private readonly ServiceProvider _provider;
+
+            public EnqueueCapture()
+            {
+                BackgroundJobMock
+                    .Setup(x => x.Enqueue<LogEntityChangesJobHandler>(It.IsAny<object>(), It.IsAny<EnqueueOptions>(), It.IsAny<CancellationToken>()))
+                    .Callback<object, EnqueueOptions, CancellationToken>((payload, _, _) =>
+                    {
+                        Payload = (LogEntityChangesJobPayload)payload;
+                        EnqueueCount++;
+                    })
+                    .ReturnsAsync("job-id");
+
+                var services = new ServiceCollection();
+                services.AddScoped(_ => BackgroundJobMock.Object);
+                _provider = services.BuildServiceProvider(validateScopes: true);
+
+                BackgroundJob.Initialize(_provider);
+            }
+
+            public Mock<IBackgroundJob> BackgroundJobMock { get; } = new();
+
+            public LogEntityChangesJobPayload Payload { get; private set; }
+
+            public int EnqueueCount { get; private set; }
+
+            public void Dispose()
+            {
+                _provider.Dispose();
+            }
         }
     }
 }
