@@ -95,20 +95,29 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
         }
 
         [Fact]
-        public async Task Handle_WhenModifiedWithDeletedStatus_RevokesTokens()
+        public async Task Handle_WhenModifiedFromApprovedToDeleted_RevokesTokens()
         {
-            var membership = new OrganizationMembership
-            {
-                UserId = "user-1",
-                IsLocked = false,
-                Status = ModuleConstants.MembershipStatuses.Deleted,
-            };
+            var oldMembership = new OrganizationMembership { UserId = "user-1", Status = ModuleConstants.MembershipStatuses.Approved };
+            var newMembership = new OrganizationMembership { UserId = "user-1", IsLocked = false, Status = ModuleConstants.MembershipStatuses.Deleted };
 
-            var message = BuildEvent(membership, EntryState.Modified);
+            var message = BuildEvent(newMembership, EntryState.Modified, oldMembership);
 
             await _handler.Handle(message);
 
             _sessionServiceMock.Verify(s => s.TerminateAllUserSessions("user-1"), Times.Once);
+        }
+
+        [Fact]
+        public async Task Handle_WhenModifiedFromInvitedToRejected_DoesNotRevokeTokens()
+        {
+            var oldMembership = new OrganizationMembership { UserId = "user-1", Status = ModuleConstants.MembershipStatuses.Invited };
+            var newMembership = new OrganizationMembership { UserId = "user-1", IsLocked = false, Status = ModuleConstants.MembershipStatuses.Rejected };
+
+            var message = BuildEvent(newMembership, EntryState.Modified, oldMembership);
+
+            await _handler.Handle(message);
+
+            _sessionServiceMock.Verify(s => s.TerminateAllUserSessions(It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
@@ -143,13 +152,15 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
             _sessionServiceMock.Verify(s => s.TerminateAllUserSessions(It.IsAny<string>()), Times.Never);
         }
 
-        private static OrganizationMembershipChangedEvent BuildEvent(OrganizationMembership membership, EntryState state)
+        private static OrganizationMembershipChangedEvent BuildEvent(
+            OrganizationMembership membership, EntryState state, OrganizationMembership oldMembership = null)
         {
+            var entry = oldMembership != null
+                ? new GenericChangedEntry<OrganizationMembership>(membership, oldMembership, state)
+                : new GenericChangedEntry<OrganizationMembership>(membership, state);
+
             return new OrganizationMembershipChangedEvent(
-                new List<GenericChangedEntry<OrganizationMembership>>
-                {
-                    new(membership, state),
-                });
+                new List<GenericChangedEntry<OrganizationMembership>> { entry });
         }
     }
 }

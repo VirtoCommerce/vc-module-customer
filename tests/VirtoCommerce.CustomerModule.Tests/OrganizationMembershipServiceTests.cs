@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using VirtoCommerce.CustomerModule.Core;
+using VirtoCommerce.CustomerModule.Core.Events;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Data.Model;
@@ -166,6 +167,38 @@ public class OrganizationMembershipServiceTests : OrganizationMembershipServiceT
         Assert.Equal(ModuleConstants.MembershipStatuses.Rejected, entity.Status);
 
         UnitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task SetStatusAsync_PublishesChangedEventWithPreviousAndNewStatus()
+    {
+        // Arrange — RevokeTokenOrganizationMembershipChangedEventHandler decides whether to revoke tokens by
+        // comparing OldEntry.Status to NewEntry.Status, so the published event must carry the status the
+        // membership actually had before this call, not the same (already-updated) value on both sides.
+        var entity = BuildEntity("id1");
+        entity.Status = ModuleConstants.MembershipStatuses.Invited;
+        SetupMemberships(entity);
+
+        OrganizationMembershipChangedEvent published = null;
+        EventPublisherMock
+            .Setup(p => p.Publish(It.IsAny<GenericChangedEntryEvent<OrganizationMembership>>(), It.IsAny<CancellationToken>()))
+            .Callback<GenericChangedEntryEvent<OrganizationMembership>, CancellationToken>((e, _) =>
+            {
+                if (e is OrganizationMembershipChangedEvent changedEvent)
+                {
+                    published = changedEvent;
+                }
+            })
+            .Returns(Task.CompletedTask);
+
+        //Act
+        await CreateCrudService().SetStatusAsync("id1", ModuleConstants.MembershipStatuses.Rejected);
+
+        //Assert
+        Assert.NotNull(published);
+        var entry = Assert.Single(published.ChangedEntries);
+        Assert.Equal(ModuleConstants.MembershipStatuses.Invited, entry.OldEntry.Status);
+        Assert.Equal(ModuleConstants.MembershipStatuses.Rejected, entry.NewEntry.Status);
     }
 
     [Fact]

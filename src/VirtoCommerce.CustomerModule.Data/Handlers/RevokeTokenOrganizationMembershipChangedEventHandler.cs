@@ -23,7 +23,8 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                         await RevokeUserTokensAsync(changedEntry.OldEntry.UserId);
                         break;
 
-                    case EntryState.Modified when changedEntry.NewEntry.IsCurrentlyLocked || ModuleConstants.MembershipStatuses.IsBlocking(changedEntry.NewEntry.Status):
+                    case EntryState.Modified when changedEntry.NewEntry.IsCurrentlyLocked ||
+                        (!ModuleConstants.MembershipStatuses.IsBlocking(changedEntry.OldEntry?.Status) && ModuleConstants.MembershipStatuses.IsBlocking(changedEntry.NewEntry.Status)):
                         await RevokeUserTokensAsync(changedEntry.NewEntry.UserId);
                         break;
                 }
