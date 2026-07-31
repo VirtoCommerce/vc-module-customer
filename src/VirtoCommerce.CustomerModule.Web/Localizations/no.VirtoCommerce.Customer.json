@@ -484,6 +484,10 @@
         "title": "Selskapsstatuser",
         "description": "Rediger selskapsstatuser"
       },
+      "OrganizationMembershipStatuses": {
+        "title": "Organisasjonsmedlemskapsstatuser",
+        "description": "Rediger organisasjonsmedlemskapsstatuser"
+      },
       "VendorStatuses": {
         "title": "Leverandørstatuser",
         "description": "Rediger leverandørstatuser"

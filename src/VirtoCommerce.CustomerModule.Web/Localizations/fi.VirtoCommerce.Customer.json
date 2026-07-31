@@ -484,6 +484,10 @@
         "title": "Yritysten tilat",
         "description": "Muokkaa yritysten tiloja"
       },
+      "OrganizationMembershipStatuses": {
+        "title": "Organisaation jäsenyyden tilat",
+        "description": "Muokkaa organisaation jäsenyyden tiloja"
+      },
       "VendorStatuses": {
         "title": "Toimittajien tilat",
         "description": "Muokkaa toimittajien tiloja"

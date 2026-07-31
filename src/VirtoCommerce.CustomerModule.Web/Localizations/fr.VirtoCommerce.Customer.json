@@ -484,6 +484,10 @@
         "title": "Statuts des entreprises",
         "description": "Modifier les statuts des entreprises"
       },
+      "OrganizationMembershipStatuses": {
+        "title": "Statuts d'adhésion à l'organisation",
+        "description": "Modifier les statuts d'adhésion à l'organisation"
+      },
       "VendorStatuses": {
         "title": "Statuts des fournisseurs",
         "description": "Modifier les statuts des fournisseurs"

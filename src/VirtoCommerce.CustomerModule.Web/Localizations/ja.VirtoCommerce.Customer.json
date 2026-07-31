@@ -484,6 +484,10 @@
         "title": "会社のステータス",
         "description": "会社のステータスを編集"
       },
+      "OrganizationMembershipStatuses": {
+        "title": "組織メンバーシップのステータス",
+        "description": "組織メンバーシップのステータスを編集"
+      },
       "VendorStatuses": {
         "title": "ベンダーのステータス",
         "description": "ベンダーのステータスを編集"

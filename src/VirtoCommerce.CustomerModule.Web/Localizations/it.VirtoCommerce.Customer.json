@@ -484,6 +484,10 @@
         "title": "Stati dell'azienda",
         "description": "Modifica stati dell'azienda"
       },
+      "OrganizationMembershipStatuses": {
+        "title": "Stati di appartenenza all'organizzazione",
+        "description": "Modifica gli stati di appartenenza all'organizzazione"
+      },
       "VendorStatuses": {
         "title": "Stati dei fornitori",
         "description": "Modifica stati dei fornitori"

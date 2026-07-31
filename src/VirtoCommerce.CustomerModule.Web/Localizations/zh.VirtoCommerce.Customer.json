@@ -484,6 +484,10 @@
         "title": "公司状态",
         "description": "编辑公司状态"
       },
+      "OrganizationMembershipStatuses": {
+        "title": "组织成员身份状态",
+        "description": "编辑组织成员身份状态"
+      },
       "VendorStatuses": {
         "title": "供应商状态",
         "description": "编辑供应商状态"

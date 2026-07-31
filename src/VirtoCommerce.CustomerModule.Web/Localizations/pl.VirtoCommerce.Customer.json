@@ -484,6 +484,10 @@
         "title": "Statusy firm",
         "description": "Edytuj statusy firm"
       },
+      "OrganizationMembershipStatuses": {
+        "title": "Statusy członkostwa w organizacji",
+        "description": "Edytuj statusy członkostwa w organizacji"
+      },
       "VendorStatuses": {
         "title": "Statusy dostawców",
         "description": "Edytuj statusy dostawców"
