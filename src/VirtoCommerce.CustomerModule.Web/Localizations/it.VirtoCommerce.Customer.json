@@ -539,6 +539,18 @@
     "RegisterCompanyEmailNotification": {
       "displayName": "Notifica email registrazione organizzazione",
       "description": "Il cliente riceve una notifica email quando la sua azienda è stata registrata"
+    },
+    "CustomerInviteNewUserEmailNotification": {
+      "displayName": "Notifica email di invito cliente",
+      "description": "La persona invitata riceve una notifica email con un link di registrazione quando viene invitata come nuovo cliente"
+    },
+    "OrganizationInviteNewUserEmailNotification": {
+      "displayName": "Notifica email di invito all'organizzazione (nuovo utente)",
+      "description": "La persona invitata riceve una notifica email con un link di registrazione quando viene invitata a unirsi a un'organizzazione per la prima volta"
+    },
+    "OrganizationInviteExistingUserEmailNotification": {
+      "displayName": "Notifica email di invito all'organizzazione (utente esistente)",
+      "description": "La persona invitata riceve una notifica email quando viene invitata a unirsi a un'altra organizzazione utilizzando il proprio account esistente"
     }
   }
 }

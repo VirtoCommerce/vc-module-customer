@@ -539,6 +539,18 @@
     "RegisterCompanyEmailNotification": {
       "displayName": "組織登録メール通知",
       "description": "顧客は、彼の会社が登録されたときにメール通知を受け取ります"
+    },
+    "CustomerInviteNewUserEmailNotification": {
+      "displayName": "顧客招待メール通知",
+      "description": "新規顧客として招待された場合、招待された人は登録リンク付きのメール通知を受け取ります"
+    },
+    "OrganizationInviteNewUserEmailNotification": {
+      "displayName": "組織招待メール通知(新規ユーザー)",
+      "description": "初めて組織に参加するよう招待された場合、招待された人は登録リンク付きのメール通知を受け取ります"
+    },
+    "OrganizationInviteExistingUserEmailNotification": {
+      "displayName": "組織招待メール通知(既存ユーザー)",
+      "description": "既存のアカウントで別の組織に参加するよう招待された場合、招待された人はメール通知を受け取ります"
     }
   }
 }

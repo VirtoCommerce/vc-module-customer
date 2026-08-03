@@ -539,6 +539,18 @@
     "RegisterCompanyEmailNotification": {
       "displayName": "Notificação de email de registro da organização",
       "description": "O cliente recebe uma notificação por email quando sua empresa é registrada"
+    },
+    "CustomerInviteNewUserEmailNotification": {
+      "displayName": "Notificação de email de convite de cliente",
+      "description": "A pessoa convidada recebe uma notificação por email com um link de registro quando é convidada como novo cliente"
+    },
+    "OrganizationInviteNewUserEmailNotification": {
+      "displayName": "Notificação de email de convite para organização (novo usuário)",
+      "description": "A pessoa convidada recebe uma notificação por email com um link de registro quando é convidada a ingressar em uma organização pela primeira vez"
+    },
+    "OrganizationInviteExistingUserEmailNotification": {
+      "displayName": "Notificação de email de convite para organização (usuário existente)",
+      "description": "A pessoa convidada recebe uma notificação por email quando é convidada a ingressar em outra organização usando sua conta existente"
     }
   }
 }

@@ -539,6 +539,18 @@
     "RegisterCompanyEmailNotification": {
       "displayName": "Yrityksen rekisteröintisähköposti-ilmoitus",
       "description": "Asiakas saa sähköposti-ilmoituksen, kun hänen yrityksensä on rekisteröity"
+    },
+    "CustomerInviteNewUserEmailNotification": {
+      "displayName": "Asiakaskutsun sähköposti-ilmoitus",
+      "description": "Kutsuttu henkilö saa sähköposti-ilmoituksen rekisteröitymislinkillä, kun hänet kutsutaan uudeksi asiakkaaksi"
+    },
+    "OrganizationInviteNewUserEmailNotification": {
+      "displayName": "Organisaatiokutsun sähköposti-ilmoitus (uusi käyttäjä)",
+      "description": "Kutsuttu henkilö saa sähköposti-ilmoituksen rekisteröitymislinkillä, kun hänet kutsutaan liittymään organisaatioon ensimmäistä kertaa"
+    },
+    "OrganizationInviteExistingUserEmailNotification": {
+      "displayName": "Organisaatiokutsun sähköposti-ilmoitus (nykyinen käyttäjä)",
+      "description": "Kutsuttu henkilö saa sähköposti-ilmoituksen, kun hänet kutsutaan liittymään toiseen organisaatioon nykyisellä tilillään"
     }
   }
 }

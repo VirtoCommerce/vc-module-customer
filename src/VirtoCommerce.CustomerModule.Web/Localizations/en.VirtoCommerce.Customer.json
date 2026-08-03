@@ -539,6 +539,18 @@
     "RegisterCompanyEmailNotification": {
       "displayName": "Organization registration email notification",
       "description": "The customer gets an email notification when his company has registered"
+    },
+    "CustomerInviteNewUserEmailNotification": {
+      "displayName": "Customer invitation email notification",
+      "description": "The invited person gets an email notification with a registration link when invited as a new customer"
+    },
+    "OrganizationInviteNewUserEmailNotification": {
+      "displayName": "Organization invitation email notification (new user)",
+      "description": "The invited person gets an email notification with a registration link when invited to join an organization for the first time"
+    },
+    "OrganizationInviteExistingUserEmailNotification": {
+      "displayName": "Organization invitation email notification (existing user)",
+      "description": "The invited person gets an email notification when invited to join another organization using their existing account"
     }
   }
 }

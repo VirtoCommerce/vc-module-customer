@@ -539,6 +539,18 @@
     "RegisterCompanyEmailNotification": {
       "displayName": "E-postmeddelande om företagsregistrering",
       "description": "Kunden får ett e-postmeddelande när deras företag har registrerats"
+    },
+    "CustomerInviteNewUserEmailNotification": {
+      "displayName": "E-postmeddelande om kundinbjudan",
+      "description": "Den inbjudna personen får ett e-postmeddelande med en registreringslänk när de bjuds in som ny kund"
+    },
+    "OrganizationInviteNewUserEmailNotification": {
+      "displayName": "E-postmeddelande om organisationsinbjudan (ny användare)",
+      "description": "Den inbjudna personen får ett e-postmeddelande med en registreringslänk när de bjuds in att gå med i en organisation för första gången"
+    },
+    "OrganizationInviteExistingUserEmailNotification": {
+      "displayName": "E-postmeddelande om organisationsinbjudan (befintlig användare)",
+      "description": "Den inbjudna personen får ett e-postmeddelande när de bjuds in att gå med i en annan organisation med sitt befintliga konto"
     }
   }
 }

@@ -539,6 +539,18 @@
     "RegisterCompanyEmailNotification": {
       "displayName": "组织注册电子邮件通知",
       "description": "客户在其公司注册时会收到电子邮件通知"
+    },
+    "CustomerInviteNewUserEmailNotification": {
+      "displayName": "客户邀请电子邮件通知",
+      "description": "受邀人在被邀请成为新客户时会收到带有注册链接的电子邮件通知"
+    },
+    "OrganizationInviteNewUserEmailNotification": {
+      "displayName": "组织邀请电子邮件通知（新用户）",
+      "description": "受邀人在首次被邀请加入某个组织时会收到带有注册链接的电子邮件通知"
+    },
+    "OrganizationInviteExistingUserEmailNotification": {
+      "displayName": "组织邀请电子邮件通知（现有用户）",
+      "description": "受邀人在使用现有账户被邀请加入另一个组织时会收到电子邮件通知"
     }
   }
 }
