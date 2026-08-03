@@ -8,7 +8,6 @@ using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Extensions;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
-using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Security.OpenIddict;
 using static VirtoCommerce.CustomerModule.Core.ModuleConstants.Security;
@@ -68,7 +67,8 @@ public class OrganizationIdRequestValidator(
             return [ErrorDescriber.InvalidOrganizationId(organizationId)];
         }
 
-        var accessibleOrganizationIds = await GetAccessibleOrganizationIdsAsync(context.User?.Id, member, availableOrganizationIds);
+        var accessibleOrganizationIds = await OrganizationAccessResolver.GetAccessibleOrganizationIdsAsync(
+            organizationMembershipSearchService, context.User?.Id, member, availableOrganizationIds);
         context.Request.SetParameter(Parameters.OrganizationId, accessibleOrganizationIds.FirstOrDefault());
 
         return [];
@@ -105,7 +105,8 @@ public class OrganizationIdRequestValidator(
         // only when the caller explicitly asked for this (now-blocked) organization, or none other is accessible.
         if (isAutoResolved)
         {
-            var accessibleOrganizationIds = await GetAccessibleOrganizationIdsAsync(context.User.Id, member, availableOrganizationIds);
+            var accessibleOrganizationIds = await OrganizationAccessResolver.GetAccessibleOrganizationIdsAsync(
+                organizationMembershipSearchService, context.User.Id, member, availableOrganizationIds);
             var fallbackOrganizationId = accessibleOrganizationIds.FirstOrDefault();
 
             if (!string.IsNullOrEmpty(fallbackOrganizationId))
@@ -150,65 +151,7 @@ public class OrganizationIdRequestValidator(
             return organizationId;
         }
 
-        return await GetMemberOrganizationId(context, member);
-    }
-
-    private async Task<string> GetMemberOrganizationId(TokenRequestContext context, Member member)
-    {
-        if (member is not IHasOrganizations contact)
-        {
-            return null;
-        }
-
-        var organizations = contact.Organizations ?? [];
-
-        var accessibleOrganizations = await GetAccessibleOrganizationIdsAsync(context.User?.Id, member, organizations);
-
-        if (!contact.CurrentOrganizationId.IsNullOrEmpty() && accessibleOrganizations.Contains(contact.CurrentOrganizationId, StringComparer.OrdinalIgnoreCase))
-        {
-            return contact.CurrentOrganizationId;
-        }
-
-        if (!contact.DefaultOrganizationId.IsNullOrEmpty() && accessibleOrganizations.Contains(contact.DefaultOrganizationId, StringComparer.OrdinalIgnoreCase))
-        {
-            return contact.DefaultOrganizationId;
-        }
-
-        return accessibleOrganizations.FirstOrDefault();
-    }
-
-    private async Task<IReadOnlyCollection<string>> GetAccessibleOrganizationIdsAsync(string userId, Member member, IList<string> organizationIds)
-    {
-        if (string.IsNullOrEmpty(userId) || organizationIds.IsNullOrEmpty())
-        {
-            return organizationIds?.ToList() ?? [];
-        }
-
-        var memberships = await organizationMembershipSearchService.SearchAllNoCloneAsync(new OrganizationMembershipSearchCriteria
-        {
-            UserId = userId,
-            OrganizationIds = organizationIds,
-        });
-
-        var membershipByOrgId = memberships
-            .Where(m => m.OrganizationId != null)
-            .GroupBy(m => m.OrganizationId)
-            .ToDictionary(g => g.Key, g => g.First());
-
-        return organizationIds
-            .Where(orgId =>
-            {
-                membershipByOrgId.TryGetValue(orgId, out var membership);
-
-                if (membership?.IsCurrentlyLocked == true)
-                {
-                    return false;
-                }
-
-                var effectiveStatus = OrganizationMembership.ResolveEffectiveStatus(membership?.Status, member?.Status);
-                return !ModuleConstants.MembershipStatuses.IsBlocking(effectiveStatus);
-            })
-            .ToList();
+        return await OrganizationAccessResolver.ResolveOrganizationIdAsync(organizationMembershipSearchService, context.User?.Id, member);
     }
 
     private async Task<Member> GetMemberAsync(TokenRequestContext context)

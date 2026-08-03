@@ -136,27 +136,6 @@ public class OrganizationIdClaimProvider(
 
         var member = await memberService.GetByIdAsync(memberId);
 
-        return member switch
-        {
-            IHasOrganizations contact => GetContactOrganizationId(contact),
-            _ => null,
-        };
-    }
-
-    private static string GetContactOrganizationId(IHasOrganizations contact)
-    {
-        var organizations = contact.Organizations ?? [];
-
-        if (!contact.CurrentOrganizationId.IsNullOrEmpty() && organizations.ContainsIgnoreCase(contact.CurrentOrganizationId))
-        {
-            return contact.CurrentOrganizationId;
-        }
-
-        if (!contact.DefaultOrganizationId.IsNullOrEmpty() && organizations.ContainsIgnoreCase(contact.DefaultOrganizationId))
-        {
-            return contact.DefaultOrganizationId;
-        }
-
-        return organizations.FirstOrDefault();
+        return await OrganizationAccessResolver.ResolveOrganizationIdAsync(organizationMembershipSearchService, context.User?.Id, member);
     }
 }
