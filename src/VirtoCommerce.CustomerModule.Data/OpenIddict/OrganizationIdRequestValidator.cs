@@ -22,11 +22,10 @@ public class OrganizationIdRequestValidator(
 
     public virtual async Task<IList<TokenResponse>> ValidateAsync(TokenRequestContext context)
     {
-        // Whether the organization was auto-resolved from the member (no explicit request) on a fresh password
-        // sign-in — computed before any fallback below rewrites the parameter. Only then may a blocked
-        // auto-resolved organization fall back to an accessible one instead of blocking sign-in entirely.
-        var isAutoResolved = string.IsNullOrEmpty(context.Request.GetParameter(Parameters.OrganizationId)?.ToString()) &&
-            context.Request.GrantType == OpenIddictConstants.GrantTypes.Password;
+        // The storefront always resends the last-used organization on every password login (useAuth.ts),
+        // so a blocked org here is never a deliberate choice — allow falling back. An explicit org switch
+        // on an existing session (refresh_token grant, switchOrganization()) gets no fallback.
+        var allowFallback = context.Request.GrantType == OpenIddictConstants.GrantTypes.Password;
 
         var member = await GetMemberAsync(context);
 
@@ -49,7 +48,7 @@ public class OrganizationIdRequestValidator(
 
         if (context.User != null)
         {
-            var accessError = await ValidateOrganizationAccessAsync(context, member, isAutoResolved, organizationId, availableOrganizationIds);
+            var accessError = await ValidateOrganizationAccessAsync(context, member, allowFallback, organizationId, availableOrganizationIds);
             if (accessError != null)
             {
                 return [accessError];
@@ -86,7 +85,7 @@ public class OrganizationIdRequestValidator(
     }
 
     private async Task<TokenResponse> ValidateOrganizationAccessAsync(
-        TokenRequestContext context, Member member, bool isAutoResolved, string organizationId, IList<string> availableOrganizationIds)
+        TokenRequestContext context, Member member, bool allowFallback, string organizationId, IList<string> availableOrganizationIds)
     {
         var membership = await organizationMembershipSearchService.GetMembershipAsync(context.User.Id, organizationId);
 
@@ -99,11 +98,8 @@ public class OrganizationIdRequestValidator(
             return null;
         }
 
-        // When the organization was auto-resolved (the caller didn't request a specific one) on a fresh password
-        // sign-in, being locked/blocked in that single organization must not lock the user out of the others they
-        // belong to — e.g. a sales rep serving many organizations. Fall back to an accessible one instead. Block
-        // only when the caller explicitly asked for this (now-blocked) organization, or none other is accessible.
-        if (isAutoResolved)
+        // Locked/blocked in this one organization must not lock the user out of the others they belong to.
+        if (allowFallback)
         {
             var accessibleOrganizationIds = await OrganizationAccessResolver.GetAccessibleOrganizationIdsAsync(
                 organizationMembershipSearchService, context.User.Id, member, availableOrganizationIds);

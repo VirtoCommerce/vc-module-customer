@@ -241,10 +241,10 @@ public class OrganizationIdRequestValidatorTests
     }
 
     [Fact]
-    public async Task ValidateAsync_ExplicitlyRequestedRejectedOrg_ReturnsOrgError()
+    public async Task ValidateAsync_PasswordGrantWithRejectedOrgParam_FallsBackToAccessibleOrgAndReturnsEmpty()
     {
-        //Arrange — the caller explicitly asks to sign in as a specific (rejected) org. That is an explicit
-        // choice, so it must be blocked rather than silently falling back to another org.
+        //Arrange — password grant resends the last-used org (useAuth.ts), which is never a deliberate choice,
+        // so a now-rejected org must fall back to another accessible one instead of blocking sign-in.
         var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
         _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
             .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId, OrgId2] });
@@ -252,6 +252,27 @@ public class OrganizationIdRequestValidatorTests
         SetupMembership(new OrganizationMembership { OrganizationId = OrgId, Status = ModuleConstants.MembershipStatuses.Rejected });
 
         var context = BuildContext(OrgId, grantType: OpenIddictConstants.GrantTypes.Password, user: user);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Empty(result);
+        Assert.Equal(OrgId2, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
+    }
+
+    [Fact]
+    public async Task ValidateAsync_RefreshTokenGrantExplicitSwitchToRejectedOrg_ReturnsOrgError()
+    {
+        //Arrange — an explicit org switch (refresh_token grant, switchOrganization()) IS a deliberate choice,
+        // so it must be blocked rather than silently falling back to a different org.
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId, OrgId2] });
+
+        SetupMembership(new OrganizationMembership { OrganizationId = OrgId, Status = ModuleConstants.MembershipStatuses.Rejected });
+
+        var context = BuildContext(OrgId, grantType: OpenIddictConstants.GrantTypes.RefreshToken, user: user);
 
         //Act
         var result = await GetValidator().ValidateAsync(context);
