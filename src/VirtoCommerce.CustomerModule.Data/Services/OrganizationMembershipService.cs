@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Events;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
@@ -78,10 +79,52 @@ public class OrganizationMembershipService
     }
 
     public Task<OrganizationMembership> LockAsync(string id, DateTime? lockoutEnd = null)
-        => SetLockStateAsync(id, isLocked: true, lockoutEnd: lockoutEnd);
+        => SetLockState(id, isLocked: true, lockoutEnd: lockoutEnd);
 
     public Task<OrganizationMembership> UnlockAsync(string id)
-        => SetLockStateAsync(id, isLocked: false, lockoutEnd: null);
+        => SetLockState(id, isLocked: false, lockoutEnd: null);
+
+    public Task<OrganizationMembership> SetStatusAsync(string id, string status)
+    {
+        if (!string.IsNullOrEmpty(status) && !ModuleConstants.MembershipStatuses.ManuallySelectableStatuses.Contains(status))
+        {
+            throw new ArgumentException(
+                $"Status must be one of: {string.Join(", ", ModuleConstants.MembershipStatuses.ManuallySelectableStatuses)}.", nameof(status));
+        }
+
+        return SetStatusInternalAsync(id, status);
+    }
+
+    private async Task<OrganizationMembership> SetStatusInternalAsync(string id, string status)
+    {
+        var model = (await GetAsync([id])).FirstOrDefault();
+        if (model == null)
+        {
+            return null;
+        }
+
+        model.Status = status;
+
+        await SaveChangesAsync([model]);
+
+        return model;
+    }
+
+    private async Task<OrganizationMembership> SetLockState(string id, bool isLocked, DateTime? lockoutEnd)
+    {
+        var model = (await GetAsync([id])).FirstOrDefault();
+        if (model == null)
+        {
+            return null;
+        }
+
+        model.IsLocked = isLocked;
+        model.LockoutEnd = isLocked ? lockoutEnd : null;
+
+        await SaveChangesAsync([model]);
+
+        return model;
+    }
 
     [Obsolete("Use IOrganizationMembershipSearchService.SearchAsync instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
     public Task<OrganizationMembershipSearchResult> SearchAsync(OrganizationMembershipSearchCriteria criteria, bool clone = true)
@@ -139,22 +182,6 @@ public class OrganizationMembershipService
             OrganizationIds = organizationIds,
             UserIds = userIds,
         });
-    }
-
-    private async Task<OrganizationMembership> SetLockStateAsync(string id, bool isLocked, DateTime? lockoutEnd)
-    {
-        var model = (await GetAsync([id])).FirstOrDefault();
-        if (model == null)
-        {
-            return null;
-        }
-
-        model.IsLocked = isLocked;
-        model.LockoutEnd = lockoutEnd;
-
-        await SaveChangesAsync([model]);
-
-        return model;
     }
 
     private static async Task ResolveOrganizationNamesAsync(

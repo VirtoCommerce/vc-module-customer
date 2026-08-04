@@ -249,6 +249,11 @@ public class OrganizationMembershipSearchService(
             }
         }
 
+        if (!criteria.Statuses.IsNullOrEmpty())
+        {
+            query = query.Where(x => criteria.Statuses.Contains(x.Status));
+        }
+
         return query;
     }
 

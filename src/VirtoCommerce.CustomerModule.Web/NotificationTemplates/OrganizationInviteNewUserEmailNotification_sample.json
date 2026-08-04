@@ -1,0 +1,5 @@
+{
+  "invite_url": "https://localhost:3000/confirm-invitation?userId=sample&email=sample%40example.com&token=sample",
+  "message": "We'd love to have you on our team.",
+  "organization_name": "Sample Organization"
+}

@@ -1,0 +1,6 @@
+{
+  "invite_url": "https://localhost:3000/account/dashboard",
+  "message": "We'd love to have you on our team.",
+  "organization_name": "Sample Organization",
+  "customer_name": "Jane Doe"
+}

@@ -288,13 +288,19 @@
           "type": "Type",
           "organization": "Organization",
           "roles": "Roles",
-          "status": "Status",
-          "lockout-end": "Locked until"
+          "status": "Invite status",
+          "lockout-end": "Locked until",
+          "locked-state": "Locked state"
         },
         "type-org": "Organization",
         "type-global": "Global",
         "status-locked": "Locked",
-        "status-active": "Active"
+        "status-unlocked": "Unlocked",
+        "status-approved": "Approved",
+        "status-invited": "Invited",
+        "status-rejected": "Rejected",
+        "status-deleted": "Deleted",
+        "status-new": "New"
       },
       "organization-membership-detail": {
         "title-global": "Global membership",
@@ -304,13 +310,19 @@
           "organization": "Organization",
           "type": "Type",
           "roles": "Roles",
-          "status": "Status",
+          "status": "Invite status",
+          "locked-state": "Locked state",
           "lockout-end": "Locked until"
         },
         "placeholders": {
           "organization": "Select organization",
           "roles": "Select roles",
-          "lockout-end": "Select date"
+          "lockout-end": "Select date",
+          "status-inherited": "Inherit from member"
+        },
+        "hints": {
+          "roles": "Roles assigned to the member within this organization, in addition to any global roles.",
+          "status": "Overrides the member's global status for this organization only. Leave empty to use the member's global status."
         }
       },
       "invite-customers": {
@@ -417,10 +429,6 @@
         "title": "Invite customers",
         "message": "Invitation notifications have been queqed successfuly"
       },
-      "invite-customers-error": {
-        "title": "Invite customers",
-        "message": "Some invitations were not sent due to errors"
-      },
       "membership-delete": {
         "title": "Confirm delete",
         "message": "Are you sure you want to delete the selected membership(s)?"
@@ -476,6 +484,10 @@
         "title": "Company statuses",
         "description": "Edit company statuses"
       },
+      "OrganizationMembershipStatuses": {
+        "title": "Organization membership statuses",
+        "description": "Edit statuses available for organization membership"
+      },
       "VendorStatuses": {
         "title": "Vendor statuses",
         "description": "Edit vendor statuses"
@@ -527,6 +539,18 @@
     "RegisterCompanyEmailNotification": {
       "displayName": "Organization registration email notification",
       "description": "The customer gets an email notification when his company has registered"
+    },
+    "CustomerInviteNewUserEmailNotification": {
+      "displayName": "Customer invitation email notification",
+      "description": "The invited person gets an email notification with a registration link when invited as a new customer"
+    },
+    "OrganizationInviteNewUserEmailNotification": {
+      "displayName": "Organization invitation email notification (new user)",
+      "description": "The invited person gets an email notification with a registration link when invited to join an organization for the first time"
+    },
+    "OrganizationInviteExistingUserEmailNotification": {
+      "displayName": "Organization invitation email notification (existing user)",
+      "description": "The invited person gets an email notification when invited to join another organization using their existing account"
     }
   }
 }

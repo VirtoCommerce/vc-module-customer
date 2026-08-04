@@ -41,7 +41,19 @@
 </script>
 
 <script type="text/ng-template" id="org-memberships-status.cell.html">
+    <div class="ui-grid-cell-contents" ng-switch="row.entity.status || ''">
+        <span ng-switch-when="New">{{ 'customer.blades.organization-memberships-list.status-new' | translate }}</span>
+        <span ng-switch-when="Invited">{{ 'customer.blades.organization-memberships-list.status-invited' | translate }}</span>
+        <span ng-switch-when="Approved">{{ 'customer.blades.organization-memberships-list.status-approved' | translate }}</span>
+        <span ng-switch-when="Rejected">{{ 'customer.blades.organization-memberships-list.status-rejected' | translate }}</span>
+        <span ng-switch-when="Deleted">{{ 'customer.blades.organization-memberships-list.status-deleted' | translate }}</span>
+    </div>
+</script>
+
+<script type="text/ng-template" id="org-memberships-locked-state.cell.html">
     <div class="ui-grid-cell-contents">
-        {{ (row.entity.isLocked ? 'customer.blades.organization-memberships-list.status-locked' : 'customer.blades.organization-memberships-list.status-active') | translate }}
+        {{ (row.entity.isLocked
+            ? 'customer.blades.organization-memberships-list.status-locked'
+            : 'customer.blades.organization-memberships-list.status-unlocked') | translate }}
     </div>
 </script>

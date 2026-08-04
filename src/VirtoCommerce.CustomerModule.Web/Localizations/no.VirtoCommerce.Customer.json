@@ -288,13 +288,19 @@
           "type": "Type",
           "organization": "Organisasjon",
           "roles": "Roller",
-          "status": "Status",
-          "lockout-end": "Blokkert til"
+          "status": "Invitasjonsstatus",
+          "lockout-end": "Blokkert til",
+          "locked-state": "Låsestatus"
         },
         "type-org": "Organisasjon",
         "type-global": "Global",
         "status-locked": "Blokkert",
-        "status-active": "Aktiv"
+        "status-unlocked": "Ulåst",
+        "status-approved": "Godkjent",
+        "status-invited": "Invitert",
+        "status-rejected": "Avvist",
+        "status-deleted": "Slettet",
+        "status-new": "Ny"
       },
       "organization-membership-detail": {
         "title-global": "Globalt medlemskap",
@@ -304,13 +310,19 @@
           "organization": "Organisasjon",
           "type": "Type",
           "roles": "Roller",
-          "status": "Status",
+          "status": "Invitasjonsstatus",
+          "locked-state": "Låsestatus",
           "lockout-end": "Blokkert til"
         },
         "placeholders": {
           "organization": "Velg organisasjon",
           "roles": "Velg roller",
-          "lockout-end": "Velg dato"
+          "lockout-end": "Velg dato",
+          "status-inherited": "Arv fra medlem"
+        },
+        "hints": {
+          "roles": "Roller tildelt medlemmet innenfor denne organisasjonen, i tillegg til eventuelle globale roller.",
+          "status": "Overstyrer medlemmets globale status kun for denne organisasjonen. La stå tomt for å bruke medlemmets globale status."
         }
       },
       "invite-customers": {
@@ -417,10 +429,6 @@
         "title": "Inviter kunder",
         "message": "Invitasjonsvarsler er lagt i kø"
       },
-      "invite-customers-error": {
-        "title": "Inviter kunder",
-        "message": "Noen invitasjoner ble ikke sendt på grunn av feil"
-      },
       "membership-delete": {
         "title": "Bekreft sletting",
         "message": "Er du sikker på at du vil slette det valgte medlemskapet/de valgte medlemskapene?"
@@ -476,6 +484,10 @@
         "title": "Selskapsstatuser",
         "description": "Rediger selskapsstatuser"
       },
+      "OrganizationMembershipStatuses": {
+        "title": "Organisasjonsmedlemskapsstatuser",
+        "description": "Rediger organisasjonsmedlemskapsstatuser"
+      },
       "VendorStatuses": {
         "title": "Leverandørstatuser",
         "description": "Rediger leverandørstatuser"
@@ -527,6 +539,18 @@
     "RegisterCompanyEmailNotification": {
       "displayName": "E-postvarsel om selskapsregistrering",
       "description": "Kunden mottar et e-postvarsel når selskapet deres har blitt registrert"
+    },
+    "CustomerInviteNewUserEmailNotification": {
+      "displayName": "E-postvarsel om kundeinvitasjon",
+      "description": "Den inviterte personen får et e-postvarsel med en registreringslenke når de blir invitert som ny kunde"
+    },
+    "OrganizationInviteNewUserEmailNotification": {
+      "displayName": "E-postvarsel om organisasjonsinvitasjon (ny bruker)",
+      "description": "Den inviterte personen får et e-postvarsel med en registreringslenke når de blir invitert til å bli med i en organisasjon for første gang"
+    },
+    "OrganizationInviteExistingUserEmailNotification": {
+      "displayName": "E-postvarsel om organisasjonsinvitasjon (eksisterende bruker)",
+      "description": "Den inviterte personen får et e-postvarsel når de blir invitert til å bli med i en annen organisasjon med sin eksisterende konto"
     }
   }
 }

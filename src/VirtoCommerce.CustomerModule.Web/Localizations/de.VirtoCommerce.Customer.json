@@ -288,13 +288,19 @@
           "type": "Typ",
           "organization": "Organisation",
           "roles": "Rollen",
-          "status": "Status",
-          "lockout-end": "Gesperrt bis"
+          "status": "Einladungsstatus",
+          "lockout-end": "Gesperrt bis",
+          "locked-state": "Sperrstatus"
         },
         "type-org": "Organisation",
         "type-global": "Global",
         "status-locked": "Gesperrt",
-        "status-active": "Aktiv"
+        "status-unlocked": "Entsperrt",
+        "status-approved": "Genehmigt",
+        "status-invited": "Eingeladen",
+        "status-rejected": "Abgelehnt",
+        "status-deleted": "Gelöscht",
+        "status-new": "Neu"
       },
       "organization-membership-detail": {
         "title-global": "Globale Mitgliedschaft",
@@ -304,13 +310,19 @@
           "organization": "Organisation",
           "type": "Typ",
           "roles": "Rollen",
-          "status": "Status",
+          "status": "Einladungsstatus",
+          "locked-state": "Sperrstatus",
           "lockout-end": "Gesperrt bis"
         },
         "placeholders": {
           "organization": "Organisation auswählen",
           "roles": "Rollen auswählen",
-          "lockout-end": "Datum auswählen"
+          "lockout-end": "Datum auswählen",
+          "status-inherited": "Vom Mitglied übernehmen"
+        },
+        "hints": {
+          "roles": "Rollen, die dem Mitglied innerhalb dieser Organisation zugewiesen sind, zusätzlich zu etwaigen globalen Rollen.",
+          "status": "Überschreibt den globalen Status des Mitglieds nur für diese Organisation. Leer lassen, um den globalen Status des Mitglieds zu verwenden."
         }
       },
       "invite-customers": {
@@ -417,10 +429,6 @@
         "title": "Kunden einladen",
         "message": "Einladungsbenachrichtigungen wurden erfolgreich in die Warteschlange gestellt"
       },
-      "invite-customers-error": {
-        "title": "Kunden einladen",
-        "message": "Einige Einladungen konnten aufgrund von Fehlern nicht gesendet werden"
-      },
       "membership-delete": {
         "title": "Löschen bestätigen",
         "message": "Sind Sie sicher, dass Sie die ausgewählten Mitgliedschaft(en) löschen möchten?"
@@ -476,6 +484,10 @@
         "title": "Unternehmensstatus",
         "description": "Unternehmensstatus bearbeiten"
       },
+      "OrganizationMembershipStatuses": {
+        "title": "Status der Organisationsmitgliedschaft",
+        "description": "Status der Organisationsmitgliedschaft bearbeiten"
+      },
       "VendorStatuses": {
         "title": "Anbieterstatus",
         "description": "Anbieterstatus bearbeiten"
@@ -527,6 +539,18 @@
     "RegisterCompanyEmailNotification": {
       "displayName": "E-Mail-Benachrichtigung zur Unternehmensregistrierung",
       "description": "Der Kunde erhält eine E-Mail-Benachrichtigung, wenn sein Unternehmen registriert wurde"
+    },
+    "CustomerInviteNewUserEmailNotification": {
+      "displayName": "E-Mail-Benachrichtigung zur Kundeneinladung",
+      "description": "Die eingeladene Person erhält eine E-Mail-Benachrichtigung mit einem Registrierungslink, wenn sie als neuer Kunde eingeladen wird"
+    },
+    "OrganizationInviteNewUserEmailNotification": {
+      "displayName": "E-Mail-Benachrichtigung zur Organisationseinladung (neuer Benutzer)",
+      "description": "Die eingeladene Person erhält eine E-Mail-Benachrichtigung mit einem Registrierungslink, wenn sie erstmals zu einer Organisation eingeladen wird"
+    },
+    "OrganizationInviteExistingUserEmailNotification": {
+      "displayName": "E-Mail-Benachrichtigung zur Organisationseinladung (bestehender Benutzer)",
+      "description": "Die eingeladene Person erhält eine E-Mail-Benachrichtigung, wenn sie mit ihrem bestehenden Konto zu einer weiteren Organisation eingeladen wird"
     }
   }
 }

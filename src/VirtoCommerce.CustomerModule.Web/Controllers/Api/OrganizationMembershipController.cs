@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
@@ -93,7 +94,21 @@ public class OrganizationMembershipController(
         [FromRoute] string id,
         [FromBody] OrganizationMembership membership)
     {
+        var existing = (await membershipService.GetAsync([id])).FirstOrDefault();
+        if (existing == null)
+        {
+            return NotFound();
+        }
+
+        if (!membership.Status.IsNullOrEmpty() &&
+            membership.Status != existing.Status &&
+            !ModuleConstants.MembershipStatuses.ManuallySelectableStatuses.Contains(membership.Status))
+        {
+            return BadRequest($"Status must be one of: {string.Join(", ", ModuleConstants.MembershipStatuses.ManuallySelectableStatuses)}.");
+        }
+
         membership.Id = id;
+
         await membershipService.SaveChangesAsync([membership]);
 
         return Ok(membership);

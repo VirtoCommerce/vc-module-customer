@@ -21,6 +21,8 @@ public class OrganizationMembershipEntity : AuditableEntity, IDataEntity<Organiz
 
     public DateTime? LockoutEnd { get; set; }
 
+    public string Status { get; set; }
+
     public virtual ObservableCollection<OrganizationMembershipRoleEntity> Roles { get; set; }
         = new NullCollection<OrganizationMembershipRoleEntity>();
 
@@ -36,6 +38,7 @@ public class OrganizationMembershipEntity : AuditableEntity, IDataEntity<Organiz
         model.OrganizationId = OrganizationId;
         model.IsLocked = IsLocked;
         model.LockoutEnd = LockoutEnd;
+        model.Status = Status;
         model.Roles = Roles.Select(r => r.ToModel(new OrganizationMembershipRole())).ToList();
 
         return model;
@@ -55,6 +58,7 @@ public class OrganizationMembershipEntity : AuditableEntity, IDataEntity<Organiz
         OrganizationId = model.OrganizationId;
         IsLocked = model.IsLocked;
         LockoutEnd = model.LockoutEnd;
+        Status = model.Status;
 
         if (model.Roles != null)
         {
@@ -76,6 +80,7 @@ public class OrganizationMembershipEntity : AuditableEntity, IDataEntity<Organiz
         target.OrganizationId = OrganizationId;
         target.IsLocked = IsLocked;
         target.LockoutEnd = LockoutEnd;
+        target.Status = Status;
 
         if (!Roles.IsNullCollection())
         {

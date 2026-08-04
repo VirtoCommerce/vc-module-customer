@@ -288,13 +288,19 @@
           "type": "Typ",
           "organization": "Organisation",
           "roles": "Roller",
-          "status": "Status",
-          "lockout-end": "Låst till"
+          "status": "Inbjudningsstatus",
+          "lockout-end": "Låst till",
+          "locked-state": "Låsstatus"
         },
         "type-org": "Organisation",
         "type-global": "Global",
         "status-locked": "Låst",
-        "status-active": "Aktiv"
+        "status-unlocked": "Olåst",
+        "status-approved": "Godkänd",
+        "status-invited": "Inbjuden",
+        "status-rejected": "Avvisad",
+        "status-deleted": "Raderad",
+        "status-new": "Ny"
       },
       "organization-membership-detail": {
         "title-global": "Globalt medlemskap",
@@ -304,13 +310,19 @@
           "organization": "Organisation",
           "type": "Typ",
           "roles": "Roller",
-          "status": "Status",
+          "status": "Inbjudningsstatus",
+          "locked-state": "Låsstatus",
           "lockout-end": "Låst till"
         },
         "placeholders": {
           "organization": "Välj organisation",
           "roles": "Välj roller",
-          "lockout-end": "Välj datum"
+          "lockout-end": "Välj datum",
+          "status-inherited": "Ärv från medlem"
+        },
+        "hints": {
+          "roles": "Roller tilldelade medlemmen inom denna organisation, utöver eventuella globala roller.",
+          "status": "Åsidosätter medlemmens globala status enbart för denna organisation. Lämna tomt för att använda medlemmens globala status."
         }
       },
       "invite-customers": {
@@ -417,10 +429,6 @@
         "title": "Bjud in kunder",
         "message": "Inbjudningsaviseringar har lagts i kö"
       },
-      "invite-customers-error": {
-        "title": "Bjud in kunder",
-        "message": "Vissa inbjudningar skickades inte på grund av fel. Visa felinformation för detaljer."
-      },
       "membership-delete": {
         "title": "Bekräfta borttagning",
         "message": "Är du säker på att du vill ta bort det/de valda medlemskapet/membri?"
@@ -476,6 +484,10 @@
         "title": "Företagsstatusar",
         "description": "Redigera företagsstatusar"
       },
+      "OrganizationMembershipStatuses": {
+        "title": "Statusar för organisationsmedlemskap",
+        "description": "Redigera statusar för organisationsmedlemskap"
+      },
       "VendorStatuses": {
         "title": "Leverantörsstatusar",
         "description": "Redigera leverantörsstatusar"
@@ -527,6 +539,18 @@
     "RegisterCompanyEmailNotification": {
       "displayName": "E-postmeddelande om företagsregistrering",
       "description": "Kunden får ett e-postmeddelande när deras företag har registrerats"
+    },
+    "CustomerInviteNewUserEmailNotification": {
+      "displayName": "E-postmeddelande om kundinbjudan",
+      "description": "Den inbjudna personen får ett e-postmeddelande med en registreringslänk när de bjuds in som ny kund"
+    },
+    "OrganizationInviteNewUserEmailNotification": {
+      "displayName": "E-postmeddelande om organisationsinbjudan (ny användare)",
+      "description": "Den inbjudna personen får ett e-postmeddelande med en registreringslänk när de bjuds in att gå med i en organisation för första gången"
+    },
+    "OrganizationInviteExistingUserEmailNotification": {
+      "displayName": "E-postmeddelande om organisationsinbjudan (befintlig användare)",
+      "description": "Den inbjudna personen får ett e-postmeddelande när de bjuds in att gå med i en annan organisation med sitt befintliga konto"
     }
   }
 }
