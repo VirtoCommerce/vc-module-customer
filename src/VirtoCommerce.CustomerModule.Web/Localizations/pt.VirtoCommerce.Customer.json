@@ -288,13 +288,19 @@
           "type": "Tipo",
           "organization": "Organização",
           "roles": "Funções",
-          "status": "Estado",
-          "lockout-end": "Bloqueado até"
+          "status": "Status do convite",
+          "lockout-end": "Bloqueado até",
+          "locked-state": "Estado de bloqueio"
         },
         "type-org": "Organização",
         "type-global": "Global",
         "status-locked": "Bloqueado",
-        "status-active": "Ativo"
+        "status-unlocked": "Desbloqueado",
+        "status-approved": "Aprovado",
+        "status-invited": "Convidado",
+        "status-rejected": "Rejeitado",
+        "status-deleted": "Excluído",
+        "status-new": "Novo"
       },
       "organization-membership-detail": {
         "title-global": "Associação global",
@@ -304,13 +310,19 @@
           "organization": "Organização",
           "type": "Tipo",
           "roles": "Funções",
-          "status": "Estado",
+          "status": "Status do convite",
+          "locked-state": "Estado de bloqueio",
           "lockout-end": "Bloqueado até"
         },
         "placeholders": {
           "organization": "Selecionar organização",
           "roles": "Selecionar funções",
-          "lockout-end": "Selecionar data"
+          "lockout-end": "Selecionar data",
+          "status-inherited": "Herdar do membro"
+        },
+        "hints": {
+          "roles": "Funções atribuídas ao membro dentro desta organização, além de quaisquer funções globais.",
+          "status": "Substitui o estado global do membro apenas para esta organização. Deixe em branco para usar o estado global do membro."
         }
       },
       "invite-customers": {
@@ -417,10 +429,6 @@
         "title": "Convidar clientes",
         "message": "As notificações de convite foram enfileiradas com sucesso"
       },
-      "invite-customers-error": {
-        "title": "Convidar clientes",
-        "message": "Alguns convites não foram enviados devido a erros"
-      },
       "membership-delete": {
         "title": "Confirmar exclusão",
         "message": "Tem certeza de que deseja excluir a(s) associação(ões) selecionada(s)?"
@@ -476,6 +484,10 @@
         "title": "Status das empresas",
         "description": "Editar status das empresas"
       },
+      "OrganizationMembershipStatuses": {
+        "title": "Status de membresia da organização",
+        "description": "Editar status de membresia da organização"
+      },
       "VendorStatuses": {
         "title": "Status dos fornecedores",
         "description": "Editar status dos fornecedores"
@@ -527,6 +539,18 @@
     "RegisterCompanyEmailNotification": {
       "displayName": "Notificação de email de registro da organização",
       "description": "O cliente recebe uma notificação por email quando sua empresa é registrada"
+    },
+    "CustomerInviteNewUserEmailNotification": {
+      "displayName": "Notificação de email de convite de cliente",
+      "description": "A pessoa convidada recebe uma notificação por email com um link de registro quando é convidada como novo cliente"
+    },
+    "OrganizationInviteNewUserEmailNotification": {
+      "displayName": "Notificação de email de convite para organização (novo usuário)",
+      "description": "A pessoa convidada recebe uma notificação por email com um link de registro quando é convidada a ingressar em uma organização pela primeira vez"
+    },
+    "OrganizationInviteExistingUserEmailNotification": {
+      "displayName": "Notificação de email de convite para organização (usuário existente)",
+      "description": "A pessoa convidada recebe uma notificação por email quando é convidada a ingressar em outra organização usando sua conta existente"
     }
   }
 }

@@ -205,6 +205,7 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
                 builder.ToAuditableEntityTable("CustomerOrganizationMembership");
                 builder.Property(x => x.UserId).HasMaxLength(IdLength).IsRequired();
                 builder.Property(x => x.OrganizationId).HasMaxLength(IdLength);
+                builder.Property(x => x.Status).HasMaxLength(Length64);
                 builder.HasIndex(x => new { x.UserId, x.OrganizationId })
                     .IsUnique()
                     .HasDatabaseName("IX_CustomerOrganizationMembership_UserId_OrganizationId");

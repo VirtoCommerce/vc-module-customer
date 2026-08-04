@@ -288,13 +288,19 @@
           "type": "类型",
           "organization": "组织",
           "roles": "角色",
-          "status": "状态",
-          "lockout-end": "锁定至"
+          "status": "邀请状态",
+          "lockout-end": "锁定至",
+          "locked-state": "锁定状态"
         },
         "type-org": "组织",
         "type-global": "全局",
         "status-locked": "已锁定",
-        "status-active": "活跃"
+        "status-unlocked": "未锁定",
+        "status-approved": "已批准",
+        "status-invited": "已邀请",
+        "status-rejected": "已拒绝",
+        "status-deleted": "已删除",
+        "status-new": "新建"
       },
       "organization-membership-detail": {
         "title-global": "全局成员资格",
@@ -304,13 +310,19 @@
           "organization": "组织",
           "type": "类型",
           "roles": "角色",
-          "status": "状态",
+          "status": "邀请状态",
+          "locked-state": "锁定状态",
           "lockout-end": "锁定至"
         },
         "placeholders": {
           "organization": "选择组织",
           "roles": "选择角色",
-          "lockout-end": "选择日期"
+          "lockout-end": "选择日期",
+          "status-inherited": "继承自成员"
+        },
+        "hints": {
+          "roles": "分配给该成员在此组织内的角色，作为其全局角色的补充。",
+          "status": "仅针对此组织覆盖该成员的全局状态。留空则使用该成员的全局状态。"
         }
       },
       "invite-customers": {
@@ -417,10 +429,6 @@
         "title": "邀请客户",
         "message": "邀请通知已成功加入队列"
       },
-      "invite-customers-error": {
-        "title": "邀请客户",
-        "message": "由于错误，部分邀请未能发送"
-      },
       "membership-delete": {
         "title": "确认删除",
         "message": "您确定要删除所选的成员资格吗？"
@@ -476,6 +484,10 @@
         "title": "公司状态",
         "description": "编辑公司状态"
       },
+      "OrganizationMembershipStatuses": {
+        "title": "组织成员身份状态",
+        "description": "编辑组织成员身份状态"
+      },
       "VendorStatuses": {
         "title": "供应商状态",
         "description": "编辑供应商状态"
@@ -527,6 +539,18 @@
     "RegisterCompanyEmailNotification": {
       "displayName": "组织注册电子邮件通知",
       "description": "客户在其公司注册时会收到电子邮件通知"
+    },
+    "CustomerInviteNewUserEmailNotification": {
+      "displayName": "客户邀请电子邮件通知",
+      "description": "受邀人在被邀请成为新客户时会收到带有注册链接的电子邮件通知"
+    },
+    "OrganizationInviteNewUserEmailNotification": {
+      "displayName": "组织邀请电子邮件通知（新用户）",
+      "description": "受邀人在首次被邀请加入某个组织时会收到带有注册链接的电子邮件通知"
+    },
+    "OrganizationInviteExistingUserEmailNotification": {
+      "displayName": "组织邀请电子邮件通知（现有用户）",
+      "description": "受邀人在使用现有账户被邀请加入另一个组织时会收到电子邮件通知"
     }
   }
 }

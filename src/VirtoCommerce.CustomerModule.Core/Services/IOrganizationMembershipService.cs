@@ -14,6 +14,8 @@ public interface IOrganizationMembershipService
 
     Task<OrganizationMembership> UnlockAsync(string id);
 
+    Task<OrganizationMembership> SetStatusAsync(string id, string status);
+
     [Obsolete("Use IOrganizationMembershipSearchService.SearchAsync instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
     new Task<OrganizationMembershipSearchResult> SearchAsync(OrganizationMembershipSearchCriteria criteria, bool clone = true);
 

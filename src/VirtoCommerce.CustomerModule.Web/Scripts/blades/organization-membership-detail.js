@@ -1,9 +1,9 @@
 angular.module('virtoCommerce.customerModule')
     .controller('virtoCommerce.customerModule.organizationMembershipDetailController',
-        ['$scope', 'platformWebApp.bladeNavigationService', 'platformWebApp.dialogService',
+        ['$scope', 'platformWebApp.bladeNavigationService', 'platformWebApp.dialogService', 'platformWebApp.settings',
          'virtoCommerce.customerModule.organizationMemberships', 'virtoCommerce.customerModule.organizations',
          'virtoCommerce.customerModule.rolesPickerService',
-        function ($scope, bladeNavigationService, dialogService,
+        function ($scope, bladeNavigationService, dialogService, settings,
                   organizationMemberships, organizations, rolesPickerService) {
             var blade = $scope.blade;
             blade.updatePermission = 'customer:update';
@@ -30,6 +30,25 @@ angular.module('virtoCommerce.customerModule')
             blade.availableRoles = [];
             blade.datepickers = {};
 
+            blade.statuses = [];
+            blade.openStatusSettingManagement = function (currentEntityId) {
+                var newBlade = {
+                    id: 'settingDetailChild',
+                    isApiSave: true,
+                    currentEntityId: currentEntityId,
+                    controller: 'platformWebApp.settingDictionaryController',
+                    template: '$(Platform)/Scripts/app/settings/blades/setting-dictionary.tpl.html'
+                };
+
+                bladeNavigationService.showBlade(newBlade, blade);
+            };
+
+            blade.loadStatuses = function (currentEntityId) {
+                settings.get({ id: currentEntityId }, function (data) {
+                    blade.statuses = [''].concat(data.allowedValues || []);
+                });
+            };
+
             blade.refresh = function () {
                 if (blade.isNew) {
                     blade.origEntity = {};
@@ -42,6 +61,7 @@ angular.module('virtoCommerce.customerModule')
                     blade.currentEntity = angular.copy(data);
                     blade.origEntity = angular.copy(data);
                     blade.isLoading = false;
+                    setToolbarCommands();
                 }, function () {
                     blade.isLoading = false;
                 });
@@ -163,6 +183,7 @@ angular.module('virtoCommerce.customerModule')
                         blade.currentEntity = result;
                         blade.origEntity = angular.copy(result);
                         blade.isLoading = false;
+                        setToolbarCommands();
                         blade.parentBlade.refresh();
                     },
                     function () { blade.isLoading = false; }
@@ -178,13 +199,14 @@ angular.module('virtoCommerce.customerModule')
                         blade.currentEntity = result;
                         blade.origEntity = angular.copy(result);
                         blade.isLoading = false;
+                        setToolbarCommands();
                         blade.parentBlade.refresh();
                     },
                     function () { blade.isLoading = false; }
                 );
             };
 
-            blade.toolbarCommands = [
+            var commands = [
                 {
                     name: 'platform.commands.save',
                     icon: 'fas fa-save',
@@ -205,20 +227,39 @@ angular.module('virtoCommerce.customerModule')
                     icon: 'fas fa-lock',
                     executeMethod: $scope.lockMembership,
                     canExecuteMethod: function () {
-                        return !blade.isNew && !blade.currentEntity.isLocked;
+                        return true;
                     },
-                    permission: blade.updatePermission
+                    permission: blade.updatePermission,
+                    meta: 'Locked'
                 },
                 {
                     name: 'customer.commands.unlock',
                     icon: 'fas fa-lock-open',
                     executeMethod: $scope.unlockMembership,
                     canExecuteMethod: function () {
-                        return !blade.isNew && blade.currentEntity.isLocked;
+                        return true;
                     },
-                    permission: blade.updatePermission
+                    permission: blade.updatePermission,
+                    meta: 'Unlocked'
                 }
             ];
 
+            function setToolbarCommands() {
+                var lockedState = !blade.isNew && blade.currentEntity.isLocked ? 'Locked' : 'Unlocked';
+
+                blade.toolbarCommands = commands.filter(function (c) {
+                    if (blade.isNew && (c.name === 'customer.commands.lock' || c.name === 'customer.commands.unlock')) {
+                        return false;
+                    }
+
+                    return !c.meta || c.meta !== lockedState;
+                });
+            }
+
+            setToolbarCommands();
             blade.refresh();
+
+            if (!blade.isNew) {
+                blade.loadStatuses('Customer.OrganizationMembershipStatuses');
+            }
         }]);

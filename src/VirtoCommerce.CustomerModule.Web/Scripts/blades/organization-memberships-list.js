@@ -171,6 +171,14 @@ angular.module('virtoCommerce.customerModule')
                         cellFilter: 'date:"mediumDate"',
                         width: 140,
                         visible: false
+                    },
+                    {
+                        name: 'isLocked',
+                        displayName: 'customer.blades.organization-memberships-list.labels.locked-state',
+                        cellTemplate: 'org-memberships-locked-state.cell.html',
+                        width: 110,
+                        enableSorting: false,
+                        visible: false
                     }
                 ]
             }, function (gridApi) { });

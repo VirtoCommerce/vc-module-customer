@@ -30,6 +30,7 @@ using VirtoCommerce.CustomerModule.Data.SqlServer;
 using VirtoCommerce.CustomerModule.Data.Validation;
 using VirtoCommerce.CustomerModule.Web.Authorization;
 using VirtoCommerce.NotificationsModule.Core.Services;
+using VirtoCommerce.NotificationsModule.TemplateLoader.FileSystem;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using VirtoCommerce.Platform.Core.Events;
@@ -216,6 +217,14 @@ namespace VirtoCommerce.CustomerModule.Web
 
             var notificationRegistrar = appBuilder.ApplicationServices.GetService<INotificationRegistrar>();
             notificationRegistrar.RegisterNotification<RegisterCompanyEmailNotification>();
+
+            var defaultNotificationTemplatesDirectory = Path.Combine(ModuleInfo.FullPhysicalPath, "NotificationTemplates");
+            notificationRegistrar.RegisterNotification<OrganizationInviteExistingUserEmailNotification>()
+                .WithTemplatesFromPath(defaultNotificationTemplatesDirectory);
+            notificationRegistrar.RegisterNotification<OrganizationInviteNewUserEmailNotification>()
+                .WithTemplatesFromPath(defaultNotificationTemplatesDirectory);
+            notificationRegistrar.RegisterNotification<CustomerInviteNewUserEmailNotification>()
+                .WithTemplatesFromPath(defaultNotificationTemplatesDirectory);
         }
 
         public void Uninstall()

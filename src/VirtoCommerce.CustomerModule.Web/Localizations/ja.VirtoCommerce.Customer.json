@@ -288,13 +288,19 @@
           "type": "タイプ",
           "organization": "組織",
           "roles": "役割",
-          "status": "状態",
-          "lockout-end": "ロック解除日"
+          "status": "招待ステータス",
+          "lockout-end": "ロック解除日",
+          "locked-state": "ロック状態"
         },
         "type-org": "組織",
         "type-global": "グローバル",
         "status-locked": "ロック済み",
-        "status-active": "アクティブ"
+        "status-unlocked": "ロック解除済み",
+        "status-approved": "承認済み",
+        "status-invited": "招待済み",
+        "status-rejected": "拒否済み",
+        "status-deleted": "削除済み",
+        "status-new": "新規"
       },
       "organization-membership-detail": {
         "title-global": "グローバルメンバーシップ",
@@ -304,13 +310,19 @@
           "organization": "組織",
           "type": "タイプ",
           "roles": "役割",
-          "status": "状態",
+          "status": "招待ステータス",
+          "locked-state": "ロック状態",
           "lockout-end": "ロック解除日"
         },
         "placeholders": {
           "organization": "組織を選択",
           "roles": "役割を選択",
-          "lockout-end": "日付を選択"
+          "lockout-end": "日付を選択",
+          "status-inherited": "メンバーから継承"
+        },
+        "hints": {
+          "roles": "このメンバーがこの組織内で持つ役割です。グローバルな役割に加えて適用されます。",
+          "status": "この設定は、この組織内でのみメンバーのグローバルステータスを上書きします。空のままにすると、メンバーのグローバルステータスが使用されます。"
         }
       },
       "invite-customers": {
@@ -417,10 +429,6 @@
         "title": "顧客を招待",
         "message": "招待通知は正常にキューに追加されました"
       },
-      "invite-customers-error": {
-        "title": "顧客を招待",
-        "message": "エラーのため、一部の招待が送信されませんでした"
-      },
       "membership-delete": {
         "title": "削除の確認",
         "message": "選択したメンバーシップを削除してもよろしいですか？"
@@ -476,6 +484,10 @@
         "title": "会社のステータス",
         "description": "会社のステータスを編集"
       },
+      "OrganizationMembershipStatuses": {
+        "title": "組織メンバーシップのステータス",
+        "description": "組織メンバーシップのステータスを編集"
+      },
       "VendorStatuses": {
         "title": "ベンダーのステータス",
         "description": "ベンダーのステータスを編集"
@@ -527,6 +539,18 @@
     "RegisterCompanyEmailNotification": {
       "displayName": "組織登録メール通知",
       "description": "顧客は、彼の会社が登録されたときにメール通知を受け取ります"
+    },
+    "CustomerInviteNewUserEmailNotification": {
+      "displayName": "顧客招待メール通知",
+      "description": "新規顧客として招待された場合、招待された人は登録リンク付きのメール通知を受け取ります"
+    },
+    "OrganizationInviteNewUserEmailNotification": {
+      "displayName": "組織招待メール通知(新規ユーザー)",
+      "description": "初めて組織に参加するよう招待された場合、招待された人は登録リンク付きのメール通知を受け取ります"
+    },
+    "OrganizationInviteExistingUserEmailNotification": {
+      "displayName": "組織招待メール通知(既存ユーザー)",
+      "description": "既存のアカウントで別の組織に参加するよう招待された場合、招待された人はメール通知を受け取ります"
     }
   }
 }

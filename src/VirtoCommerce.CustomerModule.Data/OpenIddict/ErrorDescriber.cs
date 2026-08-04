@@ -20,6 +20,27 @@ public static class ErrorDescriber
         ErrorDescription = $"Your access to organization '{organizationId}' has been blocked. Please contact your organization administrator.",
     };
 
+    public static TokenResponse UserInvitationPendingInOrganization(string organizationId) => new()
+    {
+        Error = Errors.InvalidGrant,
+        Code = nameof(UserInvitationPendingInOrganization).ToSnakeCase(),
+        ErrorDescription = $"Your invitation to organization '{organizationId}' has not been accepted yet.",
+    };
+
+    public static TokenResponse UserIsRejectedInOrganization(string organizationId) => new()
+    {
+        Error = Errors.InvalidGrant,
+        Code = nameof(UserIsRejectedInOrganization).ToSnakeCase(),
+        ErrorDescription = $"Your access to organization '{organizationId}' has been rejected. Please contact your organization administrator.",
+    };
+
+    public static TokenResponse UserIsRemovedFromOrganization(string organizationId) => new()
+    {
+        Error = Errors.InvalidGrant,
+        Code = nameof(UserIsRemovedFromOrganization).ToSnakeCase(),
+        ErrorDescription = $"Your access to organization '{organizationId}' has been removed.",
+    };
+
     public static TokenResponse UserIsLockedOut() => new()
     {
         Error = Errors.InvalidGrant,

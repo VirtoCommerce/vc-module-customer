@@ -288,13 +288,19 @@
           "type": "Tyyppi",
           "organization": "Organisaatio",
           "roles": "Roolit",
-          "status": "Tila",
-          "lockout-end": "Lukittu asti"
+          "status": "Kutsun tila",
+          "lockout-end": "Lukittu asti",
+          "locked-state": "Lukitustila"
         },
         "type-org": "Organisaatio",
         "type-global": "Globaali",
         "status-locked": "Lukittu",
-        "status-active": "Aktiivinen"
+        "status-unlocked": "Lukitsematon",
+        "status-approved": "Hyväksytty",
+        "status-invited": "Kutsuttu",
+        "status-rejected": "Hylätty",
+        "status-deleted": "Poistettu",
+        "status-new": "Uusi"
       },
       "organization-membership-detail": {
         "title-global": "Globaali jäsenyys",
@@ -304,13 +310,19 @@
           "organization": "Organisaatio",
           "type": "Tyyppi",
           "roles": "Roolit",
-          "status": "Tila",
+          "status": "Kutsun tila",
+          "locked-state": "Lukitustila",
           "lockout-end": "Lukittu asti"
         },
         "placeholders": {
           "organization": "Valitse organisaatio",
           "roles": "Valitse roolit",
-          "lockout-end": "Valitse päivämäärä"
+          "lockout-end": "Valitse päivämäärä",
+          "status-inherited": "Peritään jäseneltä"
+        },
+        "hints": {
+          "roles": "Jäsenelle tämän organisaation sisällä määritetyt roolit, mahdollisten globaalien roolien lisäksi.",
+          "status": "Ohittaa jäsenen globaalin tilan vain tässä organisaatiossa. Jätä tyhjäksi käyttääksesi jäsenen globaalia tilaa."
         }
       },
       "invite-customers": {
@@ -417,10 +429,6 @@
         "title": "Kutsu asiakkaita",
         "message": "Kutsuilmoitukset on lisätty jonoon onnistuneesti"
       },
-      "invite-customers-error": {
-        "title": "Kutsu asiakkaita",
-        "message": "Osa kutsuista ei lähetetty virheiden vuoksi. Katso lisätietoja virheistä."
-      },
       "membership-delete": {
         "title": "Vahvista poisto",
         "message": "Haluatko varmasti poistaa valitun jäsenyyden/valitut jäsenyydet?"
@@ -476,6 +484,10 @@
         "title": "Yritysten tilat",
         "description": "Muokkaa yritysten tiloja"
       },
+      "OrganizationMembershipStatuses": {
+        "title": "Organisaation jäsenyyden tilat",
+        "description": "Muokkaa organisaation jäsenyyden tiloja"
+      },
       "VendorStatuses": {
         "title": "Toimittajien tilat",
         "description": "Muokkaa toimittajien tiloja"
@@ -527,6 +539,18 @@
     "RegisterCompanyEmailNotification": {
       "displayName": "Yrityksen rekisteröintisähköposti-ilmoitus",
       "description": "Asiakas saa sähköposti-ilmoituksen, kun hänen yrityksensä on rekisteröity"
+    },
+    "CustomerInviteNewUserEmailNotification": {
+      "displayName": "Asiakaskutsun sähköposti-ilmoitus",
+      "description": "Kutsuttu henkilö saa sähköposti-ilmoituksen rekisteröitymislinkillä, kun hänet kutsutaan uudeksi asiakkaaksi"
+    },
+    "OrganizationInviteNewUserEmailNotification": {
+      "displayName": "Organisaatiokutsun sähköposti-ilmoitus (uusi käyttäjä)",
+      "description": "Kutsuttu henkilö saa sähköposti-ilmoituksen rekisteröitymislinkillä, kun hänet kutsutaan liittymään organisaatioon ensimmäistä kertaa"
+    },
+    "OrganizationInviteExistingUserEmailNotification": {
+      "displayName": "Organisaatiokutsun sähköposti-ilmoitus (nykyinen käyttäjä)",
+      "description": "Kutsuttu henkilö saa sähköposti-ilmoituksen, kun hänet kutsutaan liittymään toiseen organisaatioon nykyisellä tilillään"
     }
   }
 }
