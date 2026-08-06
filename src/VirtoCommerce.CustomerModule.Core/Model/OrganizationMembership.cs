@@ -17,9 +17,21 @@ public class OrganizationMembership : AuditableEntity, ICloneable
 
     public DateTime? LockoutEnd { get; set; }
 
+    public string Status { get; set; }
+
     public bool IsCurrentlyLocked => IsLocked && (!LockoutEnd.HasValue || LockoutEnd.Value > DateTime.UtcNow);
 
     public IList<OrganizationMembershipRole> Roles { get; set; } = [];
+
+    public static string ResolveEffectiveStatus(string membershipStatus, string memberStatus)
+    {
+        if (!string.IsNullOrEmpty(membershipStatus))
+        {
+            return membershipStatus;
+        }
+
+        return !string.IsNullOrEmpty(memberStatus) ? memberStatus : ModuleConstants.MembershipStatuses.Approved;
+    }
 
     public virtual object Clone()
     {

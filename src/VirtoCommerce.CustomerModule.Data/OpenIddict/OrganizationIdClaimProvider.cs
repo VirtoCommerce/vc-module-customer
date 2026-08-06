@@ -5,6 +5,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
+using VirtoCommerce.CustomerModule.Core;
+using VirtoCommerce.CustomerModule.Core.Extensions;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.Platform.Core;
@@ -34,47 +36,51 @@ public class OrganizationIdClaimProvider(
 
     private async Task AddOrgScopedPermissionsAsync(ClaimsPrincipal principal, string userId, string memberId, string organizationId)
     {
-        // At most one membership per (userId, organizationId) — enforced by IX_CustomerOrganizationMembership_UserId_OrganizationId
-        var membership = (await organizationMembershipSearchService.SearchAsync(new OrganizationMembershipSearchCriteria
-        {
-            UserId = userId,
-            OrganizationId = organizationId,
-            Take = 1,
-        })).Results.FirstOrDefault();
-
-        if (membership?.IsCurrentlyLocked == true)
-        {
-            return;
-        }
-
-        // Without an explicit membership row, verify via the contact's Organizations list to prevent
-        // privilege escalation when an arbitrary organizationId is passed in the token request
-        if (membership == null && !await IsContactMemberOfOrgAsync(memberId, organizationId))
-        {
-            return;
-        }
-
         if (principal.Identity is not ClaimsIdentity identity)
         {
             return;
         }
 
-        var orgScopedRoles = await organizationMembershipSearchService.GetRolesByUserAndOrgAsync(organizationId, membership);
-
-        if (orgScopedRoles.Count == 0)
+        var roleIds = await GetOrgScopedRoleIdsAsync(userId, memberId, organizationId);
+        if (roleIds.Count == 0)
         {
             return;
         }
 
-        var allRoleIds = orgScopedRoles.Select(r => r.RoleId).ToList();
-
-        // Collect permissions already present in the token (from global roles) to avoid duplicates
         var existingPermissions = principal.Claims
             .Where(c => c.Type == PlatformConstants.Security.Claims.PermissionClaimType)
             .Select(c => c.Value)
             .ToHashSet();
 
-        await AddRolePermissionsAsync(identity, allRoleIds, existingPermissions);
+        await AddRolePermissionsAsync(identity, roleIds, existingPermissions);
+    }
+
+    private async Task<IList<string>> GetOrgScopedRoleIdsAsync(string userId, string memberId, string organizationId)
+    {
+        var membership = await organizationMembershipSearchService.GetMembershipAsync(userId, organizationId);
+
+        if (membership?.IsCurrentlyLocked == true)
+        {
+            return [];
+        }
+
+        var member = string.IsNullOrEmpty(memberId) ? null : await memberService.GetByIdAsync(memberId);
+
+        var effectiveStatus = OrganizationMembership.ResolveEffectiveStatus(membership?.Status, member?.Status);
+        if (ModuleConstants.MembershipStatuses.IsBlocking(effectiveStatus))
+        {
+            return [];
+        }
+
+        var isMemberOfOrg = (member as IHasOrganizations)?.Organizations?.ContainsIgnoreCase(organizationId) == true;
+        if (membership == null && !isMemberOfOrg)
+        {
+            return [];
+        }
+
+        var orgScopedRoles = await organizationMembershipSearchService.GetRolesByUserAndOrgAsync(organizationId, membership);
+
+        return orgScopedRoles.Select(r => r.RoleId).ToList();
     }
 
     private async Task AddRolePermissionsAsync(ClaimsIdentity identity, IList<string> roleIds, HashSet<string> existingPermissions)
@@ -101,18 +107,6 @@ public class OrganizationIdClaimProvider(
                         .SetDestinations(OpenIddictConstants.Destinations.AccessToken));
             }
         }
-    }
-
-    private async Task<bool> IsContactMemberOfOrgAsync(string memberId, string organizationId)
-    {
-        if (string.IsNullOrEmpty(memberId))
-        {
-            return false;
-        }
-
-        var contact = await memberService.GetByIdAsync(memberId) as IHasOrganizations;
-
-        return contact?.Organizations?.ContainsIgnoreCase(organizationId) == true;
     }
 
     private async Task<string> GetOrganizationId(TokenRequestContext context)
@@ -142,27 +136,6 @@ public class OrganizationIdClaimProvider(
 
         var member = await memberService.GetByIdAsync(memberId);
 
-        return member switch
-        {
-            IHasOrganizations contact => GetContactOrganizationId(contact),
-            _ => null,
-        };
-    }
-
-    private static string GetContactOrganizationId(IHasOrganizations contact)
-    {
-        var organizations = contact.Organizations ?? [];
-
-        if (!contact.CurrentOrganizationId.IsNullOrEmpty() && organizations.ContainsIgnoreCase(contact.CurrentOrganizationId))
-        {
-            return contact.CurrentOrganizationId;
-        }
-
-        if (!contact.DefaultOrganizationId.IsNullOrEmpty() && organizations.ContainsIgnoreCase(contact.DefaultOrganizationId))
-        {
-            return contact.DefaultOrganizationId;
-        }
-
-        return organizations.FirstOrDefault();
+        return await OrganizationAccessResolver.ResolveOrganizationIdAsync(organizationMembershipSearchService, context.User?.Id, member);
     }
 }

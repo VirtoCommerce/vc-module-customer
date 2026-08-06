@@ -202,13 +202,6 @@ angular.module('virtoCommerce.customerModule').controller('virtoCommerce.custome
                                     errorData.data.errors = data.errors.map(err => err.description);
                                 }
                                 bladeNavigationService.setError(errorData, blade);
-
-                                var errorDialog = {
-                                    id: 'errosInviteCustomers',
-                                    title: 'customer.dialogs.invite-customers-error.title',
-                                    message: 'customer.dialogs.invite-customers-error.message'
-                                };
-                                dialogService.showErrorDialog(errorDialog);
                             }
                             else {
                                 var successDialog = {

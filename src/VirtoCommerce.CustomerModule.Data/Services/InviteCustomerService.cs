@@ -7,7 +7,10 @@ using System.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using VirtoCommerce.CustomerModule.Core;
+using VirtoCommerce.CustomerModule.Core.Extensions;
 using VirtoCommerce.CustomerModule.Core.Model;
+using VirtoCommerce.CustomerModule.Core.Notifications;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.NotificationsModule.Core.Extensions;
 using VirtoCommerce.NotificationsModule.Core.Services;
@@ -29,6 +32,8 @@ public class InviteCustomerService : IInviteCustomerService
 
     public virtual string InvitationUrlSuffix => "/confirm-invitation";
 
+    public virtual string ExistingUserInviteUrlSuffix => "/account/dashboard";
+
     private readonly IMemberService _memberService;
     private readonly IStoreService _storeService;
     private readonly INotificationSearchService _notificationSearchService;
@@ -36,6 +41,7 @@ public class InviteCustomerService : IInviteCustomerService
     private readonly Func<UserManager<ApplicationUser>> _userManagerFactory;
     private readonly Func<RoleManager<Role>> _roleManagerFactory;
     private readonly IOrganizationMembershipService _organizationMembershipService;
+    private readonly IOrganizationMembershipSearchService _organizationMembershipSearchService;
     private readonly ILogger<InviteCustomerService> _logger;
 
     public InviteCustomerService(
@@ -46,6 +52,7 @@ public class InviteCustomerService : IInviteCustomerService
         Func<UserManager<ApplicationUser>> userManagerFactory,
         Func<RoleManager<Role>> roleManagerFactory,
         IOrganizationMembershipService organizationMembershipService,
+        IOrganizationMembershipSearchService organizationMembershipSearchService,
         ILogger<InviteCustomerService> logger)
     {
         _memberService = memberService;
@@ -55,6 +62,7 @@ public class InviteCustomerService : IInviteCustomerService
         _userManagerFactory = userManagerFactory;
         _roleManagerFactory = roleManagerFactory;
         _organizationMembershipService = organizationMembershipService;
+        _organizationMembershipSearchService = organizationMembershipSearchService;
         _logger = logger;
     }
 
@@ -65,7 +73,6 @@ public class InviteCustomerService : IInviteCustomerService
             Errors = new List<InviteCustomerError>(),
         };
 
-        // request validation
         if (request == null || request.Emails.IsNullOrEmpty())
         {
             result.Errors.Add(new InviteCustomerError
@@ -77,7 +84,6 @@ public class InviteCustomerService : IInviteCustomerService
             return result;
         }
 
-        // store validation
         var storeResult = await GetStoreAsync(request.StoreId);
         if (storeResult.Errors.Count != 0)
         {
@@ -88,7 +94,6 @@ public class InviteCustomerService : IInviteCustomerService
 
         var store = storeResult.Store;
 
-        // roles validation
         var rolesResult = await GetRolesAsync(request.RoleIds);
         if (rolesResult.Errors.Count != 0)
         {
@@ -97,8 +102,7 @@ public class InviteCustomerService : IInviteCustomerService
             return result;
         }
 
-        // notification validation
-        var notificationResult = await TryGetNotification(request, store);
+        var notificationResult = await TryGetNotification(GetNewUserNotificationType(request), store);
         if (notificationResult.Errors.Count != 0)
         {
             result.Errors.AddRange(notificationResult.Errors);
@@ -106,19 +110,46 @@ public class InviteCustomerService : IInviteCustomerService
             return result;
         }
 
+        NotificationResult existingUserNotificationResult = null;
+        if (!string.IsNullOrEmpty(request.OrganizationId))
+        {
+            existingUserNotificationResult = await TryGetNotification(
+                typeof(OrganizationInviteExistingUserEmailNotification).Name, store);
+
+            if (existingUserNotificationResult.Errors.Count != 0)
+            {
+                result.Errors.AddRange(existingUserNotificationResult.Errors);
+
+                return result;
+            }
+        }
+
+        var organizationName = string.IsNullOrEmpty(request.OrganizationId) ? null : await GetOrganizationName(request.OrganizationId);
+
         using var userManager = _userManagerFactory();
         foreach (var email in request.Emails.Distinct())
         {
             var existingUser = await userManager.FindByEmailAsync(email) ?? await userManager.FindByNameAsync(email);
             if (existingUser != null)
             {
-                result.Errors.Add(new InviteCustomerError
+                if (string.IsNullOrEmpty(request.OrganizationId))
                 {
-                    Code = "UserAlreadyExists",
-                    Description = $"User with email '{email}' already exists",
-                    Parameter = email,
-                    Email = email,
-                });
+                    result.Errors.Add(new InviteCustomerError
+                    {
+                        Code = "UserAlreadyExists",
+                        Description = $"User with email '{email}' already exists",
+                        Parameter = email,
+                        Email = email,
+                    });
+
+                    continue;
+                }
+
+                var membershipErrors = await InviteExistingUserToOrganization(
+                    existingUser, request, rolesResult.Roles, existingUserNotificationResult?.Notification, store, organizationName);
+
+                result.Errors.AddRange(membershipErrors);
+                result.Succeeded |= membershipErrors.Count == 0;
 
                 continue;
             }
@@ -131,12 +162,13 @@ public class InviteCustomerService : IInviteCustomerService
 
             if (identityResult.Succeeded)
             {
-                if (!string.IsNullOrEmpty(request.OrganizationId) && rolesResult.Roles.Count > 0)
+                if (!string.IsNullOrEmpty(request.OrganizationId))
                 {
-                    await CreateOrganizationMembershipAsync(user, request.OrganizationId, rolesResult.Roles);
+                    await CreateOrganizationMembershipAsync(
+                        user, request.OrganizationId, rolesResult.Roles, ModuleConstants.MembershipStatuses.Invited);
                 }
 
-                var notificationErrors = await SendNotificationAsync(notificationResult.Notification, userManager, user, request, store);
+                var notificationErrors = await SendNotificationAsync(notificationResult.Notification, userManager, user, request, store, organizationName);
                 if (notificationErrors.Count != 0)
                 {
                     identityResult = IdentityResult.Failed();
@@ -161,6 +193,80 @@ public class InviteCustomerService : IInviteCustomerService
         return result;
     }
 
+    public virtual async Task<InviteCustomerResult> RevokeInviteAsync(string membershipId, CancellationToken cancellationToken = default)
+    {
+        var result = new InviteCustomerResult { Errors = new List<InviteCustomerError>() };
+
+        var membership = await GetPendingInvite(membershipId, result);
+        if (membership == null)
+        {
+            return result;
+        }
+
+        await _organizationMembershipService.SetStatusAsync(membership.Id, ModuleConstants.MembershipStatuses.Deleted);
+
+        result.Succeeded = true;
+
+        return result;
+    }
+
+    public virtual async Task<InviteCustomerResult> ResendInviteAsync(ResendInviteRequest request, CancellationToken cancellationToken = default)
+    {
+        var result = new InviteCustomerResult { Errors = new List<InviteCustomerError>() };
+
+        var membership = await GetPendingInvite(request.MembershipId, result);
+        if (membership == null)
+        {
+            return result;
+        }
+
+        using var userManager = _userManagerFactory();
+        var user = await userManager.FindByIdAsync(membership.UserId);
+        if (user == null)
+        {
+            result.Errors.Add(new InviteCustomerError { Code = "UserNotFound", Description = "Invited user not found" });
+            return result;
+        }
+
+        var storeResult = await GetStoreAsync(user.StoreId);
+        if (storeResult.Errors.Count != 0)
+        {
+            result.Errors.AddRange(storeResult.Errors);
+            return result;
+        }
+
+        var inviteRequest = new InviteCustomerRequest
+        {
+            StoreId = user.StoreId,
+            OrganizationId = membership.OrganizationId,
+            UrlSuffix = request.UrlSuffix,
+            Message = request.Message,
+        };
+
+        var isExistingUser = !string.IsNullOrEmpty(user.PasswordHash) || (await userManager.GetLoginsAsync(user)).Count > 0;
+
+        var notificationResult = await TryGetNotification(
+            isExistingUser ? typeof(OrganizationInviteExistingUserEmailNotification).Name : GetNewUserNotificationType(inviteRequest),
+            storeResult.Store);
+
+        if (notificationResult.Errors.Count != 0)
+        {
+            result.Errors.AddRange(notificationResult.Errors);
+            return result;
+        }
+
+        var organizationName = string.IsNullOrEmpty(inviteRequest.OrganizationId) ? null : await GetOrganizationName(inviteRequest.OrganizationId);
+
+        var notificationErrors = isExistingUser
+            ? await SendExistingUserInviteNotification(notificationResult.Notification, user, inviteRequest, storeResult.Store, organizationName)
+            : await SendNotificationAsync(notificationResult.Notification, userManager, user, inviteRequest, storeResult.Store, organizationName);
+
+        result.Errors.AddRange(notificationErrors);
+        result.Succeeded = notificationErrors.Count == 0;
+
+        return result;
+    }
+
     public async Task<IList<CustomerRole>> GetInviteRolesAsync()
     {
         using var roleManager = _roleManagerFactory();
@@ -170,6 +276,24 @@ public class InviteCustomerService : IInviteCustomerService
 
         var customerRoles = roles.Select(MapCustomerRole).ToList();
         return customerRoles;
+    }
+
+    protected virtual async Task<OrganizationMembership> GetPendingInvite(string membershipId, InviteCustomerResult result)
+    {
+        var membership = (await _organizationMembershipService.GetAsync([membershipId])).FirstOrDefault();
+        if (membership == null || membership.Status != ModuleConstants.MembershipStatuses.Invited)
+        {
+            result.Errors.Add(new InviteCustomerError
+            {
+                Code = "InviteNotFound",
+                Description = "Pending invite not found",
+                Parameter = membershipId,
+            });
+
+            return null;
+        }
+
+        return membership;
     }
 
     protected virtual Contact CreateContact(InviteCustomerRequest request, string email)
@@ -211,12 +335,141 @@ public class InviteCustomerService : IInviteCustomerService
         return user;
     }
 
-    protected virtual async Task CreateOrganizationMembershipAsync(ApplicationUser user, string organizationId, List<Role> roles)
+    protected virtual async Task<List<InviteCustomerError>> InviteExistingUserToOrganization(
+        ApplicationUser existingUser,
+        InviteCustomerRequest request,
+        List<Role> roles,
+        RegistrationInvitationNotificationBase notification,
+        Store store,
+        string organizationName)
+    {
+        var existingMembership = await _organizationMembershipSearchService.GetMembershipAsync(existingUser.Id, request.OrganizationId);
+
+        if (existingMembership != null)
+        {
+            if (!ModuleConstants.MembershipStatuses.ReinvitableStatuses.Contains(existingMembership.Status))
+            {
+                return [CreateAlreadyMemberOfOrganizationError(existingUser.Email, request.OrganizationId)];
+            }
+
+            await ReinviteExistingMembership(existingMembership, roles);
+        }
+        else
+        {
+            try
+            {
+                await CreateOrganizationMembershipAsync(existingUser, request.OrganizationId, roles, ModuleConstants.MembershipStatuses.Invited);
+            }
+            catch (Exception ex) when (IsDuplicateMembershipException(ex))
+            {
+                return [CreateAlreadyMemberOfOrganizationError(existingUser.Email, request.OrganizationId)];
+            }
+        }
+
+        await AddOrganizationToContact(existingUser.MemberId, request.OrganizationId);
+
+        return await SendExistingUserInviteNotification(notification, existingUser, request, store, organizationName);
+    }
+
+    protected virtual async Task<List<InviteCustomerError>> SendExistingUserInviteNotification(
+        RegistrationInvitationNotificationBase notification, ApplicationUser existingUser, InviteCustomerRequest request, Store store, string organizationName)
+    {
+        try
+        {
+            var urlSuffix = ExistingUserInviteUrlSuffix;
+            if (!IsValidUrlSuffix(urlSuffix))
+            {
+                return
+                [
+                    new InviteCustomerError
+                    {
+                        Code = "InvalidUrlSuffix",
+                        Description = "UrlSuffix must be a relative path.",
+                        Parameter = urlSuffix,
+                    }
+                ];
+            }
+
+            notification.InviteUrl = $"{store.Url.TrimLastSlash()}{urlSuffix.NormalizeUrlSuffix()}";
+
+            AddAdditionalParams(request, notification);
+
+            notification.Message = request.Message;
+            notification.To = existingUser.Email;
+            notification.From = store.Email;
+            notification.LanguageCode = request.CultureName ?? store.DefaultLanguage;
+
+            if (notification is OrganizationInviteExistingUserEmailNotification existingUserNotification)
+            {
+                existingUserNotification.OrganizationName = organizationName;
+                existingUserNotification.CustomerName = await GetContactName(existingUser.MemberId);
+            }
+
+            await _notificationSender.ScheduleSendNotificationAsync(notification);
+
+            return [];
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending invitation notification to '{email}'", existingUser.Email);
+
+            return
+            [
+                new InviteCustomerError
+                {
+                    Code = "NotificationSendError",
+                    Description = $"Error sending invitation notification to '{existingUser.Email}'. Check Notification Feed.",
+                    Email = existingUser.Email,
+                }
+            ];
+        }
+    }
+
+    protected virtual async Task AddOrganizationToContact(string memberId, string organizationId)
+    {
+        if (string.IsNullOrEmpty(memberId))
+        {
+            return;
+        }
+
+        if (await _memberService.GetByIdAsync(memberId) is not Contact contact)
+        {
+            return;
+        }
+
+        contact.Organizations ??= [];
+
+        if (!contact.Organizations.Contains(organizationId, StringComparer.OrdinalIgnoreCase))
+        {
+            contact.Organizations.Add(organizationId);
+            await _memberService.SaveChangesAsync([contact]);
+        }
+    }
+
+    protected virtual async Task CreateOrganizationMembershipAsync(ApplicationUser user, string organizationId, List<Role> roles, string status = null)
     {
         var membership = AbstractTypeFactory<OrganizationMembership>.TryCreateInstance();
         membership.UserId = user.Id;
         membership.OrganizationId = organizationId;
-        membership.Roles = roles
+        membership.Status = status;
+        membership.Roles = BuildMembershipRoles(roles);
+
+        await _organizationMembershipService.SaveChangesAsync([membership]);
+    }
+
+    protected virtual async Task ReinviteExistingMembership(OrganizationMembership membership, List<Role> roles)
+    {
+        membership.Status = ModuleConstants.MembershipStatuses.Invited;
+        membership.IsLocked = false;
+        membership.LockoutEnd = null;
+        membership.Roles = BuildMembershipRoles(roles);
+
+        await _organizationMembershipService.SaveChangesAsync([membership]);
+    }
+
+    protected virtual List<OrganizationMembershipRole> BuildMembershipRoles(List<Role> roles)
+    {
+        return roles
             .Select(r =>
             {
                 var membershipRole = AbstractTypeFactory<OrganizationMembershipRole>.TryCreateInstance();
@@ -225,8 +478,6 @@ public class InviteCustomerService : IInviteCustomerService
                 return membershipRole;
             })
             .ToList();
-
-        await _organizationMembershipService.SaveChangesAsync([membership]);
     }
 
     protected virtual async Task<StoreResult> GetStoreAsync(string storeId)
@@ -298,14 +549,14 @@ public class InviteCustomerService : IInviteCustomerService
         return result;
     }
 
-    protected virtual async Task<NotificationResult> TryGetNotification(InviteCustomerRequest request, Store store)
+    protected static string GetNewUserNotificationType(InviteCustomerRequest request) =>
+        !string.IsNullOrEmpty(request.OrganizationId)
+            ? typeof(OrganizationInviteNewUserEmailNotification).Name
+            : typeof(CustomerInviteNewUserEmailNotification).Name;
+
+    protected virtual async Task<NotificationResult> TryGetNotification(string notificationType, Store store)
     {
         var result = new NotificationResult();
-
-        // take notification
-        var notificationType = !string.IsNullOrEmpty(request.OrganizationId)
-            ? typeof(RegistrationInvitationEmailNotification).Name
-            : typeof(RegistrationInvitationCustomerEmailNotification).Name;
 
         var notification = await _notificationSearchService.GetNotificationAsync(notificationType, new TenantIdentity(store.Id, nameof(Store)));
         var registrationNotification = notification?.Clone() as RegistrationInvitationNotificationBase;
@@ -330,15 +581,33 @@ public class InviteCustomerService : IInviteCustomerService
         UserManager<ApplicationUser> userManager,
         ApplicationUser user,
         InviteCustomerRequest request,
-        Store store)
+        Store store,
+        string organizationName)
     {
         try
         {
+            var urlSuffix = string.IsNullOrEmpty(request.UrlSuffix) ? InvitationUrlSuffix : request.UrlSuffix;
+            if (!IsValidUrlSuffix(urlSuffix))
+            {
+                return
+                [
+                    new InviteCustomerError
+                    {
+                        Code = "InvalidUrlSuffix",
+                        Description = "UrlSuffix must be a relative path.",
+                        Parameter = urlSuffix,
+                    }
+                ];
+            }
+
             var token = await userManager.GeneratePasswordResetTokenAsync(user);
 
-            var urlSuffix = string.IsNullOrEmpty(request.UrlSuffix) ? InvitationUrlSuffix : request.UrlSuffix;
-
             notification.InviteUrl = $"{store.Url.TrimLastSlash()}{urlSuffix.NormalizeUrlSuffix()}?userId={user.Id}&email={HttpUtility.UrlEncode(user.Email)}&token={Uri.EscapeDataString(token)}";
+
+            if (!string.IsNullOrEmpty(request.OrganizationId))
+            {
+                notification.InviteUrl = $"{notification.InviteUrl}&organizationId={HttpUtility.UrlEncode(request.OrganizationId)}";
+            }
 
             AddAdditionalParams(request, notification);
 
@@ -346,6 +615,11 @@ public class InviteCustomerService : IInviteCustomerService
             notification.To = user.Email;
             notification.From = store.Email;
             notification.LanguageCode = request.CultureName ?? store.DefaultLanguage;
+
+            if (notification is OrganizationInviteNewUserEmailNotification newUserNotification)
+            {
+                newUserNotification.OrganizationName = organizationName;
+            }
 
             await _notificationSender.ScheduleSendNotificationAsync(notification);
 
@@ -365,6 +639,26 @@ public class InviteCustomerService : IInviteCustomerService
                 }
             ];
         }
+    }
+
+    protected virtual async Task<string> GetOrganizationName(string organizationId)
+    {
+        if (string.IsNullOrEmpty(organizationId))
+        {
+            return null;
+        }
+
+        return (await _memberService.GetByIdAsync(organizationId, memberType: nameof(Organization)) as Organization)?.Name;
+    }
+
+    protected virtual async Task<string> GetContactName(string memberId)
+    {
+        if (string.IsNullOrEmpty(memberId))
+        {
+            return null;
+        }
+
+        return (await _memberService.GetByIdAsync(memberId) as Contact)?.FullName;
     }
 
     protected virtual void AddAdditionalParams(InviteCustomerRequest request, RegistrationInvitationNotificationBase notification)
@@ -405,6 +699,23 @@ public class InviteCustomerService : IInviteCustomerService
         customerRole.Description = role.Description;
 
         return customerRole;
+    }
+
+    private static InviteCustomerError CreateAlreadyMemberOfOrganizationError(string email, string organizationId) => new()
+    {
+        Code = "AlreadyMemberOfOrganization",
+        Description = $"User with email '{email}' is already a member of organization '{organizationId}'",
+        Parameter = organizationId,
+        Email = email,
+    };
+
+    private static bool IsDuplicateMembershipException(Exception ex) => ex is InvalidOperationException;
+
+    private static bool IsValidUrlSuffix(string urlSuffix)
+    {
+        return string.IsNullOrEmpty(urlSuffix) ||
+            (!urlSuffix.StartsWith("//", StringComparison.Ordinal) &&
+             urlSuffix.IndexOfAny(['"', '<', '>', ':', '\r', '\n']) < 0);
     }
 
     protected class StoreResult

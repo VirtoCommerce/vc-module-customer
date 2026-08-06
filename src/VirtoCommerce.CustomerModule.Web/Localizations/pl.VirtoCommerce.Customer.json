@@ -288,13 +288,19 @@
           "type": "Typ",
           "organization": "Organizacja",
           "roles": "Role",
-          "status": "Status",
-          "lockout-end": "Zablokowany do"
+          "status": "Status zaproszenia",
+          "lockout-end": "Zablokowany do",
+          "locked-state": "Stan blokady"
         },
         "type-org": "Organizacja",
         "type-global": "Globalne",
         "status-locked": "Zablokowany",
-        "status-active": "Aktywny"
+        "status-unlocked": "Odblokowany",
+        "status-approved": "Zatwierdzony",
+        "status-invited": "Zaproszony",
+        "status-rejected": "Odrzucony",
+        "status-deleted": "Usunięty",
+        "status-new": "Nowy"
       },
       "organization-membership-detail": {
         "title-global": "Globalne członkostwo",
@@ -304,13 +310,19 @@
           "organization": "Organizacja",
           "type": "Typ",
           "roles": "Role",
-          "status": "Status",
+          "status": "Status zaproszenia",
+          "locked-state": "Stan blokady",
           "lockout-end": "Zablokowany do"
         },
         "placeholders": {
           "organization": "Wybierz organizację",
           "roles": "Wybierz role",
-          "lockout-end": "Wybierz datę"
+          "lockout-end": "Wybierz datę",
+          "status-inherited": "Odziedziczone od członka"
+        },
+        "hints": {
+          "roles": "Role przypisane członkowi w ramach tej organizacji, oprócz ewentualnych ról globalnych.",
+          "status": "Zastępuje globalny status członka wyłącznie dla tej organizacji. Pozostaw puste, aby użyć globalnego statusu członka."
         }
       },
       "invite-customers": {
@@ -417,10 +429,6 @@
         "title": "Zaproś klientów",
         "message": "Powiadomienia o zaproszeniach zostały pomyślnie dodane do kolejki"
       },
-      "invite-customers-error": {
-        "title": "Zaproś klientów",
-        "message": "Niektóre zaproszenia nie zostały wysłane z powodu błędów"
-      },
       "membership-delete": {
         "title": "Potwierdź usunięcie",
         "message": "Czy na pewno chcesz usunąć wybrane członkostwo(a)?"
@@ -476,6 +484,10 @@
         "title": "Statusy firm",
         "description": "Edytuj statusy firm"
       },
+      "OrganizationMembershipStatuses": {
+        "title": "Statusy członkostwa w organizacji",
+        "description": "Edytuj statusy członkostwa w organizacji"
+      },
       "VendorStatuses": {
         "title": "Statusy dostawców",
         "description": "Edytuj statusy dostawców"
@@ -527,6 +539,18 @@
     "RegisterCompanyEmailNotification": {
       "displayName": "Powiadomienie e-mail o rejestracji organizacji",
       "description": "Klient otrzymuje powiadomienie e-mail, gdy jego firma została zarejestrowana"
+    },
+    "CustomerInviteNewUserEmailNotification": {
+      "displayName": "Powiadomienie e-mail o zaproszeniu klienta",
+      "description": "Zaproszona osoba otrzymuje powiadomienie e-mail z linkiem rejestracyjnym, gdy zostaje zaproszona jako nowy klient"
+    },
+    "OrganizationInviteNewUserEmailNotification": {
+      "displayName": "Powiadomienie e-mail o zaproszeniu do organizacji (nowy użytkownik)",
+      "description": "Zaproszona osoba otrzymuje powiadomienie e-mail z linkiem rejestracyjnym, gdy zostaje zaproszona do dołączenia do organizacji po raz pierwszy"
+    },
+    "OrganizationInviteExistingUserEmailNotification": {
+      "displayName": "Powiadomienie e-mail o zaproszeniu do organizacji (istniejący użytkownik)",
+      "description": "Zaproszona osoba otrzymuje powiadomienie e-mail, gdy zostaje zaproszona do dołączenia do innej organizacji przy użyciu istniejącego konta"
     }
   }
 }

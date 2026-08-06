@@ -16,7 +16,14 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="VirtoCommerce.StoreModule.Core" Version="3.1005.0" />
+    <PackageReference Include="VirtoCommerce.NotificationsModule.TemplateLoader.FileSystem" Version="3.1009.0" />
   </ItemGroup>
+  <ItemGroup>
+    <NotificationTemplates Include="NotificationTemplates\**" />
+  </ItemGroup>
+  <Target Name="CopyCustomContentOnPublish" AfterTargets="Publish">
+    <Copy SourceFiles="@(NotificationTemplates)" DestinationFiles="$(PublishDir)\..\%(Identity)" />
+  </Target>
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.CustomerModule.Core\VirtoCommerce.CustomerModule.Core.csproj" />
     <ProjectReference Include="..\VirtoCommerce.CustomerModule.Data.MySql\VirtoCommerce.CustomerModule.Data.MySql.csproj" />
