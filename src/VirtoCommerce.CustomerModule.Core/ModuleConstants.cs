@@ -20,7 +20,7 @@ namespace VirtoCommerce.CustomerModule.Core
                 public const string Delete = "customer:delete";
                 public const string Invite = "customer:invite";
 
-                public static string[] AllPermissions { get; } = { Read, Create, Access, Update, Delete, Invite };
+                public static string[] AllPermissions { get; } = [Read, Create, Access, Update, Delete, Invite];
             }
 
             public static class OrganizationMembershipPermissions
@@ -30,7 +30,7 @@ namespace VirtoCommerce.CustomerModule.Core
                 public const string Update = "customer:organization-membership:update";
                 public const string Delete = "customer:organization-membership:delete";
 
-                public static string[] AllPermissions { get; } = { Read, Create, Update, Delete };
+                public static string[] AllPermissions { get; } = [Read, Create, Update, Delete];
             }
 
             public static class Claims
@@ -46,14 +46,14 @@ namespace VirtoCommerce.CustomerModule.Core
             public const string Rejected = "Rejected";
             public const string Deleted = "Deleted";
 
-            public static string[] ManuallySelectableStatuses { get; } = { Invited, Approved, Rejected, Deleted };
+            public static string[] ManuallySelectableStatuses { get; } = [Invited, Approved, Rejected, Deleted];
 
-            public static string[] BlockingStatuses { get; } = { Invited, Rejected, Deleted };
+            public static string[] BlockingStatuses { get; } = [Invited, Rejected, Deleted];
 
             public static bool IsBlocking(string effectiveStatus) =>
                 !string.IsNullOrEmpty(effectiveStatus) && BlockingStatuses.Contains(effectiveStatus);
 
-            public static string[] ReinvitableStatuses { get; } = { Rejected, Deleted };
+            public static string[] ReinvitableStatuses { get; } = [Rejected, Deleted];
         }
 
         public static class Settings
@@ -67,7 +67,7 @@ namespace VirtoCommerce.CustomerModule.Core
                     ValueType = SettingValueType.ShortText,
                     IsDictionary = true,
                     DefaultValue = "New",
-                    AllowedValues = new object[] { "VIP", "Wholesaler" }
+                    AllowedValues = ["VIP", "Wholesaler"]
                 };
 
                 public static SettingDescriptor ExportImportPageSize { get; } = new SettingDescriptor
@@ -109,7 +109,8 @@ namespace VirtoCommerce.CustomerModule.Core
                     GroupName = "Customer|Roles",
                     ValueType = SettingValueType.ShortText,
                     IsDictionary = true,
-                    AllowedValues = [],
+                    IsPublic = true,
+                    AllowedValues = ["Organization maintainer", "Organization employee", "Purchasing agent", "Store administrator", "Store manager"],
                 };
 
                 #region Statuses
@@ -121,7 +122,7 @@ namespace VirtoCommerce.CustomerModule.Core
                     GroupName = "Customer|Statuses",
                     IsDictionary = true,
                     DefaultValue = "New",
-                    AllowedValues = new[] { "New", "Approved", "Rejected", "Deleted" }
+                    AllowedValues = ["New", "Approved", "Rejected", "Deleted"]
                 };
 
                 public static SettingDescriptor VendorStatuses { get; } = new SettingDescriptor
@@ -131,7 +132,7 @@ namespace VirtoCommerce.CustomerModule.Core
                     GroupName = "Customer|Statuses",
                     IsDictionary = true,
                     DefaultValue = "New",
-                    AllowedValues = new[] { "New", "Approved", "Rejected", "Deleted" }
+                    AllowedValues = ["New", "Approved", "Rejected", "Deleted"]
                 };
 
                 public static SettingDescriptor EmployeeStatuses { get; } = new SettingDescriptor
@@ -141,7 +142,7 @@ namespace VirtoCommerce.CustomerModule.Core
                     GroupName = "Customer|Statuses",
                     IsDictionary = true,
                     DefaultValue = "New",
-                    AllowedValues = new[] { "New", "Approved", "Rejected", "Deleted" }
+                    AllowedValues = ["New", "Approved", "Rejected", "Deleted"]
                 };
 
                 public static SettingDescriptor ContactStatuses { get; } = new SettingDescriptor
@@ -151,7 +152,7 @@ namespace VirtoCommerce.CustomerModule.Core
                     GroupName = "Customer|Statuses",
                     IsDictionary = true,
                     DefaultValue = "New",
-                    AllowedValues = new[] { "New", "Approved", "Rejected", "Deleted" }
+                    AllowedValues = ["New", "Approved", "Rejected", "Deleted"]
                 };
 
                 public static SettingDescriptor OrganizationMembershipStatuses { get; } = new SettingDescriptor
@@ -180,8 +181,8 @@ namespace VirtoCommerce.CustomerModule.Core
 
                 #endregion Statuses
 
-                public static IEnumerable<SettingDescriptor> AllSettings => new List<SettingDescriptor>
-                {
+                public static IEnumerable<SettingDescriptor> AllSettings =>
+                [
                     MemberGroups,
                     ExportImportPageSize,
                     MemberIndexationDate,
@@ -195,7 +196,7 @@ namespace VirtoCommerce.CustomerModule.Core
                     OrganizationMembershipStatuses,
                     OrganizationDefaultStatus,
                     ContactDefaultStatus
-                };
+                ];
             }
 
             public static IEnumerable<SettingDescriptor> StoreLevelSettings
@@ -204,6 +205,7 @@ namespace VirtoCommerce.CustomerModule.Core
                 {
                     yield return General.OrganizationDefaultStatus;
                     yield return General.ContactDefaultStatus;
+                    yield return General.MembershipRolesWhitelist;
                 }
             }
 

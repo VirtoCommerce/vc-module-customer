@@ -30,9 +30,11 @@ angular.module('virtoCommerce.customerModule')
                     return;
                 }
                 var userId = blade.currentEntity.securityAccounts[0].id;
+                var storeId = blade.currentEntity.securityAccounts[0].storeId;
                 var newBlade = {
                     id: 'organizationMembershipsList',
                     userId: userId,
+                    storeId: storeId,
                     contact: blade.currentEntity,
                     title: blade.title,
                     subtitle: 'customer.widgets.organization-memberships.blade-subtitle',

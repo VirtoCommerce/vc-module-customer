@@ -137,6 +137,7 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<ICustomerPreferenceService, CustomerPreferenceService>();
 
             serviceCollection.AddTransient<IInviteCustomerService, InviteCustomerService>();
+            serviceCollection.AddTransient<ICompanyMemberRoleService, CompanyMemberRoleService>();
             serviceCollection.AddTransient<IAddressService, AddressService>();
             serviceCollection.AddTransient<IAddressSearchService, AddressSearchService>();
         }
