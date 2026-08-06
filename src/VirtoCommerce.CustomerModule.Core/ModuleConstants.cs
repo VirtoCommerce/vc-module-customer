@@ -209,7 +209,7 @@ namespace VirtoCommerce.CustomerModule.Core
                 }
             }
 
-            public static IEnumerable<SettingDescriptor> AllSettings => General.AllSettings;
+            public static IEnumerable<SettingDescriptor> AllModuleSettings => General.AllSettings;
         }
     }
 }
