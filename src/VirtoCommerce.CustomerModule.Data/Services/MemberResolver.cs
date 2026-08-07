@@ -1,8 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.Platform.Core.Caching;
@@ -10,11 +8,11 @@ using VirtoCommerce.Platform.Core.Security;
 
 namespace VirtoCommerce.CustomerModule.Data.Services
 {
-    public class MemberResolver(IMemberService memberService, Func<UserManager<ApplicationUser>> userManagerFactory, IHttpContextAccessor httpContextAccessor) : IMemberResolver
+    public class MemberResolver(IMemberService memberService, Func<UserManager<ApplicationUser>> userManagerFactory, IRequestScopedCacheAccessor requestScopedCacheAccessor) : IMemberResolver
     {
         [Obsolete("Use new constructor without IPlatformMemoryCache argument", DiagnosticId = "VC0012", UrlFormat = "https://docs.virtocommerce.org/platform/user-guide/versions/virto3-products-versions/")]
         public MemberResolver(IMemberService memberService, Func<UserManager<ApplicationUser>> userManagerFactory, IPlatformMemoryCache platformMemoryCache)
-            : this(memberService, userManagerFactory, (IHttpContextAccessor)null)
+            : this(memberService, userManagerFactory, (IRequestScopedCacheAccessor)null)
         {
         }
 
@@ -28,9 +26,9 @@ namespace VirtoCommerce.CustomerModule.Data.Services
             // Per-request cache: getFullCart resolves the same shopper's userId many times per request,
             // and each uncached call constructs a fresh CustomUserManager, which takes a process-global
             // Meter lock unconditionally (.NET 9 UserManagerMetrics) -> lock convoy under load.
-            // Resolved per-call from the request scope (not ctor-injected): keeps this transient service
-            // free of a captured Scoped dependency, so singleton consumers of IMemberResolver stay valid.
-            var requestCache = httpContextAccessor?.HttpContext?.RequestServices?.GetService<IRequestScopedCache>();
+            // Depend on the accessor, never on IRequestScopedCache itself: this service is Transient but its
+            // consumers are not, and the DI scope validator cannot see a Scoped dependency captured that way.
+            var requestCache = requestScopedCacheAccessor?.Cache;
             if (requestCache is null)
             {
                 // No ambient request scope (e.g. background job) - nothing to scope the cache to.
