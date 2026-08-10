@@ -1,11 +1,12 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Hangfire;
 using VirtoCommerce.CustomerModule.Core.Events;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.Platform.Core.ChangeLog;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
+using VirtoCommerce.Platform.Core.Jobs;
 using VirtoCommerce.Platform.Core.Security.Events;
 
 namespace VirtoCommerce.CustomerModule.Data.Handlers
@@ -19,6 +20,17 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
             _changeLogService = changeLogService;
         }
 
+        /// <summary>
+        /// Kept for background jobs enqueued by an earlier version, which reference this method by name.
+        /// New work goes through <see cref="LogEntityChangesJobHandler"/>; remove this once no such job
+        /// can still be pending.
+        /// </summary>
+        [Obsolete("Enqueued indirectly by legacy Hangfire jobs only; new work uses LogEntityChangesJobHandler.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
+        public Task LogEntityChangesInBackground(OperationLog[] operationLogs)
+        {
+            return _changeLogService.SaveChangesAsync(operationLogs);
+        }
+
         public virtual Task Handle(MemberChangedEvent message)
         {
             // ObjectType has to be 'Member' as MemberDocumentChangesProvider uses it to get all changed members in 1 request.
@@ -26,9 +38,7 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                 .Select(x => AbstractTypeFactory<OperationLog>.TryCreateInstance().FromChangedEntry(x, nameof(Member)))
                 .ToArray();
 
-            InnerHandle(logOperations);
-
-            return Task.CompletedTask;
+            return InnerHandle(logOperations);
         }
 
         public virtual Task Handle(UserChangedEvent message)
@@ -38,40 +48,44 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
                 .Select(x => GetOperationLog(x.OldEntry.MemberId))
                 .ToArray();
 
-            InnerHandle(operationLogs);
-
-            return Task.CompletedTask;
+            return InnerHandle(operationLogs);
         }
 
         public virtual Task Handle(UserRoleAddedEvent message)
         {
-            if (!string.IsNullOrEmpty(message.User.MemberId))
+            if (string.IsNullOrEmpty(message.User.MemberId))
             {
-                InnerHandle(GetOperationLog(message.User.MemberId));
+                return Task.CompletedTask;
             }
 
-            return Task.CompletedTask;
+            return InnerHandle(GetOperationLog(message.User.MemberId));
         }
 
         public virtual Task Handle(UserRoleRemovedEvent message)
         {
-            if (!string.IsNullOrEmpty(message.User.MemberId))
+            if (string.IsNullOrEmpty(message.User.MemberId))
             {
-                InnerHandle(GetOperationLog(message.User.MemberId));
+                return Task.CompletedTask;
             }
 
-            return Task.CompletedTask;
+            return InnerHandle(GetOperationLog(message.User.MemberId));
         }
 
-        public Task LogEntityChangesInBackground(OperationLog[] operationLogs)
+        protected virtual Task InnerHandle(params OperationLog[] operationLogs)
         {
-            return _changeLogService.SaveChangesAsync(operationLogs);
-        }
+            if (operationLogs.Length == 0)
+            {
+                // An empty batch is not free: SaveChangesAsync ends in Reset(), which expires the whole
+                // change-log cache region, so enqueuing one would evict the cache for nothing.
+                return Task.CompletedTask;
+            }
 
+            var payload = AbstractTypeFactory<LogEntityChangesJobPayload>.TryCreateInstance();
+            payload.OperationLogs = operationLogs;
 
-        protected virtual void InnerHandle(params OperationLog[] operationLogs)
-        {
-            BackgroundJob.Enqueue(() => LogEntityChangesInBackground(operationLogs));
+            // The static facade, not an injected IBackgroundJob: this handler is registered once from the root
+            // provider and held for the process lifetime, so it must not capture a Scoped dependency.
+            return BackgroundJob.Enqueue<LogEntityChangesJobHandler>(payload);
         }
 
         protected virtual OperationLog GetOperationLog(string memberId)
