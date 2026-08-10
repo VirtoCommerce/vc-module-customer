@@ -527,7 +527,7 @@ public class InviteCustomerService : IInviteCustomerService
             return result;
         }
 
-        IReadOnlyCollection<string> allowedRoleIds = null;
+        IList<string> allowedRoleIds = null;
         if (!string.IsNullOrEmpty(organizationId))
         {
             allowedRoleIds = await _companyMemberRoleService.GetAllowedRoleIdsAsync(storeId);

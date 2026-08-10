@@ -5,5 +5,5 @@ namespace VirtoCommerce.CustomerModule.Core.Services;
 
 public interface ICompanyMemberRoleService
 {
-    Task<IReadOnlyCollection<string>> GetAllowedRoleIdsAsync(string storeId);
+    Task<IList<string>> GetAllowedRoleIdsAsync(string storeId);
 }

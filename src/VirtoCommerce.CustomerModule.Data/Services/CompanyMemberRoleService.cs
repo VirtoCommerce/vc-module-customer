@@ -18,7 +18,7 @@ public class CompanyMemberRoleService : ICompanyMemberRoleService
         _settingsManager = settingsManager;
     }
 
-    public virtual async Task<IReadOnlyCollection<string>> GetAllowedRoleIdsAsync(string storeId)
+    public virtual async Task<IList<string>> GetAllowedRoleIdsAsync(string storeId)
     {
         var descriptor = ModuleConstants.Settings.General.MembershipRolesWhitelist;
 
