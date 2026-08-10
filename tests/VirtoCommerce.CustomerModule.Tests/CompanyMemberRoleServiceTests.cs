@@ -52,7 +52,8 @@ public class CompanyMemberRoleServiceTests
         // Assert
         Assert.Equal(descriptorDefaults.Length, result.Count);
         Assert.Contains("Organization maintainer", result);
-        Assert.Contains("Store manager", result);
+        Assert.Contains("Organization employee", result);
+        Assert.Contains("Purchasing agent", result);
     }
 
     [Fact]

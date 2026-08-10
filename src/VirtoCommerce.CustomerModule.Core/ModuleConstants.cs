@@ -110,7 +110,7 @@ namespace VirtoCommerce.CustomerModule.Core
                     ValueType = SettingValueType.ShortText,
                     IsDictionary = true,
                     IsPublic = true,
-                    AllowedValues = ["Organization maintainer", "Organization employee", "Purchasing agent", "Store administrator", "Store manager"],
+                    AllowedValues = ["Organization employee", "Purchasing agent", "Organization maintainer"],
                 };
 
                 #region Statuses
