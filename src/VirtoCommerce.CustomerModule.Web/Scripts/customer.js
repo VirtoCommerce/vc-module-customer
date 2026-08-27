@@ -599,6 +599,7 @@ angular.module(moduleName, [])
             conditionUserGroupsService.openUserGroupsDetailsCallback = function (groups) {
                 var newBlade = {
                     id: 'members',
+                    level: 0,
                     readOnlyList: true,
                     rootMembersOnly: false,
                     groups: groups,

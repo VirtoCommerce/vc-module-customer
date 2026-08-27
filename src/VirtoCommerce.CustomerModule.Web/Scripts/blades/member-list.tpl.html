@@ -116,7 +116,7 @@
                   <li class="menu-item" ng-click='copy(contextMenuEntity.name)'>
                     <i class="menu-ico fa fa-copy"></i> {{'customer.blades.member-list.labels.copy-name' | translate}}
                   </li>
-                  <li class="menu-item" ng-click='delete(contextMenuEntity)' va-permission="customer:delete">
+                  <li class="menu-item" ng-click='delete(contextMenuEntity)' va-permission="customer:delete" ng-if="!blade.readOnlyList">
                     <i class="menu-ico fas fa-trash-alt"></i> {{'platform.commands.delete' | translate}}
                   </li>
                 </ul>
