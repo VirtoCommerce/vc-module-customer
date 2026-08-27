@@ -61,11 +61,13 @@ angular.module(moduleName, [])
         'platformWebApp.widgetService', 'platformWebApp.settings', 'platformWebApp.userProfileIconService', 'platformWebApp.metaFormsService',
         'virtoCommerce.customerModule.memberTypesResolverService', 'virtoCommerce.customerModule.members',
         'platformWebApp.toolbarService', 'platformWebApp.bladeNavigationService', 'virtoCommerce.storeModule.stores',
+        'virtoCommerce.coreModule.common.conditionUserGroupsService',
         function (
             $rootScope, $state, mainMenuService, authService, scopeResolver,
             widgetService, settings, userProfileIconService, metaFormsService,
             memberTypesResolverService, membersApi,
-            toolbarService, bladeNavigationService, storesApi) {
+            toolbarService, bladeNavigationService, storesApi,
+            conditionUserGroupsService) {
             //Register module in main menu
             var menuItem = {
                 path: 'browse/member',
@@ -593,4 +595,19 @@ angular.module(moduleName, [])
                     });
                 }
             });
+
+            conditionUserGroupsService.openUserGroupsDetailsCallback = function (groups) {
+                var newBlade = {
+                    id: 'members',
+                    readOnlyList: true,
+                    rootMembersOnly: false,
+                    groups: groups,
+                    currentEntity: {
+                        id: null
+                    },
+                    controller: 'virtoCommerce.customerModule.memberListController',
+                    template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/member-list.tpl.html',
+                };
+                bladeNavigationService.showBlade(newBlade);
+            }
         }]);
