@@ -38,6 +38,7 @@ angular.module('virtoCommerce.customerModule')
                 var newBlade = {
                     id: 'organizationMembershipDetail',
                     userId: blade.userId,
+                    storeId: blade.storeId,
                     currentEntity: angular.copy(item),
                     isGlobal: item.organizationId === null || item.organizationId === undefined,
                     title: item.organizationId ? item.organizationName : 'customer.blades.organization-membership-detail.title-global',
@@ -62,6 +63,7 @@ angular.module('virtoCommerce.customerModule')
                         var newBlade = {
                             id: 'organizationMembershipDetail',
                             userId: blade.userId,
+                            storeId: blade.storeId,
                             currentEntity: { userId: blade.userId, roles: [], isLocked: false },
                             isNew: true,
                             title: 'customer.blades.organization-membership-detail.title-new',

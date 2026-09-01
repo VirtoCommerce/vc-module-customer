@@ -69,6 +69,7 @@ angular.module('virtoCommerce.customerModule')
 
             var rolesPicker = rolesPickerService.create({
                 whitelistSettingId: 'Customer.MembershipRolesWhitelist',
+                storeId: blade.storeId,
                 getSelectedRoles: function () { return blade.currentEntity.roles; },
                 onAvailableRolesChanged: function (list) { blade.availableRoles = list; }
             });

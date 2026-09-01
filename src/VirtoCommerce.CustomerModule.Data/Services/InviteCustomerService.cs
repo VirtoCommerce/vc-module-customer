@@ -28,7 +28,6 @@ public class InviteCustomerService : IInviteCustomerService
 {
     public virtual string InitialUserType => "Customer";
     public virtual string InitialContactStatus => "Invited";
-    public virtual string[] DefaultRoleIds => new[] { "org-employee", "purchasing-agent", "org-maintainer" };
 
     public virtual string InvitationUrlSuffix => "/confirm-invitation";
 
@@ -42,6 +41,7 @@ public class InviteCustomerService : IInviteCustomerService
     private readonly Func<RoleManager<Role>> _roleManagerFactory;
     private readonly IOrganizationMembershipService _organizationMembershipService;
     private readonly IOrganizationMembershipSearchService _organizationMembershipSearchService;
+    private readonly ICompanyMemberRoleService _companyMemberRoleService;
     private readonly ILogger<InviteCustomerService> _logger;
 
     public InviteCustomerService(
@@ -53,6 +53,7 @@ public class InviteCustomerService : IInviteCustomerService
         Func<RoleManager<Role>> roleManagerFactory,
         IOrganizationMembershipService organizationMembershipService,
         IOrganizationMembershipSearchService organizationMembershipSearchService,
+        ICompanyMemberRoleService companyMemberRoleService,
         ILogger<InviteCustomerService> logger)
     {
         _memberService = memberService;
@@ -63,6 +64,7 @@ public class InviteCustomerService : IInviteCustomerService
         _roleManagerFactory = roleManagerFactory;
         _organizationMembershipService = organizationMembershipService;
         _organizationMembershipSearchService = organizationMembershipSearchService;
+        _companyMemberRoleService = companyMemberRoleService;
         _logger = logger;
     }
 
@@ -94,7 +96,7 @@ public class InviteCustomerService : IInviteCustomerService
 
         var store = storeResult.Store;
 
-        var rolesResult = await GetRolesAsync(request.RoleIds);
+        var rolesResult = await GetRolesAsync(request.RoleIds, request.StoreId, request.OrganizationId);
         if (rolesResult.Errors.Count != 0)
         {
             result.Errors.AddRange(rolesResult.Errors);
@@ -269,12 +271,15 @@ public class InviteCustomerService : IInviteCustomerService
 
     public async Task<IList<CustomerRole>> GetInviteRolesAsync()
     {
+        var allowedRoleIds = await _companyMemberRoleService.GetAllowedRoleIdsAsync(null);
+
         using var roleManager = _roleManagerFactory();
+        var roles = await roleManager.Roles.ToListAsync();
 
-        var rolesQuery = roleManager.Roles.Where(x => DefaultRoleIds.Contains(x.Id));
-        var roles = await rolesQuery.ToListAsync();
-
-        var customerRoles = roles.Select(MapCustomerRole).ToList();
+        var customerRoles = roles
+            .Where(allowedRoleIds.IsRoleAllowed)
+            .Select(MapCustomerRole)
+            .ToList();
         return customerRoles;
     }
 
@@ -513,7 +518,7 @@ public class InviteCustomerService : IInviteCustomerService
         return result;
     }
 
-    protected virtual async Task<RolesResult> GetRolesAsync(string[] roleIds)
+    protected virtual async Task<RolesResult> GetRolesAsync(string[] roleIds, string storeId, string organizationId)
     {
         var result = new RolesResult();
 
@@ -522,17 +527,18 @@ public class InviteCustomerService : IInviteCustomerService
             return result;
         }
 
+        IList<string> allowedRoleIds = null;
+        if (!string.IsNullOrEmpty(organizationId))
+        {
+            allowedRoleIds = await _companyMemberRoleService.GetAllowedRoleIdsAsync(storeId);
+        }
+
         using var roleManager = _roleManagerFactory();
 
         foreach (var roleId in roleIds)
         {
             var role = await roleManager.FindByIdAsync(roleId) ?? await roleManager.FindByNameAsync(roleId);
-            if (role != null)
-            {
-
-                result.Roles.Add(role);
-            }
-            else
+            if (role == null)
             {
                 result.Errors.Add(new InviteCustomerError
                 {
@@ -544,6 +550,21 @@ public class InviteCustomerService : IInviteCustomerService
 
                 return result;
             }
+
+            if (allowedRoleIds != null && !allowedRoleIds.IsRoleAllowed(role))
+            {
+                result.Errors.Add(new InviteCustomerError
+                {
+                    Code = "RoleNotAllowed",
+                    Description = $"Role '{roleId}' is not allowed for company members of this store",
+                    Parameter = roleId,
+                    Email = "Common",
+                });
+
+                return result;
+            }
+
+            result.Roles.Add(role);
         }
 
         return result;

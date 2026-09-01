@@ -140,6 +140,7 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<ICustomerPreferenceService, CustomerPreferenceService>();
 
             serviceCollection.AddTransient<IInviteCustomerService, InviteCustomerService>();
+            serviceCollection.AddTransient<ICompanyMemberRoleService, CompanyMemberRoleService>();
             serviceCollection.AddTransient<IAddressService, AddressService>();
             serviceCollection.AddTransient<IAddressSearchService, AddressSearchService>();
         }
@@ -158,7 +159,7 @@ namespace VirtoCommerce.CustomerModule.Web
             AbstractTypeFactory<MemberEntity>.RegisterType<EmployeeEntity>();
 
             var settingsRegistrar = appBuilder.ApplicationServices.GetRequiredService<ISettingsRegistrar>();
-            settingsRegistrar.RegisterSettings(ModuleConstants.Settings.AllSettings, ModuleInfo.Id);
+            settingsRegistrar.RegisterSettings(ModuleConstants.Settings.AllModuleSettings, ModuleInfo.Id);
             settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.StoreLevelSettings, nameof(Store));
 
             var dynamicPropertyRegistrar = appBuilder.ApplicationServices.GetRequiredService<IDynamicPropertyRegistrar>();
