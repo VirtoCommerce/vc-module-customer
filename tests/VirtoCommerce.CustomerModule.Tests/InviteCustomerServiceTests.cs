@@ -30,6 +30,7 @@ public class InviteCustomerServiceTests
     private readonly Mock<RoleManager<Role>> _roleManagerMock;
     private readonly Mock<IOrganizationMembershipService> _membershipServiceMock = new();
     private readonly Mock<IOrganizationMembershipSearchService> _membershipSearchServiceMock = new();
+    private readonly Mock<ICompanyMemberRoleService> _companyMemberRoleServiceMock = new();
     private readonly Mock<ILogger<InviteCustomerService>> _loggerMock = new();
 
     public InviteCustomerServiceTests()
@@ -300,6 +301,92 @@ public class InviteCustomerServiceTests
                 members.Length == 1 &&
                 members[0].Id == "contact-1" &&
                 ((Contact)members[0]).Organizations.SequenceEqual(new[] { "org-1", "org-2" }))),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task InviteCustomerAsyc_OrganizationInviteWithDisallowedRole_ReturnsRoleNotAllowedError()
+    {
+        // Arrange
+        var store = new Store { Id = "store-1", Url = "https://store.test", Email = "store@test.com" };
+        _storeServiceMock.Setup(x => x.GetAsync(It.IsAny<IList<string>>(), It.IsAny<string>(), It.IsAny<bool>()))
+            .ReturnsAsync([store]);
+
+        _roleManagerMock.Setup(x => x.FindByIdAsync("not-allowed-role"))
+            .ReturnsAsync(new Role { Id = "not-allowed-role", Name = "not-allowed-role" });
+
+        _companyMemberRoleServiceMock.Setup(x => x.GetAllowedRoleIdsAsync("store-1"))
+            .ReturnsAsync(["org-maintainer", "org-employee"]);
+
+        _userManagerMock.Setup(x => x.FindByEmailAsync("new@test.com")).ReturnsAsync((ApplicationUser)null);
+        _userManagerMock.Setup(x => x.FindByNameAsync("new@test.com")).ReturnsAsync((ApplicationUser)null);
+
+        var service = BuildTestableService();
+
+        var request = new InviteCustomerRequest
+        {
+            StoreId = "store-1",
+            OrganizationId = "org-1",
+            Emails = ["new@test.com"],
+            RoleIds = ["not-allowed-role"],
+        };
+
+        // Act
+        var result = await service.InviteCustomerAsyc(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        Assert.False(result.Succeeded);
+        Assert.Contains(result.Errors, e => e.Code == "RoleNotAllowed" && e.Parameter == "not-allowed-role");
+
+        _membershipServiceMock.Verify(x => x.SaveChangesAsync(It.IsAny<IList<OrganizationMembership>>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task InviteCustomerAsyc_OrganizationInviteWithAllowedRole_Succeeds()
+    {
+        // Arrange
+        var store = new Store { Id = "store-1", Url = "https://store.test", Email = "store@test.com" };
+        _storeServiceMock.Setup(x => x.GetAsync(It.IsAny<IList<string>>(), It.IsAny<string>(), It.IsAny<bool>()))
+            .ReturnsAsync([store]);
+
+        _roleManagerMock.Setup(x => x.FindByIdAsync("org-maintainer"))
+            .ReturnsAsync(new Role { Id = "org-maintainer", Name = "org-maintainer" });
+
+        _companyMemberRoleServiceMock.Setup(x => x.GetAllowedRoleIdsAsync("store-1"))
+            .ReturnsAsync(["org-maintainer", "org-employee"]);
+
+        _notificationSearchServiceMock
+            .Setup(x => x.SearchNotificationsAsync(It.IsAny<NotificationSearchCriteria>()))
+            .ReturnsAsync(new NotificationSearchResult
+            {
+                Results = [new OrganizationInviteNewUserEmailNotification()],
+                TotalCount = 1,
+            });
+
+        _userManagerMock.Setup(x => x.FindByEmailAsync("new@test.com")).ReturnsAsync((ApplicationUser)null);
+        _userManagerMock.Setup(x => x.FindByNameAsync("new@test.com")).ReturnsAsync((ApplicationUser)null);
+        _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Success);
+        _userManagerMock.Setup(x => x.GeneratePasswordResetTokenAsync(It.IsAny<ApplicationUser>())).ReturnsAsync("token123");
+
+        var service = BuildTestableService();
+
+        var request = new InviteCustomerRequest
+        {
+            StoreId = "store-1",
+            OrganizationId = "org-1",
+            Emails = ["new@test.com"],
+            RoleIds = ["org-maintainer"],
+        };
+
+        // Act
+        var result = await service.InviteCustomerAsyc(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        Assert.True(result.Succeeded);
+
+        _membershipServiceMock.Verify(
+            x => x.SaveChangesAsync(It.Is<IList<OrganizationMembership>>(list =>
+                list.Count == 1 && list[0].Roles.Any(r => r.RoleId == "org-maintainer"))),
             Times.Once);
     }
 
@@ -614,6 +701,7 @@ public class InviteCustomerServiceTests
             () => _roleManagerMock.Object,
             _membershipServiceMock.Object,
             _membershipSearchServiceMock.Object,
+            _companyMemberRoleServiceMock.Object,
             _loggerMock.Object);
 
     private sealed class TestableInviteCustomerService(
@@ -625,9 +713,11 @@ public class InviteCustomerServiceTests
         Func<RoleManager<Role>> roleManagerFactory,
         IOrganizationMembershipService organizationMembershipService,
         IOrganizationMembershipSearchService organizationMembershipSearchService,
+        ICompanyMemberRoleService companyMemberRoleService,
         ILogger<InviteCustomerService> logger)
         : InviteCustomerService(memberService, storeService, notificationSearchService, notificationSender,
-            userManagerFactory, roleManagerFactory, organizationMembershipService, organizationMembershipSearchService, logger)
+            userManagerFactory, roleManagerFactory, organizationMembershipService, organizationMembershipSearchService,
+            companyMemberRoleService, logger)
     {
         public ApplicationUser InvokeCreateUser(
             InviteCustomerRequest request, Contact contact, string email, List<Role> roles)
