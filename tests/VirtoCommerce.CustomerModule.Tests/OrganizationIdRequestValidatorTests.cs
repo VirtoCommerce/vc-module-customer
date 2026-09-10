@@ -207,6 +207,25 @@ public class OrganizationIdRequestValidatorTests
     }
 
     [Fact]
+    public async Task ValidateAsync_PasswordGrantAllOrganizationsLocked_ClearsOrgIdAndReturnsEmpty()
+    {
+        //Arrange — the user's only organization is locked, so there's no other org to fall back to.
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId] });
+        SetupMembership(new OrganizationMembership { OrganizationId = OrgId, IsLocked = true, LockoutEnd = null });
+
+        var context = BuildContext(OrgId, grantType: OpenIddictConstants.GrantTypes.Password, user: user);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Empty(result);
+        Assert.Null(context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
+    }
+
+    [Fact]
     public async Task ValidateAsync_ActiveMembership_ReturnsEmpty()
     {
         //Arrange
