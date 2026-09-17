@@ -9,7 +9,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="VirtoCommerce.CoreModule.Core" Version="3.1007.0" />
+    <PackageReference Include="VirtoCommerce.CoreModule.Core" Version="3.1008.0" />
     <PackageReference Include="VirtoCommerce.NotificationsModule.Core" Version="3.1009.0" />
     <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.1052.0" />
     <PackageReference Include="VirtoCommerce.SearchModule.Core" Version="3.1004.0" />
