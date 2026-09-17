@@ -110,6 +110,12 @@ public class OrganizationIdRequestValidator(
                 context.Request.SetParameter(Parameters.OrganizationId, fallbackOrganizationId);
                 return null;
             }
+
+            if (isLocked)
+            {
+                context.Request.SetParameter(Parameters.OrganizationId, null);
+                return null;
+            }
         }
 
         return isLocked ? ErrorDescriber.UserIsLockedInOrganization(organizationId) : statusError;
