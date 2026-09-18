@@ -189,116 +189,121 @@ angular.module('virtoCommerce.customerModule')
                     canExecuteMethod: function () {
                         return true;
                     }
-                },
-                {
-                    name: "platform.commands.add", icon: 'fas fa-plus',
-                    executeMethod: function () {
-                        var newBlade = {
-                            id: 'listItemChild',
-                            currentEntity: blade.currentEntity,
-                            title: 'customer.blades.member-add.title',
-                            subtitle: 'customer.blades.member-add.subtitle',
-                            controller: 'virtoCommerce.customerModule.memberAddController',
-                            template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/member-add.tpl.html'
-                        };
-                        bladeNavigationService.showBlade(newBlade, blade);
-                    },
-                    canExecuteMethod: function () {
-                        return true;
-                    },
-                    permission: 'customer:create'
-                },
-                {
-                    name: "platform.commands.delete", icon: 'fas fa-trash-alt',
-                    executeMethod: function () { deleteList($scope.gridApi.selection.getSelectedRows()); },
-                    canExecuteMethod: function () {
-                        return $scope.gridApi && _.any($scope.gridApi.selection.getSelectedRows());
-                    },
-                    permission: 'customer:delete'
-                },
-                {
-                    name: "customer.commands.invite-customers", icon: 'fa fa-paper-plane',
-                    executeMethod: function () {
-                        var selectedOrganization = blade.currentEntity && blade.currentEntity.memberType === 'Organization' ? blade.currentEntity : null;
+                }];
 
-                        var newBlade = {
-                            id: 'inviteCustomers',
-                            selectedOrganization: selectedOrganization,
-                            controller: 'virtoCommerce.customerModule.inviteCustomersController',
-                            template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/invite-customers.html'
-                        };
-
-                        bladeNavigationService.showBlade(newBlade, blade);
-
-                    },
-                    canExecuteMethod: function () {
-                        return true;
-                    },
-                    permission: 'customer:invite',
-                    index: 10
-                },
-                {
-                    name: 'customer.commands.lock-in-org',
-                    icon: 'fas fa-lock',
-                    executeMethod: function () {
-                        var selected = $scope.gridApi.selection.getSelectedRows()[0];
-                        resolveOrgMembership(selected, function (membership) {
-                            organizationMemberships.lock({ id: membership.id }, {}, function () {
-                                blade.refresh();
-                            });
-                        });
-                    },
-                    canExecuteMethod: function () {
-                        // Only show when browsing inside an organization context
-                        return blade.currentEntity && blade.currentEntity.memberType === 'Organization'
-                            && $scope.gridApi && $scope.gridApi.selection.getSelectedRows().length === 1;
-                    },
-                    permission: orgActionPermission
-                },
-                {
-                    name: 'customer.commands.unlock-in-org',
-                    icon: 'fas fa-lock-open',
-                    executeMethod: function () {
-                        var selected = $scope.gridApi.selection.getSelectedRows()[0];
-                        resolveOrgMembership(selected, function (membership) {
-                            organizationMemberships.unlock({ id: membership.id }, {}, function () {
-                                blade.refresh();
-                            });
-                        });
-                    },
-                    canExecuteMethod: function () {
-                        return blade.currentEntity && blade.currentEntity.memberType === 'Organization'
-                            && $scope.gridApi && $scope.gridApi.selection.getSelectedRows().length === 1;
-                    },
-                    permission: orgActionPermission
-                },
-                {
-                    name: 'customer.commands.change-role-in-org',
-                    icon: 'fas fa-user-tag',
-                    executeMethod: function () {
-                        var selected = $scope.gridApi.selection.getSelectedRows()[0];
-                        resolveOrgMembership(selected, function (membership) {
+            if (!blade.readOnlyList) {
+                var commands = [{
+                        name: "platform.commands.add", icon: 'fas fa-plus',
+                        executeMethod: function () {
                             var newBlade = {
-                                id: 'organizationMembershipDetail',
-                                userId: membership.userId,
-                                currentEntity: angular.copy(membership),
-                                isGlobal: false,
-                                title: membership.organizationName,
-                                subtitle: 'customer.blades.organization-membership-detail.subtitle',
-                                controller: 'virtoCommerce.customerModule.organizationMembershipDetailController',
-                                template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/organization-membership-detail.tpl.html'
+                                id: 'listItemChild',
+                                currentEntity: blade.currentEntity,
+                                title: 'customer.blades.member-add.title',
+                                subtitle: 'customer.blades.member-add.subtitle',
+                                controller: 'virtoCommerce.customerModule.memberAddController',
+                                template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/member-add.tpl.html'
                             };
                             bladeNavigationService.showBlade(newBlade, blade);
-                        });
+                        },
+                        canExecuteMethod: function () {
+                            return true;
+                        },
+                        permission: 'customer:create'
                     },
-                    canExecuteMethod: function () {
-                        return blade.currentEntity && blade.currentEntity.memberType === 'Organization'
-                            && $scope.gridApi && $scope.gridApi.selection.getSelectedRows().length === 1;
+                    {
+                        name: "platform.commands.delete", icon: 'fas fa-trash-alt',
+                        executeMethod: function () { deleteList($scope.gridApi.selection.getSelectedRows()); },
+                        canExecuteMethod: function () {
+                            return $scope.gridApi && _.any($scope.gridApi.selection.getSelectedRows());
+                        },
+                        permission: 'customer:delete'
                     },
-                    permission: orgActionPermission
-                }
-            ];
+                    {
+                        name: "customer.commands.invite-customers", icon: 'fa fa-paper-plane',
+                        executeMethod: function () {
+                            var selectedOrganization = blade.currentEntity && blade.currentEntity.memberType === 'Organization' ? blade.currentEntity : null;
 
+                            var newBlade = {
+                                id: 'inviteCustomers',
+                                selectedOrganization: selectedOrganization,
+                                controller: 'virtoCommerce.customerModule.inviteCustomersController',
+                                template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/invite-customers.html'
+                            };
+
+                            bladeNavigationService.showBlade(newBlade, blade);
+
+                        },
+                        canExecuteMethod: function () {
+                            return true;
+                        },
+                        permission: 'customer:invite',
+                        index: 10
+                    },
+                    {
+                        name: 'customer.commands.lock-in-org',
+                        icon: 'fas fa-lock',
+                        executeMethod: function () {
+                            var selected = $scope.gridApi.selection.getSelectedRows()[0];
+                            resolveOrgMembership(selected, function (membership) {
+                                organizationMemberships.lock({ id: membership.id }, {}, function () {
+                                    blade.refresh();
+                                });
+                            });
+                        },
+                        canExecuteMethod: function () {
+                            // Only show when browsing inside an organization context
+                            return blade.currentEntity && blade.currentEntity.memberType === 'Organization'
+                                && $scope.gridApi && $scope.gridApi.selection.getSelectedRows().length === 1;
+                        },
+                        permission: orgActionPermission
+                    },
+                    {
+                        name: 'customer.commands.unlock-in-org',
+                        icon: 'fas fa-lock-open',
+                        executeMethod: function () {
+                            var selected = $scope.gridApi.selection.getSelectedRows()[0];
+                            resolveOrgMembership(selected, function (membership) {
+                                organizationMemberships.unlock({ id: membership.id }, {}, function () {
+                                    blade.refresh();
+                                });
+                            });
+                        },
+                        canExecuteMethod: function () {
+                            return blade.currentEntity && blade.currentEntity.memberType === 'Organization'
+                                && $scope.gridApi && $scope.gridApi.selection.getSelectedRows().length === 1;
+                        },
+                        permission: orgActionPermission
+                    },
+                    {
+                        name: 'customer.commands.change-role-in-org',
+                        icon: 'fas fa-user-tag',
+                        executeMethod: function () {
+                            var selected = $scope.gridApi.selection.getSelectedRows()[0];
+                            resolveOrgMembership(selected, function (membership) {
+                                var newBlade = {
+                                    id: 'organizationMembershipDetail',
+                                    userId: membership.userId,
+                                    currentEntity: angular.copy(membership),
+                                    isGlobal: false,
+                                    title: membership.organizationName,
+                                    subtitle: 'customer.blades.organization-membership-detail.subtitle',
+                                    controller: 'virtoCommerce.customerModule.organizationMembershipDetailController',
+                                    template: 'Modules/$(VirtoCommerce.Customer)/Scripts/blades/organization-membership-detail.tpl.html'
+                                };
+                                bladeNavigationService.showBlade(newBlade, blade);
+                            });
+                        },
+                        canExecuteMethod: function () {
+                            return blade.currentEntity && blade.currentEntity.memberType === 'Organization'
+                                && $scope.gridApi && $scope.gridApi.selection.getSelectedRows().length === 1;
+                        },
+                        permission: orgActionPermission
+                    }
+                ];
+
+                blade.toolbarCommands = blade.toolbarCommands.concat(commands);
+            }
+                
             function resolveOrgMembership(member, callback) {
                 members.get({ id: member.id }, function (fullMember) {
                     if (!fullMember.securityAccounts || !fullMember.securityAccounts.length) {
@@ -540,6 +545,8 @@ angular.module('virtoCommerce.customerModule')
                     memberId: blade.currentEntity.id,
                     keyword: composedKeyword || undefined,
                     deepSearch: !!composedKeyword,
+                    groups: blade.groups,
+                    rootMembersOnly: blade.rootMembersOnly,
                     sort: uiGridHelper.getSortExpression($scope),
                     skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
                     take: $scope.pageSettings.itemsPerPageCount,
