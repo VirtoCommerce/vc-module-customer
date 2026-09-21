@@ -91,11 +91,9 @@ namespace VirtoCommerce.CustomerModule.Tests
                 return CreateUserManager();
             };
 
-            // The [Obsolete] ctor supplies a null accessor, so the null-guard in ResolveMemberByIdAsync is the
-            // only thing keeping this path from throwing. Nothing else exercises it.
-#pragma warning disable VC0012
-            var resolver = new MemberResolver(memberServiceMock.Object, userManagerFactory, new Mock<IPlatformMemoryCache>().Object);
-#pragma warning restore VC0012
+            // A cache accessor whose Cache is null (no ambient request scope) means the null-guard in
+            // ResolveMemberByIdAsync takes the uncached path, so the factory runs on every call.
+            var resolver = new MemberResolver(memberServiceMock.Object, userManagerFactory, new Mock<IRequestScopedCacheAccessor>().Object);
 
             //Act
             await resolver.ResolveMemberByIdAsync(UserId);
@@ -145,8 +143,7 @@ namespace VirtoCommerce.CustomerModule.Tests
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IRequestScopedCacheAccessor, HttpRequestScopedCacheAccessor>();
 
-            // Mirrors the explicit factory registration in Module.cs, which pins the exact constructor
-            // to avoid ambiguity with the [Obsolete] IPlatformMemoryCache-accepting constructor.
+            // Mirrors the explicit factory registration in Module.cs.
             services.AddTransient<IMemberResolver>(provider => new MemberResolver(
                 provider.GetRequiredService<IMemberService>(),
                 provider.GetRequiredService<Func<UserManager<ApplicationUser>>>(),
@@ -159,33 +156,6 @@ namespace VirtoCommerce.CustomerModule.Tests
 
             //Assert
             Assert.IsType<MemberResolver>(resolver);
-        }
-
-        [Fact]
-        public void ServiceCollection_GenericRegistration_ThrowsAmbiguousConstructor()
-        {
-            //Arrange
-            var memberServiceMock = new Mock<IMemberService>();
-            var platformMemoryCacheMock = new Mock<IPlatformMemoryCache>();
-
-            var services = new ServiceCollection();
-            services.AddSingleton(memberServiceMock.Object);
-            services.AddSingleton<Func<UserManager<ApplicationUser>>>(() => CreateUserManager());
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<IRequestScopedCacheAccessor, HttpRequestScopedCacheAccessor>();
-            services.AddSingleton(platformMemoryCacheMock.Object);
-
-            // Pins the premise for the factory registration in Module.cs: with both ctors DI-resolvable,
-            // the generic AddTransient<TService, TImplementation>() overload cannot pick a constructor.
-            services.AddTransient<IMemberResolver, MemberResolver>();
-
-            using var provider = services.BuildServiceProvider(validateScopes: true);
-
-            //Act
-            var exception = Assert.Throws<InvalidOperationException>(() => provider.GetRequiredService<IMemberResolver>());
-
-            //Assert
-            Assert.Contains("constructor", exception.Message, StringComparison.OrdinalIgnoreCase);
         }
 
         [Fact]
