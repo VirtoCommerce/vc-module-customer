@@ -89,8 +89,7 @@ namespace VirtoCommerce.CustomerModule.Web
             serviceCollection.AddTransient<IIndexedMemberSearchService, MemberIndexedSearchService>();
             serviceCollection.AddTransient<IMemberSearchService, MemberSearchService>();
             serviceCollection.AddTransient<IMemberService, MemberService>();
-            // Explicit factory pins the ctor: the [Obsolete] IPlatformMemoryCache ctor has the same arity,
-            // so reflection-based constructor selection cannot choose between them. Same Transient lifetime.
+            // Explicit factory pins the ctor and keeps the Transient lifetime.
             serviceCollection.AddTransient<IMemberResolver>(provider => new MemberResolver(
                 provider.GetRequiredService<IMemberService>(),
                 provider.GetRequiredService<Func<UserManager<ApplicationUser>>>(),

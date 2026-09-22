@@ -780,11 +780,6 @@ namespace VirtoCommerce.CustomerModule.Data.MySql.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
-                    b.Property<string>("SelectedAddressId")
-                        .HasMaxLength(128)
-                        .HasColumnType("varchar(128)")
-                        .HasColumnName("SelectedAddressId");
-
                     b.Property<string>("TaxpayerId")
                         .HasMaxLength(64)
                         .HasColumnType("varchar(64)");
