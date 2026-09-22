@@ -126,9 +126,6 @@ namespace VirtoCommerce.CustomerModule.Data.Repositories
             modelBuilder.Entity<ContactEntity>().Property(p => p.About).HasColumnName("About");
             modelBuilder.Entity<ContactEntity>().Property(p => p.DefaultOrganizationId).HasColumnName("DefaultOrganizationId");
             modelBuilder.Entity<ContactEntity>().Property(p => p.CurrentOrganizationId).HasColumnName("CurrentOrganizationId");
-#pragma warning disable VC0011 // Type or member is obsolete
-            modelBuilder.Entity<ContactEntity>().Property(p => p.SelectedAddressId).HasColumnName("SelectedAddressId");
-#pragma warning restore VC0011 // Type or member is obsolete
 
             #endregion
 

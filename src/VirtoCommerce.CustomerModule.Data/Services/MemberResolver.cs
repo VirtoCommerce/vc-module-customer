@@ -10,12 +10,6 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 {
     public class MemberResolver(IMemberService memberService, Func<UserManager<ApplicationUser>> userManagerFactory, IRequestScopedCacheAccessor requestScopedCacheAccessor) : IMemberResolver
     {
-        [Obsolete("Use new constructor without IPlatformMemoryCache argument", DiagnosticId = "VC0012", UrlFormat = "https://docs.virtocommerce.org/platform/user-guide/versions/virto3-products-versions/")]
-        public MemberResolver(IMemberService memberService, Func<UserManager<ApplicationUser>> userManagerFactory, IPlatformMemoryCache platformMemoryCache)
-            : this(memberService, userManagerFactory, (IRequestScopedCacheAccessor)null)
-        {
-        }
-
         public virtual Task<Member> ResolveMemberByIdAsync(string userId)
         {
             if (string.IsNullOrEmpty(userId))
