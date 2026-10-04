@@ -59,10 +59,8 @@ namespace VirtoCommerce.CustomerModule.Data.Handlers
 
         protected virtual Task InnerHandle(params IndexEntry[] indexEntries)
         {
-            _indexingJobService.EnqueueIndexAndDeleteDocuments(indexEntries, JobPriority.Normal,
+            return _indexingJobService.EnqueueIndexAndDeleteDocumentsAsync(indexEntries, JobPriority.Normal,
                 _configurations.GetDocumentBuilders(KnownDocumentTypes.Member, typeof(MemberDocumentChangesProvider)).ToList());
-
-            return Task.CompletedTask;
         }
 
         protected virtual IndexEntry GetIndexEntry(string memberId, EntryState entryState = EntryState.Modified)
