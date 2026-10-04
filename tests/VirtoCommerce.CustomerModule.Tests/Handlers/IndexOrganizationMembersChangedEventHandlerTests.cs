@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using VirtoCommerce.CustomerModule.Core.Events;
@@ -50,14 +51,14 @@ public class IndexOrganizationMembersChangedEventHandlerTests
 
         //Assert
         _indexingJobServiceMock.Verify(s =>
-            s.EnqueueIndexAndDeleteDocuments(
+            s.EnqueueIndexAndDeleteDocumentsAsync(
                 It.Is<IndexEntry[]>(entries =>
                     entries.Length == 2 &&
                     entries.All(e => e.EntryState == EntryState.Modified && e.Type == KnownDocumentTypes.Member) &&
                     entries.Any(e => e.Id == "contact-1") &&
                     entries.Any(e => e.Id == "contact-2")),
                 It.IsAny<string>(),
-                It.IsAny<IList<IIndexDocumentBuilder>>()),
+                It.IsAny<IList<IIndexDocumentBuilder>>(), It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -76,10 +77,10 @@ public class IndexOrganizationMembersChangedEventHandlerTests
 
         //Assert
         _indexingJobServiceMock.Verify(s =>
-            s.EnqueueIndexAndDeleteDocuments(
+            s.EnqueueIndexAndDeleteDocumentsAsync(
                 It.IsAny<IndexEntry[]>(),
                 It.IsAny<string>(),
-                It.IsAny<IList<IIndexDocumentBuilder>>()),
+                It.IsAny<IList<IIndexDocumentBuilder>>(), It.IsAny<CancellationToken>()),
             Times.Never);
     }
 
@@ -99,10 +100,10 @@ public class IndexOrganizationMembersChangedEventHandlerTests
 
         //Assert
         _indexingJobServiceMock.Verify(s =>
-            s.EnqueueIndexAndDeleteDocuments(
+            s.EnqueueIndexAndDeleteDocumentsAsync(
                 It.IsAny<IndexEntry[]>(),
                 It.IsAny<string>(),
-                It.IsAny<IList<IIndexDocumentBuilder>>()),
+                It.IsAny<IList<IIndexDocumentBuilder>>(), It.IsAny<CancellationToken>()),
             Times.Never);
     }
 
@@ -143,10 +144,10 @@ public class IndexOrganizationMembersChangedEventHandlerTests
 
         //Assert
         _indexingJobServiceMock.Verify(s =>
-            s.EnqueueIndexAndDeleteDocuments(
+            s.EnqueueIndexAndDeleteDocumentsAsync(
                 It.Is<IndexEntry[]>(entries => entries.Length == 1 && entries[0].Id == "contact-1"),
                 It.IsAny<string>(),
-                It.IsAny<IList<IIndexDocumentBuilder>>()),
+                It.IsAny<IList<IIndexDocumentBuilder>>(), It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -171,10 +172,10 @@ public class IndexOrganizationMembersChangedEventHandlerTests
 
         //Assert
         _indexingJobServiceMock.Verify(s =>
-            s.EnqueueIndexAndDeleteDocuments(
+            s.EnqueueIndexAndDeleteDocumentsAsync(
                 It.Is<IndexEntry[]>(entries => entries.Length == 1 && entries[0].Id == "contact-1"),
                 It.IsAny<string>(),
-                It.IsAny<IList<IIndexDocumentBuilder>>()),
+                It.IsAny<IList<IIndexDocumentBuilder>>(), It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -194,10 +195,10 @@ public class IndexOrganizationMembersChangedEventHandlerTests
 
         //Assert
         _indexingJobServiceMock.Verify(s =>
-            s.EnqueueIndexAndDeleteDocuments(
+            s.EnqueueIndexAndDeleteDocumentsAsync(
                 It.IsAny<IndexEntry[]>(),
                 It.IsAny<string>(),
-                It.IsAny<IList<IIndexDocumentBuilder>>()),
+                It.IsAny<IList<IIndexDocumentBuilder>>(), It.IsAny<CancellationToken>()),
             Times.Never);
     }
 
@@ -217,10 +218,10 @@ public class IndexOrganizationMembersChangedEventHandlerTests
 
         //Assert
         _indexingJobServiceMock.Verify(s =>
-            s.EnqueueIndexAndDeleteDocuments(
+            s.EnqueueIndexAndDeleteDocumentsAsync(
                 It.IsAny<IndexEntry[]>(),
                 It.IsAny<string>(),
-                It.IsAny<IList<IIndexDocumentBuilder>>()),
+                It.IsAny<IList<IIndexDocumentBuilder>>(), It.IsAny<CancellationToken>()),
             Times.Never);
     }
 
@@ -239,10 +240,10 @@ public class IndexOrganizationMembersChangedEventHandlerTests
 
         //Assert
         _indexingJobServiceMock.Verify(s =>
-            s.EnqueueIndexAndDeleteDocuments(
+            s.EnqueueIndexAndDeleteDocumentsAsync(
                 It.IsAny<IndexEntry[]>(),
                 It.IsAny<string>(),
-                It.IsAny<IList<IIndexDocumentBuilder>>()),
+                It.IsAny<IList<IIndexDocumentBuilder>>(), It.IsAny<CancellationToken>()),
             Times.Never);
     }
 
@@ -270,10 +271,10 @@ public class IndexOrganizationMembersChangedEventHandlerTests
 
         //Assert
         _indexingJobServiceMock.Verify(s =>
-            s.EnqueueIndexAndDeleteDocuments(
+            s.EnqueueIndexAndDeleteDocumentsAsync(
                 It.Is<IndexEntry[]>(entries => entries.Length == 1 && entries[0].Id == "contact-shared"),
                 It.IsAny<string>(),
-                It.IsAny<IList<IIndexDocumentBuilder>>()),
+                It.IsAny<IList<IIndexDocumentBuilder>>(), It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -288,10 +289,10 @@ public class IndexOrganizationMembersChangedEventHandlerTests
 
         //Assert
         _indexingJobServiceMock.Verify(s =>
-            s.EnqueueIndexAndDeleteDocuments(
+            s.EnqueueIndexAndDeleteDocumentsAsync(
                 It.IsAny<IndexEntry[]>(),
                 It.IsAny<string>(),
-                It.IsAny<IList<IIndexDocumentBuilder>>()),
+                It.IsAny<IList<IIndexDocumentBuilder>>(), It.IsAny<CancellationToken>()),
             Times.Never);
     }
 
