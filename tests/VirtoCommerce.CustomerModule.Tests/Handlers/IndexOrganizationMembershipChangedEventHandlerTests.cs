@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Moq;
@@ -45,14 +46,14 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
             await _handler.Handle(message);
 
             _indexingJobServiceMock.Verify(s =>
-                s.EnqueueIndexAndDeleteDocuments(
+                s.EnqueueIndexAndDeleteDocumentsAsync(
                     It.Is<IndexEntry[]>(entries =>
                         entries.Length == 1 &&
                         entries[0].Id == "member-1" &&
                         entries[0].EntryState == EntryState.Modified &&
                         entries[0].Type == KnownDocumentTypes.Member),
                     It.IsAny<string>(),
-                    It.IsAny<IList<IIndexDocumentBuilder>>()),
+                    It.IsAny<IList<IIndexDocumentBuilder>>(), It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
@@ -68,10 +69,10 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
             await _handler.Handle(message);
 
             _indexingJobServiceMock.Verify(s =>
-                s.EnqueueIndexAndDeleteDocuments(
+                s.EnqueueIndexAndDeleteDocumentsAsync(
                     It.Is<IndexEntry[]>(entries => entries.Length == 1 && entries[0].Id == "member-1"),
                     It.IsAny<string>(),
-                    It.IsAny<IList<IIndexDocumentBuilder>>()),
+                    It.IsAny<IList<IIndexDocumentBuilder>>(), It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
@@ -91,10 +92,10 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
             await _handler.Handle(message);
 
             _indexingJobServiceMock.Verify(s =>
-                s.EnqueueIndexAndDeleteDocuments(
+                s.EnqueueIndexAndDeleteDocumentsAsync(
                     It.Is<IndexEntry[]>(entries => entries.Length == 1 && entries[0].Id == "member-1"),
                     It.IsAny<string>(),
-                    It.IsAny<IList<IIndexDocumentBuilder>>()),
+                    It.IsAny<IList<IIndexDocumentBuilder>>(), It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
@@ -109,10 +110,10 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
             await _handler.Handle(message);
 
             _indexingJobServiceMock.Verify(s =>
-                s.EnqueueIndexAndDeleteDocuments(
+                s.EnqueueIndexAndDeleteDocumentsAsync(
                     It.IsAny<IndexEntry[]>(),
                     It.IsAny<string>(),
-                    It.IsAny<IList<IIndexDocumentBuilder>>()),
+                    It.IsAny<IList<IIndexDocumentBuilder>>(), It.IsAny<CancellationToken>()),
                 Times.Never);
         }
 
@@ -128,10 +129,10 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
             await _handler.Handle(message);
 
             _indexingJobServiceMock.Verify(s =>
-                s.EnqueueIndexAndDeleteDocuments(
+                s.EnqueueIndexAndDeleteDocumentsAsync(
                     It.IsAny<IndexEntry[]>(),
                     It.IsAny<string>(),
-                    It.IsAny<IList<IIndexDocumentBuilder>>()),
+                    It.IsAny<IList<IIndexDocumentBuilder>>(), It.IsAny<CancellationToken>()),
                 Times.Never);
         }
 
@@ -153,10 +154,10 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
 
             _userManagerMock.Verify(m => m.FindByIdAsync("user-1"), Times.Once);
             _indexingJobServiceMock.Verify(s =>
-                s.EnqueueIndexAndDeleteDocuments(
+                s.EnqueueIndexAndDeleteDocumentsAsync(
                     It.Is<IndexEntry[]>(entries => entries.Length == 1 && entries[0].Id == "member-1"),
                     It.IsAny<string>(),
-                    It.IsAny<IList<IIndexDocumentBuilder>>()),
+                    It.IsAny<IList<IIndexDocumentBuilder>>(), It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
@@ -178,10 +179,10 @@ namespace VirtoCommerce.CustomerModule.Tests.Handlers
             await _handler.Handle(message);
 
             _indexingJobServiceMock.Verify(s =>
-                s.EnqueueIndexAndDeleteDocuments(
+                s.EnqueueIndexAndDeleteDocumentsAsync(
                     It.Is<IndexEntry[]>(entries => entries.Length == 1 && entries[0].Id == "member-1"),
                     It.IsAny<string>(),
-                    It.IsAny<IList<IIndexDocumentBuilder>>()),
+                    It.IsAny<IList<IIndexDocumentBuilder>>(), It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
