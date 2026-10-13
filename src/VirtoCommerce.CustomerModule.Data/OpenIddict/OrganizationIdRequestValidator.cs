@@ -18,14 +18,21 @@ public class OrganizationIdRequestValidator(
     IMemberService memberService,
     IOrganizationMembershipSearchService organizationMembershipSearchService) : ITokenRequestValidator
 {
+    // The storefront always resends the last-used organization on every interactive sign-in (useAuth.ts),
+    // so a blocked org here is never a deliberate choice — allow falling back. An explicit org switch
+    // on an existing session (refresh_token grant, switchOrganization()) gets no fallback.
+    private static readonly string[] _fallbackGrantTypes =
+    [
+        OpenIddictConstants.GrantTypes.Password,
+        GrantTypes.OtpEmail,
+        GrantTypes.Mfa,
+    ];
+
     public virtual int Priority { get; set; } = 50;
 
     public virtual async Task<IList<TokenResponse>> ValidateAsync(TokenRequestContext context)
     {
-        // The storefront always resends the last-used organization on every password login (useAuth.ts),
-        // so a blocked org here is never a deliberate choice — allow falling back. An explicit org switch
-        // on an existing session (refresh_token grant, switchOrganization()) gets no fallback.
-        var allowFallback = context.Request.GrantType == OpenIddictConstants.GrantTypes.Password;
+        var allowFallback = _fallbackGrantTypes.Contains(context.Request.GrantType);
 
         var member = await GetMemberAsync(context);
 
@@ -43,7 +50,7 @@ public class OrganizationIdRequestValidator(
         var availableOrganizationIds = GetAvailableOrganizationIds(member);
         if (!availableOrganizationIds.Contains(organizationId))
         {
-            return await HandleUnavailableOrganizationAsync(context, member, organizationId, availableOrganizationIds);
+            return await HandleUnavailableOrganizationAsync(context, member, allowFallback, organizationId, availableOrganizationIds);
         }
 
         if (context.User != null)
@@ -59,9 +66,9 @@ public class OrganizationIdRequestValidator(
     }
 
     private async Task<IList<TokenResponse>> HandleUnavailableOrganizationAsync(
-        TokenRequestContext context, Member member, string organizationId, IList<string> availableOrganizationIds)
+        TokenRequestContext context, Member member, bool allowFallback, string organizationId, IList<string> availableOrganizationIds)
     {
-        if (context.Request.GrantType != OpenIddictConstants.GrantTypes.Password)
+        if (!allowFallback)
         {
             return [ErrorDescriber.InvalidOrganizationId(organizationId)];
         }

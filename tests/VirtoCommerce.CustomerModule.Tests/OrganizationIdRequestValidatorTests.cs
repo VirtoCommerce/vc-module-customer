@@ -301,6 +301,93 @@ public class OrganizationIdRequestValidatorTests
         Assert.Equal(OpenIddictConstants.Errors.InvalidGrant, result[0].Error);
     }
 
+    [Theory]
+    [InlineData(ModuleConstants.Security.GrantTypes.OtpEmail)]
+    [InlineData(ModuleConstants.Security.GrantTypes.Mfa)]
+    public async Task ValidateAsync_InteractiveSignInGrantWithRemovedOrgParam_FallsBackToAvailableOrgAndReturnsEmpty(string grantType)
+    {
+        //Arrange — otp_email and mfa resend the last-used org just like the password grant, so an org the user
+        // was removed from must fall back instead of blocking sign-in.
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId2] });
+
+        var context = BuildContext(OrgId, grantType: grantType, user: user);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Empty(result);
+        Assert.Equal(OrgId2, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
+    }
+
+    [Theory]
+    [InlineData(ModuleConstants.Security.GrantTypes.OtpEmail)]
+    [InlineData(ModuleConstants.Security.GrantTypes.Mfa)]
+    public async Task ValidateAsync_InteractiveSignInGrantWithLockedOrgParam_FallsBackToAccessibleOrgAndReturnsEmpty(string grantType)
+    {
+        //Arrange
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId, OrgId2] });
+
+        SetupMembership(new OrganizationMembership { OrganizationId = OrgId, IsLocked = true, LockoutEnd = null });
+
+        var context = BuildContext(OrgId, grantType: grantType, user: user);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Empty(result);
+        Assert.Equal(OrgId2, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
+    }
+
+    [Theory]
+    [InlineData(ModuleConstants.Security.GrantTypes.OtpEmail, ModuleConstants.MembershipStatuses.Invited)]
+    [InlineData(ModuleConstants.Security.GrantTypes.OtpEmail, ModuleConstants.MembershipStatuses.Rejected)]
+    [InlineData(ModuleConstants.Security.GrantTypes.OtpEmail, ModuleConstants.MembershipStatuses.Deleted)]
+    [InlineData(ModuleConstants.Security.GrantTypes.Mfa, ModuleConstants.MembershipStatuses.Invited)]
+    [InlineData(ModuleConstants.Security.GrantTypes.Mfa, ModuleConstants.MembershipStatuses.Rejected)]
+    [InlineData(ModuleConstants.Security.GrantTypes.Mfa, ModuleConstants.MembershipStatuses.Deleted)]
+    public async Task ValidateAsync_InteractiveSignInGrantWithBlockedOrgParam_FallsBackToAccessibleOrgAndReturnsEmpty(string grantType, string status)
+    {
+        //Arrange
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId, OrgId2] });
+
+        SetupMembership(new OrganizationMembership { OrganizationId = OrgId, Status = status });
+
+        var context = BuildContext(OrgId, grantType: grantType, user: user);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Empty(result);
+        Assert.Equal(OrgId2, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
+    }
+
+    [Fact]
+    public async Task ValidateAsync_RefreshTokenGrantSwitchToRemovedOrg_ReturnsOrgError()
+    {
+        //Arrange — an explicit switch to an org the user is no longer in gets no fallback.
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId2] });
+
+        var context = BuildContext(OrgId, grantType: OpenIddictConstants.GrantTypes.RefreshToken, user: user);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Single(result);
+        Assert.Equal(OpenIddictConstants.Errors.InvalidGrant, result[0].Error);
+    }
+
     [Fact]
     public async Task ValidateAsync_ContactGloballyRejected_NoMembershipOverride_BlocksAccess()
     {
