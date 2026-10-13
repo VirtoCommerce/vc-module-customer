@@ -38,7 +38,6 @@ namespace VirtoCommerce.CustomerModule.Core
                 public const string OrganizationId = "organization_id";
             }
 
-            // Grant types registered by other modules (vc-module-otp, vc-module-mfa), which this module doesn't reference.
             public static class GrantTypes
             {
                 public const string OtpEmail = "otp_email";

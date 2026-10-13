@@ -18,9 +18,6 @@ public class OrganizationIdRequestValidator(
     IMemberService memberService,
     IOrganizationMembershipSearchService organizationMembershipSearchService) : ITokenRequestValidator
 {
-    // The storefront always resends the last-used organization on every interactive sign-in (useAuth.ts),
-    // so a blocked org here is never a deliberate choice — allow falling back. An explicit org switch
-    // on an existing session (refresh_token grant, switchOrganization()) gets no fallback.
     private static readonly string[] _fallbackGrantTypes =
     [
         OpenIddictConstants.GrantTypes.Password,
