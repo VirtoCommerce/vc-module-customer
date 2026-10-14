@@ -37,12 +37,6 @@ namespace VirtoCommerce.CustomerModule.Core
             {
                 public const string OrganizationId = "organization_id";
             }
-
-            public static class GrantTypes
-            {
-                public const string OtpEmail = "otp_email";
-                public const string Mfa = "mfa";
-            }
         }
 
         public static class MembershipStatuses

@@ -18,18 +18,11 @@ public class OrganizationIdRequestValidator(
     IMemberService memberService,
     IOrganizationMembershipSearchService organizationMembershipSearchService) : ITokenRequestValidator
 {
-    private static readonly string[] _fallbackGrantTypes =
-    [
-        OpenIddictConstants.GrantTypes.Password,
-        GrantTypes.OtpEmail,
-        GrantTypes.Mfa,
-    ];
-
     public virtual int Priority { get; set; } = 50;
 
     public virtual async Task<IList<TokenResponse>> ValidateAsync(TokenRequestContext context)
     {
-        var allowFallback = _fallbackGrantTypes.Contains(context.Request.GrantType);
+        var allowFallback = IsOrganizationFallbackAllowed(context);
 
         var member = await GetMemberAsync(context);
 
@@ -60,6 +53,19 @@ public class OrganizationIdRequestValidator(
         }
 
         return [];
+    }
+
+    /// <summary>
+    /// Whether an unavailable or blocked organization may be replaced with an accessible one instead of failing the request.
+    /// </summary>
+    /// <remarks>
+    /// Only credential sign-ins (password, OTP, MFA and other grants that set <see cref="TokenRequestContext.SignInResult"/>) qualify:
+    /// the storefront resends the last-used organization with them, so it is never a deliberate choice.
+    /// An explicit organization switch (refresh_token) leaves it unset and keeps failing.
+    /// </remarks>
+    protected virtual bool IsOrganizationFallbackAllowed(TokenRequestContext context)
+    {
+        return context.SignInResult != null;
     }
 
     private async Task<IList<TokenResponse>> HandleUnavailableOrganizationAsync(
