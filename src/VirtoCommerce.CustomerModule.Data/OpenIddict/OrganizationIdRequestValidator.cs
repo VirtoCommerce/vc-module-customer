@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using OpenIddict.Abstractions;
 using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Extensions;
 using VirtoCommerce.CustomerModule.Core.Model;
@@ -55,14 +54,8 @@ public class OrganizationIdRequestValidator(
         return [];
     }
 
-    /// <summary>
-    /// Whether an unavailable or blocked organization may be replaced with an accessible one instead of failing the request.
-    /// </summary>
-    /// <remarks>
-    /// Only credential sign-ins (password, OTP, MFA and other grants that set <see cref="TokenRequestContext.SignInResult"/>) qualify:
-    /// the storefront resends the last-used organization with them, so it is never a deliberate choice.
-    /// An explicit organization switch (refresh_token) leaves it unset and keeps failing.
-    /// </remarks>
+    // Credential sign-ins (SignInResult set) resend the last-used organization, so it isn't a deliberate choice;
+    // an explicit switch (refresh_token) is, and keeps failing.
     protected virtual bool IsOrganizationFallbackAllowed(TokenRequestContext context)
     {
         return context.SignInResult != null;

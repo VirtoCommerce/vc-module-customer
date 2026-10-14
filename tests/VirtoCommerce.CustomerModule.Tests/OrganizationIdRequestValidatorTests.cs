@@ -1,5 +1,5 @@
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Moq;
@@ -235,7 +235,7 @@ public class OrganizationIdRequestValidatorTests
         _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
             .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId2] });
 
-        var context = BuildContext(OrgId, grantType, user);
+        var context = BuildContext(OrgId, grantType, user, SignInResult.Success);
 
         //Act
         var result = await GetValidator().ValidateAsync(context);
@@ -256,7 +256,7 @@ public class OrganizationIdRequestValidatorTests
 
         SetupMembership(new OrganizationMembership { OrganizationId = OrgId, IsLocked = true, LockoutEnd = null });
 
-        var context = BuildContext(OrgId, grantType, user);
+        var context = BuildContext(OrgId, grantType, user, SignInResult.Success);
 
         //Act
         var result = await GetValidator().ValidateAsync(context);
@@ -277,7 +277,7 @@ public class OrganizationIdRequestValidatorTests
 
         SetupMembership(new OrganizationMembership { OrganizationId = OrgId, Status = status });
 
-        var context = BuildContext(OrgId, grantType, user);
+        var context = BuildContext(OrgId, grantType, user, SignInResult.Success);
 
         //Act
         var result = await GetValidator().ValidateAsync(context);
@@ -296,7 +296,7 @@ public class OrganizationIdRequestValidatorTests
         _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
             .ReturnsAsync(new Contact { Id = MemberId, Organizations = [] });
 
-        var context = BuildContext(OrgId, grantType, user);
+        var context = BuildContext(OrgId, grantType, user, SignInResult.Success);
 
         //Act
         var result = await GetValidator().ValidateAsync(context);
@@ -316,7 +316,7 @@ public class OrganizationIdRequestValidatorTests
             .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId] });
         SetupMembership(new OrganizationMembership { OrganizationId = OrgId, IsLocked = true, LockoutEnd = null });
 
-        var context = BuildContext(OrgId, grantType, user);
+        var context = BuildContext(OrgId, grantType, user, SignInResult.Success);
 
         //Act
         var result = await GetValidator().ValidateAsync(context);
@@ -336,7 +336,46 @@ public class OrganizationIdRequestValidatorTests
             .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId] });
         SetupMembership(new OrganizationMembership { OrganizationId = OrgId, Status = status });
 
-        var context = BuildContext(OrgId, grantType, user);
+        var context = BuildContext(OrgId, grantType, user, SignInResult.Success);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Single(result);
+        Assert.Equal(OpenIddictConstants.Errors.InvalidGrant, result[0].Error);
+        Assert.Equal(StatusErrorCodes[status], result[0].Code);
+    }
+
+    [Theory]
+    [MemberData(nameof(SignInResultData))]
+    public async Task ValidateAsync_AnySignInResult_FallsBackToAccessibleOrgAndReturnsEmpty(string signInResult)
+    {
+        //Arrange — the validators also run after a failed password check, so the fallback must not depend
+        // on whether the sign-in succeeded, only on SignInResult being set.
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId2] });
+
+        var context = BuildContext(OrgId, OpenIddictConstants.GrantTypes.Password, user, SignInResults[signInResult]);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Empty(result);
+        Assert.Equal(OrgId2, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
+    }
+
+    [Fact]
+    public async Task ValidateAsync_PasswordGrantWithoutSignInResult_ReturnsOrgError()
+    {
+        //Arrange — the fallback follows SignInResult, not the grant name.
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId2] });
+
+        var context = BuildContext(OrgId, OpenIddictConstants.GrantTypes.Password, user);
 
         //Act
         var result = await GetValidator().ValidateAsync(context);
@@ -436,7 +475,7 @@ public class OrganizationIdRequestValidatorTests
         _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
             .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId], Status = ModuleConstants.MembershipStatuses.Rejected });
 
-        var context = BuildContext(OrgId, grantType: OpenIddictConstants.GrantTypes.Password, user: user);
+        var context = BuildContext(OrgId, OpenIddictConstants.GrantTypes.Password, user, SignInResult.Success);
 
         //Act
         var result = await GetValidator().ValidateAsync(context);
@@ -458,7 +497,7 @@ public class OrganizationIdRequestValidatorTests
 
         SetupMembership(new OrganizationMembership { OrganizationId = OrgId, Status = ModuleConstants.MembershipStatuses.Approved });
 
-        var context = BuildContext(OrgId, grantType: OpenIddictConstants.GrantTypes.Password, user: user);
+        var context = BuildContext(OrgId, OpenIddictConstants.GrantTypes.Password, user, SignInResult.Success);
 
         //Act
         var result = await GetValidator().ValidateAsync(context);
@@ -479,7 +518,7 @@ public class OrganizationIdRequestValidatorTests
 
         SetupMembership(new OrganizationMembership { OrganizationId = OrgId, Status = ModuleConstants.MembershipStatuses.Rejected });
 
-        var context = BuildContext(orgId: null, grantType: OpenIddictConstants.GrantTypes.Password, user: user);
+        var context = BuildContext(orgId: null, OpenIddictConstants.GrantTypes.Password, user, SignInResult.Success);
 
         //Act
         var result = await GetValidator().ValidateAsync(context);
@@ -526,7 +565,8 @@ public class OrganizationIdRequestValidatorTests
     private OrganizationIdRequestValidator GetValidator() =>
         new(_memberServiceMock.Object, _membershipServiceMock.Object);
 
-    // Grants whose handlers set TokenRequestContext.SignInResult: the platform password grant, vc-module-otp and vc-module-mfa.
+    // Credential grants that set TokenRequestContext.SignInResult: platform password, vc-module-otp, vc-module-mfa.
+    // Row labels only: the credential theories pass SignInResult explicitly.
     private static readonly string[] CredentialGrantTypes = [OpenIddictConstants.GrantTypes.Password, "otp_email", "mfa"];
 
     private static readonly string[] NonCredentialGrantTypes =
@@ -544,6 +584,23 @@ public class OrganizationIdRequestValidatorTests
     public static MatrixTheoryData<string, string> CredentialGrantTypeBlockingStatusData =>
         new(CredentialGrantTypes, ModuleConstants.MembershipStatuses.BlockingStatuses);
 
+    private static readonly Dictionary<string, SignInResult> SignInResults = new()
+    {
+        [nameof(SignInResult.Success)] = SignInResult.Success,
+        [nameof(SignInResult.Failed)] = SignInResult.Failed,
+        [nameof(SignInResult.LockedOut)] = SignInResult.LockedOut,
+        [nameof(SignInResult.NotAllowed)] = SignInResult.NotAllowed,
+    };
+
+    public static TheoryData<string> SignInResultData => new(SignInResults.Keys);
+
+    private static readonly Dictionary<string, string> StatusErrorCodes = new()
+    {
+        [ModuleConstants.MembershipStatuses.Invited] = "user_invitation_pending_in_organization",
+        [ModuleConstants.MembershipStatuses.Rejected] = "user_is_rejected_in_organization",
+        [ModuleConstants.MembershipStatuses.Deleted] = "user_is_removed_from_organization",
+    };
+
     private static TokenRequestContext BuildContext(
         string orgId,
         string grantType = OpenIddictConstants.GrantTypes.RefreshToken,
@@ -560,7 +617,7 @@ public class OrganizationIdRequestValidatorTests
         {
             Request = request,
             User = user,
-            SignInResult = signInResult ?? (CredentialGrantTypes.Contains(grantType) ? SignInResult.Success : null),
+            SignInResult = signInResult,
         };
     }
 }
