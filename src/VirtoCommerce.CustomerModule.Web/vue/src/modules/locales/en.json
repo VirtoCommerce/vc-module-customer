@@ -58,7 +58,6 @@
     },
     "PAGES": {
       "LIST": {
-        "TITLE": "Contacts",
         "ALL": "All contacts",
         "EMPTY": "No contacts found",
         "COLUMNS": {
