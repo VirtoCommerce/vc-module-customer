@@ -57,7 +57,10 @@ export function useMemberBlade(memberType: MemberType) {
       .getApiClient()
       .then((client) => client.searchDynamicProperties({ objectType: fullTypeName(memberType), take: 1000 }))
       .then((r) => r.results ?? [])
-      .catch((e) => ((definitions = undefined), Promise.reject(e))));
+      .catch((e) => {
+        definitions = undefined;
+        return Promise.reject(e);
+      }));
 
   async function newMember(): Promise<MemberModel> {
     const parentId = options.value?.parentId;

@@ -108,13 +108,10 @@ const form = useBladeForm({
   closeConfirmMessage: computed(() => t("CUSTOMER.ALERTS.CLOSE_CONFIRMATION")),
 });
 
-const title = computed(() =>
-  isNew.value
-    ? t("CUSTOMER.PAGES.MEMBERSHIPS.NEW")
-    : item.value.organizationId
-      ? (item.value.organizationName ?? "")
-      : t("CUSTOMER.PAGES.MEMBERSHIPS.GLOBAL"),
-);
+const title = computed(() => {
+  if (isNew.value) return t("CUSTOMER.PAGES.MEMBERSHIPS.NEW");
+  return item.value.organizationId ? (item.value.organizationName ?? "") : t("CUSTOMER.PAGES.MEMBERSHIPS.GLOBAL");
+});
 
 async function load() {
   loading.value = true;

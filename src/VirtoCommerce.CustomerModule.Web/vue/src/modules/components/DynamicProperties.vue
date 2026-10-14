@@ -82,7 +82,10 @@ function toBase(p: DynamicObjectProperty): IBaseProperty {
 const bases = new WeakMap<DynamicObjectProperty, { values?: unknown; base: IBaseProperty }>();
 function baseOf(p: DynamicObjectProperty) {
   let entry = bases.get(p);
-  if (!entry || entry.values !== p.values) bases.set(p, (entry = { values: p.values, base: toBase(p) }));
+  if (!entry || entry.values !== p.values) {
+    entry = { values: p.values, base: toBase(p) };
+    bases.set(p, entry);
+  }
   return entry.base;
 }
 

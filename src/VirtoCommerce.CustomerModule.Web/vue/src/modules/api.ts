@@ -121,8 +121,8 @@ export function rolesOptions(
 
   async function search(keyword?: string, skip?: number, ids?: string[]) {
     if (ids?.length) {
-      const results = ids.map((id) => ({ id, name: selected().find((r) => r.roleId === id)?.roleName ?? id }));
-      return { results, totalCount: results.length };
+      const picked = ids.map((id) => ({ id, name: selected().find((r) => r.roleId === id)?.roleName ?? id }));
+      return { results: picked, totalCount: picked.length };
     }
     const [list, roles] = await Promise.all([
       getWhitelist(),
@@ -172,10 +172,12 @@ export interface AssetEntry {
 }
 
 export const assets = {
-  list: (folderUrl: string, keyword?: string) =>
-    getJson<{ results?: AssetEntry[] }>(
-      `/api/assets?folderUrl=${encodeURIComponent(folderUrl)}${keyword ? `&keyword=${encodeURIComponent(keyword)}` : ""}`,
-    ).then((r) => r.results ?? []),
+  list: (folderUrl: string, keyword?: string) => {
+    const search = keyword ? `&keyword=${encodeURIComponent(keyword)}` : "";
+    return getJson<{ results?: AssetEntry[] }>(`/api/assets?folderUrl=${encodeURIComponent(folderUrl)}${search}`).then(
+      (r) => r.results ?? [],
+    );
+  },
   // one request per file (the endpoint keeps only the first file of a multipart body), in parallel
   async upload(folderUrl: string, files: File[], overwrite = false) {
     await Promise.all(
