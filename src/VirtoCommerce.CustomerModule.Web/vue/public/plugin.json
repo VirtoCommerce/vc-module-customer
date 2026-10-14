@@ -1,0 +1,18 @@
+{
+  // Customer (contacts/organizations) admin UI for the Admin Shell host (Module Federation remote)
+  "remote": { "name": "customer_admin", "exposed": "./Module" },
+  "contributions": {
+    "menu": [
+      {
+        "id": "customers",
+        "sectionId": "orders",
+        "title": "Contacts",
+        "icon": "lucide-contact",
+        "route": "/customers",
+        "permission": "customer:access",
+        "priority": 20,
+        "replaces": "legacy.customers"
+      }
+    ]
+  }
+}

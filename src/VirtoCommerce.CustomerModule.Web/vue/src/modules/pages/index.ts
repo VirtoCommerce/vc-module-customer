@@ -1,0 +1,17 @@
+export { default as CustomerMembersList } from "./members-list.vue";
+export { default as CustomerMemberAdd } from "./member-add.vue";
+export { default as CustomerContactDetails } from "./contact-details.vue";
+export { default as CustomerOrganizationDetails } from "./organization-details.vue";
+export { default as CustomerEmployeeDetails } from "./employee-details.vue";
+export { default as CustomerVendorDetails } from "./vendor-details.vue";
+export { default as CustomerAddressDetails } from "./address-details.vue";
+export { default as CustomerAccounts } from "./accounts.vue";
+export { default as CustomerAccountCreate } from "./account-create.vue";
+export { default as CustomerAccountLink } from "./account-link.vue";
+export { default as CustomerOrgMemberships } from "./memberships.vue";
+export { default as CustomerOrgMembershipDetails } from "./membership-details.vue";
+export { default as CustomerInvite } from "./invite.vue";
+export { default as CustomerSeoList } from "./seo-list.vue";
+export { default as CustomerSeoDetails } from "./seo-details.vue";
+export { default as CustomerOrganizationAssets } from "./organization-assets.vue";
+export { default as CustomerMemberIcon } from "./member-icon.vue";
