@@ -147,6 +147,7 @@ import { VcBlade, VcBreadcrumbs, VcColumn, VcDataTable, VcIcon, VcImage, VcStatu
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { customerApi, membershipApi, MEMBER_TYPES, type MemberType } from "../api";
+import { requestedKeyword } from "../search";
 import type { Member, OrganizationMembership } from "../../api_client/virtocommerce.customer";
 
 export interface CustomerMembersToolbarContext {
@@ -293,6 +294,22 @@ async function load() {
 load();
 watch(searchValue, () => pagination.setPage(1));
 watch([sortExpression, searchValue, () => pagination.skip], debounce(load, 300));
+
+// global search's "Show all": the list shows the keyword it was asked for, from the top level (opened just now or already
+// open, possibly drilled into an organization)
+watch(
+  requestedKeyword,
+  (keyword) => {
+    if (keyword === undefined) return;
+    requestedKeyword.value = undefined;
+    const drilled = path.value.length > 0;
+    path.value = [];
+    selection.value = [];
+    if (searchValue.value !== keyword) searchValue.value = keyword;
+    else if (drilled) load();
+  },
+  { immediate: true },
+);
 
 const breadcrumbs = computed(() => [
   { id: "", title: t("CUSTOMER.PAGES.LIST.ALL"), icon: "lucide-contact", clickHandler: () => goTo(0) },

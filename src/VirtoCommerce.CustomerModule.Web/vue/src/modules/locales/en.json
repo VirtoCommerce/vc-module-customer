@@ -232,6 +232,9 @@
       "NO_MEMBERSHIP": "No organization membership record found for this member.",
       "DELETE_SEO": "Delete {count} SEO record(s)?",
       "UNKNOWN_MEMBER_TYPE": "Cannot edit member of an unknown type: '{memberType}'"
+    },
+    "SEARCH": {
+      "GROUP_TITLE": "Customers"
     }
   }
 }

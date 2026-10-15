@@ -1,10 +1,11 @@
 import * as blades from "./pages";
 import * as locales from "./locales";
 import { defineAppModule, registerExternalWidget } from "@vc-shell/framework";
-import { markRaw } from "vue";
+import { markRaw, type App } from "vue";
 import AccountContactWidget from "./components/AccountContactWidget.vue";
 import ProfileIconWidget from "./components/ProfileIconWidget.vue";
 import StoreInviteWidget from "./components/StoreInviteWidget.vue";
+import { registerCustomerSearch } from "./search";
 
 // Widgets the AngularJS Customer module added to other modules' blades, registered by blade name.
 // Each shows only on a saved entity (blade param), never on a "new" blade.
@@ -36,9 +37,17 @@ registerExternalWidget({
   targetBlades: ["PlatformUserProfile"],
 });
 
-export default defineAppModule({
+const appModule = defineAppModule({
   blades,
   locales,
 });
+
+export default {
+  install(app: App) {
+    appModule.install(app);
+    // customers in the Admin Shell's global search
+    registerCustomerSearch(app);
+  },
+};
 
 export * from "./pages";
