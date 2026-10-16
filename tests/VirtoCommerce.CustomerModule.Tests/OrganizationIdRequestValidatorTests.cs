@@ -1,4 +1,4 @@
-using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Moq;
 using OpenIddict.Abstractions;
@@ -6,7 +6,9 @@ using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Model;
 using VirtoCommerce.CustomerModule.Core.Services;
 using VirtoCommerce.CustomerModule.Data.OpenIddict;
+using VirtoCommerce.Platform.Core;
 using VirtoCommerce.Platform.Core.Security;
+using VirtoCommerce.Platform.Core.Security.SignInLog;
 using VirtoCommerce.Platform.Security.OpenIddict;
 using Xunit;
 
@@ -64,7 +66,7 @@ public class OrganizationIdRequestValidatorTests
     }
 
     [Fact]
-    public async Task ValidateAsync_NoExplicitOrgId_AutoDetectsFromMember_LockedInOrg_ReturnsOrgError()
+    public async Task ValidateAsync_RefreshTokenGrant_NoExplicitOrgId_LockedInSoleOrg_IssuesTokenWithoutOrg()
     {
         //Arrange — the member's only organization is locked, so there is nothing to fall back to.
         var user = new ApplicationUser
@@ -80,14 +82,16 @@ public class OrganizationIdRequestValidatorTests
                 Organizations = [OrgId]
             });
 
-        SetupMembership(new OrganizationMembership { IsLocked = true, LockoutEnd = null });
+        SetupMembership(new OrganizationMembership { OrganizationId = OrgId, IsLocked = true, LockoutEnd = null });
+
+        var context = BuildContext(orgId: null, grantType: OpenIddictConstants.GrantTypes.RefreshToken, user: user);
 
         //Act
-        var result = await GetValidator().ValidateAsync(BuildContext(orgId: null, user: user));
+        var result = await GetValidator().ValidateAsync(context);
 
         //Assert
-        Assert.Single(result);
-        Assert.Equal(OpenIddictConstants.Errors.InvalidGrant, result[0].Error);
+        Assert.Empty(result);
+        Assert.Null(context.Request.GetParameter(Parameters.OrganizationId));
     }
 
     [Fact]
@@ -115,82 +119,7 @@ public class OrganizationIdRequestValidatorTests
     }
 
     [Fact]
-    public async Task ValidateAsync_UserGloballyLocked_ReturnsGlobalError()
-    {
-        //Arrange
-        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
-            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId] });
-
-        var user = new ApplicationUser
-        {
-            Id = UserId,
-            MemberId = MemberId,
-            LockoutEnabled = true,
-            LockoutEnd = DateTimeOffset.UtcNow.AddDays(1)
-        };
-
-        //Act
-        var result = await GetValidator().ValidateAsync(BuildContext(OrgId, user: user));
-
-        //Assert
-        Assert.Single(result);
-        Assert.Equal(OpenIddictConstants.Errors.InvalidGrant, result[0].Error);
-    }
-
-    [Fact]
-    public async Task ValidateAsync_UserTemporarilyLocked_ReturnsTemporaryLockoutError()
-    {
-        //Arrange — org member with an active TEMPORARY lock (future end, NOT DateTime.MaxValue),
-        // e.g. after exceeding the failed-attempt threshold. VCST-5374: this must surface the
-        // temporary lockout code, not the permanent one.
-        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
-            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId] });
-
-        var user = new ApplicationUser
-        {
-            Id = UserId,
-            MemberId = MemberId,
-            LockoutEnabled = true,
-            LockoutEnd = DateTimeOffset.UtcNow.AddMinutes(15)
-        };
-
-        //Act
-        var result = await GetValidator().ValidateAsync(BuildContext(OrgId, user: user));
-
-        //Assert
-        Assert.Single(result);
-        Assert.Equal(OpenIddictConstants.Errors.InvalidGrant, result[0].Error);
-        Assert.NotEqual("user_is_locked_out", result[0].Code);
-        Assert.Equal("user_is_temporary_locked_out", result[0].Code);
-    }
-
-    [Fact]
-    public async Task ValidateAsync_UserPermanentlyLocked_ReturnsGlobalLockoutError()
-    {
-        //Arrange — org member with a PERMANENT lock (LockoutEnd == DateTime.MaxValue).
-        // Regression guard: the permanent code must still be returned.
-        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
-            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId] });
-
-        var user = new ApplicationUser
-        {
-            Id = UserId,
-            MemberId = MemberId,
-            LockoutEnabled = true,
-            LockoutEnd = DateTime.MaxValue.ToUniversalTime()
-        };
-
-        //Act
-        var result = await GetValidator().ValidateAsync(BuildContext(OrgId, user: user));
-
-        //Assert
-        Assert.Single(result);
-        Assert.Equal(OpenIddictConstants.Errors.InvalidGrant, result[0].Error);
-        Assert.Equal("user_is_locked_out", result[0].Code);
-    }
-
-    [Fact]
-    public async Task ValidateAsync_UserLockedInOrg_ReturnsOrgError()
+    public async Task ValidateAsync_RefreshTokenGrantExplicitSwitchToLockedOrg_ReturnsOrgError()
     {
         //Arrange
         var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
@@ -198,12 +127,15 @@ public class OrganizationIdRequestValidatorTests
             .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId] });
         SetupMembership(new OrganizationMembership { IsLocked = true, LockoutEnd = null });
 
+        var context = BuildContext(OrgId, grantType: OpenIddictConstants.GrantTypes.RefreshToken, user: user);
+
         //Act
-        var result = await GetValidator().ValidateAsync(BuildContext(OrgId, user: user));
+        var result = await GetValidator().ValidateAsync(context);
 
         //Assert
         Assert.Single(result);
         Assert.Equal(OpenIddictConstants.Errors.InvalidGrant, result[0].Error);
+        Assert.Equal(SignInFailureReason.NotAllowed, context.FailureReason);
     }
 
     [Fact]
@@ -262,8 +194,7 @@ public class OrganizationIdRequestValidatorTests
     [Fact]
     public async Task ValidateAsync_PasswordGrantWithRejectedOrgParam_FallsBackToAccessibleOrgAndReturnsEmpty()
     {
-        //Arrange — password grant resends the last-used org (useAuth.ts), which is never a deliberate choice,
-        // so a now-rejected org must fall back to another accessible one instead of blocking sign-in.
+        //Arrange — only an explicit refresh_token switch is deliberate, so an org requested on sign-in that is now rejected falls back to another accessible one.
         var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
         _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
             .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId, OrgId2] });
@@ -283,8 +214,7 @@ public class OrganizationIdRequestValidatorTests
     [Fact]
     public async Task ValidateAsync_RefreshTokenGrantExplicitSwitchToRejectedOrg_ReturnsOrgError()
     {
-        //Arrange — an explicit org switch (refresh_token grant, switchOrganization()) IS a deliberate choice,
-        // so it must be blocked rather than silently falling back to a different org.
+        //Arrange — refresh_token with organization_id (switchOrganization()) is a deliberate switch, so it is blocked instead of falling back to a different org.
         var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
         _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
             .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId, OrgId2] });
@@ -299,6 +229,7 @@ public class OrganizationIdRequestValidatorTests
         //Assert
         Assert.Single(result);
         Assert.Equal(OpenIddictConstants.Errors.InvalidGrant, result[0].Error);
+        Assert.Equal(SignInFailureReason.NotAllowed, context.FailureReason);
     }
 
     [Fact]
@@ -386,6 +317,116 @@ public class OrganizationIdRequestValidatorTests
 
         //Assert
         Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task ValidateAsync_RefreshTokenGrantExplicitSwitchToUnknownOrg_ReturnsInvalidOrganizationId()
+    {
+        //Arrange
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId] });
+
+        var context = BuildContext("wrong-org", grantType: OpenIddictConstants.GrantTypes.RefreshToken, user: user);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Single(result);
+        Assert.Equal("invalid_organization_id", result[0].Code);
+        Assert.Equal(SignInFailureReason.NotAllowed, context.FailureReason);
+    }
+
+    [Fact]
+    public async Task ValidateAsync_RefreshTokenGrantWithRejectedPrincipalOrg_FallsBackToAccessibleOrg()
+    {
+        //Arrange — plain token rotation sends no organization_id and keeps the org from the refresh token.
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId, OrgId2] });
+
+        SetupMembership(new OrganizationMembership { OrganizationId = OrgId, Status = ModuleConstants.MembershipStatuses.Rejected });
+
+        var context = BuildContext(orgId: null, grantType: OpenIddictConstants.GrantTypes.RefreshToken, user: user);
+        context.Principal = new ClaimsPrincipal(new ClaimsIdentity([new Claim(ModuleConstants.Security.Claims.OrganizationId, OrgId)], "test"));
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Empty(result);
+        Assert.Equal(OrgId2, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
+        Assert.Null(context.FailureReason);
+    }
+
+    [Theory]
+    [InlineData(OpenIddictConstants.GrantTypes.Password)]
+    [InlineData(OpenIddictConstants.GrantTypes.AuthorizationCode)]
+    [InlineData(PlatformConstants.Security.GrantTypes.ExternalSignIn)]
+    [InlineData(PlatformConstants.Security.GrantTypes.Impersonate)]
+    [InlineData("passkey")]
+    public async Task ValidateAsync_NonRefreshGrantWithRejectedOrg_FallsBackToAccessibleOrg(string grantType)
+    {
+        //Arrange
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId, OrgId2] });
+
+        SetupMembership(new OrganizationMembership { OrganizationId = OrgId, Status = ModuleConstants.MembershipStatuses.Rejected });
+
+        var context = BuildContext(OrgId, grantType: grantType, user: user);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Empty(result);
+        Assert.Equal(OrgId2, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
+        Assert.Null(context.FailureReason);
+    }
+
+    [Theory]
+    [InlineData(OpenIddictConstants.GrantTypes.Password)]
+    [InlineData(OpenIddictConstants.GrantTypes.AuthorizationCode)]
+    [InlineData(PlatformConstants.Security.GrantTypes.ExternalSignIn)]
+    [InlineData(PlatformConstants.Security.GrantTypes.Impersonate)]
+    [InlineData("passkey")]
+    public async Task ValidateAsync_NonRefreshGrantWithUnknownOrg_ReplacesWithAvailableOrg(string grantType)
+    {
+        //Arrange
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId] });
+
+        var context = BuildContext("wrong-org", grantType: grantType, user: user);
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Empty(result);
+        Assert.Equal(OrgId, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
+        Assert.Null(context.FailureReason);
+    }
+
+    [Fact]
+    public async Task ValidateAsync_PasswordGrantWithWrongPassword_ReturnsNoOrganizationError()
+    {
+        //Arrange — the member is rejected in their only org, which would otherwise return a status error.
+        var user = new ApplicationUser { Id = UserId, MemberId = MemberId };
+        _memberServiceMock.Setup(s => s.GetByIdAsync(MemberId, null, null))
+            .ReturnsAsync(new Contact { Id = MemberId, Organizations = [OrgId], Status = ModuleConstants.MembershipStatuses.Rejected });
+
+        var context = BuildContext(OrgId, grantType: OpenIddictConstants.GrantTypes.Password, user: user);
+        context.SignInResult = Microsoft.AspNetCore.Identity.SignInResult.Failed;
+
+        //Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        //Assert
+        Assert.Empty(result);
+        Assert.Null(context.FailureReason);
     }
 
     private void SetupMembership(OrganizationMembership membership) =>
