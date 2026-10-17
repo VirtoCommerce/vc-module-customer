@@ -6,6 +6,7 @@ import AccountContactWidget from "./components/AccountContactWidget.vue";
 import ProfileIconWidget from "./components/ProfileIconWidget.vue";
 import StoreInviteWidget from "./components/StoreInviteWidget.vue";
 import { registerCustomerSearch } from "./search";
+import { placeSearchIndexWidget } from "./searchIndexWidget";
 
 // Widgets the AngularJS Customer module added to other modules' blades, registered by blade name.
 // Each shows only on a saved entity (blade param), never on a "new" blade.
@@ -47,6 +48,8 @@ export default {
     appModule.install(app);
     // customers in the Admin Shell's global search
     registerCustomerSearch(app);
+    // Search's Index widget on the contact and organization blades
+    placeSearchIndexWidget(app);
   },
 };
 
