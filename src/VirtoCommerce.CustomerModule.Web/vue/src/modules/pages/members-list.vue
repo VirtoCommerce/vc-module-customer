@@ -299,13 +299,13 @@ watch([sortExpression, searchValue, () => pagination.skip], debounce(load, 300))
 // open, possibly drilled into an organization)
 watch(
   requestedKeyword,
-  (keyword) => {
-    if (keyword === undefined) return;
+  (asked) => {
+    if (asked === undefined) return;
     requestedKeyword.value = undefined;
     const drilled = path.value.length > 0;
     path.value = [];
     selection.value = [];
-    if (searchValue.value !== keyword) searchValue.value = keyword;
+    if (searchValue.value !== asked) searchValue.value = asked;
     else if (drilled) load();
   },
   { immediate: true },
