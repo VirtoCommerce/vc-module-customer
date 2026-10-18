@@ -1,0 +1,77 @@
+{
+  "permissions": {
+    "customer:access": "فتح قائمة العملاء",
+    "customer:create": "إنشاء بيانات العملاء",
+    "customer:read": "عرض بيانات العملاء",
+    "customer:update": "تحديث بيانات العملاء",
+    "customer:delete": "حذف بيانات العملاء"
+  },
+  "settings": {
+    "Customer": {
+      "MemberGroups": {
+        "title": "قاموس مجموعات الأعضاء",
+        "description": "كل قيم مجموعات الأعضاء المتاحة"
+      },
+      "ExportImport.PageSize": {
+        "title": "حجم الصفحة المستخدم للتصدير / الاستيراد",
+        "description": "ملاحظة: قد تؤدي القيم الكبيرة إلى انخفاض الأداء"
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "تفعيل الفهرسة المستندة إلى الأحداث لكيانات العملاء (تتطلب إعادة التشغيل)",
+            "description": "يؤدي أي تغيير في كيان العميل إلى تشغيل مهمة في الخلفية تطبّق هذه التغييرات على فهرس البحث"
+          }
+        }
+      },
+      "OrganizationStatuses": {
+        "title": "حالات الشركات",
+        "description": "تعديل حالات الشركات"
+      },
+      "OrganizationMembershipStatuses": {
+        "title": "حالات عضوية المؤسسات",
+        "description": "تعديل الحالات المتاحة لعضوية المؤسسات"
+      },
+      "VendorStatuses": {
+        "title": "حالات المورّدين",
+        "description": "تعديل حالات المورّدين"
+      },
+      "EmployeeStatuses": {
+        "title": "حالات الموظفين",
+        "description": "تعديل حالات الموظفين"
+      },
+      "ContactStatuses": {
+        "title": "حالات جهات الاتصال",
+        "description": "تعديل حالات جهات الاتصال"
+      },
+      "OrganizationDefaultStatus": {
+        "title": "الحالة الافتراضية للشركة",
+        "description": "حدد الحالة التي تُعيَّن للشركات المسجلة حديثًا"
+      },
+      "ContactDefaultStatus": {
+        "title": "الحالة الافتراضية لجهة الاتصال",
+        "description": "تحدد الحالة التي تُعيَّن لمالكي الشركات المسجلين حديثًا"
+      },
+      "OrganizationRolesWhitelist": {
+        "title": "الأدوار المسموح بها للمؤسسة",
+        "description": "الأدوار المتاحة للتعيين على مستوى المؤسسة"
+      },
+      "MembershipRolesWhitelist": {
+        "title": "الأدوار المسموح بها للعضوية",
+        "description": "الأدوار المتاحة للتعيين على مستوى عضوية المؤسسة"
+      }
+    },
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Member": {
+              "title": "تاريخ ووقت فهرسة الأعضاء",
+              "description": "تاريخ ووقت بدء مهمة فهرسة الأعضاء"
+            }
+          }
+        }
+      }
+    }
+  }
+}
