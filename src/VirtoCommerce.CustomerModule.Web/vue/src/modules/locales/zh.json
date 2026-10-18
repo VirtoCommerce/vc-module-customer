@@ -1,0 +1,240 @@
+{
+  "CUSTOMER": {
+    "MENU": {
+      "TITLE": "联系人"
+    },
+    "TYPES": {
+      "ORGANIZATION": "组织",
+      "CONTACT": "联系人",
+      "EMPLOYEE": "员工",
+      "VENDOR": "供应商"
+    },
+    "WIDGETS": {
+      "ACCOUNTS": "账户",
+      "MEMBERSHIPS": "组织成员资格",
+      "SEO": "SEO",
+      "ASSETS": "资源",
+      "SHOW_CONTACT": "显示联系人",
+      "NO_CONTACT": "无联系人",
+      "ICON": "图标"
+    },
+    "CARDS": {
+      "DETAILS": "详细信息",
+      "CONTACT_INFO": "电子邮件和电话",
+      "ADDRESSES": "地址",
+      "DYNAMIC_PROPERTIES": "动态属性"
+    },
+    "FIELDS": {
+      "NAME": "名称",
+      "FIRST_NAME": "名",
+      "MIDDLE_NAME": "中间名",
+      "LAST_NAME": "姓",
+      "FULL_NAME": "全名",
+      "STATUS": "状态",
+      "GROUPS": "组",
+      "SALUTATION": "称谓",
+      "BUSINESS_CATEGORY": "业务领域",
+      "ICON": "图标",
+      "ORGANIZATIONS": "组织",
+      "DEFAULT_ORGANIZATION": "默认组织",
+      "ASSOCIATED_ORGANIZATIONS": "关联组织",
+      "BIRTHDAY": "出生日期",
+      "PHOTO_URL": "照片 URL",
+      "TIME_ZONE": "时区",
+      "DEFAULT_LANGUAGE": "默认语言",
+      "CURRENCY": "货币",
+      "TAX_PAYER_ID": "纳税人ID",
+      "PREFERRED_COMMUNICATION": "首选通信渠道",
+      "PREFERRED_DELIVERY": "首选交付方式",
+      "ABOUT": "简介",
+      "SITE_URL": "网站 URL",
+      "LOGO_URL": "徽标 URL",
+      "GROUP_NAME": "组名",
+      "DESCRIPTION": "描述",
+      "ROLES": "角色",
+      "EMAILS": "电子邮件",
+      "PHONES": "电话",
+      "ADD_VALUE": "输入后按 Enter 键"
+    },
+    "PAGES": {
+      "LIST": {
+        "ALL": "所有联系人",
+        "EMPTY": "未找到联系人",
+        "COLUMNS": {
+          "NAME": "名称",
+          "TYPE": "类型",
+          "EMAIL": "电子邮件",
+          "STATUS": "状态",
+          "OUTER_ID": "外部 ID",
+          "CREATED": "创建时间"
+        },
+        "FILTERS": {
+          "TYPE": "成员类型",
+          "CREATED": "创建日期",
+          "MODIFIED": "修改日期"
+        },
+        "TOOLBAR": {
+          "REFRESH": "刷新",
+          "ADD": "添加",
+          "DELETE": "删除",
+          "INVITE": "邀请客户",
+          "LOCK": "在组织中锁定",
+          "UNLOCK": "在组织中解锁",
+          "CHANGE_ROLE": "更改在组织中的角色"
+        },
+        "ACTIONS": {
+          "MANAGE": "管理",
+          "COPY_ID": "复制 ID",
+          "COPY_NAME": "复制名称"
+        }
+      },
+      "ADD": {
+        "TITLE": "新联系人",
+        "SUBTITLE": "选择您要创建的联系人类型",
+        "ORGANIZATION": "公司资料，可包含有关员工、常规联系人或其他公司的信息",
+        "CONTACT": "商店客户，可以是某公司的成员，也可以作为个人购物者",
+        "EMPLOYEE": "在公司工作的员工",
+        "VENDOR": "卖家、商户或供应商"
+      },
+      "DETAILS": {
+        "NEW_ORGANIZATION": "新组织",
+        "NEW_CONTACT": "新联系人",
+        "NEW_EMPLOYEE": "新员工",
+        "NEW_VENDOR": "新供应商",
+        "TOOLBAR": {
+          "SAVE": "保存",
+          "CREATE": "创建",
+          "RESET": "重置"
+        }
+      },
+      "ADDRESS": {
+        "TITLE": "地址",
+        "NEW": "新地址",
+        "ADD": "添加地址",
+        "EMPTY": "无地址",
+        "COLUMNS": {
+          "TYPE": "类型",
+          "ADDRESS": "地址",
+          "DEFAULT": "默认"
+        },
+        "FIELDS": {
+          "DESCRIPTION": "描述",
+          "TYPE": "地址类型",
+          "DEFAULT": "设为此类型的默认地址",
+          "COUNTRY": "国家/地区",
+          "REGION": "州/省",
+          "CITY": "城市",
+          "ZIP": "邮政编码",
+          "LINE1": "地址行 1",
+          "LINE2": "地址行 2",
+          "EMAIL": "电子邮件",
+          "PHONE": "电话"
+        },
+        "TOOLBAR": {
+          "APPLY": "应用"
+        }
+      },
+      "ACCOUNTS": {
+        "EMPTY": "此成员未关联任何账户",
+        "COLUMNS": {
+          "USER_NAME": "用户名",
+          "EMAIL": "电子邮件",
+          "TYPE": "账户类型",
+          "STATUS": "状态"
+        },
+        "TOOLBAR": {
+          "ADD": "新账户",
+          "LINK": "链接账户",
+          "UNLINK": "解除链接"
+        }
+      },
+      "ACCOUNT_CREATE": {
+        "TITLE": "新账户",
+        "STORE": "商店",
+        "PASSWORD": "密码"
+      },
+      "ACCOUNT_LINK": {
+        "TITLE": "链接安全账户",
+        "LINKED": "已链接"
+      },
+      "MEMBERSHIPS": {
+        "NEW": "新成员资格",
+        "EMPTY": "无组织成员资格",
+        "GLOBAL": "全局（所有组织）",
+        "LOCKED": "已锁定",
+        "UNLOCKED": "活动",
+        "STATUS_INHERITED": "继承自成员",
+        "ROLES_HINT": "分配给该成员在此组织内的角色，作为其全局角色的补充。",
+        "STATUS_HINT": "仅针对此组织覆盖该成员的全局状态。留空则使用该成员的全局状态。",
+        "COLUMNS": {
+          "ORGANIZATION": "组织",
+          "LOCKED": "已锁定",
+          "LOCKOUT_END": "锁定结束时间"
+        }
+      },
+      "INVITE": {
+        "TITLE": "邀请客户",
+        "ROLE": "角色",
+        "EMAILS_PLACEHOLDER": "输入或粘贴电子邮件地址后按 Enter 键",
+        "MESSAGE": "消息",
+        "SEND": "发送邀请",
+        "SENT": "邀请通知已成功加入队列。"
+      },
+      "SEO": {
+        "NEW": "新 SEO 记录",
+        "EMPTY": "无 SEO 记录",
+        "URL_REQUIRED": "URL 关键字为必填项",
+        "URL_INVALID": "URL 关键字包含无效字符",
+        "URL_DUPLICATE": "此 URL 关键字已在此商店中使用",
+        "FIELDS": {
+          "ACTIVE": "活动",
+          "LANGUAGE": "语言",
+          "URL_KEYWORD": "URL 关键字",
+          "PAGE_TITLE": "页面标题",
+          "META_DESCRIPTION": "元描述",
+          "META_KEYWORDS": "元关键字",
+          "IMAGE_ALT": "图片替代文本"
+        }
+      },
+      "ASSETS": {
+        "EMPTY": "此文件夹中没有资源",
+        "SIZE": "大小",
+        "MODIFIED": "修改时间",
+        "DOWNLOAD": "下载",
+        "COPY_URL": "复制 URL",
+        "NEW_FOLDER": "新建文件夹",
+        "FOLDER_NAME": "文件夹名称",
+        "UPLOAD": "上传",
+        "DELETE": "删除 {count} 个资源？此操作无法撤消。",
+        "OVERWRITE": "此文件夹中已存在 {names}。是否替换？",
+        "CANCEL": "取消",
+        "CREATE": "创建"
+      },
+      "ICON": {
+        "TITLE": "管理图标"
+      }
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "您有未保存的更改。确定要关闭吗？",
+      "DELETE_CONFIRMATION": "删除{what}？此操作无法撤消。",
+      "DELETE_ORGANIZATION": "{count} 个组织及其包含的所有内容",
+      "DELETE_CONTACT": "{count} 个联系人",
+      "DELETE_EMPLOYEE": "{count} 名员工",
+      "DELETE_VENDOR": "{count} 个供应商",
+      "DELETE_ADDRESS": "确定要删除此地址吗？",
+      "DELETE_ACCOUNTS": "删除 {count} 个账户？此操作无法撤消。",
+      "UNLINK_ACCOUNTS": "确定要解除 {count} 个账户的链接吗？",
+      "RELINK_ACCOUNTS": "所选账户已与 '{names}' 关联。是否继续？",
+      "DELETE_MEMBERSHIPS": "确定要删除 {count} 个成员资格吗？",
+      "DUPLICATE_MEMBERSHIP": "此用户和组织的成员资格已存在。",
+      "NO_ACCOUNT": "此成员没有关联的安全账户。",
+      "NO_ACCOUNT_MEMBERSHIPS": "组织成员资格属于安全账户。请先为此联系人链接或创建账户。",
+      "NO_MEMBERSHIP": "找不到此成员的组织成员资格记录。",
+      "DELETE_SEO": "删除 {count} 条 SEO 记录？",
+      "UNKNOWN_MEMBER_TYPE": "无法编辑未知类型的成员：'{memberType}'"
+    },
+    "SEARCH": {
+      "GROUP_TITLE": "客户"
+    }
+  }
+}
