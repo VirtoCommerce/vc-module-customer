@@ -42,7 +42,7 @@ public static class ErrorDescriber
         ErrorDescription = $"Your access to organization '{organizationId}' has been removed.",
     };
 
-    [Obsolete("Use SecurityErrorDescriber.GetLockoutError(user) or SecurityErrorDescriber.UserIsLockedOut() instead.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
+    [Obsolete("Use VirtoCommerce.Platform.Security.OpenIddict.SecurityErrorDescriber.GetLockoutError(user) or SecurityErrorDescriber.UserIsLockedOut() instead.", DiagnosticId = "VC0016", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
     public static TokenResponse UserIsLockedOut() => new()
     {
         Error = Errors.InvalidGrant,
