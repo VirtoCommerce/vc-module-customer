@@ -4,7 +4,7 @@
   <version>3.1030.0</version>
   <version-tag />
 
-  <platformVersion>3.1087.0-alpha.13436-vcst-6121-passkeys</platformVersion>
+  <platformVersion>3.1088.0-alpha.13441-vcst-6121-passkeys</platformVersion>
   <dependencies>
     <dependency id="VirtoCommerce.Core" version="3.1012.0" />
     <dependency id="VirtoCommerce.Notifications" version="3.1018.0" />
