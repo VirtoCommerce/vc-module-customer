@@ -23,6 +23,7 @@ public class OrganizationIdRequestValidatorTests
 {
     private const string OrgId = "org1";
     private const string OrgId2 = "org2";
+    private const string UnknownOrgId = "wrong-org";
     private const string MemberId = "member1";
     private const string UserId = "user1";
 
@@ -50,7 +51,7 @@ public class OrganizationIdRequestValidatorTests
     }
 
     [Fact]
-    public async Task ValidateAsync_NoOrganizationId_NoUser_ReturnsEmpty()
+    public async Task NoUser_ReturnsEmpty()
     {
         // Arrange
         var context = BuildContext(user: null, GrantTypes.RefreshToken);
@@ -60,10 +61,11 @@ public class OrganizationIdRequestValidatorTests
 
         // Assert
         Assert.Empty(result);
+        Assert.Null(context.FailureReason);
     }
 
     [Fact]
-    public async Task ValidateAsync_NoExplicitOrgId_AutoDetectsFromMember_ActiveMembership_ReturnsEmpty()
+    public async Task TokenRotationWithoutTokenOrg_AccessibleContactOrg_ReturnsEmpty()
     {
         // Arrange
         AddMembership(OrgId);
@@ -75,12 +77,14 @@ public class OrganizationIdRequestValidatorTests
 
         // Assert
         Assert.Empty(result);
+        Assert.Null(context.Request.GetParameter(Parameters.OrganizationId));
+        Assert.Null(context.FailureReason);
     }
 
     [Fact]
-    public async Task ValidateAsync_RefreshTokenGrant_NoExplicitOrgId_LockedInSoleOrg_ClearsOrgIdAndReturnsEmpty()
+    public async Task TokenRotationWithLockedOrg_NoAccessibleOrgLeft_ClearsOrgId()
     {
-        // Arrange — token rotation keeps the org from the refresh token, and the member is now locked in it with no other org to fall back to.
+        // Arrange
         AddMembership(OrgId, isLocked: true);
 
         var context = BuildContext(_user, GrantTypes.RefreshToken);
@@ -93,10 +97,11 @@ public class OrganizationIdRequestValidatorTests
         Assert.Empty(result);
         Assert.Null(context.Request.GetParameter(Parameters.OrganizationId));
         Assert.Null(context.Principal.FindFirstValue(OrganizationId));
+        Assert.Null(context.FailureReason);
     }
 
     [Fact]
-    public async Task ValidateAsync_NoExplicitOrgId_MemberHasNoOrganizations_ReturnsEmpty()
+    public async Task TokenRotationWithoutTokenOrg_NoContactOrgs_ReturnsEmpty()
     {
         // Arrange
         var context = BuildContext(_user, GrantTypes.RefreshToken);
@@ -106,14 +111,15 @@ public class OrganizationIdRequestValidatorTests
 
         // Assert
         Assert.Empty(result);
+        Assert.Null(context.FailureReason);
     }
 
     [Theory]
     [InlineData(null, true, "user_is_locked_in_organization")]
     [InlineData(Rejected, false, "user_is_rejected_in_organization")]
-    public async Task ValidateAsync_RefreshTokenGrantExplicitSwitchToUnavailableOrg_ReturnsOrgError(string status, bool isLocked, string expectedCode)
+    public async Task SwitchToUnavailableOrg_ReturnsOrgError(string status, bool isLocked, string expectedCode)
     {
-        // Arrange — refresh_token with organization_id (switchOrganization()) is a deliberate switch, so it is blocked instead of falling back to a different org.
+        // Arrange
         AddMembership(OrgId, status, isLocked);
         AddMembership(OrgId2);
 
@@ -126,27 +132,13 @@ public class OrganizationIdRequestValidatorTests
         Assert.Single(result);
         Assert.Equal(InvalidGrant, result[0].Error);
         Assert.Equal(expectedCode, result[0].Code);
+        Assert.Contains(OrgId, result[0].ErrorDescription);
+        Assert.Equal(OrgId, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
         Assert.Equal(NotAllowed, context.FailureReason);
     }
 
     [Fact]
-    public async Task ValidateAsync_PasswordGrantAllOrganizationsLocked_ClearsOrgIdAndReturnsEmpty()
-    {
-        // Arrange — the user's only organization is locked, so there's no other org to fall back to.
-        AddMembership(OrgId, isLocked: true);
-
-        var context = BuildContext(_user, GrantTypes.Password, OrgId);
-
-        // Act
-        var result = await GetValidator().ValidateAsync(context);
-
-        // Assert
-        Assert.Empty(result);
-        Assert.Null(context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
-    }
-
-    [Fact]
-    public async Task ValidateAsync_ActiveMembership_ReturnsEmpty()
+    public async Task SwitchToAccessibleOrg_ReturnsEmpty()
     {
         // Arrange
         AddMembership(OrgId);
@@ -158,13 +150,14 @@ public class OrganizationIdRequestValidatorTests
 
         // Assert
         Assert.Empty(result);
+        Assert.Equal(OrgId, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
+        Assert.Null(context.FailureReason);
     }
 
     [Fact]
-    public async Task ValidateAsync_ContactGloballyRejected_NoMembershipOverride_BlocksAccess()
+    public async Task SignInWithRejectedContact_NoMembershipOverride_ReturnsOrgError()
     {
-        // Arrange — the contact's global Status is Rejected and there is no per-organization override for
-        // this org. The global Status is the effective default here, so sign-in must be blocked.
+        // Arrange
         _contact.Status = Rejected;
         AddMembership(OrgId);
 
@@ -177,14 +170,15 @@ public class OrganizationIdRequestValidatorTests
         Assert.Single(result);
         Assert.Equal(InvalidGrant, result[0].Error);
         Assert.Equal("user_is_rejected_in_organization", result[0].Code);
+        Assert.Contains(OrgId, result[0].ErrorDescription);
+        Assert.Equal(OrgId, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
         Assert.Equal(NotAllowed, context.FailureReason);
     }
 
     [Fact]
-    public async Task ValidateAsync_ContactGloballyRejected_MembershipOverridesToApproved_DoesNotBlockAccess()
+    public async Task SignInWithRejectedContact_ApprovedMembership_ReturnsEmpty()
     {
-        // Arrange — the contact's global Status is Rejected, but this specific organization's membership has
-        // an explicit Approved override. The override wins, so sign-in must not be blocked.
+        // Arrange
         _contact.Status = Rejected;
         AddMembership(OrgId, Approved);
 
@@ -195,14 +189,14 @@ public class OrganizationIdRequestValidatorTests
 
         // Assert
         Assert.Empty(result);
+        Assert.Equal(OrgId, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
+        Assert.Null(context.FailureReason);
     }
 
     [Fact]
-    public async Task ValidateAsync_AutoResolvedRejectedOrg_FallsBackToAccessibleOrgAndReturnsEmpty()
+    public async Task SignInWithoutOrgId_RejectedCurrentOrg_ReturnsEmpty()
     {
-        // Arrange — the member's current org is rejected, but they have another accessible one. Auto-detection
-        // (no explicit org requested) already skips the rejected org and resolves straight to the accessible
-        // one, so a fresh password sign-in must not be blocked entirely.
+        // Arrange
         _contact.CurrentOrganizationId = OrgId;
         AddMembership(OrgId, Rejected);
         AddMembership(OrgId2);
@@ -214,10 +208,12 @@ public class OrganizationIdRequestValidatorTests
 
         // Assert
         Assert.Empty(result);
+        Assert.Null(context.Request.GetParameter(Parameters.OrganizationId));
+        Assert.Null(context.FailureReason);
     }
 
     [Fact]
-    public async Task ValidateAsync_RefreshTokenGrant_SwitchToSecondAcceptedOrganization_ReturnsEmpty()
+    public async Task SwitchToSecondApprovedOrg_ReturnsEmpty()
     {
         // Arrange
         AddMembership(OrgId);
@@ -230,29 +226,34 @@ public class OrganizationIdRequestValidatorTests
 
         // Assert
         Assert.Empty(result);
+        Assert.Equal(OrgId2, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
+        Assert.Null(context.FailureReason);
     }
 
     [Fact]
-    public async Task ValidateAsync_RefreshTokenGrantExplicitSwitchToUnknownOrg_ReturnsInvalidOrganizationId()
+    public async Task SwitchToUnknownOrg_ReturnsInvalidOrganizationId()
     {
         // Arrange
         AddMembership(OrgId);
 
-        var context = BuildContext(_user, GrantTypes.RefreshToken, "wrong-org");
+        var context = BuildContext(_user, GrantTypes.RefreshToken, UnknownOrgId);
 
         // Act
         var result = await GetValidator().ValidateAsync(context);
 
         // Assert
         Assert.Single(result);
+        Assert.Equal(InvalidGrant, result[0].Error);
         Assert.Equal("invalid_organization_id", result[0].Code);
+        Assert.Contains(UnknownOrgId, result[0].ErrorDescription);
+        Assert.Equal(UnknownOrgId, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
         Assert.Equal(NotAllowed, context.FailureReason);
     }
 
     [Fact]
-    public async Task ValidateAsync_RefreshTokenGrantWithRejectedPrincipalOrg_FallsBackToAccessibleOrg()
+    public async Task TokenRotationWithRejectedOrg_FallsBackToAccessibleOrg()
     {
-        // Arrange — plain token rotation sends no organization_id and keeps the org from the refresh token.
+        // Arrange
         AddMembership(OrgId, Rejected);
         AddMembership(OrgId2);
 
@@ -270,14 +271,11 @@ public class OrganizationIdRequestValidatorTests
     }
 
     [Theory]
-    [InlineData(GrantTypes.Password)]
-    [InlineData(GrantTypes.AuthorizationCode)]
-    [InlineData(PlatformGrantTypes.ExternalSignIn)]
-    [InlineData(PlatformGrantTypes.Impersonate)]
-    public async Task ValidateAsync_NonRefreshGrantWithRejectedOrg_FallsBackToAccessibleOrg(string grantType)
+    [MemberData(nameof(FallbackGrantTypeBlockingStatusData))]
+    public async Task SignInWithBlockedOrg_FallsBackToAccessibleOrg(string grantType, string status)
     {
-        // Arrange — only an explicit refresh_token switch is deliberate, so a rejected org requested on sign-in is replaced with another accessible one.
-        AddMembership(OrgId, Rejected);
+        // Arrange
+        AddMembership(OrgId, status);
         AddMembership(OrgId2);
 
         var context = BuildContext(_user, grantType, OrgId);
@@ -292,16 +290,32 @@ public class OrganizationIdRequestValidatorTests
     }
 
     [Theory]
-    [InlineData(GrantTypes.Password)]
-    [InlineData(GrantTypes.AuthorizationCode)]
-    [InlineData(PlatformGrantTypes.ExternalSignIn)]
-    [InlineData(PlatformGrantTypes.Impersonate)]
-    public async Task ValidateAsync_NonRefreshGrantWithUnknownOrg_ReplacesWithAvailableOrg(string grantType)
+    [MemberData(nameof(FallbackGrantTypeData))]
+    public async Task SignInWithLockedOrg_FallsBackToAccessibleOrg(string grantType)
+    {
+        // Arrange
+        AddMembership(OrgId, isLocked: true);
+        AddMembership(OrgId2);
+
+        var context = BuildContext(_user, grantType, OrgId);
+
+        // Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        // Assert
+        Assert.Empty(result);
+        Assert.Equal(OrgId2, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
+        Assert.Null(context.FailureReason);
+    }
+
+    [Theory]
+    [MemberData(nameof(FallbackGrantTypeData))]
+    public async Task SignInWithUnknownOrg_FallsBackToAccessibleOrg(string grantType)
     {
         // Arrange
         AddMembership(OrgId);
 
-        var context = BuildContext(_user, grantType, "wrong-org");
+        var context = BuildContext(_user, grantType, UnknownOrgId);
 
         // Act
         var result = await GetValidator().ValidateAsync(context);
@@ -312,14 +326,66 @@ public class OrganizationIdRequestValidatorTests
         Assert.Null(context.FailureReason);
     }
 
+    [Theory]
+    [MemberData(nameof(FallbackGrantTypeData))]
+    public async Task SignInWithUnknownOrg_NoAccessibleOrgLeft_ClearsOrgId(string grantType)
+    {
+        // Arrange
+        var context = BuildContext(_user, grantType, OrgId);
+
+        // Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        // Assert
+        Assert.Empty(result);
+        Assert.Null(context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
+        Assert.Null(context.FailureReason);
+    }
+
+    [Theory]
+    [MemberData(nameof(FallbackGrantTypeData))]
+    public async Task SignInWithLockedOrg_NoAccessibleOrgLeft_ClearsOrgId(string grantType)
+    {
+        // Arrange
+        AddMembership(OrgId, isLocked: true);
+
+        var context = BuildContext(_user, grantType, OrgId);
+
+        // Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        // Assert
+        Assert.Empty(result);
+        Assert.Null(context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
+        Assert.Null(context.FailureReason);
+    }
+
+    [Theory]
+    [MemberData(nameof(FallbackGrantTypeBlockingStatusData))]
+    public async Task SignInWithBlockedOrg_NoAccessibleOrgLeft_ReturnsOrgError(string grantType, string status)
+    {
+        // Arrange
+        AddMembership(OrgId, status);
+
+        var context = BuildContext(_user, grantType, OrgId);
+
+        // Act
+        var result = await GetValidator().ValidateAsync(context);
+
+        // Assert
+        Assert.Single(result);
+        Assert.Equal(InvalidGrant, result[0].Error);
+        Assert.Equal(StatusErrorCodes[status], result[0].Code);
+        Assert.Contains(OrgId, result[0].ErrorDescription);
+        Assert.Equal(OrgId, context.Request.GetParameter(Parameters.OrganizationId)?.ToString());
+        Assert.Equal(NotAllowed, context.FailureReason);
+    }
+
     private void AddMembership(string organizationId, string status = null, bool isLocked = false)
     {
         _contact.Organizations.Add(organizationId);
         _memberships.Add(new OrganizationMembership { UserId = _user.Id, OrganizationId = organizationId, Status = status, IsLocked = isLocked });
     }
-
-    private OrganizationIdRequestValidator GetValidator() =>
-        new(_memberServiceMock.Object, _membershipServiceMock.Object);
 
     private static TokenRequestContext BuildContext(ApplicationUser user, string grantType, string requestedOrganizationId = null)
     {
@@ -332,4 +398,27 @@ public class OrganizationIdRequestValidatorTests
 
         return new TokenRequestContext { Request = request, User = user };
     }
+
+    private OrganizationIdRequestValidator GetValidator() =>
+        new(_memberServiceMock.Object, _membershipServiceMock.Object);
+
+    private static readonly string[] FallbackGrantTypes =
+    [
+        GrantTypes.Password,
+        GrantTypes.AuthorizationCode,
+        PlatformGrantTypes.ExternalSignIn,
+        PlatformGrantTypes.Impersonate,
+        "not_refresh_token",
+    ];
+
+    public static TheoryData<string> FallbackGrantTypeData => new(FallbackGrantTypes);
+
+    public static MatrixTheoryData<string, string> FallbackGrantTypeBlockingStatusData => new(FallbackGrantTypes, BlockingStatuses);
+
+    private static readonly Dictionary<string, string> StatusErrorCodes = new()
+    {
+        [Invited] = "user_invitation_pending_in_organization",
+        [Rejected] = "user_is_rejected_in_organization",
+        [Deleted] = "user_is_removed_from_organization",
+    };
 }

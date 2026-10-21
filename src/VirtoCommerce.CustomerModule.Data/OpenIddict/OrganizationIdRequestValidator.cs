@@ -36,10 +36,7 @@ public class OrganizationIdRequestValidator(
         }
 
         var availableOrganizationIds = GetAvailableOrganizationIds(member);
-
-        // Only refresh_token with organization_id is a deliberate switch; other requests resend a remembered organization that may have become unavailable
-        var allowFallback = context.Request.GrantType != RefreshToken ||
-                            string.IsNullOrEmpty(GetRequestedOrganizationId(context));
+        var allowFallback = IsOrganizationFallbackAllowed(context);
 
         var error = availableOrganizationIds.Contains(organizationId)
             ? await ValidateOrganizationAccessAsync(context, member, allowFallback, organizationId, availableOrganizationIds)
@@ -53,6 +50,12 @@ public class OrganizationIdRequestValidator(
         context.FailureReason = SignInFailureReason.NotAllowed;
 
         return [error];
+    }
+
+    protected virtual bool IsOrganizationFallbackAllowed(TokenRequestContext context)
+    {
+        return context.Request.GrantType != RefreshToken ||
+               string.IsNullOrEmpty(GetRequestedOrganizationId(context));
     }
 
     private async Task<TokenResponse> HandleUnavailableOrganizationAsync(
