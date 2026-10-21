@@ -1,0 +1,240 @@
+{
+  "CUSTOMER": {
+    "MENU": {
+      "TITLE": "Contacts"
+    },
+    "TYPES": {
+      "ORGANIZATION": "Organization",
+      "CONTACT": "Contact",
+      "EMPLOYEE": "Employee",
+      "VENDOR": "Vendor"
+    },
+    "WIDGETS": {
+      "ACCOUNTS": "Accounts",
+      "MEMBERSHIPS": "Organization memberships",
+      "SEO": "SEO",
+      "ASSETS": "Assets",
+      "SHOW_CONTACT": "Show contact",
+      "NO_CONTACT": "No contact",
+      "ICON": "Icon"
+    },
+    "CARDS": {
+      "DETAILS": "Details",
+      "CONTACT_INFO": "Emails and phones",
+      "ADDRESSES": "Addresses",
+      "DYNAMIC_PROPERTIES": "Dynamic properties"
+    },
+    "FIELDS": {
+      "NAME": "Name",
+      "FIRST_NAME": "First name",
+      "MIDDLE_NAME": "Middle name",
+      "LAST_NAME": "Last name",
+      "FULL_NAME": "Full name",
+      "STATUS": "Status",
+      "GROUPS": "Groups",
+      "SALUTATION": "Salutation",
+      "BUSINESS_CATEGORY": "Business category",
+      "ICON": "Icon",
+      "ORGANIZATIONS": "Organizations",
+      "DEFAULT_ORGANIZATION": "Default organization",
+      "ASSOCIATED_ORGANIZATIONS": "Associated organizations",
+      "BIRTHDAY": "Birthday",
+      "PHOTO_URL": "Photo URL",
+      "TIME_ZONE": "Time zone",
+      "DEFAULT_LANGUAGE": "Default language",
+      "CURRENCY": "Currency",
+      "TAX_PAYER_ID": "Taxpayer ID",
+      "PREFERRED_COMMUNICATION": "Preferred communication",
+      "PREFERRED_DELIVERY": "Preferred delivery",
+      "ABOUT": "About",
+      "SITE_URL": "Site URL",
+      "LOGO_URL": "Logo URL",
+      "GROUP_NAME": "Group name",
+      "DESCRIPTION": "Description",
+      "ROLES": "Roles",
+      "EMAILS": "Emails",
+      "PHONES": "Phones",
+      "ADD_VALUE": "Type and press Enter"
+    },
+    "PAGES": {
+      "LIST": {
+        "ALL": "All contacts",
+        "EMPTY": "No contacts found",
+        "COLUMNS": {
+          "NAME": "Name",
+          "TYPE": "Type",
+          "EMAIL": "Email",
+          "STATUS": "Status",
+          "OUTER_ID": "Outer ID",
+          "CREATED": "Created"
+        },
+        "FILTERS": {
+          "TYPE": "Member type",
+          "CREATED": "Created date",
+          "MODIFIED": "Modified date"
+        },
+        "TOOLBAR": {
+          "REFRESH": "Refresh",
+          "ADD": "Add",
+          "DELETE": "Delete",
+          "INVITE": "Invite customers",
+          "LOCK": "Lock in organization",
+          "UNLOCK": "Unlock in organization",
+          "CHANGE_ROLE": "Change role in organization"
+        },
+        "ACTIONS": {
+          "MANAGE": "Manage",
+          "COPY_ID": "Copy ID",
+          "COPY_NAME": "Copy name"
+        }
+      },
+      "ADD": {
+        "TITLE": "New contact",
+        "SUBTITLE": "Select a type of contact you would like to create",
+        "ORGANIZATION": "A company profile that may contain information on employees, regular contacts, or other companies",
+        "CONTACT": "A store customer that may either be a member of a company or act as an individual shopper",
+        "EMPLOYEE": "An employee that works in a company",
+        "VENDOR": "Seller, merchant, or vendor"
+      },
+      "DETAILS": {
+        "NEW_ORGANIZATION": "New organization",
+        "NEW_CONTACT": "New contact",
+        "NEW_EMPLOYEE": "New employee",
+        "NEW_VENDOR": "New vendor",
+        "TOOLBAR": {
+          "SAVE": "Save",
+          "CREATE": "Create",
+          "RESET": "Reset"
+        }
+      },
+      "ADDRESS": {
+        "TITLE": "Address",
+        "NEW": "New address",
+        "ADD": "Add address",
+        "EMPTY": "No addresses",
+        "COLUMNS": {
+          "TYPE": "Type",
+          "ADDRESS": "Address",
+          "DEFAULT": "Default"
+        },
+        "FIELDS": {
+          "DESCRIPTION": "Description",
+          "TYPE": "Address type",
+          "DEFAULT": "Default for this type",
+          "COUNTRY": "Country",
+          "REGION": "State / province",
+          "CITY": "City",
+          "ZIP": "Zip code",
+          "LINE1": "Address line 1",
+          "LINE2": "Address line 2",
+          "EMAIL": "Email",
+          "PHONE": "Phone"
+        },
+        "TOOLBAR": {
+          "APPLY": "Apply"
+        }
+      },
+      "ACCOUNTS": {
+        "EMPTY": "No accounts linked to this member",
+        "COLUMNS": {
+          "USER_NAME": "User name",
+          "EMAIL": "Email",
+          "TYPE": "Account type",
+          "STATUS": "Status"
+        },
+        "TOOLBAR": {
+          "ADD": "New account",
+          "LINK": "Link account",
+          "UNLINK": "Unlink"
+        }
+      },
+      "ACCOUNT_CREATE": {
+        "TITLE": "New account",
+        "STORE": "Store",
+        "PASSWORD": "Password"
+      },
+      "ACCOUNT_LINK": {
+        "TITLE": "Link security accounts",
+        "LINKED": "Linked"
+      },
+      "MEMBERSHIPS": {
+        "NEW": "New membership",
+        "EMPTY": "No organization memberships",
+        "GLOBAL": "Global (all organizations)",
+        "LOCKED": "Locked",
+        "UNLOCKED": "Active",
+        "STATUS_INHERITED": "Inherited from the member",
+        "ROLES_HINT": "Roles assigned to the member within this organization, in addition to any global roles.",
+        "STATUS_HINT": "Overrides the member's global status for this organization only. Leave empty to use the member's global status.",
+        "COLUMNS": {
+          "ORGANIZATION": "Organization",
+          "LOCKED": "Locked",
+          "LOCKOUT_END": "Lockout end"
+        }
+      },
+      "INVITE": {
+        "TITLE": "Invite customers",
+        "ROLE": "Role",
+        "EMAILS_PLACEHOLDER": "Type or paste emails and press Enter",
+        "MESSAGE": "Message",
+        "SEND": "Send invitations",
+        "SENT": "Invitation notifications have been queued successfully."
+      },
+      "SEO": {
+        "NEW": "New SEO record",
+        "EMPTY": "No SEO records",
+        "URL_REQUIRED": "URL keyword is required",
+        "URL_INVALID": "URL keyword contains invalid characters",
+        "URL_DUPLICATE": "This URL keyword is already used for this store",
+        "FIELDS": {
+          "ACTIVE": "Active",
+          "LANGUAGE": "Language",
+          "URL_KEYWORD": "URL keyword",
+          "PAGE_TITLE": "Page title",
+          "META_DESCRIPTION": "Meta description",
+          "META_KEYWORDS": "Meta keywords",
+          "IMAGE_ALT": "Image alternative text"
+        }
+      },
+      "ASSETS": {
+        "EMPTY": "No assets in this folder",
+        "SIZE": "Size",
+        "MODIFIED": "Modified",
+        "DOWNLOAD": "Download",
+        "COPY_URL": "Copy URL",
+        "NEW_FOLDER": "New folder",
+        "FOLDER_NAME": "Folder name",
+        "UPLOAD": "Upload",
+        "DELETE": "Delete {count} asset(s)? This cannot be undone.",
+        "OVERWRITE": "{names} already exist(s) in this folder. Replace?",
+        "CANCEL": "Cancel",
+        "CREATE": "Create"
+      },
+      "ICON": {
+        "TITLE": "Manage icon"
+      }
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "You have unsaved changes. Are you sure you want to close?",
+      "DELETE_CONFIRMATION": "Delete {what}? This cannot be undone.",
+      "DELETE_ORGANIZATION": "{count} organization(s) and any content within",
+      "DELETE_CONTACT": "{count} contact(s)",
+      "DELETE_EMPLOYEE": "{count} employee(s)",
+      "DELETE_VENDOR": "{count} vendor(s)",
+      "DELETE_ADDRESS": "Are you sure you want to delete this address?",
+      "DELETE_ACCOUNTS": "Delete {count} account(s)? This cannot be undone.",
+      "UNLINK_ACCOUNTS": "Are you sure you want to unlink {count} account(s)?",
+      "RELINK_ACCOUNTS": "The selected account(s) are already associated with '{names}'. Do you want to proceed?",
+      "DELETE_MEMBERSHIPS": "Are you sure you want to delete {count} membership(s)?",
+      "DUPLICATE_MEMBERSHIP": "A membership for this user and organization already exists.",
+      "NO_ACCOUNT": "This member does not have a linked security account.",
+      "NO_ACCOUNT_MEMBERSHIPS": "Organization memberships belong to a security account. Link or create an account for this contact first.",
+      "NO_MEMBERSHIP": "No organization membership record found for this member.",
+      "DELETE_SEO": "Delete {count} SEO record(s)?",
+      "UNKNOWN_MEMBER_TYPE": "Cannot edit member of an unknown type: '{memberType}'"
+    },
+    "SEARCH": {
+      "GROUP_TITLE": "Customers"
+    }
+  }
+}

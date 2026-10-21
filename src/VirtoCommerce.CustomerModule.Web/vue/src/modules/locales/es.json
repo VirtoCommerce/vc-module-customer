@@ -1,0 +1,240 @@
+{
+  "CUSTOMER": {
+    "MENU": {
+      "TITLE": "Contactos"
+    },
+    "TYPES": {
+      "ORGANIZATION": "Organización",
+      "CONTACT": "Contacto",
+      "EMPLOYEE": "Empleado",
+      "VENDOR": "Proveedor"
+    },
+    "WIDGETS": {
+      "ACCOUNTS": "Cuentas",
+      "MEMBERSHIPS": "Membresías de organización",
+      "SEO": "SEO",
+      "ASSETS": "Recursos",
+      "SHOW_CONTACT": "Mostrar contacto",
+      "NO_CONTACT": "Sin contacto",
+      "ICON": "Ícono"
+    },
+    "CARDS": {
+      "DETAILS": "Detalles",
+      "CONTACT_INFO": "Correos electrónicos y teléfonos",
+      "ADDRESSES": "Direcciones",
+      "DYNAMIC_PROPERTIES": "Propiedades dinámicas"
+    },
+    "FIELDS": {
+      "NAME": "Nombre",
+      "FIRST_NAME": "Nombre",
+      "MIDDLE_NAME": "Segundo nombre",
+      "LAST_NAME": "Apellido",
+      "FULL_NAME": "Nombre completo",
+      "STATUS": "Estado",
+      "GROUPS": "Grupos",
+      "SALUTATION": "Título",
+      "BUSINESS_CATEGORY": "Campo de negocio",
+      "ICON": "Ícono",
+      "ORGANIZATIONS": "Organizaciones",
+      "DEFAULT_ORGANIZATION": "Organización predeterminada",
+      "ASSOCIATED_ORGANIZATIONS": "Organizaciones asociadas",
+      "BIRTHDAY": "Fecha de nacimiento",
+      "PHOTO_URL": "URL de la foto",
+      "TIME_ZONE": "Zona horaria",
+      "DEFAULT_LANGUAGE": "Idioma predeterminado",
+      "CURRENCY": "Moneda",
+      "TAX_PAYER_ID": "ID de contribuyente",
+      "PREFERRED_COMMUNICATION": "Canal de comunicación preferido",
+      "PREFERRED_DELIVERY": "Método de entrega preferido",
+      "ABOUT": "Acerca de",
+      "SITE_URL": "URL del sitio web",
+      "LOGO_URL": "URL del logotipo",
+      "GROUP_NAME": "Nombre del grupo",
+      "DESCRIPTION": "Descripción",
+      "ROLES": "Roles",
+      "EMAILS": "Correos electrónicos",
+      "PHONES": "Teléfonos",
+      "ADD_VALUE": "Escriba y pulse Intro"
+    },
+    "PAGES": {
+      "LIST": {
+        "ALL": "Todos los contactos",
+        "EMPTY": "No se encontraron contactos",
+        "COLUMNS": {
+          "NAME": "Nombre",
+          "TYPE": "Tipo",
+          "EMAIL": "Correo electrónico",
+          "STATUS": "Estado",
+          "OUTER_ID": "ID externo",
+          "CREATED": "Creado"
+        },
+        "FILTERS": {
+          "TYPE": "Tipo de miembro",
+          "CREATED": "Fecha de creación",
+          "MODIFIED": "Fecha de modificación"
+        },
+        "TOOLBAR": {
+          "REFRESH": "Actualizar",
+          "ADD": "Agregar",
+          "DELETE": "Eliminar",
+          "INVITE": "Invitar clientes",
+          "LOCK": "Bloquear en organización",
+          "UNLOCK": "Desbloquear en organización",
+          "CHANGE_ROLE": "Cambiar rol en organización"
+        },
+        "ACTIONS": {
+          "MANAGE": "Gestionar",
+          "COPY_ID": "Copiar ID",
+          "COPY_NAME": "Copiar nombre"
+        }
+      },
+      "ADD": {
+        "TITLE": "Nuevo contacto",
+        "SUBTITLE": "Seleccione el tipo de contacto que desea crear",
+        "ORGANIZATION": "Un perfil de empresa que puede contener información sobre empleados, contactos habituales u otras empresas",
+        "CONTACT": "Un cliente de la tienda que puede ser miembro de una empresa o actuar como comprador individual",
+        "EMPLOYEE": "Un empleado que trabaja en una empresa",
+        "VENDOR": "Vendedor, comerciante o proveedor"
+      },
+      "DETAILS": {
+        "NEW_ORGANIZATION": "Nueva organización",
+        "NEW_CONTACT": "Nuevo contacto",
+        "NEW_EMPLOYEE": "Nuevo empleado",
+        "NEW_VENDOR": "Nuevo proveedor",
+        "TOOLBAR": {
+          "SAVE": "Guardar",
+          "CREATE": "Crear",
+          "RESET": "Restablecer"
+        }
+      },
+      "ADDRESS": {
+        "TITLE": "Dirección",
+        "NEW": "Nueva dirección",
+        "ADD": "Agregar dirección",
+        "EMPTY": "No hay direcciones",
+        "COLUMNS": {
+          "TYPE": "Tipo",
+          "ADDRESS": "Dirección",
+          "DEFAULT": "Predeterminada"
+        },
+        "FIELDS": {
+          "DESCRIPTION": "Descripción",
+          "TYPE": "Tipo de dirección",
+          "DEFAULT": "Predeterminada para este tipo",
+          "COUNTRY": "País",
+          "REGION": "Estado / provincia",
+          "CITY": "Ciudad",
+          "ZIP": "Código postal",
+          "LINE1": "Dirección línea 1",
+          "LINE2": "Dirección línea 2",
+          "EMAIL": "Correo electrónico",
+          "PHONE": "Teléfono"
+        },
+        "TOOLBAR": {
+          "APPLY": "Aplicar"
+        }
+      },
+      "ACCOUNTS": {
+        "EMPTY": "No hay cuentas vinculadas a este miembro",
+        "COLUMNS": {
+          "USER_NAME": "Nombre de usuario",
+          "EMAIL": "Correo electrónico",
+          "TYPE": "Tipo de cuenta",
+          "STATUS": "Estado"
+        },
+        "TOOLBAR": {
+          "ADD": "Nueva cuenta",
+          "LINK": "Vincular cuenta",
+          "UNLINK": "Desvincular"
+        }
+      },
+      "ACCOUNT_CREATE": {
+        "TITLE": "Nueva cuenta",
+        "STORE": "Tienda",
+        "PASSWORD": "Contraseña"
+      },
+      "ACCOUNT_LINK": {
+        "TITLE": "Vincular cuentas de seguridad",
+        "LINKED": "Vinculada"
+      },
+      "MEMBERSHIPS": {
+        "NEW": "Nueva membresía",
+        "EMPTY": "No hay membresías de organización",
+        "GLOBAL": "Global (todas las organizaciones)",
+        "LOCKED": "Bloqueado",
+        "UNLOCKED": "Activo",
+        "STATUS_INHERITED": "Heredado del miembro",
+        "ROLES_HINT": "Roles asignados al miembro dentro de esta organización, además de cualquier rol global.",
+        "STATUS_HINT": "Anula el estado global del miembro solo para esta organización. Déjelo vacío para usar el estado global del miembro.",
+        "COLUMNS": {
+          "ORGANIZATION": "Organización",
+          "LOCKED": "Bloqueado",
+          "LOCKOUT_END": "Bloqueado hasta"
+        }
+      },
+      "INVITE": {
+        "TITLE": "Invitar clientes",
+        "ROLE": "Rol",
+        "EMAILS_PLACEHOLDER": "Escriba o pegue los correos electrónicos y pulse Intro",
+        "MESSAGE": "Mensaje",
+        "SEND": "Enviar invitaciones",
+        "SENT": "Las notificaciones de invitación se han puesto en cola correctamente."
+      },
+      "SEO": {
+        "NEW": "Nuevo registro SEO",
+        "EMPTY": "No hay registros SEO",
+        "URL_REQUIRED": "La palabra clave de URL es obligatoria",
+        "URL_INVALID": "La palabra clave de URL contiene caracteres no válidos",
+        "URL_DUPLICATE": "Esta palabra clave de URL ya se utiliza en esta tienda",
+        "FIELDS": {
+          "ACTIVE": "Activo",
+          "LANGUAGE": "Idioma",
+          "URL_KEYWORD": "Palabra clave de URL",
+          "PAGE_TITLE": "Título de la página",
+          "META_DESCRIPTION": "Metadescripción",
+          "META_KEYWORDS": "Metapalabras clave",
+          "IMAGE_ALT": "Texto alternativo de la imagen"
+        }
+      },
+      "ASSETS": {
+        "EMPTY": "No hay recursos en esta carpeta",
+        "SIZE": "Tamaño",
+        "MODIFIED": "Modificado",
+        "DOWNLOAD": "Descargar",
+        "COPY_URL": "Copiar URL",
+        "NEW_FOLDER": "Nueva carpeta",
+        "FOLDER_NAME": "Nombre de la carpeta",
+        "UPLOAD": "Cargar",
+        "DELETE": "¿Eliminar {count} recurso(s)? Esta acción no se puede deshacer.",
+        "OVERWRITE": "{names} ya existe(n) en esta carpeta. ¿Desea reemplazarlo(s)?",
+        "CANCEL": "Cancelar",
+        "CREATE": "Crear"
+      },
+      "ICON": {
+        "TITLE": "Gestionar ícono"
+      }
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "Tiene cambios sin guardar. ¿Está seguro de que desea cerrar?",
+      "DELETE_CONFIRMATION": "¿Eliminar {what}? Esta acción no se puede deshacer.",
+      "DELETE_ORGANIZATION": "{count} organización(es) y todo su contenido",
+      "DELETE_CONTACT": "{count} contacto(s)",
+      "DELETE_EMPLOYEE": "{count} empleado(s)",
+      "DELETE_VENDOR": "{count} proveedor(es)",
+      "DELETE_ADDRESS": "¿Está seguro de que desea eliminar esta dirección?",
+      "DELETE_ACCOUNTS": "¿Eliminar {count} cuenta(s)? Esta acción no se puede deshacer.",
+      "UNLINK_ACCOUNTS": "¿Está seguro de que desea desvincular {count} cuenta(s)?",
+      "RELINK_ACCOUNTS": "Las cuentas seleccionadas ya están asociadas con '{names}'. ¿Desea continuar?",
+      "DELETE_MEMBERSHIPS": "¿Está seguro de que desea eliminar {count} membresía(s)?",
+      "DUPLICATE_MEMBERSHIP": "Ya existe una membresía para este usuario y esta organización.",
+      "NO_ACCOUNT": "Este miembro no tiene una cuenta de seguridad vinculada.",
+      "NO_ACCOUNT_MEMBERSHIPS": "Las membresías de organización pertenecen a una cuenta de seguridad. Primero vincule o cree una cuenta para este contacto.",
+      "NO_MEMBERSHIP": "No se encontró ningún registro de membresía de organización para este miembro.",
+      "DELETE_SEO": "¿Eliminar {count} registro(s) SEO?",
+      "UNKNOWN_MEMBER_TYPE": "No se puede editar un miembro de un tipo desconocido: '{memberType}'"
+    },
+    "SEARCH": {
+      "GROUP_TITLE": "Clientes"
+    }
+  }
+}

@@ -1,0 +1,240 @@
+{
+  "CUSTOMER": {
+    "MENU": {
+      "TITLE": "Kontakty"
+    },
+    "TYPES": {
+      "ORGANIZATION": "Organizacja",
+      "CONTACT": "Kontakt",
+      "EMPLOYEE": "Pracownik",
+      "VENDOR": "Dostawca"
+    },
+    "WIDGETS": {
+      "ACCOUNTS": "Konta",
+      "MEMBERSHIPS": "Członkostwa w organizacjach",
+      "SEO": "SEO",
+      "ASSETS": "Zasoby",
+      "SHOW_CONTACT": "Pokaż kontakt",
+      "NO_CONTACT": "Brak kontaktu",
+      "ICON": "Ikona"
+    },
+    "CARDS": {
+      "DETAILS": "Szczegóły",
+      "CONTACT_INFO": "Adresy e-mail i telefony",
+      "ADDRESSES": "Adresy",
+      "DYNAMIC_PROPERTIES": "Właściwości dynamiczne"
+    },
+    "FIELDS": {
+      "NAME": "Nazwa",
+      "FIRST_NAME": "Imię",
+      "MIDDLE_NAME": "Drugie imię",
+      "LAST_NAME": "Nazwisko",
+      "FULL_NAME": "Imię i nazwisko",
+      "STATUS": "Status",
+      "GROUPS": "Grupy",
+      "SALUTATION": "Tytuł",
+      "BUSINESS_CATEGORY": "Branża",
+      "ICON": "Ikona",
+      "ORGANIZATIONS": "Organizacje",
+      "DEFAULT_ORGANIZATION": "Domyślna organizacja",
+      "ASSOCIATED_ORGANIZATIONS": "Powiązane organizacje",
+      "BIRTHDAY": "Data urodzenia",
+      "PHOTO_URL": "URL zdjęcia",
+      "TIME_ZONE": "Strefa czasowa",
+      "DEFAULT_LANGUAGE": "Język domyślny",
+      "CURRENCY": "Waluta",
+      "TAX_PAYER_ID": "ID podatnika",
+      "PREFERRED_COMMUNICATION": "Preferowany kanał komunikacji",
+      "PREFERRED_DELIVERY": "Preferowana metoda dostawy",
+      "ABOUT": "Informacje",
+      "SITE_URL": "URL witryny",
+      "LOGO_URL": "URL logo",
+      "GROUP_NAME": "Nazwa grupy",
+      "DESCRIPTION": "Opis",
+      "ROLES": "Role",
+      "EMAILS": "Adresy e-mail",
+      "PHONES": "Telefony",
+      "ADD_VALUE": "Wpisz i naciśnij Enter"
+    },
+    "PAGES": {
+      "LIST": {
+        "ALL": "Wszystkie kontakty",
+        "EMPTY": "Nie znaleziono kontaktów",
+        "COLUMNS": {
+          "NAME": "Nazwa",
+          "TYPE": "Typ",
+          "EMAIL": "E-mail",
+          "STATUS": "Status",
+          "OUTER_ID": "Identyfikator zewnętrzny",
+          "CREATED": "Utworzono"
+        },
+        "FILTERS": {
+          "TYPE": "Typ członka",
+          "CREATED": "Data utworzenia",
+          "MODIFIED": "Data modyfikacji"
+        },
+        "TOOLBAR": {
+          "REFRESH": "Odśwież",
+          "ADD": "Dodaj",
+          "DELETE": "Usuń",
+          "INVITE": "Zaproś klientów",
+          "LOCK": "Zablokuj w organizacji",
+          "UNLOCK": "Odblokuj w organizacji",
+          "CHANGE_ROLE": "Zmień rolę w organizacji"
+        },
+        "ACTIONS": {
+          "MANAGE": "Zarządzaj",
+          "COPY_ID": "Kopiuj ID",
+          "COPY_NAME": "Kopiuj nazwę"
+        }
+      },
+      "ADD": {
+        "TITLE": "Nowy kontakt",
+        "SUBTITLE": "Wybierz typ kontaktu, który chcesz utworzyć",
+        "ORGANIZATION": "Profil firmy, który może zawierać informacje o pracownikach, stałych kontaktach lub innych firmach",
+        "CONTACT": "Klient sklepu, który może być członkiem firmy lub działać jako indywidualny nabywca",
+        "EMPLOYEE": "Pracownik zatrudniony w firmie",
+        "VENDOR": "Sprzedawca, kupiec lub dostawca"
+      },
+      "DETAILS": {
+        "NEW_ORGANIZATION": "Nowa organizacja",
+        "NEW_CONTACT": "Nowy kontakt",
+        "NEW_EMPLOYEE": "Nowy pracownik",
+        "NEW_VENDOR": "Nowy dostawca",
+        "TOOLBAR": {
+          "SAVE": "Zapisz",
+          "CREATE": "Utwórz",
+          "RESET": "Resetuj"
+        }
+      },
+      "ADDRESS": {
+        "TITLE": "Adres",
+        "NEW": "Nowy adres",
+        "ADD": "Dodaj adres",
+        "EMPTY": "Brak adresów",
+        "COLUMNS": {
+          "TYPE": "Typ",
+          "ADDRESS": "Adres",
+          "DEFAULT": "Domyślny"
+        },
+        "FIELDS": {
+          "DESCRIPTION": "Opis",
+          "TYPE": "Typ adresu",
+          "DEFAULT": "Domyślny dla tego typu",
+          "COUNTRY": "Kraj",
+          "REGION": "Stan / województwo",
+          "CITY": "Miasto",
+          "ZIP": "Kod pocztowy",
+          "LINE1": "Adres - linia 1",
+          "LINE2": "Adres - linia 2",
+          "EMAIL": "E-mail",
+          "PHONE": "Telefon"
+        },
+        "TOOLBAR": {
+          "APPLY": "Zastosuj"
+        }
+      },
+      "ACCOUNTS": {
+        "EMPTY": "Brak kont powiązanych z tym członkiem",
+        "COLUMNS": {
+          "USER_NAME": "Nazwa użytkownika",
+          "EMAIL": "E-mail",
+          "TYPE": "Typ konta",
+          "STATUS": "Status"
+        },
+        "TOOLBAR": {
+          "ADD": "Nowe konto",
+          "LINK": "Połącz konto",
+          "UNLINK": "Odłącz"
+        }
+      },
+      "ACCOUNT_CREATE": {
+        "TITLE": "Nowe konto",
+        "STORE": "Sklep",
+        "PASSWORD": "Hasło"
+      },
+      "ACCOUNT_LINK": {
+        "TITLE": "Połącz konta zabezpieczeń",
+        "LINKED": "Połączone"
+      },
+      "MEMBERSHIPS": {
+        "NEW": "Nowe członkostwo",
+        "EMPTY": "Brak członkostw w organizacjach",
+        "GLOBAL": "Globalne (wszystkie organizacje)",
+        "LOCKED": "Zablokowany",
+        "UNLOCKED": "Aktywny",
+        "STATUS_INHERITED": "Odziedziczony od członka",
+        "ROLES_HINT": "Role przypisane członkowi w ramach tej organizacji, oprócz ewentualnych ról globalnych.",
+        "STATUS_HINT": "Zastępuje globalny status członka wyłącznie dla tej organizacji. Pozostaw puste, aby użyć globalnego statusu członka.",
+        "COLUMNS": {
+          "ORGANIZATION": "Organizacja",
+          "LOCKED": "Zablokowany",
+          "LOCKOUT_END": "Koniec blokady"
+        }
+      },
+      "INVITE": {
+        "TITLE": "Zaproś klientów",
+        "ROLE": "Rola",
+        "EMAILS_PLACEHOLDER": "Wpisz lub wklej adresy e-mail i naciśnij Enter",
+        "MESSAGE": "Wiadomość",
+        "SEND": "Wyślij zaproszenia",
+        "SENT": "Powiadomienia z zaproszeniami zostały pomyślnie dodane do kolejki."
+      },
+      "SEO": {
+        "NEW": "Nowy rekord SEO",
+        "EMPTY": "Brak rekordów SEO",
+        "URL_REQUIRED": "Słowo kluczowe URL jest wymagane",
+        "URL_INVALID": "Słowo kluczowe URL zawiera nieprawidłowe znaki",
+        "URL_DUPLICATE": "To słowo kluczowe URL jest już używane w tym sklepie",
+        "FIELDS": {
+          "ACTIVE": "Aktywny",
+          "LANGUAGE": "Język",
+          "URL_KEYWORD": "Słowo kluczowe URL",
+          "PAGE_TITLE": "Tytuł strony",
+          "META_DESCRIPTION": "Metaopis",
+          "META_KEYWORDS": "Metasłowa kluczowe",
+          "IMAGE_ALT": "Tekst alternatywny obrazu"
+        }
+      },
+      "ASSETS": {
+        "EMPTY": "Brak zasobów w tym folderze",
+        "SIZE": "Rozmiar",
+        "MODIFIED": "Zmodyfikowano",
+        "DOWNLOAD": "Pobierz",
+        "COPY_URL": "Kopiuj URL",
+        "NEW_FOLDER": "Nowy folder",
+        "FOLDER_NAME": "Nazwa folderu",
+        "UPLOAD": "Prześlij",
+        "DELETE": "Usunąć zasoby ({count})? Tej operacji nie można cofnąć.",
+        "OVERWRITE": "{names} już istnieje/istnieją w tym folderze. Zastąpić?",
+        "CANCEL": "Anuluj",
+        "CREATE": "Utwórz"
+      },
+      "ICON": {
+        "TITLE": "Zarządzaj ikoną"
+      }
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "Masz niezapisane zmiany. Czy na pewno chcesz zamknąć?",
+      "DELETE_CONFIRMATION": "Usunąć: {what}? Tej operacji nie można cofnąć.",
+      "DELETE_ORGANIZATION": "organizacje ({count}) wraz z całą zawartością",
+      "DELETE_CONTACT": "kontakty ({count})",
+      "DELETE_EMPLOYEE": "pracownicy ({count})",
+      "DELETE_VENDOR": "dostawcy ({count})",
+      "DELETE_ADDRESS": "Czy na pewno chcesz usunąć ten adres?",
+      "DELETE_ACCOUNTS": "Usunąć konta ({count})? Tej operacji nie można cofnąć.",
+      "UNLINK_ACCOUNTS": "Czy na pewno chcesz odłączyć konta ({count})?",
+      "RELINK_ACCOUNTS": "Wybrane konta są już powiązane z '{names}'. Czy chcesz kontynuować?",
+      "DELETE_MEMBERSHIPS": "Czy na pewno chcesz usunąć członkostwa ({count})?",
+      "DUPLICATE_MEMBERSHIP": "Członkostwo dla tego użytkownika i tej organizacji już istnieje.",
+      "NO_ACCOUNT": "Ten członek nie ma powiązanego konta zabezpieczeń.",
+      "NO_ACCOUNT_MEMBERSHIPS": "Członkostwa w organizacjach należą do konta zabezpieczeń. Najpierw połącz lub utwórz konto dla tego kontaktu.",
+      "NO_MEMBERSHIP": "Nie znaleziono rekordu członkostwa w organizacji dla tego członka.",
+      "DELETE_SEO": "Usunąć rekordy SEO ({count})?",
+      "UNKNOWN_MEMBER_TYPE": "Nie można edytować członka o nieznanym typie: '{memberType}'"
+    },
+    "SEARCH": {
+      "GROUP_TITLE": "Klienci"
+    }
+  }
+}
