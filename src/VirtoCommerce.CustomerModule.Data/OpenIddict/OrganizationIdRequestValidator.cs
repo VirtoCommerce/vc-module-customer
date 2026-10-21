@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using OpenIddict.Abstractions;
 using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Extensions;
 using VirtoCommerce.CustomerModule.Core.Model;
@@ -22,10 +21,7 @@ public class OrganizationIdRequestValidator(
 
     public virtual async Task<IList<TokenResponse>> ValidateAsync(TokenRequestContext context)
     {
-        // The storefront always resends the last-used organization on every password login (useAuth.ts),
-        // so a blocked org here is never a deliberate choice — allow falling back. An explicit org switch
-        // on an existing session (refresh_token grant, switchOrganization()) gets no fallback.
-        var allowFallback = context.Request.GrantType == OpenIddictConstants.GrantTypes.Password;
+        var allowFallback = IsOrganizationFallbackAllowed(context);
 
         var member = await GetMemberAsync(context);
 
@@ -43,7 +39,7 @@ public class OrganizationIdRequestValidator(
         var availableOrganizationIds = GetAvailableOrganizationIds(member);
         if (!availableOrganizationIds.Contains(organizationId))
         {
-            return await HandleUnavailableOrganizationAsync(context, member, organizationId, availableOrganizationIds);
+            return await HandleUnavailableOrganizationAsync(context, member, allowFallback, organizationId, availableOrganizationIds);
         }
 
         if (context.User != null)
@@ -58,10 +54,17 @@ public class OrganizationIdRequestValidator(
         return [];
     }
 
-    private async Task<IList<TokenResponse>> HandleUnavailableOrganizationAsync(
-        TokenRequestContext context, Member member, string organizationId, IList<string> availableOrganizationIds)
+    // Credential sign-ins (SignInResult set) resend the last-used organization, so it isn't a deliberate choice;
+    // an explicit switch (refresh_token) is, and keeps failing.
+    protected virtual bool IsOrganizationFallbackAllowed(TokenRequestContext context)
     {
-        if (context.Request.GrantType != OpenIddictConstants.GrantTypes.Password)
+        return context.SignInResult != null;
+    }
+
+    private async Task<IList<TokenResponse>> HandleUnavailableOrganizationAsync(
+        TokenRequestContext context, Member member, bool allowFallback, string organizationId, IList<string> availableOrganizationIds)
+    {
+        if (!allowFallback)
         {
             return [ErrorDescriber.InvalidOrganizationId(organizationId)];
         }
