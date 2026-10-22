@@ -9,7 +9,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="VirtoCommerce.Platform.Data.SqlServer" Version="3.1088.0-alpha.13441-vcst-6121-passkeys" />
+    <PackageReference Include="VirtoCommerce.Platform.Data.SqlServer" Version="3.1090.0-alpha.13450-vcst-6121-passkeys" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.CustomerModule.Data\VirtoCommerce.CustomerModule.Data.csproj" />
