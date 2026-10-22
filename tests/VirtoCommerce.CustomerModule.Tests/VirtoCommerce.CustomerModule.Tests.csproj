@@ -10,9 +10,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
     <PackageReference Include="Moq" Version="4.21.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Caching" Version="3.1083.0" />
-    
-    
+    <PackageReference Include="VirtoCommerce.Platform.Caching" Version="3.1090.0-alpha.13450-vcst-6121-passkeys" />
     <PackageReference Include="xunit.v3" Version="3.2.2" />
     <PackageReference Include="xunit.v3.runner.console" Version="3.2.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
