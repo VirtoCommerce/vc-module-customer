@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="VirtoCommerce.CoreModule.Core" Version="3.1012.0" />
     <PackageReference Include="VirtoCommerce.NotificationsModule.Core" Version="3.1018.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.1090.0-alpha.13450-vcst-6121-passkeys" />
+    <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.1091.0-alpha.13460-vcst-6121-passkeys" />
     <PackageReference Include="VirtoCommerce.SearchModule.Core" Version="3.1010.0" />
     <PackageReference Include="VirtoCommerce.Seo.Core" Version="3.1005.0" />
     <PackageReference Include="VirtoCommerce.StoreModule.Core" Version="3.1009.0" />
