@@ -1,0 +1,77 @@
+{
+  "permissions": {
+    "customer:access": "פתיחת תפריט הלקוחות",
+    "customer:create": "יצירת נתוני לקוחות",
+    "customer:read": "צפייה בנתוני לקוחות",
+    "customer:update": "עדכון נתוני לקוחות",
+    "customer:delete": "מחיקת נתוני לקוחות"
+  },
+  "settings": {
+    "Customer": {
+      "MemberGroups": {
+        "title": "מילון קבוצות חברים",
+        "description": "כל ערכי קבוצות החברים הזמינים"
+      },
+      "ExportImport.PageSize": {
+        "title": "גודל הדף המשמש לייצוא / ייבוא",
+        "description": "הערה: ערכים גדולים עלולים לפגוע בביצועים"
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "הפעלת אינדוקס מבוסס אירועים עבור ישויות לקוחות (נדרשת הפעלה מחדש)",
+            "description": "כל שינוי בישות לקוח מפעיל משימת רקע שמחילה את השינויים על אינדקס החיפוש"
+          }
+        }
+      },
+      "OrganizationStatuses": {
+        "title": "סטטוסים של חברות",
+        "description": "עריכת סטטוסים של חברות"
+      },
+      "OrganizationMembershipStatuses": {
+        "title": "סטטוסים של השתייכות לארגון",
+        "description": "עריכת הסטטוסים הזמינים להשתייכות לארגון"
+      },
+      "VendorStatuses": {
+        "title": "סטטוסים של ספקים",
+        "description": "עריכת סטטוסים של ספקים"
+      },
+      "EmployeeStatuses": {
+        "title": "סטטוסים של עובדים",
+        "description": "עריכת סטטוסים של עובדים"
+      },
+      "ContactStatuses": {
+        "title": "סטטוסים של אנשי קשר",
+        "description": "עריכת סטטוסים של אנשי קשר"
+      },
+      "OrganizationDefaultStatus": {
+        "title": "סטטוס ברירת המחדל של חברה",
+        "description": "יש לציין את הסטטוס שמוקצה לחברות חדשות שנרשמות"
+      },
+      "ContactDefaultStatus": {
+        "title": "סטטוס ברירת המחדל של איש קשר",
+        "description": "מציין את הסטטוס שמוקצה לבעלי חברות חדשים שנרשמים"
+      },
+      "OrganizationRolesWhitelist": {
+        "title": "רשימת התפקידים המותרים לארגון",
+        "description": "תפקידים הזמינים להקצאה ברמת הארגון"
+      },
+      "MembershipRolesWhitelist": {
+        "title": "רשימת התפקידים המותרים להשתייכות",
+        "description": "תפקידים הזמינים להקצאה ברמת ההשתייכות לארגון"
+      }
+    },
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Member": {
+              "title": "תאריך ושעה של אינדוקס חברים",
+              "description": "התאריך והשעה שבהם מתחילה משימת אינדוקס החברים"
+            }
+          }
+        }
+      }
+    }
+  }
+}

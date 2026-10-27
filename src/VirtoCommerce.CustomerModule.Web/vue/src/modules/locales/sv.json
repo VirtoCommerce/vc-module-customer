@@ -1,0 +1,240 @@
+{
+  "CUSTOMER": {
+    "MENU": {
+      "TITLE": "Kontakter"
+    },
+    "TYPES": {
+      "ORGANIZATION": "Organisation",
+      "CONTACT": "Kontakt",
+      "EMPLOYEE": "Anställd",
+      "VENDOR": "Leverantör"
+    },
+    "WIDGETS": {
+      "ACCOUNTS": "Konton",
+      "MEMBERSHIPS": "Organisationsmedlemskap",
+      "SEO": "SEO",
+      "ASSETS": "Resurser",
+      "SHOW_CONTACT": "Visa kontakt",
+      "NO_CONTACT": "Ingen kontakt",
+      "ICON": "Ikon"
+    },
+    "CARDS": {
+      "DETAILS": "Detaljer",
+      "CONTACT_INFO": "E-postadresser och telefonnummer",
+      "ADDRESSES": "Adresser",
+      "DYNAMIC_PROPERTIES": "Dynamiska egenskaper"
+    },
+    "FIELDS": {
+      "NAME": "Namn",
+      "FIRST_NAME": "Förnamn",
+      "MIDDLE_NAME": "Mellannamn",
+      "LAST_NAME": "Efternamn",
+      "FULL_NAME": "Fullständigt namn",
+      "STATUS": "Status",
+      "GROUPS": "Grupper",
+      "SALUTATION": "Titel",
+      "BUSINESS_CATEGORY": "Verksamhetsområde",
+      "ICON": "Ikon",
+      "ORGANIZATIONS": "Organisationer",
+      "DEFAULT_ORGANIZATION": "Standardorganisation",
+      "ASSOCIATED_ORGANIZATIONS": "Associerade organisationer",
+      "BIRTHDAY": "Födelsedatum",
+      "PHOTO_URL": "Foto-URL",
+      "TIME_ZONE": "Tidszon",
+      "DEFAULT_LANGUAGE": "Standardspråk",
+      "CURRENCY": "Valuta",
+      "TAX_PAYER_ID": "Skattebetalar-ID",
+      "PREFERRED_COMMUNICATION": "Föredragen kommunikationskanal",
+      "PREFERRED_DELIVERY": "Föredragen leveransmetod",
+      "ABOUT": "Om",
+      "SITE_URL": "Webbplats-URL",
+      "LOGO_URL": "Logotyp-URL",
+      "GROUP_NAME": "Gruppnamn",
+      "DESCRIPTION": "Beskrivning",
+      "ROLES": "Roller",
+      "EMAILS": "E-postadresser",
+      "PHONES": "Telefonnummer",
+      "ADD_VALUE": "Skriv och tryck på Enter"
+    },
+    "PAGES": {
+      "LIST": {
+        "ALL": "Alla kontakter",
+        "EMPTY": "Inga kontakter hittades",
+        "COLUMNS": {
+          "NAME": "Namn",
+          "TYPE": "Typ",
+          "EMAIL": "E-post",
+          "STATUS": "Status",
+          "OUTER_ID": "Externt ID",
+          "CREATED": "Skapad"
+        },
+        "FILTERS": {
+          "TYPE": "Medlemstyp",
+          "CREATED": "Skapat datum",
+          "MODIFIED": "Ändrat datum"
+        },
+        "TOOLBAR": {
+          "REFRESH": "Uppdatera",
+          "ADD": "Lägg till",
+          "DELETE": "Ta bort",
+          "INVITE": "Bjud in kunder",
+          "LOCK": "Lås i organisation",
+          "UNLOCK": "Lås upp i organisation",
+          "CHANGE_ROLE": "Ändra roll i organisation"
+        },
+        "ACTIONS": {
+          "MANAGE": "Hantera",
+          "COPY_ID": "Kopiera ID",
+          "COPY_NAME": "Kopiera namn"
+        }
+      },
+      "ADD": {
+        "TITLE": "Ny kontakt",
+        "SUBTITLE": "Välj vilken typ av kontakt du vill skapa",
+        "ORGANIZATION": "En företagsprofil som kan innehålla information om anställda, vanliga kontakter eller andra företag",
+        "CONTACT": "En butikskund som antingen kan vara medlem i ett företag eller agera som en individuell köpare",
+        "EMPLOYEE": "En anställd som arbetar i ett företag",
+        "VENDOR": "Säljare, handlare eller leverantör"
+      },
+      "DETAILS": {
+        "NEW_ORGANIZATION": "Ny organisation",
+        "NEW_CONTACT": "Ny kontakt",
+        "NEW_EMPLOYEE": "Ny anställd",
+        "NEW_VENDOR": "Ny leverantör",
+        "TOOLBAR": {
+          "SAVE": "Spara",
+          "CREATE": "Skapa",
+          "RESET": "Återställ"
+        }
+      },
+      "ADDRESS": {
+        "TITLE": "Adress",
+        "NEW": "Ny adress",
+        "ADD": "Lägg till adress",
+        "EMPTY": "Inga adresser",
+        "COLUMNS": {
+          "TYPE": "Typ",
+          "ADDRESS": "Adress",
+          "DEFAULT": "Standard"
+        },
+        "FIELDS": {
+          "DESCRIPTION": "Beskrivning",
+          "TYPE": "Adresstyp",
+          "DEFAULT": "Standard för denna typ",
+          "COUNTRY": "Land",
+          "REGION": "Delstat / provins",
+          "CITY": "Stad",
+          "ZIP": "Postnummer",
+          "LINE1": "Adressrad 1",
+          "LINE2": "Adressrad 2",
+          "EMAIL": "E-post",
+          "PHONE": "Telefon"
+        },
+        "TOOLBAR": {
+          "APPLY": "Tillämpa"
+        }
+      },
+      "ACCOUNTS": {
+        "EMPTY": "Inga konton är länkade till denna medlem",
+        "COLUMNS": {
+          "USER_NAME": "Användarnamn",
+          "EMAIL": "E-post",
+          "TYPE": "Kontotyp",
+          "STATUS": "Status"
+        },
+        "TOOLBAR": {
+          "ADD": "Nytt konto",
+          "LINK": "Länka konto",
+          "UNLINK": "Ta bort länk"
+        }
+      },
+      "ACCOUNT_CREATE": {
+        "TITLE": "Nytt konto",
+        "STORE": "Butik",
+        "PASSWORD": "Lösenord"
+      },
+      "ACCOUNT_LINK": {
+        "TITLE": "Länka säkerhetskonton",
+        "LINKED": "Länkad"
+      },
+      "MEMBERSHIPS": {
+        "NEW": "Nytt medlemskap",
+        "EMPTY": "Inga organisationsmedlemskap",
+        "GLOBAL": "Global (alla organisationer)",
+        "LOCKED": "Låst",
+        "UNLOCKED": "Aktiv",
+        "STATUS_INHERITED": "Ärvd från medlemmen",
+        "ROLES_HINT": "Roller tilldelade medlemmen inom denna organisation, utöver eventuella globala roller.",
+        "STATUS_HINT": "Åsidosätter medlemmens globala status enbart för denna organisation. Lämna tomt för att använda medlemmens globala status.",
+        "COLUMNS": {
+          "ORGANIZATION": "Organisation",
+          "LOCKED": "Låst",
+          "LOCKOUT_END": "Låsning upphör"
+        }
+      },
+      "INVITE": {
+        "TITLE": "Bjud in kunder",
+        "ROLE": "Roll",
+        "EMAILS_PLACEHOLDER": "Skriv eller klistra in e-postadresser och tryck på Enter",
+        "MESSAGE": "Meddelande",
+        "SEND": "Skicka inbjudningar",
+        "SENT": "Inbjudningsaviseringarna har lagts i kö."
+      },
+      "SEO": {
+        "NEW": "Ny SEO-post",
+        "EMPTY": "Inga SEO-poster",
+        "URL_REQUIRED": "URL-nyckelord krävs",
+        "URL_INVALID": "URL-nyckelordet innehåller ogiltiga tecken",
+        "URL_DUPLICATE": "Detta URL-nyckelord används redan för den här butiken",
+        "FIELDS": {
+          "ACTIVE": "Aktiv",
+          "LANGUAGE": "Språk",
+          "URL_KEYWORD": "URL-nyckelord",
+          "PAGE_TITLE": "Sidtitel",
+          "META_DESCRIPTION": "Metabeskrivning",
+          "META_KEYWORDS": "Metanyckelord",
+          "IMAGE_ALT": "Alternativ text för bild"
+        }
+      },
+      "ASSETS": {
+        "EMPTY": "Inga resurser i den här mappen",
+        "SIZE": "Storlek",
+        "MODIFIED": "Ändrad",
+        "DOWNLOAD": "Ladda ned",
+        "COPY_URL": "Kopiera URL",
+        "NEW_FOLDER": "Ny mapp",
+        "FOLDER_NAME": "Mappnamn",
+        "UPLOAD": "Ladda upp",
+        "DELETE": "Ta bort {count} resurs(er)? Detta kan inte ångras.",
+        "OVERWRITE": "{names} finns redan i den här mappen. Vill du ersätta?",
+        "CANCEL": "Avbryt",
+        "CREATE": "Skapa"
+      },
+      "ICON": {
+        "TITLE": "Hantera ikon"
+      }
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "Du har osparade ändringar. Är du säker på att du vill stänga?",
+      "DELETE_CONFIRMATION": "Ta bort {what}? Detta kan inte ångras.",
+      "DELETE_ORGANIZATION": "{count} organisation(er) och allt innehåll i dem",
+      "DELETE_CONTACT": "{count} kontakt(er)",
+      "DELETE_EMPLOYEE": "{count} anställd(a)",
+      "DELETE_VENDOR": "{count} leverantör(er)",
+      "DELETE_ADDRESS": "Är du säker på att du vill ta bort denna adress?",
+      "DELETE_ACCOUNTS": "Ta bort {count} konto(n)? Detta kan inte ångras.",
+      "UNLINK_ACCOUNTS": "Är du säker på att du vill ta bort länkningen för {count} konto(n)?",
+      "RELINK_ACCOUNTS": "De valda kontona är redan associerade med '{names}'. Vill du fortsätta?",
+      "DELETE_MEMBERSHIPS": "Är du säker på att du vill ta bort {count} medlemskap?",
+      "DUPLICATE_MEMBERSHIP": "Ett medlemskap för den här användaren och organisationen finns redan.",
+      "NO_ACCOUNT": "Den här medlemmen har inget länkat säkerhetskonto.",
+      "NO_ACCOUNT_MEMBERSHIPS": "Organisationsmedlemskap tillhör ett säkerhetskonto. Länka eller skapa först ett konto för den här kontakten.",
+      "NO_MEMBERSHIP": "Ingen post för organisationsmedlemskap hittades för den här medlemmen.",
+      "DELETE_SEO": "Ta bort {count} SEO-post(er)?",
+      "UNKNOWN_MEMBER_TYPE": "Kan inte redigera medlem av okänd typ: '{memberType}'"
+    },
+    "SEARCH": {
+      "GROUP_TITLE": "Kunder"
+    }
+  }
+}
