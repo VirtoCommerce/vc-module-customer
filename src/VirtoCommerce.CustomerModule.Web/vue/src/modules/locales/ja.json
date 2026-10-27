@@ -1,0 +1,240 @@
+{
+  "CUSTOMER": {
+    "MENU": {
+      "TITLE": "連絡先"
+    },
+    "TYPES": {
+      "ORGANIZATION": "組織",
+      "CONTACT": "連絡先",
+      "EMPLOYEE": "従業員",
+      "VENDOR": "ベンダー"
+    },
+    "WIDGETS": {
+      "ACCOUNTS": "アカウント",
+      "MEMBERSHIPS": "組織メンバーシップ",
+      "SEO": "SEO",
+      "ASSETS": "リソース",
+      "SHOW_CONTACT": "連絡先を表示",
+      "NO_CONTACT": "連絡先なし",
+      "ICON": "アイコン"
+    },
+    "CARDS": {
+      "DETAILS": "詳細",
+      "CONTACT_INFO": "メールと電話番号",
+      "ADDRESSES": "住所",
+      "DYNAMIC_PROPERTIES": "動的プロパティ"
+    },
+    "FIELDS": {
+      "NAME": "名前",
+      "FIRST_NAME": "名",
+      "MIDDLE_NAME": "ミドルネーム",
+      "LAST_NAME": "姓",
+      "FULL_NAME": "氏名",
+      "STATUS": "ステータス",
+      "GROUPS": "グループ",
+      "SALUTATION": "敬称",
+      "BUSINESS_CATEGORY": "ビジネス分野",
+      "ICON": "アイコン",
+      "ORGANIZATIONS": "組織",
+      "DEFAULT_ORGANIZATION": "デフォルトの組織",
+      "ASSOCIATED_ORGANIZATIONS": "関連組織",
+      "BIRTHDAY": "生年月日",
+      "PHOTO_URL": "写真のURL",
+      "TIME_ZONE": "タイムゾーン",
+      "DEFAULT_LANGUAGE": "デフォルトの言語",
+      "CURRENCY": "通貨",
+      "TAX_PAYER_ID": "納税者ID",
+      "PREFERRED_COMMUNICATION": "希望する連絡方法",
+      "PREFERRED_DELIVERY": "希望する配送方法",
+      "ABOUT": "概要",
+      "SITE_URL": "サイトのURL",
+      "LOGO_URL": "ロゴのURL",
+      "GROUP_NAME": "グループ名",
+      "DESCRIPTION": "説明",
+      "ROLES": "ロール",
+      "EMAILS": "メール",
+      "PHONES": "電話番号",
+      "ADD_VALUE": "入力して Enter キーを押してください"
+    },
+    "PAGES": {
+      "LIST": {
+        "ALL": "すべての連絡先",
+        "EMPTY": "連絡先が見つかりません",
+        "COLUMNS": {
+          "NAME": "名前",
+          "TYPE": "種類",
+          "EMAIL": "メール",
+          "STATUS": "ステータス",
+          "OUTER_ID": "外部ID",
+          "CREATED": "作成日"
+        },
+        "FILTERS": {
+          "TYPE": "メンバータイプ",
+          "CREATED": "作成日",
+          "MODIFIED": "更新日"
+        },
+        "TOOLBAR": {
+          "REFRESH": "更新",
+          "ADD": "追加",
+          "DELETE": "削除",
+          "INVITE": "顧客を招待",
+          "LOCK": "組織でロック",
+          "UNLOCK": "組織でロック解除",
+          "CHANGE_ROLE": "組織内のロールを変更"
+        },
+        "ACTIONS": {
+          "MANAGE": "管理",
+          "COPY_ID": "IDをコピー",
+          "COPY_NAME": "名前をコピー"
+        }
+      },
+      "ADD": {
+        "TITLE": "新しい連絡先",
+        "SUBTITLE": "作成する連絡先の種類を選択してください",
+        "ORGANIZATION": "従業員、通常の連絡先、または他の会社に関する情報を含むことができる会社のプロフィール",
+        "CONTACT": "会社のメンバー、または個人の購入者として利用するストアの顧客",
+        "EMPLOYEE": "会社に勤務する従業員",
+        "VENDOR": "売り手、商人、業者"
+      },
+      "DETAILS": {
+        "NEW_ORGANIZATION": "新しい組織",
+        "NEW_CONTACT": "新しい連絡先",
+        "NEW_EMPLOYEE": "新しい従業員",
+        "NEW_VENDOR": "新しいベンダー",
+        "TOOLBAR": {
+          "SAVE": "保存",
+          "CREATE": "作成",
+          "RESET": "リセット"
+        }
+      },
+      "ADDRESS": {
+        "TITLE": "住所",
+        "NEW": "新しい住所",
+        "ADD": "住所を追加",
+        "EMPTY": "住所がありません",
+        "COLUMNS": {
+          "TYPE": "種類",
+          "ADDRESS": "住所",
+          "DEFAULT": "デフォルト"
+        },
+        "FIELDS": {
+          "DESCRIPTION": "説明",
+          "TYPE": "住所の種類",
+          "DEFAULT": "この種類のデフォルト",
+          "COUNTRY": "国",
+          "REGION": "都道府県 / 州",
+          "CITY": "市区町村",
+          "ZIP": "郵便番号",
+          "LINE1": "住所1行目",
+          "LINE2": "住所2行目",
+          "EMAIL": "メール",
+          "PHONE": "電話番号"
+        },
+        "TOOLBAR": {
+          "APPLY": "適用"
+        }
+      },
+      "ACCOUNTS": {
+        "EMPTY": "このメンバーにリンクされたアカウントはありません",
+        "COLUMNS": {
+          "USER_NAME": "ユーザー名",
+          "EMAIL": "メール",
+          "TYPE": "アカウントの種類",
+          "STATUS": "ステータス"
+        },
+        "TOOLBAR": {
+          "ADD": "新しいアカウント",
+          "LINK": "アカウントをリンク",
+          "UNLINK": "リンクを解除"
+        }
+      },
+      "ACCOUNT_CREATE": {
+        "TITLE": "新しいアカウント",
+        "STORE": "ストア",
+        "PASSWORD": "パスワード"
+      },
+      "ACCOUNT_LINK": {
+        "TITLE": "セキュリティアカウントをリンク",
+        "LINKED": "リンク済み"
+      },
+      "MEMBERSHIPS": {
+        "NEW": "新しいメンバーシップ",
+        "EMPTY": "組織メンバーシップがありません",
+        "GLOBAL": "グローバル（すべての組織）",
+        "LOCKED": "ロック済み",
+        "UNLOCKED": "有効",
+        "STATUS_INHERITED": "メンバーから継承",
+        "ROLES_HINT": "このメンバーにこの組織内で割り当てられたロールです。グローバルなロールに加えて適用されます。",
+        "STATUS_HINT": "この組織に限り、メンバーのグローバルステータスを上書きします。空のままにすると、メンバーのグローバルステータスが使用されます。",
+        "COLUMNS": {
+          "ORGANIZATION": "組織",
+          "LOCKED": "ロック済み",
+          "LOCKOUT_END": "ロック終了日時"
+        }
+      },
+      "INVITE": {
+        "TITLE": "顧客を招待",
+        "ROLE": "ロール",
+        "EMAILS_PLACEHOLDER": "メールアドレスを入力または貼り付けて Enter キーを押してください",
+        "MESSAGE": "メッセージ",
+        "SEND": "招待を送信",
+        "SENT": "招待通知が正常にキューに追加されました。"
+      },
+      "SEO": {
+        "NEW": "新しいSEOレコード",
+        "EMPTY": "SEOレコードがありません",
+        "URL_REQUIRED": "URLキーワードは必須です",
+        "URL_INVALID": "URLキーワードに無効な文字が含まれています",
+        "URL_DUPLICATE": "このURLキーワードはこのストアですでに使用されています",
+        "FIELDS": {
+          "ACTIVE": "有効",
+          "LANGUAGE": "言語",
+          "URL_KEYWORD": "URLキーワード",
+          "PAGE_TITLE": "ページタイトル",
+          "META_DESCRIPTION": "メタディスクリプション",
+          "META_KEYWORDS": "メタキーワード",
+          "IMAGE_ALT": "画像の代替テキスト"
+        }
+      },
+      "ASSETS": {
+        "EMPTY": "このフォルダーにリソースはありません",
+        "SIZE": "サイズ",
+        "MODIFIED": "更新日時",
+        "DOWNLOAD": "ダウンロード",
+        "COPY_URL": "URLをコピー",
+        "NEW_FOLDER": "新しいフォルダー",
+        "FOLDER_NAME": "フォルダー名",
+        "UPLOAD": "アップロード",
+        "DELETE": "{count} 件のリソースを削除しますか？この操作は元に戻せません。",
+        "OVERWRITE": "{names} はこのフォルダーにすでに存在します。置き換えますか？",
+        "CANCEL": "キャンセル",
+        "CREATE": "作成"
+      },
+      "ICON": {
+        "TITLE": "アイコンを管理"
+      }
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "保存されていない変更があります。閉じてもよろしいですか？",
+      "DELETE_CONFIRMATION": "{what}を削除しますか？この操作は元に戻せません。",
+      "DELETE_ORGANIZATION": "{count} 件の組織とそれに含まれるすべてのコンテンツ",
+      "DELETE_CONTACT": "{count} 件の連絡先",
+      "DELETE_EMPLOYEE": "{count} 人の従業員",
+      "DELETE_VENDOR": "{count} 件のベンダー",
+      "DELETE_ADDRESS": "この住所を削除してもよろしいですか？",
+      "DELETE_ACCOUNTS": "{count} 件のアカウントを削除しますか？この操作は元に戻せません。",
+      "UNLINK_ACCOUNTS": "{count} 件のアカウントのリンクを解除してもよろしいですか？",
+      "RELINK_ACCOUNTS": "選択したアカウントはすでに '{names}' に関連付けられています。続行しますか？",
+      "DELETE_MEMBERSHIPS": "{count} 件のメンバーシップを削除してもよろしいですか？",
+      "DUPLICATE_MEMBERSHIP": "このユーザーと組織のメンバーシップはすでに存在します。",
+      "NO_ACCOUNT": "このメンバーにはリンクされたセキュリティアカウントがありません。",
+      "NO_ACCOUNT_MEMBERSHIPS": "組織メンバーシップはセキュリティアカウントに属します。まず、この連絡先のアカウントをリンクまたは作成してください。",
+      "NO_MEMBERSHIP": "このメンバーの組織メンバーシップレコードが見つかりません。",
+      "DELETE_SEO": "{count} 件のSEOレコードを削除しますか？",
+      "UNKNOWN_MEMBER_TYPE": "不明なタイプのメンバーは編集できません: '{memberType}'"
+    },
+    "SEARCH": {
+      "GROUP_TITLE": "顧客"
+    }
+  }
+}

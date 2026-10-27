@@ -274,3 +274,6 @@ dist/
 # AI
 *.local.*
 /.serena
+
+# Admin Shell plugin build output
+src/VirtoCommerce.CustomerModule.Web/plugins/
