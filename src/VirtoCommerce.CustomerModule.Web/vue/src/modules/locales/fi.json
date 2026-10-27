@@ -1,0 +1,240 @@
+{
+  "CUSTOMER": {
+    "MENU": {
+      "TITLE": "Yhteystiedot"
+    },
+    "TYPES": {
+      "ORGANIZATION": "Organisaatio",
+      "CONTACT": "Yhteystieto",
+      "EMPLOYEE": "Työntekijä",
+      "VENDOR": "Toimittaja"
+    },
+    "WIDGETS": {
+      "ACCOUNTS": "Tilit",
+      "MEMBERSHIPS": "Organisaatiojäsenyydet",
+      "SEO": "SEO",
+      "ASSETS": "Resurssit",
+      "SHOW_CONTACT": "Näytä yhteystieto",
+      "NO_CONTACT": "Ei yhteystietoa",
+      "ICON": "Kuvake"
+    },
+    "CARDS": {
+      "DETAILS": "Tiedot",
+      "CONTACT_INFO": "Sähköpostit ja puhelinnumerot",
+      "ADDRESSES": "Osoitteet",
+      "DYNAMIC_PROPERTIES": "Dynaamiset ominaisuudet"
+    },
+    "FIELDS": {
+      "NAME": "Nimi",
+      "FIRST_NAME": "Etunimi",
+      "MIDDLE_NAME": "Toinen nimi",
+      "LAST_NAME": "Sukunimi",
+      "FULL_NAME": "Koko nimi",
+      "STATUS": "Tila",
+      "GROUPS": "Ryhmät",
+      "SALUTATION": "Titteli",
+      "BUSINESS_CATEGORY": "Liiketoiminta-ala",
+      "ICON": "Kuvake",
+      "ORGANIZATIONS": "Organisaatiot",
+      "DEFAULT_ORGANIZATION": "Oletusorganisaatio",
+      "ASSOCIATED_ORGANIZATIONS": "Liitetyt organisaatiot",
+      "BIRTHDAY": "Syntymäpäivä",
+      "PHOTO_URL": "Valokuvan URL",
+      "TIME_ZONE": "Aikavyöhyke",
+      "DEFAULT_LANGUAGE": "Oletuskieli",
+      "CURRENCY": "Valuutta",
+      "TAX_PAYER_ID": "Veronmaksajatunnus",
+      "PREFERRED_COMMUNICATION": "Ensisijainen viestintäkanava",
+      "PREFERRED_DELIVERY": "Ensisijainen toimitustapa",
+      "ABOUT": "Tietoja",
+      "SITE_URL": "Sivuston URL",
+      "LOGO_URL": "Logon URL",
+      "GROUP_NAME": "Ryhmän nimi",
+      "DESCRIPTION": "Kuvaus",
+      "ROLES": "Roolit",
+      "EMAILS": "Sähköpostit",
+      "PHONES": "Puhelinnumerot",
+      "ADD_VALUE": "Kirjoita ja paina Enter"
+    },
+    "PAGES": {
+      "LIST": {
+        "ALL": "Kaikki yhteystiedot",
+        "EMPTY": "Yhteystietoja ei löytynyt",
+        "COLUMNS": {
+          "NAME": "Nimi",
+          "TYPE": "Tyyppi",
+          "EMAIL": "Sähköposti",
+          "STATUS": "Tila",
+          "OUTER_ID": "Ulkoinen tunnus",
+          "CREATED": "Luotu"
+        },
+        "FILTERS": {
+          "TYPE": "Jäsentyyppi",
+          "CREATED": "Luontipäivä",
+          "MODIFIED": "Muokkauspäivä"
+        },
+        "TOOLBAR": {
+          "REFRESH": "Päivitä",
+          "ADD": "Lisää",
+          "DELETE": "Poista",
+          "INVITE": "Kutsu asiakkaita",
+          "LOCK": "Lukitse organisaatiossa",
+          "UNLOCK": "Avaa lukitus organisaatiossa",
+          "CHANGE_ROLE": "Muuta roolia organisaatiossa"
+        },
+        "ACTIONS": {
+          "MANAGE": "Hallitse",
+          "COPY_ID": "Kopioi tunnus",
+          "COPY_NAME": "Kopioi nimi"
+        }
+      },
+      "ADD": {
+        "TITLE": "Uusi yhteystieto",
+        "SUBTITLE": "Valitse luotavan yhteystiedon tyyppi",
+        "ORGANIZATION": "Yritysprofiili, joka voi sisältää tietoja työntekijöistä, tavallisista yhteystiedoista tai muista yrityksistä",
+        "CONTACT": "Kaupan asiakas, joka voi olla yrityksen jäsen tai toimia yksittäisenä ostajana",
+        "EMPLOYEE": "Työntekijä, joka työskentelee yrityksessä",
+        "VENDOR": "Myyjä, kauppias tai toimittaja"
+      },
+      "DETAILS": {
+        "NEW_ORGANIZATION": "Uusi organisaatio",
+        "NEW_CONTACT": "Uusi yhteystieto",
+        "NEW_EMPLOYEE": "Uusi työntekijä",
+        "NEW_VENDOR": "Uusi toimittaja",
+        "TOOLBAR": {
+          "SAVE": "Tallenna",
+          "CREATE": "Luo",
+          "RESET": "Palauta"
+        }
+      },
+      "ADDRESS": {
+        "TITLE": "Osoite",
+        "NEW": "Uusi osoite",
+        "ADD": "Lisää osoite",
+        "EMPTY": "Ei osoitteita",
+        "COLUMNS": {
+          "TYPE": "Tyyppi",
+          "ADDRESS": "Osoite",
+          "DEFAULT": "Oletus"
+        },
+        "FIELDS": {
+          "DESCRIPTION": "Kuvaus",
+          "TYPE": "Osoitteen tyyppi",
+          "DEFAULT": "Oletus tälle tyypille",
+          "COUNTRY": "Maa",
+          "REGION": "Osavaltio / maakunta",
+          "CITY": "Kaupunki",
+          "ZIP": "Postinumero",
+          "LINE1": "Osoiterivi 1",
+          "LINE2": "Osoiterivi 2",
+          "EMAIL": "Sähköposti",
+          "PHONE": "Puhelin"
+        },
+        "TOOLBAR": {
+          "APPLY": "Käytä"
+        }
+      },
+      "ACCOUNTS": {
+        "EMPTY": "Tähän jäseneen ei ole linkitetty tilejä",
+        "COLUMNS": {
+          "USER_NAME": "Käyttäjänimi",
+          "EMAIL": "Sähköposti",
+          "TYPE": "Tilin tyyppi",
+          "STATUS": "Tila"
+        },
+        "TOOLBAR": {
+          "ADD": "Uusi tili",
+          "LINK": "Linkitä tili",
+          "UNLINK": "Poista linkitys"
+        }
+      },
+      "ACCOUNT_CREATE": {
+        "TITLE": "Uusi tili",
+        "STORE": "Myymälä",
+        "PASSWORD": "Salasana"
+      },
+      "ACCOUNT_LINK": {
+        "TITLE": "Linkitä suojaustilejä",
+        "LINKED": "Linkitetty"
+      },
+      "MEMBERSHIPS": {
+        "NEW": "Uusi jäsenyys",
+        "EMPTY": "Ei organisaatiojäsenyyksiä",
+        "GLOBAL": "Globaali (kaikki organisaatiot)",
+        "LOCKED": "Lukittu",
+        "UNLOCKED": "Aktiivinen",
+        "STATUS_INHERITED": "Peritty jäseneltä",
+        "ROLES_HINT": "Jäsenelle tämän organisaation sisällä määritetyt roolit, mahdollisten globaalien roolien lisäksi.",
+        "STATUS_HINT": "Ohittaa jäsenen globaalin tilan vain tässä organisaatiossa. Jätä tyhjäksi käyttääksesi jäsenen globaalia tilaa.",
+        "COLUMNS": {
+          "ORGANIZATION": "Organisaatio",
+          "LOCKED": "Lukittu",
+          "LOCKOUT_END": "Lukitus päättyy"
+        }
+      },
+      "INVITE": {
+        "TITLE": "Kutsu asiakkaita",
+        "ROLE": "Rooli",
+        "EMAILS_PLACEHOLDER": "Kirjoita tai liitä sähköpostiosoitteet ja paina Enter",
+        "MESSAGE": "Viesti",
+        "SEND": "Lähetä kutsut",
+        "SENT": "Kutsuilmoitukset on lisätty jonoon onnistuneesti."
+      },
+      "SEO": {
+        "NEW": "Uusi SEO-tietue",
+        "EMPTY": "Ei SEO-tietueita",
+        "URL_REQUIRED": "URL-avainsana on pakollinen",
+        "URL_INVALID": "URL-avainsana sisältää virheellisiä merkkejä",
+        "URL_DUPLICATE": "Tämä URL-avainsana on jo käytössä tässä myymälässä",
+        "FIELDS": {
+          "ACTIVE": "Aktiivinen",
+          "LANGUAGE": "Kieli",
+          "URL_KEYWORD": "URL-avainsana",
+          "PAGE_TITLE": "Sivun otsikko",
+          "META_DESCRIPTION": "Metakuvaus",
+          "META_KEYWORDS": "Meta-avainsanat",
+          "IMAGE_ALT": "Kuvan vaihtoehtoinen teksti"
+        }
+      },
+      "ASSETS": {
+        "EMPTY": "Tässä kansiossa ei ole resursseja",
+        "SIZE": "Koko",
+        "MODIFIED": "Muokattu",
+        "DOWNLOAD": "Lataa",
+        "COPY_URL": "Kopioi URL",
+        "NEW_FOLDER": "Uusi kansio",
+        "FOLDER_NAME": "Kansion nimi",
+        "UPLOAD": "Lähetä",
+        "DELETE": "Poistetaanko {count} resurssi(a)? Toimintoa ei voi kumota.",
+        "OVERWRITE": "{names} on jo olemassa tässä kansiossa. Korvataanko?",
+        "CANCEL": "Peruuta",
+        "CREATE": "Luo"
+      },
+      "ICON": {
+        "TITLE": "Hallitse kuvaketta"
+      }
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "Sinulla on tallentamattomia muutoksia. Haluatko varmasti sulkea?",
+      "DELETE_CONFIRMATION": "Poistetaanko {what}? Toimintoa ei voi kumota.",
+      "DELETE_ORGANIZATION": "{count} organisaatio(ta) ja kaikki niihin sisältyvä sisältö",
+      "DELETE_CONTACT": "{count} yhteystieto(a)",
+      "DELETE_EMPLOYEE": "{count} työntekijä(ä)",
+      "DELETE_VENDOR": "{count} toimittaja(a)",
+      "DELETE_ADDRESS": "Haluatko varmasti poistaa tämän osoitteen?",
+      "DELETE_ACCOUNTS": "Poistetaanko {count} tili(ä)? Toimintoa ei voi kumota.",
+      "UNLINK_ACCOUNTS": "Haluatko varmasti poistaa {count} tilin linkityksen?",
+      "RELINK_ACCOUNTS": "Valitut tilit on jo liitetty kohteeseen '{names}'. Haluatko jatkaa?",
+      "DELETE_MEMBERSHIPS": "Haluatko varmasti poistaa {count} jäsenyyttä?",
+      "DUPLICATE_MEMBERSHIP": "Jäsenyys tälle käyttäjälle ja organisaatiolle on jo olemassa.",
+      "NO_ACCOUNT": "Tällä jäsenellä ei ole linkitettyä suojaustiliä.",
+      "NO_ACCOUNT_MEMBERSHIPS": "Organisaatiojäsenyydet kuuluvat suojaustilille. Linkitä tai luo ensin tili tälle yhteystiedolle.",
+      "NO_MEMBERSHIP": "Tälle jäsenelle ei löytynyt organisaatiojäsenyyden tietuetta.",
+      "DELETE_SEO": "Poistetaanko {count} SEO-tietue(tta)?",
+      "UNKNOWN_MEMBER_TYPE": "Tuntemattoman tyypin jäsentä ei voi muokata: '{memberType}'"
+    },
+    "SEARCH": {
+      "GROUP_TITLE": "Asiakkaat"
+    }
+  }
+}

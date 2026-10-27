@@ -1,0 +1,240 @@
+{
+  "CUSTOMER": {
+    "MENU": {
+      "TITLE": "אנשי קשר"
+    },
+    "TYPES": {
+      "ORGANIZATION": "ארגון",
+      "CONTACT": "איש קשר",
+      "EMPLOYEE": "עובד",
+      "VENDOR": "ספק"
+    },
+    "WIDGETS": {
+      "ACCOUNTS": "חשבונות",
+      "MEMBERSHIPS": "חברות בארגונים",
+      "SEO": "SEO",
+      "ASSETS": "נכסים",
+      "SHOW_CONTACT": "הצגת איש הקשר",
+      "NO_CONTACT": "אין איש קשר",
+      "ICON": "סמל"
+    },
+    "CARDS": {
+      "DETAILS": "פרטים",
+      "CONTACT_INFO": "כתובות דוא״ל וטלפונים",
+      "ADDRESSES": "כתובות",
+      "DYNAMIC_PROPERTIES": "מאפיינים דינמיים"
+    },
+    "FIELDS": {
+      "NAME": "שם",
+      "FIRST_NAME": "שם פרטי",
+      "MIDDLE_NAME": "שם אמצעי",
+      "LAST_NAME": "שם משפחה",
+      "FULL_NAME": "שם מלא",
+      "STATUS": "סטטוס",
+      "GROUPS": "קבוצות",
+      "SALUTATION": "תואר פנייה",
+      "BUSINESS_CATEGORY": "קטגוריה עסקית",
+      "ICON": "סמל",
+      "ORGANIZATIONS": "ארגונים",
+      "DEFAULT_ORGANIZATION": "ארגון ברירת מחדל",
+      "ASSOCIATED_ORGANIZATIONS": "ארגונים משויכים",
+      "BIRTHDAY": "תאריך לידה",
+      "PHOTO_URL": "URL של התמונה",
+      "TIME_ZONE": "אזור זמן",
+      "DEFAULT_LANGUAGE": "שפת ברירת מחדל",
+      "CURRENCY": "מטבע",
+      "TAX_PAYER_ID": "מזהה משלם מס",
+      "PREFERRED_COMMUNICATION": "אמצעי תקשורת מועדף",
+      "PREFERRED_DELIVERY": "שיטת מסירה מועדפת",
+      "ABOUT": "אודות",
+      "SITE_URL": "URL של האתר",
+      "LOGO_URL": "URL של הלוגו",
+      "GROUP_NAME": "שם הקבוצה",
+      "DESCRIPTION": "תיאור",
+      "ROLES": "תפקידים",
+      "EMAILS": "כתובות דוא״ל",
+      "PHONES": "טלפונים",
+      "ADD_VALUE": "יש להקליד ערך וללחוץ על Enter"
+    },
+    "PAGES": {
+      "LIST": {
+        "ALL": "כל אנשי הקשר",
+        "EMPTY": "לא נמצאו אנשי קשר",
+        "COLUMNS": {
+          "NAME": "שם",
+          "TYPE": "סוג",
+          "EMAIL": "דוא״ל",
+          "STATUS": "סטטוס",
+          "OUTER_ID": "מזהה חיצוני",
+          "CREATED": "תאריך יצירה"
+        },
+        "FILTERS": {
+          "TYPE": "סוג חבר",
+          "CREATED": "תאריך יצירה",
+          "MODIFIED": "תאריך שינוי"
+        },
+        "TOOLBAR": {
+          "REFRESH": "רענון",
+          "ADD": "הוספה",
+          "DELETE": "מחיקה",
+          "INVITE": "הזמנת לקוחות",
+          "LOCK": "נעילה בארגון",
+          "UNLOCK": "ביטול נעילה בארגון",
+          "CHANGE_ROLE": "שינוי תפקיד בארגון"
+        },
+        "ACTIONS": {
+          "MANAGE": "ניהול",
+          "COPY_ID": "העתקת מזהה",
+          "COPY_NAME": "העתקת שם"
+        }
+      },
+      "ADD": {
+        "TITLE": "איש קשר חדש",
+        "SUBTITLE": "יש לבחור את סוג איש הקשר ליצירה",
+        "ORGANIZATION": "פרופיל של חברה, שיכול לכלול מידע על עובדים, אנשי קשר רגילים או חברות אחרות",
+        "CONTACT": "לקוח של החנות, שיכול להיות חבר בחברה או לקנות כקונה פרטי",
+        "EMPLOYEE": "עובד בחברה",
+        "VENDOR": "מוכר, סוחר או ספק"
+      },
+      "DETAILS": {
+        "NEW_ORGANIZATION": "ארגון חדש",
+        "NEW_CONTACT": "איש קשר חדש",
+        "NEW_EMPLOYEE": "עובד חדש",
+        "NEW_VENDOR": "ספק חדש",
+        "TOOLBAR": {
+          "SAVE": "שמירה",
+          "CREATE": "יצירה",
+          "RESET": "איפוס"
+        }
+      },
+      "ADDRESS": {
+        "TITLE": "כתובת",
+        "NEW": "כתובת חדשה",
+        "ADD": "הוספת כתובת",
+        "EMPTY": "אין כתובות",
+        "COLUMNS": {
+          "TYPE": "סוג",
+          "ADDRESS": "כתובת",
+          "DEFAULT": "ברירת מחדל"
+        },
+        "FIELDS": {
+          "DESCRIPTION": "תיאור",
+          "TYPE": "סוג כתובת",
+          "DEFAULT": "ברירת מחדל לסוג זה",
+          "COUNTRY": "מדינה",
+          "REGION": "מדינה / מחוז",
+          "CITY": "עיר",
+          "ZIP": "מיקוד",
+          "LINE1": "שורת כתובת 1",
+          "LINE2": "שורת כתובת 2",
+          "EMAIL": "דוא״ל",
+          "PHONE": "טלפון"
+        },
+        "TOOLBAR": {
+          "APPLY": "החלה"
+        }
+      },
+      "ACCOUNTS": {
+        "EMPTY": "אין חשבונות שמקושרים לחבר זה",
+        "COLUMNS": {
+          "USER_NAME": "שם משתמש",
+          "EMAIL": "דוא״ל",
+          "TYPE": "סוג חשבון",
+          "STATUS": "סטטוס"
+        },
+        "TOOLBAR": {
+          "ADD": "חשבון חדש",
+          "LINK": "קישור חשבון",
+          "UNLINK": "ביטול קישור"
+        }
+      },
+      "ACCOUNT_CREATE": {
+        "TITLE": "חשבון חדש",
+        "STORE": "חנות",
+        "PASSWORD": "סיסמה"
+      },
+      "ACCOUNT_LINK": {
+        "TITLE": "קישור חשבונות אבטחה",
+        "LINKED": "מקושר"
+      },
+      "MEMBERSHIPS": {
+        "NEW": "חברות חדשה",
+        "EMPTY": "אין חברות בארגונים",
+        "GLOBAL": "גלובלי (כל הארגונים)",
+        "LOCKED": "נעול",
+        "UNLOCKED": "פעיל",
+        "STATUS_INHERITED": "עובר בירושה מהחבר",
+        "ROLES_HINT": "תפקידים שהוקצו לחבר בארגון זה, בנוסף לתפקידים הגלובליים.",
+        "STATUS_HINT": "גובר על הסטטוס הגלובלי של החבר בארגון זה בלבד. יש להשאיר ריק כדי להשתמש בסטטוס הגלובלי של החבר.",
+        "COLUMNS": {
+          "ORGANIZATION": "ארגון",
+          "LOCKED": "נעול",
+          "LOCKOUT_END": "סיום הנעילה"
+        }
+      },
+      "INVITE": {
+        "TITLE": "הזמנת לקוחות",
+        "ROLE": "תפקיד",
+        "EMAILS_PLACEHOLDER": "יש להקליד או להדביק כתובות דוא״ל וללחוץ על Enter",
+        "MESSAGE": "הודעה",
+        "SEND": "שליחת הזמנות",
+        "SENT": "התראות ההזמנה נוספו לתור בהצלחה."
+      },
+      "SEO": {
+        "NEW": "רשומת SEO חדשה",
+        "EMPTY": "אין רשומות SEO",
+        "URL_REQUIRED": "יש להזין מילת מפתח ל-URL",
+        "URL_INVALID": "מילת המפתח ל-URL מכילה תווים לא חוקיים",
+        "URL_DUPLICATE": "מילת המפתח ל-URL כבר בשימוש בחנות זו",
+        "FIELDS": {
+          "ACTIVE": "פעיל",
+          "LANGUAGE": "שפה",
+          "URL_KEYWORD": "מילת מפתח ל-URL",
+          "PAGE_TITLE": "כותרת הדף",
+          "META_DESCRIPTION": "תיאור מטא",
+          "META_KEYWORDS": "מילות מפתח מטא",
+          "IMAGE_ALT": "טקסט חלופי לתמונה"
+        }
+      },
+      "ASSETS": {
+        "EMPTY": "אין נכסים בתיקייה זו",
+        "SIZE": "גודל",
+        "MODIFIED": "תאריך שינוי",
+        "DOWNLOAD": "הורדה",
+        "COPY_URL": "העתקת URL",
+        "NEW_FOLDER": "תיקייה חדשה",
+        "FOLDER_NAME": "שם התיקייה",
+        "UPLOAD": "העלאה",
+        "DELETE": "האם למחוק את הנכסים שנבחרו ({count})? לא ניתן לבטל פעולה זו.",
+        "OVERWRITE": "הקבצים הבאים כבר קיימים בתיקייה זו: {names}. האם להחליף אותם?",
+        "CANCEL": "ביטול",
+        "CREATE": "יצירה"
+      },
+      "ICON": {
+        "TITLE": "ניהול הסמל"
+      }
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "יש שינויים שלא נשמרו. האם לסגור בכל זאת?",
+      "DELETE_CONFIRMATION": "האם למחוק {what}? לא ניתן לבטל פעולה זו.",
+      "DELETE_ORGANIZATION": "ארגונים ({count}) וכל התוכן שבהם",
+      "DELETE_CONTACT": "אנשי קשר ({count})",
+      "DELETE_EMPLOYEE": "עובדים ({count})",
+      "DELETE_VENDOR": "ספקים ({count})",
+      "DELETE_ADDRESS": "האם למחוק את הכתובת?",
+      "DELETE_ACCOUNTS": "האם למחוק את החשבונות שנבחרו ({count})? לא ניתן לבטל פעולה זו.",
+      "UNLINK_ACCOUNTS": "האם לבטל את הקישור של החשבונות שנבחרו ({count})?",
+      "RELINK_ACCOUNTS": "החשבונות שנבחרו כבר משויכים אל '{names}'. האם להמשיך?",
+      "DELETE_MEMBERSHIPS": "האם למחוק את החברויות שנבחרו ({count})?",
+      "DUPLICATE_MEMBERSHIP": "כבר קיימת חברות של משתמש זה בארגון זה.",
+      "NO_ACCOUNT": "לחבר זה אין חשבון אבטחה מקושר.",
+      "NO_ACCOUNT_MEMBERSHIPS": "חברות בארגונים שייכת לחשבון אבטחה. יש קודם לקשר או ליצור חשבון לאיש קשר זה.",
+      "NO_MEMBERSHIP": "לא נמצאה רשומת חברות בארגון עבור חבר זה.",
+      "DELETE_SEO": "האם למחוק את רשומות ה-SEO שנבחרו ({count})?",
+      "UNKNOWN_MEMBER_TYPE": "לא ניתן לערוך חבר מסוג לא ידוע: '{memberType}'"
+    },
+    "SEARCH": {
+      "GROUP_TITLE": "לקוחות"
+    }
+  }
+}

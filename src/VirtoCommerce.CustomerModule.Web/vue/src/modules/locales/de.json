@@ -1,0 +1,240 @@
+{
+  "CUSTOMER": {
+    "MENU": {
+      "TITLE": "Kontakte"
+    },
+    "TYPES": {
+      "ORGANIZATION": "Organisation",
+      "CONTACT": "Kontakt",
+      "EMPLOYEE": "Mitarbeiter",
+      "VENDOR": "Anbieter"
+    },
+    "WIDGETS": {
+      "ACCOUNTS": "Konten",
+      "MEMBERSHIPS": "Organisationsmitgliedschaften",
+      "SEO": "SEO",
+      "ASSETS": "Ressourcen",
+      "SHOW_CONTACT": "Kontakt anzeigen",
+      "NO_CONTACT": "Kein Kontakt",
+      "ICON": "Symbol"
+    },
+    "CARDS": {
+      "DETAILS": "Details",
+      "CONTACT_INFO": "E-Mails und Telefonnummern",
+      "ADDRESSES": "Adressen",
+      "DYNAMIC_PROPERTIES": "Dynamische Eigenschaften"
+    },
+    "FIELDS": {
+      "NAME": "Name",
+      "FIRST_NAME": "Vorname",
+      "MIDDLE_NAME": "Zweiter Vorname",
+      "LAST_NAME": "Nachname",
+      "FULL_NAME": "Vollständiger Name",
+      "STATUS": "Status",
+      "GROUPS": "Gruppen",
+      "SALUTATION": "Anrede",
+      "BUSINESS_CATEGORY": "Geschäftsbereich",
+      "ICON": "Symbol",
+      "ORGANIZATIONS": "Organisationen",
+      "DEFAULT_ORGANIZATION": "Standardorganisation",
+      "ASSOCIATED_ORGANIZATIONS": "Zugehörige Organisationen",
+      "BIRTHDAY": "Geburtsdatum",
+      "PHOTO_URL": "Foto-URL",
+      "TIME_ZONE": "Zeitzone",
+      "DEFAULT_LANGUAGE": "Standardsprache",
+      "CURRENCY": "Währung",
+      "TAX_PAYER_ID": "Steueridentifikationsnummer",
+      "PREFERRED_COMMUNICATION": "Bevorzugter Kommunikationskanal",
+      "PREFERRED_DELIVERY": "Bevorzugte Liefermethode",
+      "ABOUT": "Über",
+      "SITE_URL": "Website-URL",
+      "LOGO_URL": "Logo-URL",
+      "GROUP_NAME": "Gruppenname",
+      "DESCRIPTION": "Beschreibung",
+      "ROLES": "Rollen",
+      "EMAILS": "E-Mails",
+      "PHONES": "Telefonnummern",
+      "ADD_VALUE": "Eingeben und Enter drücken"
+    },
+    "PAGES": {
+      "LIST": {
+        "ALL": "Alle Kontakte",
+        "EMPTY": "Keine Kontakte gefunden",
+        "COLUMNS": {
+          "NAME": "Name",
+          "TYPE": "Typ",
+          "EMAIL": "E-Mail",
+          "STATUS": "Status",
+          "OUTER_ID": "Externe ID",
+          "CREATED": "Erstellt"
+        },
+        "FILTERS": {
+          "TYPE": "Mitgliedertyp",
+          "CREATED": "Erstellungsdatum",
+          "MODIFIED": "Änderungsdatum"
+        },
+        "TOOLBAR": {
+          "REFRESH": "Aktualisieren",
+          "ADD": "Hinzufügen",
+          "DELETE": "Löschen",
+          "INVITE": "Kunden einladen",
+          "LOCK": "In Organisation sperren",
+          "UNLOCK": "In Organisation entsperren",
+          "CHANGE_ROLE": "Rolle in Organisation ändern"
+        },
+        "ACTIONS": {
+          "MANAGE": "Verwalten",
+          "COPY_ID": "ID kopieren",
+          "COPY_NAME": "Name kopieren"
+        }
+      },
+      "ADD": {
+        "TITLE": "Neuer Kontakt",
+        "SUBTITLE": "Wählen Sie den Typ des Kontakts aus, den Sie erstellen möchten",
+        "ORGANIZATION": "Ein Unternehmensprofil, das Informationen über Mitarbeiter, regelmäßige Kontakte oder andere Unternehmen enthalten kann",
+        "CONTACT": "Ein Kunde des Shops, der entweder Mitglied eines Unternehmens sein oder als individueller Käufer auftreten kann",
+        "EMPLOYEE": "Ein Mitarbeiter, der in einem Unternehmen arbeitet",
+        "VENDOR": "Verkäufer, Händler oder Lieferant"
+      },
+      "DETAILS": {
+        "NEW_ORGANIZATION": "Neue Organisation",
+        "NEW_CONTACT": "Neuer Kontakt",
+        "NEW_EMPLOYEE": "Neuer Mitarbeiter",
+        "NEW_VENDOR": "Neuer Anbieter",
+        "TOOLBAR": {
+          "SAVE": "Speichern",
+          "CREATE": "Erstellen",
+          "RESET": "Zurücksetzen"
+        }
+      },
+      "ADDRESS": {
+        "TITLE": "Adresse",
+        "NEW": "Neue Adresse",
+        "ADD": "Adresse hinzufügen",
+        "EMPTY": "Keine Adressen",
+        "COLUMNS": {
+          "TYPE": "Typ",
+          "ADDRESS": "Adresse",
+          "DEFAULT": "Standard"
+        },
+        "FIELDS": {
+          "DESCRIPTION": "Beschreibung",
+          "TYPE": "Adresstyp",
+          "DEFAULT": "Standard für diesen Typ",
+          "COUNTRY": "Land",
+          "REGION": "Bundesland / Provinz",
+          "CITY": "Stadt",
+          "ZIP": "Postleitzahl",
+          "LINE1": "Adresszeile 1",
+          "LINE2": "Adresszeile 2",
+          "EMAIL": "E-Mail",
+          "PHONE": "Telefon"
+        },
+        "TOOLBAR": {
+          "APPLY": "Anwenden"
+        }
+      },
+      "ACCOUNTS": {
+        "EMPTY": "Mit diesem Mitglied sind keine Konten verknüpft",
+        "COLUMNS": {
+          "USER_NAME": "Benutzername",
+          "EMAIL": "E-Mail",
+          "TYPE": "Kontotyp",
+          "STATUS": "Status"
+        },
+        "TOOLBAR": {
+          "ADD": "Neues Konto",
+          "LINK": "Konto verknüpfen",
+          "UNLINK": "Trennen"
+        }
+      },
+      "ACCOUNT_CREATE": {
+        "TITLE": "Neues Konto",
+        "STORE": "Shop",
+        "PASSWORD": "Passwort"
+      },
+      "ACCOUNT_LINK": {
+        "TITLE": "Sicherheitskonten verknüpfen",
+        "LINKED": "Verknüpft"
+      },
+      "MEMBERSHIPS": {
+        "NEW": "Neue Mitgliedschaft",
+        "EMPTY": "Keine Organisationsmitgliedschaften",
+        "GLOBAL": "Global (alle Organisationen)",
+        "LOCKED": "Gesperrt",
+        "UNLOCKED": "Aktiv",
+        "STATUS_INHERITED": "Vom Mitglied übernommen",
+        "ROLES_HINT": "Rollen, die dem Mitglied innerhalb dieser Organisation zugewiesen sind, zusätzlich zu etwaigen globalen Rollen.",
+        "STATUS_HINT": "Überschreibt den globalen Status des Mitglieds nur für diese Organisation. Leer lassen, um den globalen Status des Mitglieds zu verwenden.",
+        "COLUMNS": {
+          "ORGANIZATION": "Organisation",
+          "LOCKED": "Gesperrt",
+          "LOCKOUT_END": "Gesperrt bis"
+        }
+      },
+      "INVITE": {
+        "TITLE": "Kunden einladen",
+        "ROLE": "Rolle",
+        "EMAILS_PLACEHOLDER": "E-Mail-Adressen eingeben oder einfügen und Enter drücken",
+        "MESSAGE": "Nachricht",
+        "SEND": "Einladungen senden",
+        "SENT": "Einladungsbenachrichtigungen wurden erfolgreich in die Warteschlange gestellt."
+      },
+      "SEO": {
+        "NEW": "Neuer SEO-Eintrag",
+        "EMPTY": "Keine SEO-Einträge",
+        "URL_REQUIRED": "URL-Schlüsselwort ist erforderlich",
+        "URL_INVALID": "URL-Schlüsselwort enthält ungültige Zeichen",
+        "URL_DUPLICATE": "Dieses URL-Schlüsselwort wird für diesen Shop bereits verwendet",
+        "FIELDS": {
+          "ACTIVE": "Aktiv",
+          "LANGUAGE": "Sprache",
+          "URL_KEYWORD": "URL-Schlüsselwort",
+          "PAGE_TITLE": "Seitentitel",
+          "META_DESCRIPTION": "Meta-Beschreibung",
+          "META_KEYWORDS": "Meta-Schlüsselwörter",
+          "IMAGE_ALT": "Alternativtext des Bildes"
+        }
+      },
+      "ASSETS": {
+        "EMPTY": "Keine Ressourcen in diesem Ordner",
+        "SIZE": "Größe",
+        "MODIFIED": "Geändert",
+        "DOWNLOAD": "Herunterladen",
+        "COPY_URL": "URL kopieren",
+        "NEW_FOLDER": "Neuer Ordner",
+        "FOLDER_NAME": "Ordnername",
+        "UPLOAD": "Hochladen",
+        "DELETE": "{count} Ressource(n) löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.",
+        "OVERWRITE": "{names} ist/sind in diesem Ordner bereits vorhanden. Ersetzen?",
+        "CANCEL": "Abbrechen",
+        "CREATE": "Erstellen"
+      },
+      "ICON": {
+        "TITLE": "Symbol verwalten"
+      }
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "Sie haben nicht gespeicherte Änderungen. Möchten Sie wirklich schließen?",
+      "DELETE_CONFIRMATION": "{what} löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.",
+      "DELETE_ORGANIZATION": "{count} Organisation(en) und sämtliche darin enthaltenen Inhalte",
+      "DELETE_CONTACT": "{count} Kontakt(e)",
+      "DELETE_EMPLOYEE": "{count} Mitarbeiter",
+      "DELETE_VENDOR": "{count} Anbieter",
+      "DELETE_ADDRESS": "Möchten Sie diese Adresse wirklich löschen?",
+      "DELETE_ACCOUNTS": "{count} Konto/Konten löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.",
+      "UNLINK_ACCOUNTS": "Möchten Sie die Verknüpfung von {count} Konto/Konten wirklich trennen?",
+      "RELINK_ACCOUNTS": "Die ausgewählten Konten sind bereits mit '{names}' verknüpft. Möchten Sie fortfahren?",
+      "DELETE_MEMBERSHIPS": "Möchten Sie {count} Mitgliedschaft(en) wirklich löschen?",
+      "DUPLICATE_MEMBERSHIP": "Eine Mitgliedschaft für diesen Benutzer und diese Organisation ist bereits vorhanden.",
+      "NO_ACCOUNT": "Dieses Mitglied hat kein verknüpftes Sicherheitskonto.",
+      "NO_ACCOUNT_MEMBERSHIPS": "Organisationsmitgliedschaften gehören zu einem Sicherheitskonto. Verknüpfen oder erstellen Sie zuerst ein Konto für diesen Kontakt.",
+      "NO_MEMBERSHIP": "Für dieses Mitglied wurde kein Datensatz zur Organisationsmitgliedschaft gefunden.",
+      "DELETE_SEO": "{count} SEO-Eintrag/Einträge löschen?",
+      "UNKNOWN_MEMBER_TYPE": "Mitglied eines unbekannten Typs kann nicht bearbeitet werden: '{memberType}'"
+    },
+    "SEARCH": {
+      "GROUP_TITLE": "Kunden"
+    }
+  }
+}
