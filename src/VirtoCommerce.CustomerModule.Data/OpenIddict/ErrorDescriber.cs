@@ -1,3 +1,4 @@
+using System;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Security.OpenIddict;
 using static OpenIddict.Abstractions.OpenIddictConstants;
@@ -41,6 +42,7 @@ public static class ErrorDescriber
         ErrorDescription = $"Your access to organization '{organizationId}' has been removed.",
     };
 
+    [Obsolete("Use VirtoCommerce.Platform.Security.OpenIddict.SecurityErrorDescriber.GetLockoutError(user) or SecurityErrorDescriber.UserIsLockedOut() instead.", DiagnosticId = "VC0016", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
     public static TokenResponse UserIsLockedOut() => new()
     {
         Error = Errors.InvalidGrant,

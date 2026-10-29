@@ -186,7 +186,13 @@ angular.module(moduleName, [])
             widgetService.registerWidget(indexWidget, 'vendorDetail2');
 
             //Register widgets in user details
-            widgetService.registerWidget(iconWidget, 'userProfileDetail');
+            var userProfileIconWidget = angular.extend({}, iconWidget, {
+                isVisible: function (blade) {
+                    return !!blade.currentMemberId && iconWidget.isVisible(blade);
+                }
+            });
+
+            widgetService.registerWidget(userProfileIconWidget, 'userProfileDetail');
 
             // register member types
             memberTypesResolverService.registerType({
