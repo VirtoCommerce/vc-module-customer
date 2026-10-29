@@ -1,0 +1,240 @@
+{
+  "CUSTOMER": {
+    "MENU": {
+      "TITLE": "Kontakter"
+    },
+    "TYPES": {
+      "ORGANIZATION": "Organisasjon",
+      "CONTACT": "Kontakt",
+      "EMPLOYEE": "Ansatt",
+      "VENDOR": "Leverandør"
+    },
+    "WIDGETS": {
+      "ACCOUNTS": "Kontoer",
+      "MEMBERSHIPS": "Organisasjonsmedlemskap",
+      "SEO": "SEO",
+      "ASSETS": "Ressurser",
+      "SHOW_CONTACT": "Vis kontakt",
+      "NO_CONTACT": "Ingen kontakt",
+      "ICON": "Ikon"
+    },
+    "CARDS": {
+      "DETAILS": "Detaljer",
+      "CONTACT_INFO": "E-poster og telefoner",
+      "ADDRESSES": "Adresser",
+      "DYNAMIC_PROPERTIES": "Dynamiske egenskaper"
+    },
+    "FIELDS": {
+      "NAME": "Navn",
+      "FIRST_NAME": "Fornavn",
+      "MIDDLE_NAME": "Mellomnavn",
+      "LAST_NAME": "Etternavn",
+      "FULL_NAME": "Fullt navn",
+      "STATUS": "Status",
+      "GROUPS": "Grupper",
+      "SALUTATION": "Tittel",
+      "BUSINESS_CATEGORY": "Forretningsområde",
+      "ICON": "Ikon",
+      "ORGANIZATIONS": "Organisasjoner",
+      "DEFAULT_ORGANIZATION": "Standardorganisasjon",
+      "ASSOCIATED_ORGANIZATIONS": "Tilknyttede organisasjoner",
+      "BIRTHDAY": "Fødselsdato",
+      "PHOTO_URL": "Bilde-URL",
+      "TIME_ZONE": "Tidssone",
+      "DEFAULT_LANGUAGE": "Standardspråk",
+      "CURRENCY": "Valuta",
+      "TAX_PAYER_ID": "Skattebetaler-ID",
+      "PREFERRED_COMMUNICATION": "Foretrukket kommunikasjonskanal",
+      "PREFERRED_DELIVERY": "Foretrukket leveringsmetode",
+      "ABOUT": "Om",
+      "SITE_URL": "Nettsted-URL",
+      "LOGO_URL": "Logo-URL",
+      "GROUP_NAME": "Gruppenavn",
+      "DESCRIPTION": "Beskrivelse",
+      "ROLES": "Roller",
+      "EMAILS": "E-poster",
+      "PHONES": "Telefoner",
+      "ADD_VALUE": "Skriv og trykk Enter"
+    },
+    "PAGES": {
+      "LIST": {
+        "ALL": "Alle kontakter",
+        "EMPTY": "Fant ingen kontakter",
+        "COLUMNS": {
+          "NAME": "Navn",
+          "TYPE": "Type",
+          "EMAIL": "E-post",
+          "STATUS": "Status",
+          "OUTER_ID": "Ekstern ID",
+          "CREATED": "Opprettet"
+        },
+        "FILTERS": {
+          "TYPE": "Medlemstype",
+          "CREATED": "Opprettet dato",
+          "MODIFIED": "Endret dato"
+        },
+        "TOOLBAR": {
+          "REFRESH": "Oppdater",
+          "ADD": "Legg til",
+          "DELETE": "Slett",
+          "INVITE": "Inviter kunder",
+          "LOCK": "Blokker i organisasjon",
+          "UNLOCK": "Fjern blokkering i organisasjon",
+          "CHANGE_ROLE": "Endre rolle i organisasjon"
+        },
+        "ACTIONS": {
+          "MANAGE": "Administrer",
+          "COPY_ID": "Kopier ID",
+          "COPY_NAME": "Kopier navn"
+        }
+      },
+      "ADD": {
+        "TITLE": "Ny kontakt",
+        "SUBTITLE": "Velg hvilken type kontakt du vil opprette",
+        "ORGANIZATION": "En selskapsprofil som kan inneholde informasjon om ansatte, vanlige kontakter eller andre selskaper",
+        "CONTACT": "En butikkunde som enten kan være medlem av et selskap eller opptre som en individuell kjøper",
+        "EMPLOYEE": "En ansatt som jobber i et selskap",
+        "VENDOR": "Selger, kjøpmann eller leverandør"
+      },
+      "DETAILS": {
+        "NEW_ORGANIZATION": "Ny organisasjon",
+        "NEW_CONTACT": "Ny kontakt",
+        "NEW_EMPLOYEE": "Ny ansatt",
+        "NEW_VENDOR": "Ny leverandør",
+        "TOOLBAR": {
+          "SAVE": "Lagre",
+          "CREATE": "Opprett",
+          "RESET": "Tilbakestill"
+        }
+      },
+      "ADDRESS": {
+        "TITLE": "Adresse",
+        "NEW": "Ny adresse",
+        "ADD": "Legg til adresse",
+        "EMPTY": "Ingen adresser",
+        "COLUMNS": {
+          "TYPE": "Type",
+          "ADDRESS": "Adresse",
+          "DEFAULT": "Standard"
+        },
+        "FIELDS": {
+          "DESCRIPTION": "Beskrivelse",
+          "TYPE": "Adressetype",
+          "DEFAULT": "Standard for denne typen",
+          "COUNTRY": "Land",
+          "REGION": "Delstat / provins",
+          "CITY": "By",
+          "ZIP": "Postnummer",
+          "LINE1": "Adresselinje 1",
+          "LINE2": "Adresselinje 2",
+          "EMAIL": "E-post",
+          "PHONE": "Telefon"
+        },
+        "TOOLBAR": {
+          "APPLY": "Bruk"
+        }
+      },
+      "ACCOUNTS": {
+        "EMPTY": "Ingen kontoer er koblet til dette medlemmet",
+        "COLUMNS": {
+          "USER_NAME": "Brukernavn",
+          "EMAIL": "E-post",
+          "TYPE": "Kontotype",
+          "STATUS": "Status"
+        },
+        "TOOLBAR": {
+          "ADD": "Ny konto",
+          "LINK": "Koble konto",
+          "UNLINK": "Fjern kobling"
+        }
+      },
+      "ACCOUNT_CREATE": {
+        "TITLE": "Ny konto",
+        "STORE": "Butikk",
+        "PASSWORD": "Passord"
+      },
+      "ACCOUNT_LINK": {
+        "TITLE": "Koble sikkerhetskontoer",
+        "LINKED": "Koblet"
+      },
+      "MEMBERSHIPS": {
+        "NEW": "Nytt medlemskap",
+        "EMPTY": "Ingen organisasjonsmedlemskap",
+        "GLOBAL": "Global (alle organisasjoner)",
+        "LOCKED": "Blokkert",
+        "UNLOCKED": "Aktiv",
+        "STATUS_INHERITED": "Arvet fra medlemmet",
+        "ROLES_HINT": "Roller tildelt medlemmet innenfor denne organisasjonen, i tillegg til eventuelle globale roller.",
+        "STATUS_HINT": "Overstyrer medlemmets globale status kun for denne organisasjonen. La stå tomt for å bruke medlemmets globale status.",
+        "COLUMNS": {
+          "ORGANIZATION": "Organisasjon",
+          "LOCKED": "Blokkert",
+          "LOCKOUT_END": "Blokkering slutter"
+        }
+      },
+      "INVITE": {
+        "TITLE": "Inviter kunder",
+        "ROLE": "Rolle",
+        "EMAILS_PLACEHOLDER": "Skriv inn eller lim inn e-postadresser og trykk Enter",
+        "MESSAGE": "Melding",
+        "SEND": "Send invitasjoner",
+        "SENT": "Invitasjonsvarslene er lagt i kø."
+      },
+      "SEO": {
+        "NEW": "Ny SEO-oppføring",
+        "EMPTY": "Ingen SEO-oppføringer",
+        "URL_REQUIRED": "URL-nøkkelord er påkrevd",
+        "URL_INVALID": "URL-nøkkelordet inneholder ugyldige tegn",
+        "URL_DUPLICATE": "Dette URL-nøkkelordet er allerede i bruk for denne butikken",
+        "FIELDS": {
+          "ACTIVE": "Aktiv",
+          "LANGUAGE": "Språk",
+          "URL_KEYWORD": "URL-nøkkelord",
+          "PAGE_TITLE": "Sidetittel",
+          "META_DESCRIPTION": "Metabeskrivelse",
+          "META_KEYWORDS": "Metanøkkelord",
+          "IMAGE_ALT": "Alternativ tekst for bilde"
+        }
+      },
+      "ASSETS": {
+        "EMPTY": "Ingen ressurser i denne mappen",
+        "SIZE": "Størrelse",
+        "MODIFIED": "Endret",
+        "DOWNLOAD": "Last ned",
+        "COPY_URL": "Kopier URL",
+        "NEW_FOLDER": "Ny mappe",
+        "FOLDER_NAME": "Mappenavn",
+        "UPLOAD": "Last opp",
+        "DELETE": "Slette {count} ressurs(er)? Dette kan ikke angres.",
+        "OVERWRITE": "{names} finnes allerede i denne mappen. Vil du erstatte?",
+        "CANCEL": "Avbryt",
+        "CREATE": "Opprett"
+      },
+      "ICON": {
+        "TITLE": "Administrer ikon"
+      }
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "Du har endringer som ikke er lagret. Er du sikker på at du vil lukke?",
+      "DELETE_CONFIRMATION": "Slette {what}? Dette kan ikke angres.",
+      "DELETE_ORGANIZATION": "{count} organisasjon(er) og alt innhold i dem",
+      "DELETE_CONTACT": "{count} kontakt(er)",
+      "DELETE_EMPLOYEE": "{count} ansatt(e)",
+      "DELETE_VENDOR": "{count} leverandør(er)",
+      "DELETE_ADDRESS": "Er du sikker på at du vil slette denne adressen?",
+      "DELETE_ACCOUNTS": "Slette {count} konto(er)? Dette kan ikke angres.",
+      "UNLINK_ACCOUNTS": "Er du sikker på at du vil fjerne koblingen for {count} konto(er)?",
+      "RELINK_ACCOUNTS": "De valgte kontoene er allerede knyttet til '{names}'. Vil du fortsette?",
+      "DELETE_MEMBERSHIPS": "Er du sikker på at du vil slette {count} medlemskap?",
+      "DUPLICATE_MEMBERSHIP": "Et medlemskap for denne brukeren og organisasjonen finnes allerede.",
+      "NO_ACCOUNT": "Dette medlemmet har ikke en tilknyttet sikkerhetskonto.",
+      "NO_ACCOUNT_MEMBERSHIPS": "Organisasjonsmedlemskap tilhører en sikkerhetskonto. Koble til eller opprett en konto for denne kontakten først.",
+      "NO_MEMBERSHIP": "Fant ingen organisasjonsmedlemskapspost for dette medlemmet.",
+      "DELETE_SEO": "Slette {count} SEO-oppføring(er)?",
+      "UNKNOWN_MEMBER_TYPE": "Kan ikke redigere medlem av ukjent type: '{memberType}'"
+    },
+    "SEARCH": {
+      "GROUP_TITLE": "Kunder"
+    }
+  }
+}
