@@ -218,16 +218,22 @@ namespace VirtoCommerce.CustomerModule.Web
                 dbContext.Database.Migrate();
             }
 
+            // The templates are rendered inside the Default Master layout of the Notifications module
+            const string defaultLayoutName = "Default";
             var notificationRegistrar = appBuilder.ApplicationServices.GetService<INotificationRegistrar>();
-            notificationRegistrar.RegisterNotification<RegisterCompanyEmailNotification>();
-
             var defaultNotificationTemplatesDirectory = Path.Combine(ModuleInfo.FullPhysicalPath, "NotificationTemplates");
+            notificationRegistrar.RegisterNotification<RegisterCompanyEmailNotification>()
+                .WithTemplatesFromPath(defaultNotificationTemplatesDirectory)
+                .WithLayout(defaultLayoutName);
             notificationRegistrar.RegisterNotification<OrganizationInviteExistingUserEmailNotification>()
-                .WithTemplatesFromPath(defaultNotificationTemplatesDirectory);
+                .WithTemplatesFromPath(defaultNotificationTemplatesDirectory)
+                .WithLayout(defaultLayoutName);
             notificationRegistrar.RegisterNotification<OrganizationInviteNewUserEmailNotification>()
-                .WithTemplatesFromPath(defaultNotificationTemplatesDirectory);
+                .WithTemplatesFromPath(defaultNotificationTemplatesDirectory)
+                .WithLayout(defaultLayoutName);
             notificationRegistrar.RegisterNotification<CustomerInviteNewUserEmailNotification>()
-                .WithTemplatesFromPath(defaultNotificationTemplatesDirectory);
+                .WithTemplatesFromPath(defaultNotificationTemplatesDirectory)
+                .WithLayout(defaultLayoutName);
         }
 
         public void Uninstall()

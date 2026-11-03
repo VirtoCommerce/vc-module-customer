@@ -1,0 +1,14 @@
+{% comment %}
+  Company registration. Rendered inside the Default Master layout of the Notifications module.
+  Model: company_name.
+{% endcomment %}
+{%- capture preheader -%}{{ company_name | escape }} is registered{%- endcapture -%}
+{%- capture content -%}
+  {%- include 'snippets/eyebrow' eyebrow_text: 'Welcome' -%}
+  {%- capture company_heading -%}Welcome{% if company_name.size > 0 %}, {{ company_name | escape }}{% endif %}!{%- endcapture -%}
+  {%- include 'snippets/heading' heading_text: company_heading -%}
+  {%- capture company_intro -%}Your company account <strong>{{ company_name | escape }}</strong> has been created. You can now sign in, invite your colleagues and place orders for your company.{%- endcapture -%}
+  {%- include 'snippets/text' text_body: company_intro -%}
+  {%- include 'snippets/divider' -%}
+  {%- include 'snippets/text' text_body: 'If you did not register this company, reply to this email and let us know.' -%}
+{%- endcapture -%}
