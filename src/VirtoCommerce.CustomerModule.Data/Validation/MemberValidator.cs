@@ -6,9 +6,11 @@ namespace VirtoCommerce.CustomerModule.Data.Validation
 {
     public class MemberValidator : AbstractValidator<Member>
     {
+        public const int AddressLineMaxLength = 2048;
+
         private const string MemberTypeMessage = "'{0}' is an incorrect value for the member type";
 
-        public MemberValidator(AbstractValidator<Address> addressValidator)
+        public MemberValidator()
         {
             RuleFor(member => member.MemberType)
                 .NotNull()
@@ -17,7 +19,11 @@ namespace VirtoCommerce.CustomerModule.Data.Validation
                 .WithMessage(x => string.Format(MemberTypeMessage, x.MemberType));
 
             RuleForEach(member => member.Addresses)
-                .SetValidator(addressValidator);
+                .ChildRules(address =>
+                {
+                    address.RuleFor(x => x.Line1).MaximumLength(AddressLineMaxLength);
+                    address.RuleFor(x => x.Line2).MaximumLength(AddressLineMaxLength);
+                });
         }
     }
 }
