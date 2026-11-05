@@ -158,7 +158,7 @@ namespace VirtoCommerce.CustomerModule.Tests
             var memoryCache = new MemoryCache(Options.Create(new MemoryCacheOptions()));
             var platformMemoryCache = new PlatformMemoryCache(memoryCache, Options.Create(new CachingOptions()), new Mock<ILogger<PlatformMemoryCache>>().Object);
 
-            return new MemberService(_repositoryFactory, _userSearchServiceMock.Object, _eventPublisherMock.Object, platformMemoryCache, new MemberValidator(), null);
+            return new MemberService(_repositoryFactory, _userSearchServiceMock.Object, _eventPublisherMock.Object, platformMemoryCache, new MemberValidator(new AddressValidator()), null);
         }
     }
 }

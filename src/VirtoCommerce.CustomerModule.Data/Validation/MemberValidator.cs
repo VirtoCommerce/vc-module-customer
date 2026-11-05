@@ -8,13 +8,16 @@ namespace VirtoCommerce.CustomerModule.Data.Validation
     {
         private const string MemberTypeMessage = "'{0}' is an incorrect value for the member type";
 
-        public MemberValidator()
+        public MemberValidator(AbstractValidator<Address> addressValidator)
         {
             RuleFor(member => member.MemberType)
                 .NotNull()
                 .NotEmpty()
                 .Must(memberType => AbstractTypeFactory<Member>.FindTypeInfoByName(memberType) != null)
                 .WithMessage(x => string.Format(MemberTypeMessage, x.MemberType));
+
+            RuleForEach(member => member.Addresses)
+                .SetValidator(addressValidator);
         }
     }
 }
