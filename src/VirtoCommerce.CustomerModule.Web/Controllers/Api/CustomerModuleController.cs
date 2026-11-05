@@ -917,11 +917,9 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
 
         #endregion
 
-        /// <summary>
-        /// Converts member validation errors (e.g. address lines exceeding the max length) into 400 Bad Request instead of 500.
-        /// </summary>
         public override void OnActionExecuted(ActionExecutedContext context)
         {
+            // Convert validation errors into 400 Bad Request instead of 500
             if (context.Exception is ValidationException validationException && !context.ExceptionHandled)
             {
                 foreach (var error in validationException.Errors)
