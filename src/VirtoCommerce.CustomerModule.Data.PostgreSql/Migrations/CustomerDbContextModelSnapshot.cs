@@ -83,12 +83,12 @@ namespace VirtoCommerce.CustomerModule.Data.PostgreSql.Migrations
 
                     b.Property<string>("Line1")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
 
                     b.Property<string>("Line2")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
 
                     b.Property<string>("MemberId")
                         .IsRequired()

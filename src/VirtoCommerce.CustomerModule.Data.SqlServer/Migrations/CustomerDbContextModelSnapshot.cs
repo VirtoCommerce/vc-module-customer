@@ -83,12 +83,12 @@ namespace VirtoCommerce.CustomerModule.Data.SqlServer.Migrations
 
                     b.Property<string>("Line1")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
 
                     b.Property<string>("Line2")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
 
                     b.Property<string>("MemberId")
                         .IsRequired()
