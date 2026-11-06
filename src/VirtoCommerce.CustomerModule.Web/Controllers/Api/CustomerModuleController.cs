@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.CustomerModule.Core;
 using VirtoCommerce.CustomerModule.Core.Model;
@@ -914,6 +916,23 @@ namespace VirtoCommerce.CustomerModule.Web.Controllers.Api
         }
 
         #endregion
+
+        public override void OnActionExecuted(ActionExecutedContext context)
+        {
+            // Convert validation errors into 400 Bad Request instead of 500
+            if (context.Exception is ValidationException validationException && !context.ExceptionHandled)
+            {
+                foreach (var error in validationException.Errors)
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                }
+
+                context.Result = BadRequest(ModelState);
+                context.ExceptionHandled = true;
+            }
+
+            base.OnActionExecuted(context);
+        }
 
         private bool HasDefaultBillingAndShippingAddress(Member member, out ActionResult actionResult)
         {
