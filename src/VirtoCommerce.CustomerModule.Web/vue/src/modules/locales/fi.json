@@ -70,6 +70,8 @@
         },
         "FILTERS": {
           "TYPE": "Jäsentyyppi",
+          "STATUS": "Tila",
+          "GROUP": "Ryhmä",
           "CREATED": "Luontipäivä",
           "MODIFIED": "Muokkauspäivä"
         },
