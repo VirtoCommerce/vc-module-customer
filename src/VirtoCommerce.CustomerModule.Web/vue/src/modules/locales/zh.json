@@ -70,6 +70,8 @@
         },
         "FILTERS": {
           "TYPE": "成员类型",
+          "STATUS": "状态",
+          "GROUP": "分组",
           "CREATED": "创建日期",
           "MODIFIED": "修改日期"
         },

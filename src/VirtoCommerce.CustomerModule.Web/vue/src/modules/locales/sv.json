@@ -70,6 +70,8 @@
         },
         "FILTERS": {
           "TYPE": "Medlemstyp",
+          "STATUS": "Status",
+          "GROUP": "Grupp",
           "CREATED": "Skapat datum",
           "MODIFIED": "Ändrat datum"
         },
