@@ -21,6 +21,7 @@
       :total-count="totalCount"
       :pagination="pagination"
       :searchable="true"
+      search-bar
       :state-key="'CUSTOMER_MEMBERS'"
       :active-item-id="activeChildParam"
       :show-all-columns="!activeChildParam"
@@ -141,12 +142,13 @@ import {
   usePermissions,
   usePopup,
   useTableSearch,
+  type GlobalFilterConfig,
   type IBladeToolbar,
 } from "@vc-shell/framework";
 import { VcBlade, VcBreadcrumbs, VcColumn, VcDataTable, VcIcon, VcImage, VcStatus } from "@vc-shell/framework/ui";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { customerApi, membershipApi, MEMBER_TYPES, type MemberType } from "../api";
+import { customerApi, getSettingValues, membershipApi, MEMBER_TYPES, type MemberType } from "../api";
 import { requestedKeyword } from "../search";
 import type { Member, OrganizationMembership } from "../../api_client/virtocommerce.customer";
 
@@ -217,48 +219,67 @@ const statusVariant = (status: string) =>
   (({ Approved: "success", Rejected: "danger", Deleted: "danger" }) as Record<string, "success" | "danger">)[status] ??
   "info";
 
-// filters, sent as index keyword tokens exactly like the AngularJS member list
-const filters = ref<Record<string, string | undefined>>({});
-const globalFilters = computed(() => [
+// filters, sent as index keyword tokens like the AngularJS member list (so the keyword handed to toolbar extensions,
+// e.g. export, carries them too): member type, status and group take several values, created / modified a date range
+const filters = ref<Record<string, unknown>>({});
+const statuses = ref<string[]>([]);
+const groups = ref<string[]>([]);
+const valueOptions = (values: string[]) => values.map((x) => ({ value: x, label: x }));
+const globalFilters = computed<GlobalFilterConfig[]>(() => [
   {
     id: "memberType",
     label: t("CUSTOMER.PAGES.LIST.FILTERS.TYPE"),
-    filter: { options: Object.keys(MEMBER_TYPES).map((x) => ({ value: x, label: typeTitle(x) })) },
+    filter: { multiple: true, options: Object.keys(MEMBER_TYPES).map((x) => ({ value: x, label: typeTitle(x) })) },
   },
-  {
-    id: "created",
-    label: t("CUSTOMER.PAGES.LIST.FILTERS.CREATED"),
-    filter: { range: ["createdStart", "createdEnd"] as [string, string] },
-  },
-  {
-    id: "modified",
-    label: t("CUSTOMER.PAGES.LIST.FILTERS.MODIFIED"),
-    filter: { range: ["modifiedStart", "modifiedEnd"] as [string, string] },
-  },
+  { id: "status", label: t("CUSTOMER.PAGES.LIST.FILTERS.STATUS"), filter: { multiple: true, options: valueOptions(statuses.value) } },
+  // a list opened for given groups (options.groups) is already limited to them
+  ...(options.value?.groups?.length
+    ? []
+    : [{ id: "groups", label: t("CUSTOMER.PAGES.LIST.FILTERS.GROUP"), filter: { multiple: true, options: valueOptions(groups.value) } }]),
+  { id: "created", label: t("CUSTOMER.PAGES.LIST.FILTERS.CREATED"), filter: { range: ["createdStart", "createdEnd"] } },
+  { id: "modified", label: t("CUSTOMER.PAGES.LIST.FILTERS.MODIFIED"), filter: { range: ["modifiedStart", "modifiedEnd"] } },
 ]);
 
+// the options: the statuses of every member type (one setting each) and the member groups
+async function loadFilterOptions() {
+  const [typeStatuses, memberGroups] = await Promise.all([
+    Promise.all(Object.values(MEMBER_TYPES).map((x) => getSettingValues(x.statusSetting))),
+    getSettingValues("Customer.MemberGroups"),
+  ]);
+  statuses.value = [...new Set(typeStatuses.flat())];
+  groups.value = memberGroups;
+}
+
 function onFilter(event: { filters: Record<string, unknown> }) {
-  filters.value = Object.fromEntries(
-    Object.entries(event.filters).map(([k, v]) => [k, (Array.isArray(v) ? v[0] : v) || undefined]),
-  ) as Record<string, string | undefined>;
+  filters.value = event.filters;
   // a page change loads through the watcher below
   if (pagination.skip) pagination.setPage(1);
   else load();
 }
 
-const day = (d: string) => new Date(d).toISOString().slice(0, 10);
-function rangeToken(field: string, start?: string, end?: string) {
-  if (!start && !end) return "";
-  const from = start ? `"${day(start)}T00:00:00Z"` : '""';
-  const to = end ? `"${day(end)}T23:59:59Z"` : '""';
-  return `${field}:[${from} TO ${to}]`;
+const quote = (value: string) => `"${value.replace(/["\\]/g, "\\$&")}"`;
+function valuesToken(field: string, value: unknown) {
+  const values = ([] as unknown[]).concat(value ?? []).filter(Boolean).map(String);
+  return values.length ? `${field}:${values.map(quote).join(",")}` : "";
+}
+
+// the search bar sends local days (YYYY-MM-DD), both ends included; the index keeps UTC times
+const localDay = (ymd: unknown, endOfDay = false) => {
+  if (typeof ymd !== "string" || !ymd) return '""';
+  const d = new Date(`${ymd}T${endOfDay ? "23:59:59" : "00:00:00"}`);
+  return quote(d.toISOString().replace(/\.\d{3}Z$/, "Z"));
+};
+function rangeToken(field: string, start: unknown, end: unknown) {
+  return start || end ? `${field}:[${localDay(start)} TO ${localDay(end, true)}]` : "";
 }
 
 function keyword() {
   const f = filters.value;
   return [
     searchValue.value,
-    f.memberType && `membertype:${f.memberType}`,
+    valuesToken("membertype", f.memberType),
+    valuesToken("status", f.status),
+    valuesToken("groups", f.groups),
     rangeToken("createddate", f.createdStart, f.createdEnd),
     rangeToken("modifieddate", f.modifiedStart, f.modifiedEnd),
   ]
@@ -292,6 +313,8 @@ async function load() {
 }
 
 load();
+// without them the status and group filters just have no options
+loadFilterOptions().catch(() => undefined);
 watch(searchValue, () => pagination.setPage(1));
 watch([sortExpression, searchValue, () => pagination.skip], debounce(load, 300));
 

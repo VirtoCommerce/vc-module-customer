@@ -70,6 +70,8 @@
         },
         "FILTERS": {
           "TYPE": "Typ członka",
+          "STATUS": "Status",
+          "GROUP": "Grupa",
           "CREATED": "Data utworzenia",
           "MODIFIED": "Data modyfikacji"
         },
