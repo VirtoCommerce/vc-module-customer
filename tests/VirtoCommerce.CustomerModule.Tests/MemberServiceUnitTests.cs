@@ -150,6 +150,38 @@ namespace VirtoCommerce.CustomerModule.Tests
         }
 
 
+        [Fact]
+        public async Task GetByIdAsync_WithSecurityAccounts_ReturnsAccountsWithoutPasswordHashAndSecurityStamp()
+        {
+            //Arrange
+            var contactEntity = new ContactEntity { Id = Guid.NewGuid().ToString(), MemberType = nameof(Contact) };
+            var user = new ApplicationUser
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserName = "contact-user",
+                MemberId = contactEntity.Id,
+                PasswordHash = "password-hash",
+                SecurityStamp = "security-stamp",
+            };
+
+            _repositoryMock.Setup(x => x.GetMembersByIdsAsync(new[] { contactEntity.Id }, It.IsAny<string>(), It.IsAny<string[]>()))
+                .ReturnsAsync(new[] { contactEntity });
+            var service = GetMemberService();
+            _userSearchServiceMock.Setup(x => x.SearchUsersAsync(It.IsAny<UserSearchCriteria>()))
+                .ReturnsAsync(new UserSearchResult { TotalCount = 1, Results = new List<ApplicationUser> { user } });
+
+            //Act
+            var contact = (Contact)await service.GetByIdAsync(contactEntity.Id, nameof(MemberResponseGroup.Full));
+
+            //Assert
+            var account = Assert.Single(contact.SecurityAccounts);
+            Assert.Equal(user.Id, account.Id);
+            Assert.Equal(user.UserName, account.UserName);
+            Assert.Null(account.PasswordHash);
+            Assert.Null(account.SecurityStamp);
+        }
+
+
         private MemberService GetMemberService()
         {
             _userSearchServiceMock.Setup(x => x.SearchUsersAsync(It.IsAny<UserSearchCriteria>()))

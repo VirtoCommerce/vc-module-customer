@@ -107,6 +107,9 @@ namespace VirtoCommerce.CustomerModule.Data.Services
                     {
                         hasAccountMember.SecurityAccounts.ToList().ForEach(x => cacheEntry.AddExpirationToken(SecurityCacheRegion.CreateChangeTokenForUser(x)));
                     }
+
+                    // The accounts are loaded after ProcessModels, reduce their details too
+                    ((Member)hasAccountMember).ReduceDetails(responseGroup);
                 }
 
                 #endregion Load member security accounts by separate request
