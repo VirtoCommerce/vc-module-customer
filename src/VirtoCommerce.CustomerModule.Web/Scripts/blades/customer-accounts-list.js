@@ -90,6 +90,8 @@ function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFil
                                         bladeNavigationService.setError(result.errors.join(), blade);
                                         return Promise.reject(result.errors);
                                     }
+
+                                    return result;
                                 });
                         });
 
