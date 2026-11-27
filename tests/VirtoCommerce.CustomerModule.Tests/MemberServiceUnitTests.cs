@@ -44,6 +44,10 @@ namespace VirtoCommerce.CustomerModule.Tests
             _cacheEntryMock.SetupGet(c => c.ExpirationTokens).Returns(new List<IChangeToken>());
             _primaryKeyResolvingMap = new PrimaryKeyResolvingMap();
 
+            _userSearchServiceMock
+                .Setup(x => x.SearchUsersAsync(It.IsAny<UserSearchCriteria>()))
+                .ReturnsAsync(new UserSearchResult());
+
             AbstractTypeFactory<Member>.RegisterType<Organization>().MapToType<OrganizationEntity>();
             AbstractTypeFactory<Member>.RegisterType<Contact>().MapToType<ContactEntity>();
 
@@ -149,12 +153,16 @@ namespace VirtoCommerce.CustomerModule.Tests
             Assert.NotNull(originalEntity.ModifiedDate);
         }
 
-
         [Fact]
         public async Task GetByIdAsync_WithSecurityAccounts_ReturnsAccountsWithoutPasswordHashAndSecurityStamp()
         {
             //Arrange
-            var contactEntity = new ContactEntity { Id = Guid.NewGuid().ToString(), MemberType = nameof(Contact) };
+            var contactEntity = new ContactEntity
+            {
+                Id = Guid.NewGuid().ToString(),
+                MemberType = nameof(Contact),
+            };
+
             var user = new ApplicationUser
             {
                 Id = Guid.NewGuid().ToString(),
@@ -164,11 +172,15 @@ namespace VirtoCommerce.CustomerModule.Tests
                 SecurityStamp = "security-stamp",
             };
 
-            _repositoryMock.Setup(x => x.GetMembersByIdsAsync(new[] { contactEntity.Id }, It.IsAny<string>(), It.IsAny<string[]>()))
-                .ReturnsAsync(new[] { contactEntity });
+            _repositoryMock
+                .Setup(x => x.GetMembersByIdsAsync(new[] { contactEntity.Id }, It.IsAny<string>(), It.IsAny<string[]>()))
+                .ReturnsAsync([contactEntity]);
+
+            _userSearchServiceMock
+                .Setup(x => x.SearchUsersAsync(It.IsAny<UserSearchCriteria>()))
+                .ReturnsAsync(new UserSearchResult { TotalCount = 1, Results = [user] });
+
             var service = GetMemberService();
-            _userSearchServiceMock.Setup(x => x.SearchUsersAsync(It.IsAny<UserSearchCriteria>()))
-                .ReturnsAsync(new UserSearchResult { TotalCount = 1, Results = new List<ApplicationUser> { user } });
 
             //Act
             var contact = (Contact)await service.GetByIdAsync(contactEntity.Id, nameof(MemberResponseGroup.Full));
@@ -186,9 +198,6 @@ namespace VirtoCommerce.CustomerModule.Tests
 
         private MemberService GetMemberService()
         {
-            _userSearchServiceMock.Setup(x => x.SearchUsersAsync(It.IsAny<UserSearchCriteria>()))
-                .ReturnsAsync(new UserSearchResult());
-
             var memoryCache = new MemoryCache(Options.Create(new MemoryCacheOptions()));
             var platformMemoryCache = new PlatformMemoryCache(memoryCache, Options.Create(new CachingOptions()), new Mock<ILogger<PlatformMemoryCache>>().Object);
 

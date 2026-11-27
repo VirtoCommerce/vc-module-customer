@@ -101,14 +101,13 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
                 foreach (var hasAccountMember in hasSecurityAccountMembers)
                 {
-                    hasAccountMember.SecurityAccounts = usersSearchResult.Results
-                        .Where(x => x.MemberId.EqualsIgnoreCase(hasAccountMember.Id))
-                        .Select(ReduceSecurityAccount)
-                        .ToList();
+                    hasAccountMember.SecurityAccounts = [];
+                    var users = usersSearchResult.Results.Where(x => x.MemberId.EqualsIgnoreCase(hasAccountMember.Id));
 
-                    if (hasAccountMember.SecurityAccounts.Count > 0)
+                    foreach (var user in users)
                     {
-                        hasAccountMember.SecurityAccounts.ToList().ForEach(x => cacheEntry.AddExpirationToken(SecurityCacheRegion.CreateChangeTokenForUser(x)));
+                        hasAccountMember.SecurityAccounts.Add(ReduceSecurityAccount(user));
+                        cacheEntry.AddExpirationToken(SecurityCacheRegion.CreateChangeTokenForUser(user));
                     }
                 }
 
@@ -214,7 +213,7 @@ namespace VirtoCommerce.CustomerModule.Data.Services
         /// </summary>
         protected virtual ApplicationUser ReduceSecurityAccount(ApplicationUser user)
         {
-            var account = (ApplicationUser)user.Clone();
+            var account = user.CloneTyped();
             account.PasswordHash = null;
             account.SecurityStamp = null;
 
