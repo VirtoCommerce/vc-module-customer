@@ -179,6 +179,8 @@ namespace VirtoCommerce.CustomerModule.Tests
             Assert.Equal(user.UserName, account.UserName);
             Assert.Null(account.PasswordHash);
             Assert.Null(account.SecurityStamp);
+            Assert.Equal("password-hash", user.PasswordHash);
+            Assert.Equal("security-stamp", user.SecurityStamp);
         }
 
 

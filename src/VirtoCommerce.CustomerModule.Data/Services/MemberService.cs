@@ -101,15 +101,15 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
                 foreach (var hasAccountMember in hasSecurityAccountMembers)
                 {
-                    hasAccountMember.SecurityAccounts = usersSearchResult.Results.Where(x => x.MemberId.EqualsIgnoreCase(hasAccountMember.Id)).ToList();
+                    hasAccountMember.SecurityAccounts = usersSearchResult.Results
+                        .Where(x => x.MemberId.EqualsIgnoreCase(hasAccountMember.Id))
+                        .Select(ReduceSecurityAccount)
+                        .ToList();
 
                     if (hasAccountMember.SecurityAccounts.Count > 0)
                     {
                         hasAccountMember.SecurityAccounts.ToList().ForEach(x => cacheEntry.AddExpirationToken(SecurityCacheRegion.CreateChangeTokenForUser(x)));
                     }
-
-                    // The accounts are loaded after ProcessModels, reduce their details too
-                    ((Member)hasAccountMember).ReduceDetails(responseGroup);
                 }
 
                 #endregion Load member security accounts by separate request
@@ -206,6 +206,19 @@ namespace VirtoCommerce.CustomerModule.Data.Services
 
                 await _eventPublisher.Publish(new MemberChangedEvent(changedEntries));
             }
+        }
+
+        /// <summary>
+        /// Returns the copy of a user that a member carries in its security accounts:
+        /// without the password hash and the security stamp. Use the platform security API to work with passwords.
+        /// </summary>
+        protected virtual ApplicationUser ReduceSecurityAccount(ApplicationUser user)
+        {
+            var account = (ApplicationUser)user.Clone();
+            account.PasswordHash = null;
+            account.SecurityStamp = null;
+
+            return account;
         }
 
         protected virtual void ConfigureCache(MemoryCacheEntryOptions cacheOptions, string[] memberIds, IList<MemberEntity> entities, IList<Member> models)

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
-using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.SearchModule.Core.Model;
 using VirtoCommerce.Seo.Core.Models;
 
@@ -97,30 +96,6 @@ namespace VirtoCommerce.CustomerModule.Core.Model
             {
                 DynamicProperties = null;
             }
-
-            // Members never carry the password hash and the security stamp of their accounts, whatever the response group
-            if (this is IHasSecurityAccounts { SecurityAccounts: not null } hasSecurityAccounts)
-            {
-                hasSecurityAccounts.SecurityAccounts = hasSecurityAccounts.SecurityAccounts.Select(ReduceSecurityAccount).ToList();
-            }
-        }
-
-        /// <summary>
-        /// Returns a copy of the security account without the password hash and the security stamp.
-        /// Use the platform security API to work with passwords.
-        /// </summary>
-        protected virtual ApplicationUser ReduceSecurityAccount(ApplicationUser account)
-        {
-            if (account == null)
-            {
-                return null;
-            }
-
-            var result = (ApplicationUser)account.Clone();
-            result.PasswordHash = null;
-            result.SecurityStamp = null;
-
-            return result;
         }
 
         #region ICloneable members
