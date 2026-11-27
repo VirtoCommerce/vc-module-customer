@@ -77,18 +77,22 @@ function ($scope, dialogService, uiGridHelper, bladeNavigationService, filterFil
                     bladeNavigationService.closeChildrenBlades(blade, function () {
                         blade.isLoading = true;
 
+                        // Member security accounts may carry fewer user details than the stored user,
+                        // so load each user from the security API and change only the member link
                         const updatePromises = selectedAccounts.map(account => {
-                            return new Promise((resolve, reject) => {
-                                account.memberId = null;
-                                accounts.update(account, function (result) {
-                                    if (result.succeeded) {
-                                        resolve();
-                                    } else {
+                            return accounts.get({ id: account.userName }).$promise
+                                .then(user => {
+                                    user.memberId = null;
+                                    return accounts.update(user).$promise;
+                                })
+                                .then(result => {
+                                    if (!result.succeeded) {
                                         bladeNavigationService.setError(result.errors.join(), blade);
-                                        reject(result.errors);
+                                        return Promise.reject(result.errors);
                                     }
+
+                                    return result;
                                 });
-                            });
                         });
 
                         Promise.all(updatePromises)
