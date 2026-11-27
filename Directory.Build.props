@@ -9,5 +9,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NuGetAuditMode>direct</NuGetAuditMode>
   </PropertyGroup>
 </Project>
